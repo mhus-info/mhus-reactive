@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public abstract class Gateway extends Task {
+public interface Gateway<P extends Pool> extends Activity<P> {
+
+	Class<? extends Activity<P>>[] doExecute() throws Exception;
 
 }

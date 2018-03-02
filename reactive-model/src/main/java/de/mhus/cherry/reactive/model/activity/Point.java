@@ -1,5 +1,5 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public class Point extends Activity {
+public interface Point<P extends Pool> extends Activity<P> {
 
 }

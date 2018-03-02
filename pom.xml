@@ -361,6 +361,7 @@
 
 	<modules>
 		<module>reactive-model</module>
+		<module>reactive-util</module>
 		<module>reactive-engine</module>
 		<module>reactive-examples</module>
 	</modules>

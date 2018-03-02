@@ -1,7 +1,13 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public class Activity {
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
-	protected ProcessContext context;
+public interface Activity<P extends Pool> {
+
+	ProcessContext<P> getContext();
+	
+	default P getPool() {
+		return getContext().getPool();
+	}
 	
 }

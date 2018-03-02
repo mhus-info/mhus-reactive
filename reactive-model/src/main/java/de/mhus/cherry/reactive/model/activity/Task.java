@@ -1,6 +1,7 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public abstract class Task extends Activity {
+public interface Task<P extends Pool> extends Activity<P> {
 
-	public abstract Class<? extends Activity> doExecute() throws Exception;
+	Class<? extends Activity<P>> doExecute() throws Exception;
+
 }

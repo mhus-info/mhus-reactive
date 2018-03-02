@@ -1,5 +1,43 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public class Pool {
+import java.util.Map;
 
+/**
+ * Case Lifecycle:
+ * - start the new case
+ * - constructor
+ * - setContext()
+ * - initializeCase() / checkInputParameters()
+ * - getStartPoint()
+ * - exportParamters()
+ * - destroy
+ * Loop:
+ * - constructor
+ * - setContext()
+ * - importParameters()
+ * - do task
+ * - exportParamters()
+ * - destroy
+ * Ending:
+ * - constructor
+ * - setContext()
+ * - importParameters()
+ * - closeCase()
+ * - exportParamters()
+ * - destroy
+ * - archive case
+ * 
+ */
+public interface Pool<P extends Pool<?>> {
+
+	Map<String, Object> exportParamters();
+	
+	void importParameters(Map<String, Object> parameters);
+	
+	void initializeCase(Map<String, Object> parameters) throws Exception;
+	
+	void closeCase();
+	
+	Class<? extends StartPoint<P>> getStartPoint();
+	
 }

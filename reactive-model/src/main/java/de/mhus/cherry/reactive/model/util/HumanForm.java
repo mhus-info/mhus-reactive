@@ -1,4 +1,4 @@
-package de.mhus.cherry.reactive.model.activity;
+package de.mhus.cherry.reactive.model.util;
 
 import de.mhus.lib.core.definition.DefComponent;
 import de.mhus.lib.core.definition.DefRoot;

@@ -1,6 +1,6 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public abstract class ServiceActivity extends Task {
+public interface ServiceActivity<P extends Pool> extends Task<P> {
 
 	
 }

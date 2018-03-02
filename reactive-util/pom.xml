@@ -207,7 +207,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reactive-examples</artifactId>
+	<artifactId>reactive-util</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
@@ -227,7 +227,7 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.examples.*;version=${project.version}
+							de.mhus.cherry.reactive.util.*;version=${project.version}
 						</Export-Package>
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
@@ -268,11 +268,6 @@
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
-			<artifactId>reactive-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
