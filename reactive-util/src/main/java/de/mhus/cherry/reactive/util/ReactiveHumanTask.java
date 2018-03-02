@@ -3,8 +3,6 @@ package de.mhus.cherry.reactive.util;
 import java.io.IOException;
 
 import de.mhus.cherry.reactive.model.activity.HumanTask;
-import de.mhus.cherry.reactive.model.activity.Pool;
-import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoAttribute;
@@ -12,13 +10,7 @@ import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.form.DataSource;
 import de.mhus.lib.form.UiComponent;
 
-public abstract class ReactiveHumanTask<P extends Pool> implements HumanTask<P> {
-
-	@Override
-	public ProcessContext<P> getContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+public abstract class ReactiveHumanTask<P extends ReactivePool<?>> extends ReactiveTask<P> implements HumanTask<P> {
 
 	@Override
 	public DataSource createDataSource() {

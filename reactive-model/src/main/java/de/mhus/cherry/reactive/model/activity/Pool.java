@@ -27,6 +27,23 @@ import java.util.Map;
  * - destroy
  * - archive case
  * 
+ * FlowNode Lifecycle:
+ * - start or retry new task
+ * - constructor
+ * - setContext()
+ * - initializeTask()
+ * - doExecute()
+ * - exportParamters()
+ * - destroy
+ * Loop (if needed):
+ * - constructor
+ * - setContext()
+ * - importParameters()
+ * - doExecute()
+ * - exportParamters()
+ * - destroy
+ * @param <P> 
+ * 
  */
 public interface Pool<P extends Pool<?>> {
 
