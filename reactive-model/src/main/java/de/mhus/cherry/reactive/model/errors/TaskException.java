@@ -1,4 +1,6 @@
-package de.mhus.cherry.reactive.model.activity;
+package de.mhus.cherry.reactive.model.errors;
+
+import de.mhus.cherry.reactive.model.activity.Activity;
 
 public class TaskException extends Exception {
 

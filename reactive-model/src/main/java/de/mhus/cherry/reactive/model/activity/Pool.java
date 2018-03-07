@@ -45,7 +45,7 @@ import java.util.Map;
  * @param <P> 
  * 
  */
-public interface Pool<P extends Pool<?>> {
+public interface Pool<P extends Pool<?>> extends Element {
 
 	Map<String, Object> exportParamters();
 	

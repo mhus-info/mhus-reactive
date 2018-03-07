@@ -19,7 +19,7 @@ public interface StorageProvider {
 	 * @param caze
 	 * @throws IOException 
 	 */
-	void saveCase(ReactiveCase caze) throws IOException;
+	void saveCase(EngineCase caze) throws IOException;
 	
 	/**
 	 * Load the case from storage'
@@ -28,7 +28,7 @@ public interface StorageProvider {
 	 * @throws IOException 
 	 * @throws NotFoundException 
 	 */
-	ReactiveCase loadCase(UUID id) throws IOException, NotFoundException;
+	EngineCase loadCase(UUID id) throws IOException, NotFoundException;
 	
 	/**
 	 * Delete the case and all flow data from storage.
@@ -44,7 +44,7 @@ public interface StorageProvider {
 	 * @param flow
 	 * @throws IOException 
 	 */
-	void saveFlowNode(ReactiveFlowNode flow) throws IOException;
+	void saveFlowNode(EngineFlowNode flow) throws IOException;
 	
 	/**
 	 * Load the flow node.
@@ -54,7 +54,7 @@ public interface StorageProvider {
 	 * @throws IOException 
 	 * @throws NotFoundException 
 	 */
-	ReactiveFlowNode loadFlowNode(UUID id) throws IOException,NotFoundException;
+	EngineFlowNode loadFlowNode(UUID id) throws IOException,NotFoundException;
 
 	/**
 	 * Load all cases with the specified state or all. 
@@ -67,7 +67,7 @@ public interface StorageProvider {
 	 * @return Set to iterate the results.
 	 * @throws IOException 
 	 */
-	Set<ReactiveCase> getCases(ReactiveCase.STATE state) throws IOException;
+	Set<EngineCase> getCases(EngineCase.STATE state) throws IOException;
 	
 	/**
 	 * Load all flows for this case with the specified state or all. 
@@ -81,7 +81,7 @@ public interface StorageProvider {
 	 * @return list
 	 * @throws IOException 
 	 */
-	Set<ReactiveFlowNode> getFlowNodes(UUID caseId, ReactiveFlowNode.STATE state) throws IOException;
+	Set<EngineFlowNode> getFlowNodes(UUID caseId, EngineFlowNode.STATE state) throws IOException;
 	
 	/**
 	 * Return all flows with specified state or all. 
@@ -94,6 +94,6 @@ public interface StorageProvider {
 	 * @return Set of all nodes
 	 * @throws IOException 
 	 */
-	Set<ReactiveFlowNode> getFlowNodes(ReactiveFlowNode.STATE state) throws IOException;
+	Set<EngineFlowNode> getFlowNodes(EngineFlowNode.STATE state) throws IOException;
 	
 }

@@ -7,7 +7,7 @@ import java.io.ObjectOutput;
 import java.util.Map;
 import java.util.UUID;
 
-public class ReactiveCase implements Externalizable {
+public class EngineCase implements Externalizable {
 	
 	public enum STATE {NEW, READY, SCHEDULED, FAILED, SUSPENDED, CLOSED};
 	
@@ -21,9 +21,9 @@ public class ReactiveCase implements Externalizable {
 	protected long scheduled;
 	protected Map<String,Object> parameters;
 
-	public ReactiveCase() {}
+	public EngineCase() {}
 
-	public ReactiveCase(UUID id, String customId, String uri, String name, long creationDate, String createdBy, STATE state,
+	public EngineCase(UUID id, String customId, String uri, String name, long creationDate, String createdBy, STATE state,
 	        long scheduled, Map<String, Object> parameters) {
 		this.id = id;
 		this.customId = customId;

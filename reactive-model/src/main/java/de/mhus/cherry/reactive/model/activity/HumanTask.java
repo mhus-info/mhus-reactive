@@ -1,11 +1,13 @@
 package de.mhus.cherry.reactive.model.activity;
 
 import de.mhus.cherry.reactive.model.util.HumanForm;
-import de.mhus.lib.form.DataSource;
+import de.mhus.lib.core.IProperties;
 
 public interface HumanTask<P extends Pool<?>> extends Task<P> {
 
-	DataSource createDataSource();
+	IProperties getFormValues();
+	
+	void setFormValues(IProperties values);
 
 	HumanForm createForm();
 
