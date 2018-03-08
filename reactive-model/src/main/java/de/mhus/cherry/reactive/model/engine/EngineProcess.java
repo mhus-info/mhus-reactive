@@ -3,7 +3,7 @@ package de.mhus.cherry.reactive.model.engine;
 import java.util.List;
 import java.util.Set;
 
-import de.mhus.cherry.reactive.model.activity.Element;
+import de.mhus.cherry.reactive.model.activity.RElement;
 
 public interface EngineProcess {
 
@@ -11,14 +11,14 @@ public interface EngineProcess {
 
 	String getVersion();
 
-	List<Class<? extends Element>> getElements();
+	List<Class<? extends RElement<?>>> getElements();
 
 	EnginePool getPool(String name);
 
-	EngineActivity getActivity(String name);
+	EngineElement getElement(String name);
 
 	Set<String> getPoolNames();
 
-	Set<String> getActivityNames();
+	Set<String> getElementNames();
 
 }

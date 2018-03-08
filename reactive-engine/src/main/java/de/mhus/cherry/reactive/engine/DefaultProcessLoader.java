@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.mhus.cherry.reactive.model.activity.Element;
+import de.mhus.cherry.reactive.model.activity.RElement;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
@@ -19,7 +19,7 @@ import de.mhus.lib.core.MString;
 public class DefaultProcessLoader extends MLog implements ProcessLoader {
 	
 	protected LinkedList<URL> classLoaderUrls = new LinkedList<>();
-	protected LinkedList<Class<? extends Element>> elementClasses = new LinkedList<>();
+	protected LinkedList<Class<? extends RElement<?>>> elementClasses = new LinkedList<>();
 	protected URLClassLoader classLoader;
 
 	public DefaultProcessLoader(File[] dirs) {
@@ -35,17 +35,23 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		LinkedList<String> classNames = new LinkedList<>();
 		// load from jar files
 		for (URL url : classLoaderUrls) {
-			try {	
-				JarFile jar = new JarFile(url.getFile());
-				for (Enumeration<JarEntry> enu = jar.entries();enu.hasMoreElements();) {
-					JarEntry entry = enu.nextElement();
-					String name = entry.getName();
-					if (name.endsWith(".class") && name.indexOf('$') < 0) {
-						if (name.startsWith("/")) name = name.substring(1);
-						classNames.add(MString.beforeLastIndex(name,'.').replace('/', '.'));
+			try {
+				File file = new File(url.getFile());
+				if (file.isDirectory() && file.getName().equals("classes")) {
+					findClasses(file, classNames, file.getAbsolutePath());
+				} else
+				if (file.isFile() && file.getName().endsWith(".jar")) {
+					JarFile jar = new JarFile(file);
+					for (Enumeration<JarEntry> enu = jar.entries();enu.hasMoreElements();) {
+						JarEntry entry = enu.nextElement();
+						String name = entry.getName();
+						if (name.endsWith(".class") && name.indexOf('$') < 0) {
+							if (name.startsWith("/")) name = name.substring(1);
+							classNames.add(MString.beforeLastIndex(name,'.').replace('/', '.'));
+						}
 					}
+					jar.close();
 				}
-				jar.close();
 			} catch (Throwable t) {
 				log().w(url,t);
 			}
@@ -55,8 +61,8 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		for (String name : classNames) {
 			try {
 				Class<?> clazz = classLoader.loadClass(name);
-				if (Element.class.isAssignableFrom(clazz))
-					elementClasses.add((Class<? extends Element>) clazz);
+				if (RElement.class.isAssignableFrom(clazz))
+					elementClasses.add((Class<? extends RElement<?>>) clazz);
 			} catch (Throwable t) {
 				log().w(name,t);
 			}
@@ -64,22 +70,51 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		
 	}
 
+	private void findClasses(File dir, LinkedList<String> classNames, String base) {
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory() && !file.getName().startsWith("."))
+				findClasses(file, classNames, base);
+			else
+			if (file.isFile() && file.getName().endsWith(".class")) {
+				String name = file.getAbsolutePath().substring(base.length());
+				if (name.startsWith("/")) name = name.substring(1);
+				classNames.add(MString.beforeLastIndex(name,'.').replace('/', '.'));
+			}
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	protected void load(File dir) {
-		for (File file : dir.listFiles()) {
-			if (file.isFile()) {
-				if (file.getName().endsWith(".jar"))
-					try {
-						classLoaderUrls.add( file.toURL() );
-					} catch (MalformedURLException e) {
-						log().w(file,e);
-					}
+		if (dir.isDirectory() && dir.getName().equals("classes")) {
+			try {
+				classLoaderUrls.add( dir.toURL() );
+			} catch (MalformedURLException e) {
+				log().w(dir,e);
+			}
+		} else
+		if (dir.isDirectory()) {
+			for (File file : dir.listFiles()) {
+				if (file.isFile()) {
+					if (file.getName().endsWith(".jar"))
+						try {
+							classLoaderUrls.add( file.toURL() );
+						} catch (MalformedURLException e) {
+							log().w(file,e);
+						}
+				}
+			}
+		} else
+		if (dir.isFile() && dir.getName().endsWith(".jar")) {
+			try {
+				classLoaderUrls.add( dir.toURL() );
+			} catch (MalformedURLException e) {
+				log().w(dir,e);
 			}
 		}
 	}
 
 	@Override
-	public List<Class<? extends Element>> getElements() {
+	public List<Class<? extends RElement<?>>> getElements() {
 		return Collections.unmodifiableList(elementClasses);
 	}
 

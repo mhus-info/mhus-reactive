@@ -10,6 +10,5 @@ import de.mhus.cherry.reactive.model.migrate.Migrator;
 public @interface PoolDescription {
 
 	String name() default "";
-	Class<? extends StartPoint<?>>[] startPoints();
 	
 }

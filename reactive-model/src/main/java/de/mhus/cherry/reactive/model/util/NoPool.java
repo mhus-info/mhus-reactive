@@ -24,9 +24,4 @@ public class NoPool implements Pool {
 	public void closeCase() {
 	}
 
-	@Override
-	public Class getStartPoint() {
-		return null;
-	}
-
 }

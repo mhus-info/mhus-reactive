@@ -1,5 +1,5 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public interface Element {
+public interface InactiveStartPoint {
 
 }

@@ -28,6 +28,8 @@ public class EngineFlowNode {
 	protected long lastRunDate;
 	// state
 	protected STATE state = STATE.NEW;
+	// state
+	protected STATE suspendedState = STATE.NEW;
 	// list of schedulers and the source, only the nearest scheduling time is needed to be triggered
 	protected HashMap<String,Long> schedulers;
 	// list of singnals to wait for

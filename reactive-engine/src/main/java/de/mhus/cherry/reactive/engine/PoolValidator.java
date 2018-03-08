@@ -1,0 +1,162 @@
+package de.mhus.cherry.reactive.engine;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+import de.mhus.cherry.reactive.model.activity.Activity;
+import de.mhus.cherry.reactive.model.activity.Actor;
+import de.mhus.cherry.reactive.model.activity.EndPoint;
+import de.mhus.cherry.reactive.model.activity.Pool;
+import de.mhus.cherry.reactive.model.activity.StartPoint;
+import de.mhus.cherry.reactive.model.activity.Swimlane;
+import de.mhus.cherry.reactive.model.annotations.Trigger;
+import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
+import de.mhus.cherry.reactive.model.engine.EngineElement;
+import de.mhus.cherry.reactive.model.engine.EnginePool;
+
+public class PoolValidator {
+
+	private LinkedList<Finding> findings = new LinkedList<>();
+	private EnginePool pool;
+
+	public PoolValidator(EnginePool pool) {
+		this.pool = pool;
+	}
+	
+	public void validate() {
+		
+		for (String name : pool.getElementNames()) {
+			validateElement(name);
+		}
+		
+		
+	}
+
+	private void validateElement(String name) {
+		EngineElement elem = pool.getElement(name);
+		if (elem == null) {
+			findings.add(new Finding(LEVEL.FATAL,name,"not found")); // should not happen
+			return;
+		}
+		if (elem.is(Swimlane.class)) {
+			validateSwimlane(name,elem);
+			return;
+		}
+		if (elem.is(Pool.class)) {
+			validatePool(name,elem);
+			return;
+		}
+		if (elem.is(Actor.class)) {
+			validateActor(name, elem);
+			return;
+		}
+		if (elem.is(Activity.class)) {
+			validateActivity(name, elem);
+			return;
+		}
+		findings.add(new Finding(LEVEL.WARN, name, "unknown type"));
+	}
+	
+	private void validateActivity(String name, EngineElement elem) {
+		// test outgoing
+		if (elem.is(Activity.class) && !elem.is(EndPoint.class)) {
+			Class<? extends Activity<?>>[] outputs = elem.getOutputs();
+			if (outputs.length == 0)
+				findings.add(new Finding(LEVEL.WARN, name, "task without following activity"));
+			for (Class<? extends Activity<?>> output : outputs)
+				if (pool.getElement(output.getCanonicalName()) == null) {
+					findings.add(new Finding(LEVEL.FATAL, name, "output not found in pool: " + output.getCanonicalName()));
+				}
+		}
+		// test previous
+		if (!elem.is(StartPoint.class)) {
+			boolean foundPrev = false;
+			for (String prevName : pool.getElementNames()) {
+				EngineElement prev = pool.getElement(prevName);
+				for (Class<? extends Activity<?>> output : prev.getOutputs())
+					if (output.getCanonicalName().equals(name)) {
+						foundPrev = true;
+						break;
+					}
+			}
+			if (!foundPrev)
+				findings.add(new Finding(LEVEL.WARN, name, "task without previous activity"));
+		}
+		// test triggers
+		boolean defaultErrorTrigger = false;
+		boolean timerTrigger = false;
+		for (Trigger trigger : elem.getTriggers()) {
+			if (trigger.type() == TYPE.DEFAULT_ERROR) {
+				if (defaultErrorTrigger)
+					findings.add(new Finding(LEVEL.FATAL, name, "task with more then one default error trigger"));
+				else
+					defaultErrorTrigger = true;
+			} else
+			if (trigger.type() == TYPE.NOOP)
+				findings.add(new Finding(LEVEL.TRIVIAL, name, "task without NOOP trigger"));
+			else
+			if (trigger.type() == TYPE.TIMER) {
+				if (timerTrigger)
+					findings.add(new Finding(LEVEL.WARN, name, "task without more then one timer trigger"));
+				else
+					timerTrigger = true;
+				long next = EngineUtil.getNextScheduledTime(trigger.timer());
+				if (next < 0)
+					findings.add(new Finding(LEVEL.FATAL, name, "timer trigger with invalid time interval definition"));
+			}
+		}
+		// test lane
+		Class<? extends Swimlane<?>> lane = elem.getSwiminglane();
+		if (lane == null) {
+			findings.add(new Finding(LEVEL.FATAL, name, "Activity without lane"));
+		} else {
+			EngineElement laneElem = pool.getElement(lane.getCanonicalName());
+			if (laneElem == null)
+				findings.add(new Finding(LEVEL.FATAL, name, "Swiminglane not found in pool: " + lane.getCanonicalName()));
+		}
+	}
+	
+	private void validateActor(String name, EngineElement elem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void validatePool(String name, EngineElement elem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void validateSwimlane(String name, EngineElement elem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public enum LEVEL {TRIVIAL,WARN,ERROR,FATAL}
+	public static class Finding {
+
+		private LEVEL level;
+		private String name;
+		private String msg;
+
+		public Finding(LEVEL level, String name, String msg) {
+			this.level = level;
+			this.name = name;
+			this.msg = msg;
+		}
+		
+		@Override
+		public String toString() {
+			return level.name() + " " + name + ": " + msg;
+		}
+	}
+	
+	public List<Finding> getFindings() {
+		return Collections.unmodifiableList(findings);
+	}
+	
+	public void clearFindings() {
+		findings.clear();
+	}
+	
+}

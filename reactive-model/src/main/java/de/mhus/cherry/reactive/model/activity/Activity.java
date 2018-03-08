@@ -2,7 +2,7 @@ package de.mhus.cherry.reactive.model.activity;
 
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
-public interface Activity<P extends Pool<?>> {
+public interface Activity<P extends Pool<?>> extends RElement<P> {
 
 	ProcessContext<P> getContext();
 	

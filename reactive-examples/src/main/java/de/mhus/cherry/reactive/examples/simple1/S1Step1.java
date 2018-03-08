@@ -14,15 +14,15 @@ import de.mhus.cherry.reactive.util.ReactiveServiceTask;
 				@Trigger(type=TYPE.DEFAULT_ERROR,activity=S1TheEnd.class)
 		}
 		)
-public class S1Step1 extends ReactiveServiceTask<S1ExamplePool> {
+public class S1Step1 extends ReactiveServiceTask<S1Pool> {
 
 	@SuppressWarnings("unused")
 	private String localText;
 	
 	@Override
-	public Class<? extends Activity<S1ExamplePool>> doExecute()  throws Exception {
+	public Class<? extends Activity<S1Pool>> doExecute()  throws Exception {
 		
-		switch( ((S1ExamplePool)getContext().getPool()).getText1() ) {
+		switch( ((S1Pool)getContext().getPool()).getText1() ) {
 		case "error1":
 			throw new TaskException("Mist", S1TheEnd.class);
 		case "fatal":

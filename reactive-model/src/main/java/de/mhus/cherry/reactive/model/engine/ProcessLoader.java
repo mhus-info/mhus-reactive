@@ -2,10 +2,10 @@ package de.mhus.cherry.reactive.model.engine;
 
 import java.util.List;
 
-import de.mhus.cherry.reactive.model.activity.Element;
+import de.mhus.cherry.reactive.model.activity.RElement;
 
 public interface ProcessLoader {
 
-	List<Class<? extends Element>> getElements();
+	List<Class<? extends RElement<?>>> getElements();
 		
 }

@@ -45,7 +45,7 @@ import java.util.Map;
  * @param <P> 
  * 
  */
-public interface Pool<P extends Pool<?>> extends Element {
+public interface Pool<P extends Pool<?>> extends RElement<P> {
 
 	Map<String, Object> exportParamters();
 	
@@ -54,7 +54,5 @@ public interface Pool<P extends Pool<?>> extends Element {
 	void initializeCase(Map<String, Object> parameters) throws Exception;
 	
 	void closeCase();
-	
-	Class<? extends StartPoint<P>> getStartPoint();
-	
+		
 }

@@ -12,7 +12,7 @@ import de.mhus.cherry.reactive.model.util.NoActivity;
 public @interface ActivityDescription {
 
 	public Class<? extends Activity<?>>[] outputs();
-	public Trigger[] triggers() default @Trigger(activity = NoActivity.class, type = TYPE.NOOP);
+	public Trigger[] triggers() default {};
 	public Class<? extends Swimlane<?>> lane();
 	String description() default "";
 	String caption() default "";

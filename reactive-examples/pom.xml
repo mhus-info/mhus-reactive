@@ -275,6 +275,11 @@
 			<artifactId>reactive-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-engine</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		
 	</dependencies>
 
