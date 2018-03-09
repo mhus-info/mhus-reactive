@@ -19,7 +19,7 @@ public class EngineFlowNode {
 	// ident of this flow node
 	protected UUID id;
 	// ident of the case
-	protected UUID caseId;
+	private UUID caseId;
 	// name of this low node (e.g. activity)
 	protected String name;
 	// created
@@ -47,6 +47,10 @@ public class EngineFlowNode {
 	protected Map<String,Object> parameters;
 
 	protected String assignedUser;
+
+	public UUID getCaseId() {
+		return caseId;
+	}
 	
 	
 }
