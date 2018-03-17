@@ -3,7 +3,7 @@ package de.mhus.cherry.reactive.model.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import de.mhus.cherry.reactive.model.activity.Activity;
+import de.mhus.cherry.reactive.model.activity.AActivity;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Trigger {
@@ -12,7 +12,7 @@ public @interface Trigger {
 	String timer() default "";
 	String name() default "";
 	String description() default "";
-	Class<? extends Activity<?>> activity();
+	Class<? extends AActivity<?>> activity();
 	
 	
 }

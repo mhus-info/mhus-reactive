@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import de.mhus.cherry.reactive.model.activity.RElement;
+import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
@@ -19,7 +19,7 @@ import de.mhus.lib.core.MString;
 public class DefaultProcessLoader extends MLog implements ProcessLoader {
 	
 	protected LinkedList<URL> classLoaderUrls = new LinkedList<>();
-	protected LinkedList<Class<? extends RElement<?>>> elementClasses = new LinkedList<>();
+	protected LinkedList<Class<? extends AElement<?>>> elementClasses = new LinkedList<>();
 	protected URLClassLoader classLoader;
 
 	public DefaultProcessLoader(File[] dirs) {
@@ -61,8 +61,8 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		for (String name : classNames) {
 			try {
 				Class<?> clazz = classLoader.loadClass(name);
-				if (RElement.class.isAssignableFrom(clazz))
-					elementClasses.add((Class<? extends RElement<?>>) clazz);
+				if (AElement.class.isAssignableFrom(clazz))
+					elementClasses.add((Class<? extends AElement<?>>) clazz);
 			} catch (Throwable t) {
 				log().w(name,t);
 			}
@@ -114,7 +114,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 	}
 
 	@Override
-	public List<Class<? extends RElement<?>>> getElements() {
+	public List<Class<? extends AElement<?>>> getElements() {
 		return Collections.unmodifiableList(elementClasses);
 	}
 

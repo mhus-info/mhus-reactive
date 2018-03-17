@@ -1,7 +1,6 @@
 package de.mhus.cherry.reactive.model.engine;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.UUID;
 
 import de.mhus.lib.errors.NotFoundException;
@@ -19,7 +18,7 @@ public interface StorageProvider {
 	 * @param caze
 	 * @throws IOException 
 	 */
-	void saveCase(EngineCase caze) throws IOException;
+	void saveCase(PCase caze) throws IOException;
 	
 	/**
 	 * Load the case from storage'
@@ -28,7 +27,7 @@ public interface StorageProvider {
 	 * @throws IOException 
 	 * @throws NotFoundException 
 	 */
-	EngineCase loadCase(UUID id) throws IOException, NotFoundException;
+	PCase loadCase(UUID id) throws IOException, NotFoundException;
 	
 	/**
 	 * Delete the case and all flow data from storage.
@@ -44,7 +43,7 @@ public interface StorageProvider {
 	 * @param flow
 	 * @throws IOException 
 	 */
-	void saveFlowNode(EngineFlowNode flow) throws IOException;
+	void saveFlowNode(PNode flow) throws IOException;
 	
 	/**
 	 * Load the flow node.
@@ -54,7 +53,7 @@ public interface StorageProvider {
 	 * @throws IOException 
 	 * @throws NotFoundException 
 	 */
-	EngineFlowNode loadFlowNode(UUID id) throws IOException,NotFoundException;
+	PNode loadFlowNode(UUID id) throws IOException,NotFoundException;
 
 	/**
 	 * Load all cases with the specified state or all. 
@@ -67,7 +66,7 @@ public interface StorageProvider {
 	 * @return Set to iterate the results.
 	 * @throws IOException 
 	 */
-	Set<EngineCase> getCases(EngineCase.STATE state) throws IOException;
+	Result<UUID> getCases(PCase.STATE_CASE state) throws IOException;
 	
 	/**
 	 * Load all flows for this case with the specified state or all. 
@@ -81,19 +80,29 @@ public interface StorageProvider {
 	 * @return list
 	 * @throws IOException 
 	 */
-	Set<EngineFlowNode> getFlowNodes(UUID caseId, EngineFlowNode.STATE state) throws IOException;
+	Result<UUID> getFlowNodes(UUID caseId, PNode.STATE_NODE state) throws IOException;
 	
 	/**
-	 * Return all flows with specified state or all. 
+	 * Returns all flow nodes with the state and a scheduled time greater zero and
+	 * lesser or equals 'scheduled'.
 	 * 
-	 * The set is only used to
-	 * iterate the result. Other functionality is not needed. You can
-	 * use a open database handle until the end of the queue is reached.
-	 * 
-	 * @param state The state or null for all
-	 * @return Set of all nodes
-	 * @throws IOException 
+	 * @param state The state or null
+	 * @param scheduled
+	 * @return List of results
+	 * @throws IOException
 	 */
-	Set<EngineFlowNode> getFlowNodes(EngineFlowNode.STATE state) throws IOException;
+	Result<UUID> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled) throws IOException;
+	
+	Result<UUID> getSignaledFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
+	
+	Result<UUID> getMessageFlowNodes(UUID caseId, PNode.STATE_NODE state, String message) throws IOException;
+
+	/**
+	 * Return new engine persistence status. If no engine status is stored return null.
+	 * @return List of results
+	 */
+	PEngine loadEngine();
+	
+	void saveEngine(PEngine engine);
 	
 }

@@ -1,30 +1,35 @@
 package de.mhus.cherry.reactive.examples.simple1;
 
-import de.mhus.cherry.reactive.model.activity.Activity;
+import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.errors.TaskException;
-import de.mhus.cherry.reactive.util.ReactiveServiceTask;
+import de.mhus.cherry.reactive.util.activity.RServiceTask;
 
 @ActivityDescription(
-		outputs = {S1Step2.class,S1Step3.class},
+		outputs = {
+				@Output(activity=S1Step2.class),
+				@Output(activity=S1Step3.class)
+				},
 		lane = S1Lane1.class,
 		triggers = {
-				@Trigger(type=TYPE.DEFAULT_ERROR,activity=S1TheEnd.class)
+				@Trigger(type=TYPE.DEFAULT_ERROR,activity=S1TheEnd.class),
+				@Trigger(type=TYPE.ERROR,activity=S1TheEnd.class, name="error1")
 		}
 		)
-public class S1Step1 extends ReactiveServiceTask<S1Pool> {
+public class S1Step1 extends RServiceTask<S1Pool> {
 
 	@SuppressWarnings("unused")
 	private String localText;
 	
 	@Override
-	public Class<? extends Activity<S1Pool>> doExecute()  throws Exception {
+	public Class<? extends AActivity<S1Pool>> doExecute()  throws Exception {
 		
-		switch( ((S1Pool)getContext().getPool()).getText1() ) {
+		switch( getPool().getText1() ) {
 		case "error1":
-			throw new TaskException("Mist", S1TheEnd.class);
+			throw new TaskException("Mist", "error1");
 		case "fatal":
 			throw new Exception("Mist");
 		case "second":

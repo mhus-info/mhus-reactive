@@ -4,23 +4,25 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.mhus.cherry.reactive.model.activity.Activity;
-import de.mhus.cherry.reactive.model.activity.Actor;
-import de.mhus.cherry.reactive.model.activity.EndPoint;
-import de.mhus.cherry.reactive.model.activity.Pool;
-import de.mhus.cherry.reactive.model.activity.StartPoint;
-import de.mhus.cherry.reactive.model.activity.Swimlane;
+import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AActor;
+import de.mhus.cherry.reactive.model.activity.AEndPoint;
+import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.activity.AStartPoint;
+import de.mhus.cherry.reactive.model.activity.ASwimlane;
+import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
-import de.mhus.cherry.reactive.model.engine.EngineElement;
-import de.mhus.cherry.reactive.model.engine.EnginePool;
+import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EPool;
+import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
 
 public class PoolValidator {
 
 	private LinkedList<Finding> findings = new LinkedList<>();
-	private EnginePool pool;
+	private EPool pool;
 
-	public PoolValidator(EnginePool pool) {
+	public PoolValidator(EPool pool) {
 		this.pool = pool;
 	}
 	
@@ -34,48 +36,48 @@ public class PoolValidator {
 	}
 
 	private void validateElement(String name) {
-		EngineElement elem = pool.getElement(name);
+		EElement elem = pool.getElement(name);
 		if (elem == null) {
 			findings.add(new Finding(LEVEL.FATAL,name,"not found")); // should not happen
 			return;
 		}
-		if (elem.is(Swimlane.class)) {
+		if (elem.is(ASwimlane.class)) {
 			validateSwimlane(name,elem);
 			return;
 		}
-		if (elem.is(Pool.class)) {
+		if (elem.is(APool.class)) {
 			validatePool(name,elem);
 			return;
 		}
-		if (elem.is(Actor.class)) {
+		if (elem.is(AActor.class)) {
 			validateActor(name, elem);
 			return;
 		}
-		if (elem.is(Activity.class)) {
+		if (elem.is(AActivity.class)) {
 			validateActivity(name, elem);
 			return;
 		}
 		findings.add(new Finding(LEVEL.WARN, name, "unknown type"));
 	}
 	
-	private void validateActivity(String name, EngineElement elem) {
+	private void validateActivity(String name, EElement elem) {
 		// test outgoing
-		if (elem.is(Activity.class) && !elem.is(EndPoint.class)) {
-			Class<? extends Activity<?>>[] outputs = elem.getOutputs();
+		if (elem.is(AActivity.class) && !elem.is(AEndPoint.class)) {
+			Output[] outputs = elem.getOutputs();
 			if (outputs.length == 0)
 				findings.add(new Finding(LEVEL.WARN, name, "task without following activity"));
-			for (Class<? extends Activity<?>> output : outputs)
-				if (pool.getElement(output.getCanonicalName()) == null) {
-					findings.add(new Finding(LEVEL.FATAL, name, "output not found in pool: " + output.getCanonicalName()));
+			for (Output output : outputs)
+				if (pool.getElement(output.activity().getCanonicalName()) == null) {
+					findings.add(new Finding(LEVEL.FATAL, name, "output not found in pool: " + output.activity().getCanonicalName()));
 				}
 		}
 		// test previous
-		if (!elem.is(StartPoint.class)) {
+		if (!elem.is(AStartPoint.class)) {
 			boolean foundPrev = false;
 			for (String prevName : pool.getElementNames()) {
-				EngineElement prev = pool.getElement(prevName);
-				for (Class<? extends Activity<?>> output : prev.getOutputs())
-					if (output.getCanonicalName().equals(name)) {
+				EElement prev = pool.getElement(prevName);
+				for (Output output : prev.getOutputs())
+					if (output.activity().getCanonicalName().equals(name)) {
 						foundPrev = true;
 						break;
 					}
@@ -107,27 +109,30 @@ public class PoolValidator {
 			}
 		}
 		// test lane
-		Class<? extends Swimlane<?>> lane = elem.getSwiminglane();
+		Class<? extends ASwimlane<?>> lane = elem.getSwimlane();
 		if (lane == null) {
 			findings.add(new Finding(LEVEL.FATAL, name, "Activity without lane"));
+		} else 
+		if (lane == DefaultSwimlane.class) {
+			// nothing
 		} else {
-			EngineElement laneElem = pool.getElement(lane.getCanonicalName());
+			EElement laneElem = pool.getElement(lane.getCanonicalName());
 			if (laneElem == null)
-				findings.add(new Finding(LEVEL.FATAL, name, "Swiminglane not found in pool: " + lane.getCanonicalName()));
+				findings.add(new Finding(LEVEL.FATAL, name, "Swimlane not found in pool: " + lane.getCanonicalName()));
 		}
 	}
 	
-	private void validateActor(String name, EngineElement elem) {
+	private void validateActor(String name, EElement elem) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void validatePool(String name, EngineElement elem) {
+	private void validatePool(String name, EElement elem) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void validateSwimlane(String name, EngineElement elem) {
+	private void validateSwimlane(String name, EElement elem) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -6,8 +6,8 @@ import de.mhus.cherry.reactive.engine.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.PoolValidator;
 import de.mhus.cherry.reactive.engine.ProcessDump;
-import de.mhus.cherry.reactive.model.engine.EnginePool;
-import de.mhus.cherry.reactive.model.engine.EngineProcess;
+import de.mhus.cherry.reactive.model.engine.EPool;
+import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.lib.errors.MException;
 
 public class S1EngineTest {
@@ -23,10 +23,10 @@ public class S1EngineTest {
 		
 		for (String processName : provider.getProcessNames()) {
 			System.out.println(">>> Process: " + processName);
-			EngineProcess process = provider.getProcess(processName);
+			EProcess process = provider.getProcess(processName);
 			for (String poolName : process.getPoolNames()) {
 				System.out.println("   >>> Pool: " + poolName);
-				EnginePool pool = process.getPool(poolName);
+				EPool pool = process.getPool(poolName);
 				PoolValidator validator = new PoolValidator(pool);
 				validator.validate();
 				for (PoolValidator.Finding finding : validator.getFindings()) {

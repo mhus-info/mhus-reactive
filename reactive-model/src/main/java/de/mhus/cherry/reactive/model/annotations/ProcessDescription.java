@@ -14,5 +14,6 @@ public @interface ProcessDescription {
 	Class<? extends Migrator> sameMigrator() default Migrator.class;
 	Class<? extends Migrator> minorMigrator() default Migrator.class;
 	Class<? extends Migrator> majorMigrator() default Migrator.class;
+	String defaultPool() default "";
 	
 }

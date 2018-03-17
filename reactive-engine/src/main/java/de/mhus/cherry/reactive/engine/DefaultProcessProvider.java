@@ -1,28 +1,28 @@
 package de.mhus.cherry.reactive.engine;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.mhus.cherry.reactive.model.activity.Activity;
-import de.mhus.cherry.reactive.model.activity.InactiveStartPoint;
-import de.mhus.cherry.reactive.model.activity.RElement;
-import de.mhus.cherry.reactive.model.activity.Pool;
-import de.mhus.cherry.reactive.model.activity.StartPoint;
-import de.mhus.cherry.reactive.model.activity.Swimlane;
+import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AElement;
+import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.activity.AProcess;
+import de.mhus.cherry.reactive.model.activity.AStartPoint;
+import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
-import de.mhus.cherry.reactive.model.engine.EngineElement;
-import de.mhus.cherry.reactive.model.engine.EnginePool;
-import de.mhus.cherry.reactive.model.engine.EngineProcess;
+import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EPool;
+import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
+import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
@@ -34,46 +34,57 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 	
 	public void addProcess(ProcessLoader loader) throws MException {
 		ProcessContainer container = new ProcessContainer(loader);
-		if (processes.containsKey(container.getCanonicalName()))
+		String name = container.getProcessName() + ":" + container.getVersion();
+		if (processes.containsKey(name))
 			throw new MException("Process already defined",container.getCanonicalName());
-		processes.put(container.getCanonicalName(), container);
+		processes.put(name, container);
 
+	}
+	
+	public void removeProcess(String name) {
+		processes.remove(name);
 	}
 	
 	@Override
-	public EngineProcess getProcess(String name) {
-		return processes.get(name);
+	public EProcess getProcess(String name, String version) {
+		return processes.get(name + ":" + version);
 	}
 	
-	public class ProcessContainer implements EngineProcess {
+	@Override
+	public EProcess getProcess(String nameVerion) {
+		return processes.get(nameVerion);
+	}
+	
+	public class ProcessContainer implements EProcess {
 
 		private ProcessLoader loader;
 		private String canonicalName;
-		private Class<? extends Process> processClass;
+		private Class<? extends AProcess> processClass;
 		private ProcessDescription processDescription;
 		private String processName;
-		private HashMap<String, EnginePool> pools = new HashMap<>();
-		private HashMap<String, EngineElement> elements = new HashMap<>();
+		private HashMap<String, EPool> pools = new HashMap<>();
+		private HashMap<String, EElement> elements = new HashMap<>();
 
 		@SuppressWarnings("unchecked")
 		public ProcessContainer(ProcessLoader loader) throws MException {
 			this.loader = loader;
 			// iterate all elements
-			for (Class<? extends RElement<?>> element : loader.getElements()) {
+			for (Class<? extends AElement<?>> element : loader.getElements()) {
 				
 				// find the process description
-				if (!element.isInterface() && de.mhus.cherry.reactive.model.activity.RProcess.class.isAssignableFrom(element)) {
+				if (!element.isInterface() && de.mhus.cherry.reactive.model.activity.AProcess.class.isAssignableFrom(element)) {
 					if (processClass != null)
 						throw new MException("Multipe process definition classes found",processClass,element);
-					processClass = (Class<? extends Process>) element;
+					processClass = (Class<? extends AProcess>) element;
 				}
 				
 				// find the pool descriptions
-				if (!element.isInterface() && Pool.class.isAssignableFrom(element)) {
+				if (!element.isInterface() && APool.class.isAssignableFrom(element)) {
 					try {
-						PoolContainer pool = new PoolContainer((Class<? extends Pool<?>>) element);
+						PoolContainer pool = new PoolContainer((Class<? extends APool<?>>) element);
 						if (pools.containsKey(pool.getCanonicalName()))
 							throw new MException("Multiple pools with the same name",pool.getCanonicalName() );
+						pool.setProcess(this);
 						pools.put(pool.getCanonicalName(), pool);
 					} catch (Throwable t) {
 						log().w(element,t);
@@ -82,11 +93,11 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 				}
 				
 				// find all activities
-				if (!element.isInterface() && RElement.class.isAssignableFrom(element)) {
+				if (!element.isInterface() && AElement.class.isAssignableFrom(element)) {
 					try {
-						ElementContainer act = new ElementContainer((Class<? extends Activity<?>>) element);
+						ElementContainer act = new ElementContainer((Class<? extends AActivity<?>>) element);
 						if (elements.containsKey(act.getCanonicalName()))
-							throw new MException("Multiple activity with the same name",act.getCanonicalName() ); // should not happen
+							throw new MException("Multiple activities with the same name",act.getCanonicalName() ); // should not happen
 						elements.put(act.getCanonicalName(), act);
 					} catch (Throwable t) {
 						log().w(element,t);
@@ -104,11 +115,12 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			canonicalName = processName + ":" + processDescription.version();
 			
 			// init pools
-			for (EnginePool pool : pools.values())
-				((PoolContainer)pool).collectElements(elements);
+			for (EPool pool : pools.values())
+				((PoolContainer)pool).collectElements();
 			
 		}
 
+		@Override
 		public String getCanonicalName() {
 			return canonicalName;
 		}
@@ -124,7 +136,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 		
 		@Override
-		public List<Class<? extends RElement<?>>> getElements() {
+		public List<Class<? extends AElement<?>>> getElements() {
 			return loader.getElements();
 		}
 		
@@ -134,7 +146,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 		
 		@Override
-		public EnginePool getPool(String name) {
+		public EPool getPool(String name) {
 			return pools.get(name);
 		}
 		
@@ -144,7 +156,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 		
 		@Override
-		public EngineElement getElement(String name) {
+		public EElement getElement(String name) {
 			return elements.get(name);
 		}
 		
@@ -152,17 +164,28 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public Set<String> getElementNames() {
 			return elements.keySet();
 		}
+
+		@Override
+		public ProcessDescription getProcessDescription() {
+			return processDescription;
+		}
+
+		@Override
+		public Class<? extends AProcess> getProcessClass() {
+			return processClass;
+		}
 				
 	}
 	
-	public class PoolContainer  implements EnginePool {
+	public class PoolContainer  implements EPool {
 
-		private Class<? extends Pool<?>> pool;
-		private HashMap<String, EngineElement> poolElements = new HashMap<>();
+		private Class<? extends APool<?>> pool;
+		private HashMap<String, EElement> poolElements = new HashMap<>();
 		private PoolDescription poolDescription;
 		private String name;
+		private ProcessContainer process;
 
-		public PoolContainer(Class<? extends Pool<?>> pool) throws MException {
+		public PoolContainer(Class<? extends APool<?>> pool) throws MException {
 			this.pool = pool;
 			poolDescription = pool.getAnnotation(PoolDescription.class);
 			if (poolDescription == null)
@@ -170,13 +193,31 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			name = poolDescription.name().length() == 0 ? pool.getName() : poolDescription.name();
 		}
 
-		public void collectElements(HashMap<String, EngineElement> elements) {
-			for (EngineElement element : elements.values()) {
-				Class<? extends RElement<?>> clazz = element.getElementClass();
-				String elementPool = MSystem.getTemplateCanonicalName(clazz, 0);
-				if (pool.getCanonicalName().equals(elementPool))
-						poolElements.put(element.getCanonicalName(),element);
-			}
+		public void setProcess(ProcessContainer process) {
+			this.process = process;
+		}
+		
+		public EProcess getProcess() {
+			return process;
+		}
+
+		public void collectElements() {
+			for (EElement element : process.elements.values())
+				if (isElementOfPool(element))
+					poolElements.put(element.getCanonicalName(),element);
+		}
+		
+		@Override
+		public boolean isElementOfPool(EElement element) {
+			Class<? extends AElement<?>> clazz = element.getElementClass();
+			String elementPool = MSystem.getTemplateCanonicalName(clazz, 0);
+			// for direct check
+			// if (pool.getCanonicalName().equals(elementPool))
+			// with this check also pool subclasses are possible
+			EElement poolContainer = process.elements.get(elementPool);
+			if (poolContainer == null) return false;
+			Class<? extends AElement<?>> poolClass = poolContainer.getElementClass();
+			return (pool.isAssignableFrom(poolClass));
 		}
 
 		@Override
@@ -184,25 +225,24 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			return name;
 		}
 		
-		@SuppressWarnings("unchecked")
 		@Override
-		public List<EngineElement> getStartPoints() {
-			LinkedList<EngineElement> out = new LinkedList<>();
-			for (EngineElement element : poolElements.values()) {
-				Class<? extends RElement<?>> clazz = element.getElementClass();
-				if (element.is(StartPoint.class) && !InactiveStartPoint.class.isAssignableFrom(clazz))
+		public List<EElement> getStartPoints() {
+			LinkedList<EElement> out = new LinkedList<>();
+			for (EElement element : poolElements.values()) {
+				Class<? extends AElement<?>> clazz = element.getElementClass();
+				if (element.is(AStartPoint.class) && !InactiveStartPoint.class.isAssignableFrom(clazz))
 					out.add(element);
 			}
 			return out;
 		}
 		
 		@Override
-		public Class<? extends Pool<?>> getPoolClass() {
+		public Class<? extends APool<?>> getPoolClass() {
 			return pool;
 		}
 				
 		@Override
-		public EngineElement getElement(String name) {
+		public EElement getElement(String name) {
 			return poolElements.get(name);
 		}
 		
@@ -212,37 +252,46 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 
 		@Override
-		public List<EngineElement> getElements(Class<? extends RElement<?>> ifc) {
-			LinkedList<EngineElement> out = new LinkedList<>();
-			for (EngineElement element : poolElements.values())
+		public List<EElement> getElements(Class<? extends AElement<?>> ifc) {
+			LinkedList<EElement> out = new LinkedList<>();
+			for (EElement element : poolElements.values())
 				if (ifc.isAssignableFrom(element.getElementClass()))
 					out.add(element);
 			return out;
 		}
 		
 		@Override
-		public List<EngineElement> getOutputElements(EngineElement element) {
-			LinkedList<EngineElement> out = new LinkedList<>();
-			for (Class<? extends Activity<?>> output : element.getOutputs()) {
-				EngineElement o = getElement(output.getCanonicalName());
+		public List<EElement> getOutputElements(EElement element) {
+			LinkedList<EElement> out = new LinkedList<>();
+			for (Output output : element.getOutputs()) {
+				EElement o = getElement(output.activity().getCanonicalName());
 				if (o != null)
 					out.add(o);
 			}
 			return out;
 		}
 
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public PoolDescription getPoolDescription() {
+			return poolDescription;
+		}
 
 	}
 	
-	public class ElementContainer implements EngineElement {
+	public class ElementContainer implements EElement {
 
-		private Class<? extends RElement<?>> element;
+		private Class<? extends AElement<?>> element;
 		private String name;
 		private ActivityDescription actDescription;
 		
-		public ElementContainer(Class<? extends RElement<?>> element) throws MException {
+		public ElementContainer(Class<? extends AElement<?>> element) throws MException {
 			this.element = element;
-			if (Activity.class.isAssignableFrom(element)) {
+			if (AActivity.class.isAssignableFrom(element)) {
 				actDescription = element.getAnnotation(ActivityDescription.class);
 				if (actDescription == null) throw new MException("Activity without description annotation",element);
 			}
@@ -255,21 +304,20 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 
 		@Override
-		public Class<? extends RElement<?>> getElementClass() {
+		public Class<? extends AElement<?>> getElementClass() {
 			return element;
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public boolean is(Class<? extends RElement> ifc) {
+		public boolean is(Class<? extends AElement> ifc) {
 			if (ifc == null) return false;
 			return ifc.isAssignableFrom(element);
 		}
 		
-		@SuppressWarnings("unchecked")
 		@Override
-		public Class<? extends Activity<?>>[] getOutputs() {
-			if (actDescription == null) return new Class[0];
+		public Output[] getOutputs() {
+			if (actDescription == null) return new Output[0];
 			return actDescription.outputs();
 		}
 
@@ -282,12 +330,35 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			return actDescription.triggers();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
-		public Class<? extends Swimlane<?>> getSwiminglane() {
+		public Class<? extends ASwimlane<?>> getSwimlane() {
 			if (actDescription == null) return null;
-			return actDescription.lane();
+			@SuppressWarnings("rawtypes")
+			Class<? extends ASwimlane> lane = actDescription.lane();
+			return (Class<? extends ASwimlane<?>>) lane;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public boolean isInterface(Class<?> ifc) {
+			if (ifc == null) return false;
+			return ifc.isAssignableFrom(element);
+		}
+
+		@Override
+		public ActivityDescription getActivityDescription() {
+			return actDescription;
 		}
 		
+		@Override
+		public String toString() {
+			return getCanonicalName();
+		}
 	}
 
 	public Set<String> getProcessNames() {

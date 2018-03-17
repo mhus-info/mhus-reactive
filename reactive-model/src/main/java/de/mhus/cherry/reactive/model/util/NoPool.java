@@ -2,26 +2,30 @@ package de.mhus.cherry.reactive.model.util;
 
 import java.util.Map;
 
-import de.mhus.cherry.reactive.model.activity.Pool;
+import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.lib.errors.NotSupportedException;
 
 @SuppressWarnings("rawtypes")
-public class NoPool implements Pool {
+public class NoPool implements APool {
 
 	@Override
 	public Map exportParamters() {
-		return null;
+		throw new NotSupportedException();
 	}
 
 	@Override
 	public void importParameters(Map parameters) {
+		throw new NotSupportedException();
 	}
 
 	@Override
 	public void initializeCase(Map parameters) {
+		throw new NotSupportedException();
 	}
 
 	@Override
 	public void closeCase() {
+		throw new NotSupportedException();
 	}
 
 }
