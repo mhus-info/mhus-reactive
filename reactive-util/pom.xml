@@ -208,7 +208,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>reactive-util</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>cherry-reactive</artifactId>
@@ -217,24 +217,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${bundle.plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>
-							de.mhus.cherry.reactive.util.*;version=${project.version}
-						</Export-Package>
-						<Import-Package>*</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
-						<Service-Component>*</Service-Component>
-					</instructions>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -243,26 +225,6 @@
 			<groupId>de.mhus.lib</groupId>
 			<artifactId>mhu-lib-core</artifactId>
 			<version>${mhulib.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-persistence</artifactId>
-			<version>${mhulib.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-karaf</artifactId>
-			<version>${mhulib.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-sop-api</artifactId>
-			<version>${mhusop.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
 		</dependency>
 		
 		<dependency>

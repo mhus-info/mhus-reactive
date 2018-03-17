@@ -6,10 +6,10 @@ import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.lib.errors.NotSupportedException;
 
 @SuppressWarnings("rawtypes")
-public class NoPool implements APool {
+public class NoPool implements APool<APool> {
 
 	@Override
-	public Map exportParamters() {
+	public Map<String, Object> exportParamters() {
 		throw new NotSupportedException();
 	}
 

@@ -302,13 +302,6 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>de.mhus.ports.karaf.tooling</groupId>
-				<artifactId>karaf-services-maven-plugin</artifactId>
-				<configuration>
-					<artifactInclude>.*mhu.*</artifactInclude>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.3</version>
@@ -335,28 +328,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>de.mhus.ports.karaf.tooling</groupId>
-					<artifactId>karaf-services-maven-plugin</artifactId>
-					<version>${karaf.tool.version}</version>
-					<executions>
-						<execution>
-							<id>service-metadata-generate</id>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>service-metadata-generate</goal>
-							</goals>
-							<configuration>
-								<artifactInclude>.*mhu.*</artifactInclude>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 
 	<modules>
@@ -364,6 +335,8 @@
 		<module>reactive-util</module>
 		<module>reactive-engine</module>
 		<module>reactive-examples</module>
+		<module>reactive-osgi</module>
+		<module>reactive-karaf</module>
 	</modules>
 
 	<distributionManagement>

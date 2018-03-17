@@ -235,7 +235,36 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>de.mhus.ports.karaf.tooling</groupId>
+				<artifactId>karaf-services-maven-plugin</artifactId>
+				<configuration>
+					<artifactInclude>.*mhu.*</artifactInclude>
+				</configuration>
+			</plugin>
+			
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>de.mhus.ports.karaf.tooling</groupId>
+					<artifactId>karaf-services-maven-plugin</artifactId>
+					<version>${karaf.tool.version}</version>
+					<executions>
+						<execution>
+							<id>service-metadata-generate</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>service-metadata-generate</goal>
+							</goals>
+							<configuration>
+								<artifactInclude>.*mhu.*</artifactInclude>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>		
 	</build>
 
 	<dependencies>
@@ -257,12 +286,37 @@
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
+			<version>${osgi.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>biz.aQute</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>${bndlib.version}</version>
+        </dependency>
 		
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-engine</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-osgi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		

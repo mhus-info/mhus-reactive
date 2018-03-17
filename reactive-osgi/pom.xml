@@ -227,11 +227,16 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.osgi.*;version=${project.version}
+							de.mhus.cherry.reactive.osgi.*;version=${project.version},
+							de.mhus.cherry.reactive.model.*;version=${project.version},
+							de.mhus.cherry.reactive.engine.*;version=${project.version},
+							de.mhus.cherry.reactive.util.*;version=${project.version}
 						</Export-Package>
+						<Private-Package>de.mhus.cherry.reactive.osgi.impl.*</Private-Package>
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
 						<Service-Component>*</Service-Component>
+						<Embed-Dependency>reactive-model,reactive-engine,reactive-util</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
@@ -252,8 +257,18 @@
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
+			<version>${osgi.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+        </dependency>
+		<dependency>
+            <groupId>biz.aQute</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>${bndlib.version}</version>
+        </dependency>
 		
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
