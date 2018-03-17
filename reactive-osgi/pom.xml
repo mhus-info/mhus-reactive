@@ -232,15 +232,49 @@
 							de.mhus.cherry.reactive.engine.*;version=${project.version},
 							de.mhus.cherry.reactive.util.*;version=${project.version}
 						</Export-Package>
+						<!-- 
 						<Private-Package>de.mhus.cherry.reactive.osgi.impl.*</Private-Package>
+						 -->
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
-						<Service-Component>*</Service-Component>
+						<Service-Component>de.mhus.cherry.reactive.osgi.*</Service-Component>
 						<Embed-Dependency>reactive-model,reactive-engine,reactive-util</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>de.mhus.ports.karaf.tooling</groupId>
+				<artifactId>karaf-services-maven-plugin</artifactId>
+				<configuration>
+					<artifactInclude>.*mhu.*</artifactInclude>
+				</configuration>
+			</plugin>
+			
 		</plugins>
+		
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>de.mhus.ports.karaf.tooling</groupId>
+					<artifactId>karaf-services-maven-plugin</artifactId>
+					<version>${karaf.tool.version}</version>
+					<executions>
+						<execution>
+							<id>service-metadata-generate</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>service-metadata-generate</goal>
+							</goals>
+							<configuration>
+								<artifactInclude>.*mhu.*</artifactInclude>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>	
+				
 	</build>
 
 	<dependencies>

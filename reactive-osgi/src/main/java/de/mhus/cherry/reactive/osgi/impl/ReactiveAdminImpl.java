@@ -33,10 +33,13 @@ import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.sql.DataSourceProvider;
 import de.mhus.lib.sql.DefaultDbPool;
+
+//TODO renew datasource reference from time to time ... 
 
 @Component(immediate=true)
 public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
@@ -59,7 +62,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	protected boolean aaaDefaultAccess = true;
 	private ServiceTracker<AProcess,AProcess> processTracker;
 	private TreeMap<String, ProcessInfo> availableProcesses = new TreeMap<>();
-	private boolean autoDeploy = true;
+	private boolean autoDeploy = false;
 	
 	// --- Process list handling
 	
@@ -96,7 +99,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private String getProcessCanonicalName(AProcess process) {
 		ProcessDescription desc = process.getClass().getAnnotation(ProcessDescription.class);
 		if (desc == null) return null;
-		return desc.name() + ":" + desc.version();
+		String name = desc.name();
+		if (MString.isEmpty(name)) name = process.getClass().getCanonicalName();
+		return name + ":" + desc.version();
 	}
 	
 	@Override
@@ -222,12 +227,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		processTracker = null;
 	}
 	
-	@Reference(unbind="unbindAaaProvider")
+//	@Reference(unbind="unbindAaaProvider",optional=true)
 	public void setAaaProvider(AaaProvider provider) {
 		aaaProvider = provider;
 	}
 	
-	public void unbindAaaProvider() {
+	public void unbindAaaProvider(AaaProvider provider) {
 		aaaProvider = null;
 	}
 	

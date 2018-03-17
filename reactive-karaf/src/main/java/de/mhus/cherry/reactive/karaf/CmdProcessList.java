@@ -5,7 +5,10 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pls", description = "List processes")
 @Service
@@ -16,6 +19,17 @@ public class CmdProcessList extends MLog implements Action {
 
 	@Override
 	public Object execute() throws Exception {
+		
+		ConsoleTable table = new ConsoleTable();
+		table.fitToConsole();
+		table.setHeaderValues("Registered", "Deployed");
+		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		for (String name : api.getAvailableProcesses()) {
+			String deployName = api.getProcessDeployName(name);
+			if (all || deployName != null)
+				table.addRowValues(name, deployName);
+		}
+		table.print(System.out);
 		return null;
 	}
 
