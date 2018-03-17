@@ -223,7 +223,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-annotations</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
 			<artifactId>mhu-lib-core</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-persistence</artifactId>
 			<version>${mhulib.version}</version>
 		</dependency>
 		

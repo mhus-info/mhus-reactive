@@ -32,13 +32,13 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 	protected HashMap<String, ProcessContainer> processes = new HashMap<>();
 	protected LinkedList<String> warnings = new LinkedList<>();
 	
-	public void addProcess(ProcessLoader loader) throws MException {
+	public String addProcess(ProcessLoader loader) throws MException {
 		ProcessContainer container = new ProcessContainer(loader);
 		String name = container.getProcessName() + ":" + container.getVersion();
 		if (processes.containsKey(name))
 			throw new MException("Process already defined",container.getCanonicalName());
 		processes.put(name, container);
-
+		return name;
 	}
 	
 	public void removeProcess(String name) {
