@@ -101,11 +101,13 @@ public class PCase implements Externalizable {
 		out.writeObject(options);
 		out.writeObject(uri);
 		out.writeObject(name);
+		out.writeObject(canonicalName);
 		out.writeLong(creationDate);
 		out.writeObject(createdBy);
 		out.writeObject(state);
 		out.writeLong(scheduled);
 		out.writeObject(parameters);
+		out.flush();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -119,6 +121,7 @@ public class PCase implements Externalizable {
 		options = (Map<String, Object>) in.readObject();
 		uri = (String) in.readObject();
 		name = (String) in.readObject();
+		canonicalName = (String) in.readObject();
 		creationDate = in.readLong();
 		createdBy = (String) in.readObject();
 		state = (STATE_CASE) in.readObject();

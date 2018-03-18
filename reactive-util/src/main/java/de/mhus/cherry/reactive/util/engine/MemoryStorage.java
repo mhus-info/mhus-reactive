@@ -7,8 +7,10 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
+import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.lib.errors.NotFoundException;
@@ -51,21 +53,21 @@ public class MemoryStorage implements StorageProvider {
 	}
 
 	@Override
-	public Result<UUID> getCases(STATE_CASE state) throws IOException {
-		ResultList<UUID> out = new ResultList<>();
-		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(entry.getId()); } );
+	public Result<PCaseInfo> getCases(STATE_CASE state) throws IOException {
+		ResultList<PCaseInfo> out = new ResultList<>();
+		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(new PCaseInfo(entry.getId())); } );
 		return out;
 	}
 
 	@Override
-	public Result<UUID> getFlowNodes(UUID caseId,
+	public Result<PNodeInfo> getFlowNodes(UUID caseId,
 	        de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state) throws IOException {
-		ResultList<UUID> out = new ResultList<>();
+		ResultList<PNodeInfo> out = new ResultList<>();
 		flowNodes.values().forEach(value -> {
 			if ( (caseId == null || value.getCaseId().equals(caseId))
 					&& 
 				 (state == null || value.getState() == state)
-				) out.add(value.getId()); });
+				) out.add(new PNodeInfo(value.getId(),value.getCaseId()) ); });
 		return out;
 	}
 
@@ -87,39 +89,39 @@ public class MemoryStorage implements StorageProvider {
 	}
 
 	@Override
-	public Result<UUID> getScheduledFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
+	public Result<PNodeInfo> getScheduledFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
 	        long scheduled) throws IOException {
-		ResultList<UUID> out = new ResultList<>();
+		ResultList<PNodeInfo> out = new ResultList<>();
 		flowNodes.values().forEach(value -> {
 			Entry<String, Long> entry = value.getNextScheduled();
 			if ( 	entry != null &&
 					(state == null || state == value.getState()) 
 					&&
 					entry.getValue() > 0 && entry.getValue() <= scheduled)
-				out.add(value.getId());
+				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
 		});
 		return out;
 	}
 
 	@Override
-	public Result<UUID> getSignaledFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
+	public Result<PNodeInfo> getSignaledFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
 	        String signal) throws IOException {
-		ResultList<UUID> out = new ResultList<>();
+		ResultList<PNodeInfo> out = new ResultList<>();
 		String intSig = PNode.getSignalAsString(signal);
 		flowNodes.values().forEach(value -> {
 			if (	(state == null || value.getState() == state) 
 					&& 
 					value.getSignalsAsString().contains(intSig)
 				)
-				out.add(value.getId());
+				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
 		});
 		return out;
 	}
 
 	@Override
-	public Result<UUID> getMessageFlowNodes(UUID caseId,
+	public Result<PNodeInfo> getMessageFlowNodes(UUID caseId,
 	        de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state, String message) throws IOException {
-		ResultList<UUID> out = new ResultList<>();
+		ResultList<PNodeInfo> out = new ResultList<>();
 		String intSig = PNode.getMessageAsString(message);
 		flowNodes.values().forEach(value -> {
 			if (	(caseId == null || caseId.equals(value.getCaseId()))
@@ -128,7 +130,7 @@ public class MemoryStorage implements StorageProvider {
 					&& 
 					value.getSignalsAsString().contains(intSig)
 				)
-				out.add(value.getId());
+				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
 		});
 		return out;
 	}

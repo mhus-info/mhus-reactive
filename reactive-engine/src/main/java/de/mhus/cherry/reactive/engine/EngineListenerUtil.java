@@ -55,7 +55,10 @@ public class EngineListenerUtil {
 			Log log = Log.getLog(Engine.class);
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-				log.i(method.getName(), args);
+				if (method.getName().equals("doStep"))
+					log.d(method.getName(), args);
+				else
+					log.i(method.getName(), args);
 				return null;
 			}
 		});

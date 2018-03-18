@@ -5,16 +5,18 @@ import java.util.List;
 
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
+import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
+import de.mhus.cherry.reactive.osgi.ReactiveAdmin.STATE_ENGINE;
 import de.mhus.lib.errors.MException;
 
 public interface ReactiveAdmin {
 
+	enum STATE_ENGINE {STOPPED,SUSPENDED,RUNNING}
+	
 	void startEngine();
 
 	void stopEngine();
-
-	boolean isEngineRunning();
 
 	Collection<String> getAvailableProcesses();
 
@@ -22,12 +24,18 @@ public interface ReactiveAdmin {
 
 	void removeProcess(String name);
 
-	List<Finding> deploy(String name) throws MException;
+	List<Finding> deploy(String name, boolean addVersion, boolean activate) throws MException;
 
 	void undeploy(String name) throws MException;
 
 	String getProcessDeployName(String name);
 
 	Engine getEngine();
+
+	PEngine getEnginePersistence();
+
+	void setExecutionSuspended(boolean suspend);
+
+	STATE_ENGINE getEngineState();
 
 }

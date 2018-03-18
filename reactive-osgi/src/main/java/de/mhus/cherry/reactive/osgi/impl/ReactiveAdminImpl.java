@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.osgi.impl;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,10 +19,10 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
-import aQute.bnd.annotation.component.Reference;
 import de.mhus.cherry.reactive.engine.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
+import de.mhus.cherry.reactive.engine.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.PoolValidator;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
 import de.mhus.cherry.reactive.model.activity.AProcess;
@@ -29,13 +30,18 @@ import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
+import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
+import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
+import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.sql.DataSourceProvider;
 import de.mhus.lib.sql.DefaultDbPool;
 
@@ -63,6 +69,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private ServiceTracker<AProcess,AProcess> processTracker;
 	private TreeMap<String, ProcessInfo> availableProcesses = new TreeMap<>();
 	private boolean autoDeploy = true;
+	private Thread executor;
+	private long nextCleanup;
+	private boolean executionSuspended = false;
+	private boolean stopExecutor = false;
 	
 	// --- Process list handling
 	
@@ -86,14 +96,23 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			if (availableProcesses.put(name, new ProcessInfo(name,loader)) != null)
 				log().w("Process was already present",name);
 		}
-		if (autoDeploy )
+		if (autoDeploy && isProcessActivated(name) )
 			try {
-				deploy(name);
+				deploy(name, false, false);
 				return true;
 			} catch (MException e) {
 				log().e(name,e);
 			}
 		return false;
+	}
+
+	private boolean isProcessActivated(String name) {
+		startEngine();
+		if (engine == null) return false;
+		String v = MString.afterIndex(name, ':');
+		String n = MString.beforeIndex(name, ':');
+		String[] versions = String.valueOf(config.persistent.getParameters().getOrDefault("process:" + n + ":versions","")).split(",");
+		return MCollection.contains(versions, v);
 	}
 
 	private String getProcessCanonicalName(AProcess process) {
@@ -112,7 +131,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 	
 	@Override
-	public List<Finding> deploy(String name) throws MException {
+	public List<Finding> deploy(String name, boolean addVersion, boolean activate) throws MException {
 		startEngine();
 		// get process
 		ProcessInfo info = null;
@@ -144,6 +163,22 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			((DefaultProcessProvider)config.processProvider).removeProcess(info.deployedName);
 			return validator.getFindings();
 		}
+		
+		// add version
+		String v = MString.afterIndex(info.deployedName, ':');
+		String n = MString.beforeIndex(info.deployedName, ':');
+		if (addVersion) {
+			String[] versions = ((String)config.persistent.getParameters().getOrDefault("process:" + n + ":versions","")).split(",");
+			if (!MCollection.contains(versions, v)) {
+				versions = MCollection.append(versions, v);
+				config.persistent.getParameters().put("process:" + n + ":versions", MString.join(versions,','));
+			}
+		}
+		if (activate) {
+			config.persistent.getParameters().put("process:" + n + ":enabled", v);
+		}
+		if (addVersion || activate)
+			engine.saveEnginePersistence();
 		
 		return null;
 	}
@@ -217,10 +252,57 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			}
 		});
 		processTracker.open(true);
+		
+		executor = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				while (true) {
+					if (stopExecutor) return;
+					try {
+						if (doExecuteStep() == 0)
+							Thread.sleep(20000);
+						else
+							Thread.sleep(1000);
+					} catch (Throwable t) {
+						log().e(t);
+						MThread.sleep(1000);
+					}
+				}
+			}
+			
+		},"reactive-engine-executor");
+		executor.setDaemon(true);
+		executor.start();
 	}
 	
+	protected int doExecuteStep() throws NotFoundException, IOException {
+		if (executionSuspended ) return 0;
+		Engine e = engine;
+		if (e == null) return 0;
+		int cnt = e.execute();
+		e = engine;
+		if (e == null) return 0;
+		if (System.currentTimeMillis() > nextCleanup) {
+			nextCleanup = System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS / 2;
+			e.cleanup();
+		}
+		return cnt;
+	}
+
 	@Deactivate
 	public void doDeactivate(ComponentContext ctx) {
+		stopExecutor  = true;
+		executor.stop();
+		int cnt = 60;
+		log().i("Wait for engine to stop");
+		while (executor.isAlive() && cnt > 0) {
+			MThread.sleep(1000);
+			cnt--;
+		}
+		if (cnt == 0)
+			log().w("Engine not stopped");
+		
 		instance = null;
 		stopEngine();
 		processTracker.close();
@@ -246,12 +328,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			storageDsProvider = new DataSourceProvider();
 			updateStorageDataSource();
 			storagePool = new DefaultDbPool(storageDsProvider);
-			config.storage = new SqlDbStorage(storagePool);
+			config.storage = new SqlDbStorage(storagePool,"storage");
 			// archive
 			archiveDsProvider = new DataSourceProvider();
 			updateArchiveDataSource();
 			archivePool = new DefaultDbPool(archiveDsProvider);
-			config.archive = new SqlDbStorage(archivePool);
+			config.archive = new SqlDbStorage(archivePool,"archive");
 			// aaa
 			config.aaa = new AaaProvider() {
 				
@@ -285,6 +367,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			// process provider
 			config.processProvider = new DefaultProcessProvider();
 			
+			// listener
+			config.listener = EngineListenerUtil.createLogInfoListener();
+			
 			engine = new Engine(config);
 		} catch (Throwable t) {
 			engine = null;
@@ -304,8 +389,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 
 	@Override
-	public boolean isEngineRunning() {
-		return engine != null;
+	public STATE_ENGINE getEngineState() {
+		if (engine == null) return STATE_ENGINE.STOPPED;
+		if (executionSuspended) return STATE_ENGINE.SUSPENDED;
+		return STATE_ENGINE.RUNNING;
 	}
 
 	protected void updateStorageDataSource() throws InvalidSyntaxException, MException {
@@ -327,5 +414,16 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		startEngine();
 		return engine;
 	}
+
+	@Override
+	public PEngine getEnginePersistence() {
+		return config.persistent;
+	}
+	
+	@Override
+	public void setExecutionSuspended(boolean suspend) {
+		executionSuspended = suspend;
+	}
+	
 	
 }

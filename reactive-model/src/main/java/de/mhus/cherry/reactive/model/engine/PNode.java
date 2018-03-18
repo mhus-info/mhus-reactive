@@ -314,24 +314,29 @@ public class PNode implements Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(1);
+		
 		out.writeObject(id);
 		out.writeObject(caseId);
 		out.writeObject(name);
 		out.writeObject(canonicalName);
 		out.writeLong(creationDate);
+		
 		out.writeLong(lastRunDate);
 		out.writeObject(state);
 		out.writeObject(suspendedState);
 		out.writeObject(schedulers);
 		out.writeObject(signalTriggers);
+		
 		out.writeObject(messageTriggers);
 		out.writeBoolean(stopAfterExecute);
 		out.writeObject(type);
 		out.writeObject(exitMessage);
 		out.writeObject(parameters);
+		
 		out.writeObject(assignedUser);
 		out.writeObject(runtimeNode);
 		out.writeInt(tryCount);
+		out.flush();
 	}
 
 	@Override
@@ -344,16 +349,19 @@ public class PNode implements Externalizable {
 		name= (String) in.readObject();
 		canonicalName = (String) in.readObject();
 		creationDate = in.readLong();
+		
 		lastRunDate = in.readLong();
 		state = (STATE_NODE) in.readObject();
 		suspendedState = (STATE_NODE) in.readObject();
 		schedulers = (HashMap<String, Long>) in.readObject();
 		signalTriggers = (HashMap<String, String>) in.readObject();
+		
 		messageTriggers = (HashMap<String, String>) in.readObject();
 		stopAfterExecute = in.readBoolean();
 		type = (TYPE_NODE) in.readObject();
 		exitMessage = (String) in.readObject();
 		parameters = (Map<String, Object>) in.readObject();
+		
 		assignedUser = (String) in.readObject();
 		runtimeNode = (UUID) in.readObject();
 		tryCount = in.readInt();

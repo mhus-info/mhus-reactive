@@ -7,7 +7,9 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pls", description = "List processes")
@@ -22,12 +24,22 @@ public class CmdProcessList extends MLog implements Action {
 		
 		ConsoleTable table = new ConsoleTable();
 		table.fitToConsole();
-		table.setHeaderValues("Registered", "Deployed");
+		table.setHeaderValues("Registered", "Deployed", "Status");
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		for (String name : api.getAvailableProcesses()) {
 			String deployName = api.getProcessDeployName(name);
-			if (all || deployName != null)
-				table.addRowValues(name, deployName);
+			if (all || deployName != null) {
+				String a = "undeployed";
+				if (deployName != null) {
+					String v = MString.afterIndex(deployName, ':');
+					String n = MString.beforeIndex(deployName, ':');
+					String[] versions = ((String)api.getEnginePersistence().getParameters().getOrDefault("process:" + n + ":versions", "")).split(",");
+					boolean enabled = MCollection.contains(versions, v);
+					boolean active = v.equals(api.getEnginePersistence().getParameters().get("process:" + n + ":enabled"));
+					a = (enabled ? "enabled" : "") + (active ? " active" : "");
+				}
+				table.addRowValues(name, deployName, a);
+			}
 		}
 		table.print(System.out);
 		return null;

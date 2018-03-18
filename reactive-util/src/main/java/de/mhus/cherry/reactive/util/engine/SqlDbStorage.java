@@ -8,20 +8,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
+import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.config.XmlConfigFile;
-import de.mhus.lib.core.io.PipedStream;
+import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.sql.DbConnection;
 import de.mhus.lib.sql.DbPool;
@@ -31,10 +35,11 @@ import de.mhus.lib.sql.DbStatement;
 public class SqlDbStorage extends MLog implements StorageProvider {
 
 	private DbPool pool;
-	private String prefix = "null";
-
-	public SqlDbStorage(DbPool pool) {
+	private String prefix;
+	
+	public SqlDbStorage(DbPool pool, String prefix) {
 		this.pool = pool;
+		this.prefix = prefix;
 		init();
 	}
 	
@@ -151,16 +156,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			flow.writeExternal(new ObjectOutputStream(outStream));
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 			prop.put("content", inStream);
+			prop.put("case",flow.getCaseId());
 			prop.put("created", new Date());
 			prop.put("modified", new Date());
 			prop.put("state", flow.getState());
 			prop.put("name", flow.getName());
+			prop.put("signal", flow.getSignalsAsString());
+			prop.put("message", flow.getMessagesAsString());
+			Entry<String, Long> scheduled = flow.getNextScheduled();
+			long scheduledLong = 0;
+			if (scheduled != null && scheduled.getValue() != null)
+				scheduledLong = scheduled.getValue();
+			prop.put("scheduled", scheduledLong);
+			
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET content_=$content$,modified_=$modified$,state_=$state$ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET content_=$content$,modified_=$modified$,state_=$state$,signal_=$signal$,message_=$message$,scheduled_=$scheduled$ WHERE id_=$id$");
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
-				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ (id_,content_,created_,modified_,state_,name_) VALUES ($id$,$content$,$created$,$modified$,$state$,$name$)");
+				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ (id_,case_,content_,created_,modified_,state_,name_,scheduled_) VALUES ($id$,$case$,$content$,$created$,$modified$,$state$,$name$,$scheduled$)");
 				sta.executeUpdate(prop);
 				sta.close();
 			}
@@ -195,33 +209,117 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 
 	@Override
-	public Result<UUID> getCases(STATE_CASE state) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PCaseInfo> getCases(STATE_CASE state) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (state == null) {
+				sta = con.createStatement("SELECT id_ FROM " + prefix + "_case_");
+			} else {
+				prop.put("state", state);
+				sta = con.createStatement("SELECT id_ FROM " + prefix + "_case_ WHERE state_=$state$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultCase(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
-	public Result<UUID> getFlowNodes(UUID caseId, STATE_NODE state) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PNodeInfo> getFlowNodes(UUID caseId, STATE_NODE state) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (caseId == null && state == null) {
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_");
+			} else 
+			if (caseId == null) {
+				prop.put("state", state);
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$");
+			} else
+			if (state == null) {
+				prop.setString("case", caseId.toString());
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE case_=$case$");
+			} else {
+				prop.setString("case", caseId.toString());
+				prop.put("state", state);
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and case_=$case$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
-	public Result<UUID> getScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PNodeInfo> getScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
+		DbConnection con = null;
+		try {
+			con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (state == null) {
+				prop.setLong("scheduled", scheduled);
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE scheduled_ >= $scheduled$");
+			} else {
+				prop.setLong("scheduled", scheduled);
+				prop.setString("state", state.name());
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ >= $scheduled$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			try {
+				if (con != null) con.close();
+			} catch (Exception e2) {}
+			throw new IOException(e);
+		}
 	}
 
 	@Override
-	public Result<UUID> getSignaledFlowNodes(STATE_NODE state, String signal) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PNodeInfo> getSignaledFlowNodes(STATE_NODE state, String signal) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (state == null) {
+				prop.setString("signal", "%" + PNode.getSignalAsString(signal) + "%");
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE signal_ like $signal$");
+			} else {
+				prop.setString("signal", "%" + PNode.getSignalAsString(signal) + "%");
+				prop.setString("state", state.name());
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and signal_ like $signal$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
-	public Result<UUID> getMessageFlowNodes(UUID caseId, STATE_NODE state, String message) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Result<PNodeInfo> getMessageFlowNodes(UUID caseId, STATE_NODE state, String message) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (state == null) {
+				prop.setString("message", "%" + PNode.getMessageAsString(message) + "%");
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE message_ like $message$");
+			} else {
+				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
+				prop.setString("state", state.name());
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and message_ like $message$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 	}
 
 	@Override
@@ -284,4 +382,103 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		}
 	}
 
+	private static class SqlResultCase implements Result<PCaseInfo>, Iterator<PCaseInfo> {
+
+		private DbResult res;
+		private boolean hasNext = false;
+		private DbConnection con;
+
+		public SqlResultCase(DbConnection con, DbResult res) throws Exception {
+			this.con = con;
+			this.res = res;
+			hasNext = res.next();
+		}
+
+		@Override
+		public Iterator<PCaseInfo> iterator() {
+			return this;
+		}
+
+		@Override
+		public synchronized void close() {
+			if (res == null) return;
+			try {
+				res.close();
+			} catch (Exception e) {}
+			con.close();
+			res = null;
+			con = null;
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (!hasNext) {
+				close();
+			}
+			return hasNext;
+		}
+
+		@Override
+		public PCaseInfo next() {
+			if (res == null) return null;
+			try {
+				PCaseInfo out = new PCaseInfo(UUID.fromString(res.getString("id_")));
+				hasNext = res.next();
+				return out;
+			} catch (Exception e) {
+				throw new MRuntimeException(e);
+			}
+		}
+	}
+	
+	private static class SqlResultNode implements Result<PNodeInfo>, Iterator<PNodeInfo> {
+
+		private DbResult res;
+		private boolean hasNext = false;
+		private DbConnection con;
+
+		public SqlResultNode(DbConnection con, DbResult res) throws Exception {
+			this.con = con;
+			this.res = res;
+			hasNext = res.next();
+		}
+
+		@Override
+		public Iterator<PNodeInfo> iterator() {
+			return this;
+		}
+
+		@Override
+		public synchronized void close() {
+			if (res == null) return;
+			try {
+				res.close();
+			} catch (Exception e) {}
+			con.close();
+			res = null;
+			con = null;
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			if (!hasNext) {
+				close();
+			}
+			return hasNext;
+		}
+
+		@Override
+		public PNodeInfo next() {
+			if (res == null) return null;
+			try {
+				PNodeInfo out = new PNodeInfo(UUID.fromString(res.getString("id_")), UUID.fromString(res.getString("case_")));
+				hasNext = res.next();
+				return out;
+			} catch (Exception e) {
+				throw new MRuntimeException(e);
+			}
+		}
+	}	
 }

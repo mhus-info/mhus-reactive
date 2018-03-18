@@ -20,9 +20,11 @@ import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
+import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.errors.MException;
@@ -166,8 +168,8 @@ public class Sample1Test extends TestCase {
 				System.out.println(config.storage);
 				
 				boolean found = false;
-				for (UUID nodeId : engine.storageGetFlowNodes(caseId, STATE_NODE.RUNNING)) {
-					PNode node = engine.getFlowNode(nodeId);
+				for (PNodeInfo nodeId : engine.storageGetFlowNodes(caseId, STATE_NODE.RUNNING)) {
+					PNode node = engine.getFlowNode(nodeId.getId());
 					found = true;
 					node.setScheduled(System.currentTimeMillis());
 					config.storage.saveFlowNode(node);
@@ -215,8 +217,8 @@ public class Sample1Test extends TestCase {
 	private void archiveEngine(Engine engine, EngineConfiguration config) throws IOException, MException {
 		
 		// find runtime
-		for (UUID nodeId : engine.storageGetFlowNodes(null, null)) {
-			PNode node = engine.getFlowNode(nodeId);
+		for (PNodeInfo nodeId : engine.storageGetFlowNodes(null, null)) {
+			PNode node = engine.getFlowNode(nodeId.getId());
 			if (node.getType() == TYPE_NODE.RUNTIME) {
 				PCase caze = engine.getCase(node.getCaseId());
 				EngineContext context = engine.createContext(caze);
@@ -233,12 +235,12 @@ public class Sample1Test extends TestCase {
 
 		{
 			int cnt = 0;
-			for (@SuppressWarnings("unused") UUID cazeId : config.storage.getCases(null)) cnt++;
+			for (@SuppressWarnings("unused") PCaseInfo cazeId : config.storage.getCases(null)) cnt++;
 			assertEquals(0, cnt);
 		}
 		{
 			int cnt = 0;
-			for (@SuppressWarnings("unused") UUID nodeId : config.storage.getFlowNodes(null,null)) cnt++;
+			for (@SuppressWarnings("unused") PNodeInfo nodeId : config.storage.getFlowNodes(null,null)) cnt++;
 			assertEquals(0, cnt);
 		}
 		

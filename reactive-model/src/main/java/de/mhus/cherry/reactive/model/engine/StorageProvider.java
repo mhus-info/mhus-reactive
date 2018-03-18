@@ -66,7 +66,7 @@ public interface StorageProvider {
 	 * @return Set to iterate the results.
 	 * @throws IOException 
 	 */
-	Result<UUID> getCases(PCase.STATE_CASE state) throws IOException;
+	Result<PCaseInfo> getCases(PCase.STATE_CASE state) throws IOException;
 	
 	/**
 	 * Load all flows for this case with the specified state or all. 
@@ -80,7 +80,7 @@ public interface StorageProvider {
 	 * @return list
 	 * @throws IOException 
 	 */
-	Result<UUID> getFlowNodes(UUID caseId, PNode.STATE_NODE state) throws IOException;
+	Result<PNodeInfo> getFlowNodes(UUID caseId, PNode.STATE_NODE state) throws IOException;
 	
 	/**
 	 * Returns all flow nodes with the state and a scheduled time greater zero and
@@ -91,11 +91,11 @@ public interface StorageProvider {
 	 * @return List of results
 	 * @throws IOException
 	 */
-	Result<UUID> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled) throws IOException;
+	Result<PNodeInfo> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled) throws IOException;
 	
-	Result<UUID> getSignaledFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
+	Result<PNodeInfo> getSignaledFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
 	
-	Result<UUID> getMessageFlowNodes(UUID caseId, PNode.STATE_NODE state, String message) throws IOException;
+	Result<PNodeInfo> getMessageFlowNodes(UUID caseId, PNode.STATE_NODE state, String message) throws IOException;
 
 	/**
 	 * Return new engine persistence status. If no engine status is stored return null.
