@@ -264,11 +264,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null) {
 				prop.setLong("scheduled", scheduled);
-				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE scheduled_ >= $scheduled$");
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$ and scheduled_ != 0");
 			} else {
 				prop.setLong("scheduled", scheduled);
-				prop.setString("state", state.name());
-				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ >= $scheduled$");
+				prop.put("state", state);
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$ and scheduled_ != 0");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);

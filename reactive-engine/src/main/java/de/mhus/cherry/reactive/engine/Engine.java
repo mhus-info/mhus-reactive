@@ -124,16 +124,19 @@ public class Engine extends MLog {
 			int maxThreads = MCast.toint(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_MAX_THREADS), 10);
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
 			for (PNodeInfo nodeId : result) {
-				doneCnt++;
 				synchronized (running) {
 					if (running.contains(nodeId)) continue;
 				}
 				PNode node = getFlowNode(nodeId.getId());
-				FlowNodeExecutor executor = new FlowNodeExecutor(node);
-				Thread thread = new Thread(executor);
-				executor.thread = thread;
-				thread.start();
-				if (threads.size() >= maxThreads) break;
+				PCase caze = getCase(node.getCaseId());
+				if (isProcessActive(caze)) {
+					doneCnt++;
+					FlowNodeExecutor executor = new FlowNodeExecutor(node);
+					Thread thread = new Thread(executor);
+					executor.thread = thread;
+					thread.start();
+					if (threads.size() >= maxThreads) break;
+				}
 			}
 			
 			while (threads.size() > 0) {
@@ -146,13 +149,16 @@ public class Engine extends MLog {
 				synchronized (running) {
 					if (running.contains(nodeId)) continue;
 				}
-				synchronized (running) {
-					running.add(nodeId.getId());
-				}
 				PNode node = getFlowNode(nodeId.getId());
-				doFlowNode(node);
-				synchronized (running) {
-					running.remove(nodeId);
+				PCase caze = getCase(node.getCaseId());
+				if (isProcessActive(caze)) {
+					synchronized (running) {
+						running.add(nodeId.getId());
+					}
+					doFlowNode(node);
+					synchronized (running) {
+						running.remove(nodeId);
+					}
 				}
 			}
 		}
@@ -163,6 +169,18 @@ public class Engine extends MLog {
 		return doneCnt;
 	}
 	
+	public boolean isProcessActive(PCase caze) {
+		try {
+			MUri uri = MUri.toUri(caze.getUri());
+			EProcess process = getProcess(uri);
+			if (process == null) return false;
+			EPool pool = getPool(process, uri);
+			if (pool == null) return false;
+			return pool.getPoolClass() != null;
+		} catch (Throwable t) {}
+		return false;
+	}
+
 	public void cleanup() throws IOException, NotFoundException {
 				
 		// scan for closeable cases and runtimes
