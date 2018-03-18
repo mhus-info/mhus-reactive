@@ -62,7 +62,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	protected boolean aaaDefaultAccess = true;
 	private ServiceTracker<AProcess,AProcess> processTracker;
 	private TreeMap<String, ProcessInfo> availableProcesses = new TreeMap<>();
-	private boolean autoDeploy = false;
+	private boolean autoDeploy = true;
 	
 	// --- Process list handling
 	
@@ -320,6 +320,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		if (refs.size() == 0) throw new MException("datasource not found",archiveDsName);
 		archiveDataSource = context.getService(refs.iterator().next());
 		archiveDsProvider.setDataSource(archiveDataSource);
+	}
+
+	@Override
+	public Engine getEngine() {
+		startEngine();
+		return engine;
 	}
 	
 }

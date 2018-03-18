@@ -100,9 +100,11 @@ public interface StorageProvider {
 	/**
 	 * Return new engine persistence status. If no engine status is stored return null.
 	 * @return List of results
+	 * @throws IOException 
+	 * @throws NotFoundException 
 	 */
-	PEngine loadEngine();
+	PEngine loadEngine() throws IOException, NotFoundException;
 	
-	void saveEngine(PEngine engine);
+	void saveEngine(PEngine engine) throws IOException;
 	
 }

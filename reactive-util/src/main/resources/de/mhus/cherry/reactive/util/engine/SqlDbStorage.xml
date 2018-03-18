@@ -1,0 +1,28 @@
+<config>
+	<table name="$prefix$_case" primary_key="id">
+	  <field name="id" type="string" size="36" />
+	  <field name="content" type="blob" />
+	  <field name="uri" type="string" size="700" />
+	  <field name="state" type="string" size="20" />
+	  <field name="created" type="DATETIME" />
+	  <field name="modified" type="DATETIME" />
+	</table>
+	<table name="$prefix$_node" primary_key="id">
+	  <field name="id" type="string" size="36" />
+	  <field name="case" type="string" size="36" />
+	  <field name="content" type="blob" />
+	  <field name="message" type="string" size="700" />
+	  <field name="signal" type="string" size="700" />
+	  <field name="name" type="string" size="700" />
+	  <field name="state" type="string" size="20" />
+	  <field name="created" type="DATETIME" />
+	  <field name="modified" type="DATETIME" />
+	</table>
+	<table name="$prefix$_engine" primary_key="id">
+	  <field name="id" type="string" size="36" />
+	  <field name="content" type="blob" />
+	  <field name="created" type="DATETIME" />
+	  <field name="modified" type="DATETIME" />
+	</table>
+	
+</config>

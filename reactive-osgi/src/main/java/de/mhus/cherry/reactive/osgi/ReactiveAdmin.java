@@ -3,6 +3,7 @@ package de.mhus.cherry.reactive.osgi;
 import java.util.Collection;
 import java.util.List;
 
+import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.lib.errors.MException;
@@ -26,5 +27,7 @@ public interface ReactiveAdmin {
 	void undeploy(String name) throws MException;
 
 	String getProcessDeployName(String name);
+
+	Engine getEngine();
 
 }

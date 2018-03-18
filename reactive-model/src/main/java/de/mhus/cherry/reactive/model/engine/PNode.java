@@ -1,5 +1,9 @@
 package de.mhus.cherry.reactive.model.engine;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,7 +12,7 @@ import java.util.UUID;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.errors.UsageException;
 
-public class PNode {
+public class PNode implements Externalizable {
 
 	// NEW: before save to store
 	// READY: ready to proceess
@@ -305,6 +309,54 @@ public class PNode {
 	
 	public void setActivityTimeout(long activityTimeout) {
 		this.activityTimeout = activityTimeout;
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(1);
+		out.writeObject(id);
+		out.writeObject(caseId);
+		out.writeObject(name);
+		out.writeObject(canonicalName);
+		out.writeLong(creationDate);
+		out.writeLong(lastRunDate);
+		out.writeObject(state);
+		out.writeObject(suspendedState);
+		out.writeObject(schedulers);
+		out.writeObject(signalTriggers);
+		out.writeObject(messageTriggers);
+		out.writeBoolean(stopAfterExecute);
+		out.writeObject(type);
+		out.writeObject(exitMessage);
+		out.writeObject(parameters);
+		out.writeObject(assignedUser);
+		out.writeObject(runtimeNode);
+		out.writeInt(tryCount);
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		int version = in.readInt();
+		if (version != 1) throw new IOException("Wrong version: " + version);
+		
+		id = (UUID) in.readObject();
+		caseId = (UUID) in.readObject();
+		name= (String) in.readObject();
+		canonicalName = (String) in.readObject();
+		creationDate = in.readLong();
+		lastRunDate = in.readLong();
+		state = (STATE_NODE) in.readObject();
+		suspendedState = (STATE_NODE) in.readObject();
+		schedulers = (HashMap<String, Long>) in.readObject();
+		signalTriggers = (HashMap<String, String>) in.readObject();
+		messageTriggers = (HashMap<String, String>) in.readObject();
+		stopAfterExecute = in.readBoolean();
+		type = (TYPE_NODE) in.readObject();
+		exitMessage = (String) in.readObject();
+		parameters = (Map<String, Object>) in.readObject();
+		assignedUser = (String) in.readObject();
+		runtimeNode = (UUID) in.readObject();
+		tryCount = in.readInt();
 	}
 	
 }

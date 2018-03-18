@@ -74,14 +74,22 @@ public class Engine extends MLog {
 		if (listener == null) listener = EngineListenerUtil.createQuietListener();
 		processProvider = config.processProvider;
 		
-		persistent = storage.loadEngine();
+		try {
+			persistent = storage.loadEngine();
+		} catch (NotFoundException | IOException e) {
+			log().i(e);
+		}
 		if (persistent == null) {
 			log().i("Initial new engine persistence");
 			persistent = new PEngine();
 		}
 		if (config.parameters != null) {
 			persistent.getParameters().putAll(config.parameters);
-			storage.saveEngine(persistent);
+			try {
+				storage.saveEngine(persistent);
+			} catch (IOException e) {
+				log().e(e);
+			}
 		}
 
 	}
@@ -505,6 +513,13 @@ public class Engine extends MLog {
 		if (!EngineConst.SCHEME_REACTIVE.equals(uri.getScheme()))
 			throw new UsageException("unknown uri scheme",uri,"should be",EngineConst.SCHEME_REACTIVE);
 		
+		if (properties == null) {
+			properties = new MProperties();
+		}
+		Map<String, String> query = uri.getQuery();
+		if (query != null)
+			properties.putAll(query);
+
 		// get process
 		EProcess process = getProcess(uri);
 		
@@ -1221,6 +1236,26 @@ public class Engine extends MLog {
 		AElement<?> aNode = context.getANode();
 		((CloseActivity)aNode).doClose(context,runtimeNode);
 		savePCase(context);
+	}
+
+	public PEngine getEnginePersistence() {
+		return persistent;
+	}
+
+	public void saveEnginePersistence() {
+		try {
+			storage.saveEngine(persistent);
+		} catch (IOException e) {
+			log().e(e);
+		}
+	}
+
+	public void loadEnginePersistence() {
+		try {
+			persistent = storage.loadEngine();
+		} catch (NotFoundException | IOException e) {
+			log().e(e);
+		}
 	}
 
 }
