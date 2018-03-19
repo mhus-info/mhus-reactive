@@ -17,5 +17,5 @@ public @interface ActivityDescription {
 	String description() default "";
 	String caption() default "";
 	public Class<? extends RuntimeNode> runtime() default RuntimeNode.class;
-
+	public String name() default "";
 }

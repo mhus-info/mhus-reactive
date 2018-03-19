@@ -24,6 +24,7 @@ import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.MException;
 
@@ -64,6 +65,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		private String processName;
 		private HashMap<String, EPool> pools = new HashMap<>();
 		private HashMap<String, EElement> elements = new HashMap<>();
+		private String name;
 
 		@SuppressWarnings("unchecked")
 		public ProcessContainer(ProcessLoader loader) throws MException {
@@ -111,9 +113,10 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			processDescription = processClass.getAnnotation(ProcessDescription.class);
 			if (processDescription == null)
 				throw new MException("process definition annotation not found");
-			processName = processDescription.name().length() == 0 ? processClass.getName() : processDescription.name();
-			canonicalName = processName + ":" + processDescription.version();
-			
+			processName = processClass.getCanonicalName();
+			name = MString.isEmpty(processDescription.name()) ? processClass.getSimpleName() : processDescription.name();
+			canonicalName = processClass.getCanonicalName() + ":" + processDescription.version();
+
 			// init pools
 			for (EPool pool : pools.values())
 				((PoolContainer)pool).collectElements();
@@ -123,6 +126,11 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		@Override
 		public String getCanonicalName() {
 			return canonicalName;
+		}
+		
+		@Override
+		public String getName() {
+			return name;
 		}
 		
 		@Override
@@ -174,7 +182,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public Class<? extends AProcess> getProcessClass() {
 			return processClass;
 		}
-				
+						
 	}
 	
 	public class PoolContainer  implements EPool {
@@ -190,7 +198,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			poolDescription = pool.getAnnotation(PoolDescription.class);
 			if (poolDescription == null)
 				throw new MException("Pool without description annotation found",pool);
-			name = poolDescription.name().length() == 0 ? pool.getName() : poolDescription.name();
+			name = MString.isEmpty(poolDescription.name()) ? pool.getSimpleName() : poolDescription.name();
 		}
 
 		public void setProcess(ProcessContainer process) {
@@ -222,7 +230,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 
 		@Override
 		public String getCanonicalName() {
-			return name;
+			return pool.getCanonicalName();
 		}
 		
 		@Override
@@ -280,6 +288,11 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public PoolDescription getPoolDescription() {
 			return poolDescription;
 		}
+		
+		@Override
+		public String toString() {
+			return getCanonicalName();
+		}
 
 	}
 	
@@ -295,12 +308,12 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 				actDescription = element.getAnnotation(ActivityDescription.class);
 				if (actDescription == null) throw new MException("Activity without description annotation",element);
 			}
-			name = element.getCanonicalName();
+			name = actDescription == null || MString.isEmpty(actDescription.name()) ? element.getSimpleName() : actDescription.name();
 		}
 
 		@Override
 		public String getCanonicalName() {
-			return name;
+			return element.getCanonicalName();
 		}
 
 		@Override

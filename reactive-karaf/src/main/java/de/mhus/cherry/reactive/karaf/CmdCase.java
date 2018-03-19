@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.karaf;
 
+import java.util.Date;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;
@@ -14,7 +16,9 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pcase", description = "Case modifiations")
@@ -36,27 +40,45 @@ public class CmdCase extends MLog implements Action {
 		
 		if (cmd.equals("view")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
-			System.out.println("Uri  : " + caze.getUri());
-			System.out.println("Name : " + caze.getName());
-			System.out.println("Id   : " + caze.getId());
-			System.out.println("State: " + caze.getState());
+			System.out.println("Uri      : " + caze.getUri());
+			System.out.println("CustomId : " + caze.getCustomId());
+			System.out.println("Name     : " + caze.getName());
+			System.out.println("Id       : " + caze.getId());
+			System.out.println("State    : " + caze.getState());
+			System.out.println("CName    : " + caze.getCanonicalName());
+			System.out.println("CreatedBy: " + caze.getCreatedBy());
+			System.out.println("Created  : " + MDate.toIso8601(new Date(caze.getCreationDate())));
+			System.out.println("Scheduled: " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
+			System.out.println("Close    : " + caze.getClosedCode() + " " + caze.getClosedMessage());
+			System.out.println("Options  : " + caze.getOptions());
+		} else
+		if (cmd.equals("nodes")) {
+			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
+			ConsoleTable table = new ConsoleTable();
+			table.fitToConsole();
+			table.setHeaderValues("Id","CName","State","Type","Scheduled");
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
-				System.out.println("---------------");
-				System.out.println("Name : " + node.getCanonicalName());
-				System.out.println("Id   : " + node.getId());
-				System.out.println("State: " + node.getState());
+				String scheduled = "-";
+				Entry<String, Long> scheduledEntry = node.getNextScheduled();
+				if (scheduledEntry != null) {
+					long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+					if (diff > 0)
+						scheduled = MTimeInterval.getIntervalAsString(diff);
+				}
+				table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), scheduled);
 			}
+			table.print(System.out);
 		} else
 		if (cmd.equals("list")) {
 			STATE_CASE state = null;
 			if (parameters != null) state = STATE_CASE.valueOf(parameters[0].toUpperCase());
 			ConsoleTable table = new ConsoleTable();
 			table.fitToConsole();
-			table.setHeaderValues("Id","Uri","State");
+			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : api.getEngine().storageGetCases(state)) {
 				PCase caze = api.getEngine().getCase(info.getId());
-				table.addRowValues(info.getId(), caze.getUri(), caze.getState() );
+				table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 			}
 			table.print(System.out);
 		} else

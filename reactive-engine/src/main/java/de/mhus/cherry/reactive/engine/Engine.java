@@ -684,7 +684,7 @@ public class Engine extends MLog {
 			processVersion = config.persistent.getActiveProcessVersion(processName);
 		else {
 			if (!config.persistent.isProcessEnabled(processName, processVersion))
-				throw new MException("specified process version is not enabled",processName, processVersion);
+				throw new MException("specified process version is not enabled",processName, processVersion,uri);
 		}
 		if (MString.isEmpty(processVersion))
 			throw new MException("default process version is disabled",processName,uri);

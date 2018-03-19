@@ -9,7 +9,7 @@ import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 
 public interface EProcess {
 
-	String getProcessName();
+	String getName();
 
 	String getVersion();
 
@@ -32,5 +32,7 @@ public interface EProcess {
 	String getCanonicalName();
 
 	Class<? extends AProcess> getProcessClass();
+
+	String getProcessName();
 
 }
