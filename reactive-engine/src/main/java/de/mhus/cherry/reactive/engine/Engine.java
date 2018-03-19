@@ -42,7 +42,6 @@ import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
-import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
@@ -215,7 +214,7 @@ public class Engine extends MLog {
 			}
 			if (!found) {
 				// close case without active node
-				closeCase(caze, false);
+				closeCase(caze, false, 0, "");
 			}
 			
 		}
@@ -302,12 +301,12 @@ public class Engine extends MLog {
 			savePCase(context);
 	}
 
-	public void closeCase(UUID caseId, boolean hard) throws IOException, NotFoundException {
+	public void closeCase(UUID caseId, boolean hard, int code, String msg) throws IOException, NotFoundException {
 		PCase caze = getCase(caseId);
-		closeCase(caze, hard);
+		closeCase(caze, hard, code, msg);
 	}
 	
-	public void closeCase(PCase caze, boolean hard) throws IOException {
+	public void closeCase(PCase caze, boolean hard, int code, String msg) throws IOException {
 		config.listener.closeCase(caze,hard);
 		if (!hard) {
 			try {
@@ -330,7 +329,7 @@ public class Engine extends MLog {
 				config.listener.error(caze,t);
 			}
 		}
-		caze.setState(STATE_CASE.CLOSED);
+		caze.close(code, msg);
 		synchronized (caseCache) {
 			storage.saveCase(caze);
 			caseCache.put(caze.getId(), caze);
@@ -682,11 +681,10 @@ public class Engine extends MLog {
 			processName = MString.beforeIndex(processName, ':');
 		}
 		if (processVersion == null)
-			processVersion = (String) config.persistent.getParameters().get("process:" + processName + ":enabled");
+			processVersion = config.persistent.getActiveProcessVersion(processName);
 		else {
-			String[] versions = ((String) config.persistent.getParameters().getOrDefault("process:" + processName + ":versions","")).split(",");
-			if (!MCollection.contains(versions, processVersion))
-				throw new MException("specified process version is not enabled",processName, processVersion,versions);
+			if (!config.persistent.isProcessEnabled(processName, processVersion))
+				throw new MException("specified process version is not enabled",processName, processVersion);
 		}
 		if (MString.isEmpty(processVersion))
 			throw new MException("default process version is disabled",processName,uri);

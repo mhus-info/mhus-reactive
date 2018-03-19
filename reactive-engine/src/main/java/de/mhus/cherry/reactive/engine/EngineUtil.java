@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.engine;
 
+import de.mhus.cherry.reactive.model.activity.AProcess;
+import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.schedule.CronJob;
@@ -26,6 +28,14 @@ public class EngineUtil {
 		} else {
 			return System.currentTimeMillis() + time;
 		}
+	}
+
+	public static String getProcessCanonicalName(AProcess process) {
+		ProcessDescription desc = process.getClass().getAnnotation(ProcessDescription.class);
+		if (desc == null) return null;
+		String name = desc.name();
+		if (MString.isEmpty(name)) name = process.getClass().getCanonicalName();
+		return name + ":" + desc.version();
 	}
 
 }

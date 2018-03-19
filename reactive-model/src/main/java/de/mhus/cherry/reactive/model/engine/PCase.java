@@ -23,6 +23,8 @@ public class PCase implements Externalizable {
 	protected Map<String,Object> options;
 	protected Map<String,Object> parameters;
 	private String canonicalName;
+	private int closedCode = 0;
+	private String closedMessage;
 
 	public PCase() {}
 
@@ -37,6 +39,8 @@ public class PCase implements Externalizable {
 		this.state = clone.getState();
 		this.scheduled = clone.getScheduled();
 		this.parameters = new HashMap<>(clone.getParameters());
+		this.closedCode = clone.getClosedCode();
+		this.closedMessage = clone.getClosedMessage();
 	}
 	
 	public PCase(UUID id, Map<String,Object> options, String uri, String name, String canonicalName, long creationDate, String createdBy, STATE_CASE state,
@@ -97,16 +101,21 @@ public class PCase implements Externalizable {
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(1);
+		
 		out.writeObject(id);
 		out.writeObject(options);
 		out.writeObject(uri);
 		out.writeObject(name);
 		out.writeObject(canonicalName);
+		
 		out.writeLong(creationDate);
 		out.writeObject(createdBy);
 		out.writeObject(state);
 		out.writeLong(scheduled);
 		out.writeObject(parameters);
+		
+		out.writeInt(closedCode);
+		out.writeObject(closedMessage);
 		out.flush();
 	}
 
@@ -122,14 +131,20 @@ public class PCase implements Externalizable {
 		uri = (String) in.readObject();
 		name = (String) in.readObject();
 		canonicalName = (String) in.readObject();
+		
 		creationDate = in.readLong();
 		createdBy = (String) in.readObject();
 		state = (STATE_CASE) in.readObject();
 		scheduled = in.readLong();
 		parameters = (Map<String, Object>) in.readObject();
+		
+		closedCode = in.readInt();
+		closedMessage = (String) in.readObject();
+		
 	}
 
 	public void setState(STATE_CASE state) {
+		if (this.state == STATE_CASE.CLOSED) return;
 		this.state = state;
 	}
 
@@ -142,4 +157,19 @@ public class PCase implements Externalizable {
 		return Collections.unmodifiableMap(options);
 	}
 	
+	public void close(int code, String message) {
+		if (this.state == STATE_CASE.CLOSED) return;
+		closedCode = code;
+		closedMessage = message;
+		setState(STATE_CASE.CLOSED);
+	}
+	
+	public String getClosedMessage() {
+		return closedMessage;
+	}
+
+	public int getClosedCode() {
+		return closedCode;
+	}
+
 }

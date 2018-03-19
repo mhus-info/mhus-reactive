@@ -77,13 +77,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("created", new Date());
 			prop.put("modified", new Date());
 			prop.put("state", caze.getState());
+			prop.put("closedCode", caze.getClosedCode());
+			prop.put("closedMessage", caze.getClosedMessage() == null ? "" : caze.getClosedMessage() );
 			prop.put("uri", caze.getUri());
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET content_=$content$,modified_=$modified$,state_=$state$ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET content_=$content$,modified_=$modified$,state_=$state$,closed_code_=$closedCode$,closed_message_=$closedMessage$ WHERE id_=$id$");
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
-				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_case_ (id_,content_,created_,modified_,state_,uri_) VALUES ($id$,$content$,$created$,$modified$,$state$,$uri$)");
+				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_case_ (id_,content_,created_,modified_,state_,uri_,closed_code_,closed_message_) VALUES ($id$,$content$,$created$,$modified$,$state$,$uri$,$closedCode$,$closedMessage$)");
 				sta.executeUpdate(prop);
 				sta.close();
 			}

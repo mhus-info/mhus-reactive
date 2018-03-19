@@ -23,10 +23,10 @@ import de.mhus.cherry.reactive.engine.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.EngineListenerUtil;
+import de.mhus.cherry.reactive.engine.EngineUtil;
 import de.mhus.cherry.reactive.engine.PoolValidator;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
 import de.mhus.cherry.reactive.model.activity.AProcess;
-import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
@@ -34,9 +34,7 @@ import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
-import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.errors.MException;
@@ -77,31 +75,31 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	// --- Process list handling
 	
 	@Override
-	public void removeProcess(String name) {
-		if (name == null) return;
-		log().d("remove process",name);
+	public void removeProcess(String canonicalName) {
+		if (canonicalName == null) return;
+		log().d("remove process",canonicalName);
 		synchronized (availableProcesses) {
-			availableProcesses.remove(name);
+			availableProcesses.remove(canonicalName);
 		}
 	}
 
 	@Override
-	public boolean addProcess(String name, ProcessLoader loader) {
-		if (name == null) {
-			log().d("found process without name");
-			return false;
+	public boolean addProcess(String info, ProcessLoader loader) {
+		if (info == null) {
+			info = "";
 		}
-		log().d("add process",name);
+		String canonicalName = loader.getProcessCanonicalName();
+		log().d("add process",info);
 		synchronized (availableProcesses) {
-			if (availableProcesses.put(name, new ProcessInfo(name,loader)) != null)
-				log().w("Process was already present",name);
+			if (availableProcesses.put(canonicalName, new ProcessInfo(info, canonicalName, loader)) != null)
+				log().w("Process was already present",canonicalName);
 		}
-		if (autoDeploy && isProcessActivated(name) )
+		if (autoDeploy && isProcessActivated(canonicalName) )
 			try {
-				deploy(name, false, false);
+				deploy(canonicalName, false, false);
 				return true;
 			} catch (MException e) {
-				log().e(name,e);
+				log().e(canonicalName,e);
 			}
 		return false;
 	}
@@ -109,18 +107,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private boolean isProcessActivated(String name) {
 		startEngine();
 		if (engine == null) return false;
-		String v = MString.afterIndex(name, ':');
-		String n = MString.beforeIndex(name, ':');
-		String[] versions = String.valueOf(config.persistent.getParameters().getOrDefault("process:" + n + ":versions","")).split(",");
-		return MCollection.contains(versions, v);
-	}
-
-	private String getProcessCanonicalName(AProcess process) {
-		ProcessDescription desc = process.getClass().getAnnotation(ProcessDescription.class);
-		if (desc == null) return null;
-		String name = desc.name();
-		if (MString.isEmpty(name)) name = process.getClass().getCanonicalName();
-		return name + ":" + desc.version();
+		return config.persistent.isProcessEnabled(name);
 	}
 	
 	@Override
@@ -165,18 +152,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 		
 		// add version
-		String v = MString.afterIndex(info.deployedName, ':');
-		String n = MString.beforeIndex(info.deployedName, ':');
-		if (addVersion) {
-			String[] versions = ((String)config.persistent.getParameters().getOrDefault("process:" + n + ":versions","")).split(",");
-			if (!MCollection.contains(versions, v)) {
-				versions = MCollection.append(versions, v);
-				config.persistent.getParameters().put("process:" + n + ":versions", MString.join(versions,','));
-			}
-		}
-		if (activate) {
-			config.persistent.getParameters().put("process:" + n + ":enabled", v);
-		}
+		if (addVersion)
+			config.persistent.enableProcessVersion(info.deployedName);
+
+		if (activate)
+			config.persistent.activateProcessVersion(info.deployedName);
+
 		if (addVersion || activate)
 			engine.saveEnginePersistence();
 		
@@ -192,6 +173,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 	}
 	
+	@Override
+	public String getProcessInfo(String name) {
+		synchronized (availableProcesses) {
+			ProcessInfo info = availableProcesses.get(name);
+			if (info == null) return null;
+			return info.info;
+		}
+	}
 	
 	@Override
 	public void undeploy(String name) throws MException {
@@ -210,17 +199,19 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	
 	private class ProcessInfo {
 		ProcessLoader loader;
-		String name;
+		String info;
 		String deployedName;
+		String canonicalName;
 		
-		public ProcessInfo(String name, ProcessLoader loader) {
-			this.name = name;
+		public ProcessInfo(String info, String canonicalName, ProcessLoader loader) {
+			this.info = info;
+			this.canonicalName = canonicalName;
 			this.loader = loader;
 		}
 		
 		@Override
 		public String toString() {
-			return name;
+			return canonicalName;
 		}
 		
 	}
@@ -236,19 +227,19 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			@Override
 			public AProcess addingService(ServiceReference<AProcess> reference) {
 				AProcess process = context.getService(reference);
-				addProcess(getProcessCanonicalName(process), new OsgiProcessLoader(process));
+				addProcess(reference.getBundle().getSymbolicName() + ":" + process.getClass().getSimpleName(), new OsgiProcessLoader(process));
 				return null;
 			}
 
 			@Override
 			public void modifiedService(ServiceReference<AProcess> reference, AProcess service) {
-				removeProcess(getProcessCanonicalName(service));
-				addProcess(getProcessCanonicalName(service), new OsgiProcessLoader(service));
+				removeProcess(EngineUtil.getProcessCanonicalName(service));
+				addProcess(reference.getBundle().getSymbolicName() + ":" + service.getClass().getSimpleName(), new OsgiProcessLoader(service));
 			}
 
 			@Override
 			public void removedService(ServiceReference<AProcess> reference, AProcess service) {
-				removeProcess(getProcessCanonicalName(service));
+				removeProcess(EngineUtil.getProcessCanonicalName(service));
 			}
 		});
 		processTracker.open(true);

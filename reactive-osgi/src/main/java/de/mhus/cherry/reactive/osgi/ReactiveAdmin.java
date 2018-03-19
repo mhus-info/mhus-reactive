@@ -7,7 +7,6 @@ import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
-import de.mhus.cherry.reactive.osgi.ReactiveAdmin.STATE_ENGINE;
 import de.mhus.lib.errors.MException;
 
 public interface ReactiveAdmin {
@@ -37,5 +36,7 @@ public interface ReactiveAdmin {
 	void setExecutionSuspended(boolean suspend);
 
 	STATE_ENGINE getEngineState();
+
+	String getProcessInfo(String name);
 
 }

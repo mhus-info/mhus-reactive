@@ -180,7 +180,7 @@ public class Sample1Test extends TestCase {
 //			assertEquals(4, i);
 			if (i == 10) throw new MException();
 			
-			engine.closeCase(caseId, true);
+			engine.closeCase(caseId, true, -1, "test");
 			
 		}
 

@@ -6,6 +6,8 @@
 	  <field name="state" type="int" size="20" />
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
+	  <field name="closed_message" type="string" size="400" />
+	  <field name="closed_code" type="int"/>
 	</table>
 	<table name="$/prefix$_node" primary_key="id">
 	  <field name="id" type="string" size="36" />
