@@ -35,9 +35,9 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 	
 	public String addProcess(ProcessLoader loader) throws MException {
 		ProcessContainer container = new ProcessContainer(loader);
-		String name = container.getProcessName() + ":" + container.getVersion();
+		String name = container.getCanonicalName() + ":" + container.getVersion();
 		if (processes.containsKey(name))
-			throw new MException("Process already defined",container.getCanonicalName());
+			throw new MException("Process already defined",container.getProcessName());
 		processes.put(name, container);
 		return name;
 	}
@@ -124,7 +124,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 
 		@Override
-		public String getCanonicalName() {
+		public String getProcessName() {
 			return canonicalName;
 		}
 		
@@ -134,7 +134,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		}
 		
 		@Override
-		public String getProcessName() {
+		public String getCanonicalName() {
 			return processName;
 		}
 		

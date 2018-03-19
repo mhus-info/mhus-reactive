@@ -9,6 +9,11 @@ import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 
 public interface EProcess {
 
+	/**
+	 * Return the simple name of the process.
+	 * 
+	 * @return Simple name
+	 */
 	String getName();
 
 	String getVersion();
@@ -29,10 +34,15 @@ public interface EProcess {
 	 * Return processName : processVersion
 	 * @return The unique name processName : processVersion
 	 */
-	String getCanonicalName();
+	String getProcessName();
 
 	Class<? extends AProcess> getProcessClass();
 
-	String getProcessName();
+	/**
+	 * Return the canonical name of the process class only.
+	 * 
+	 * @return canonical class name
+	 */
+	String getCanonicalName();
 
 }

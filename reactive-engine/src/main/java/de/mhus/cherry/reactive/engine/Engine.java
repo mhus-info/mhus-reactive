@@ -553,7 +553,7 @@ public class Engine extends MLog {
 		
 		// update uri
 		MutableUri u = new MutableUri(uri.toString());
-		u.setLocation(process.getProcessName() + ":" + process.getVersion() );
+		u.setLocation(process.getCanonicalName() + ":" + process.getVersion() );
 		u.setPath(pool.getCanonicalName());
 		u.setQuery(null);
 		MUri originalUri = uri;
