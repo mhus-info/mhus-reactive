@@ -1207,6 +1207,10 @@ public class Engine extends MLog {
 		return storage.getFlowNodes(caseId, state);
 	}
 
+	public Result<PNodeInfo> storageGetAssignedFlowNodes(String user) throws IOException {
+		return storage.getAssignedFlowNodes(user);
+	}
+	
 	public Result<PNodeInfo> storageGetScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
 		return storage.getScheduledFlowNodes(state, scheduled);
 	}

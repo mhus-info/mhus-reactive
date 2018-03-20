@@ -72,6 +72,48 @@ public class EngineUi extends MLog {
 		return out;
 	}
 
+	public List<INode> getAssignedNodes(int page, int size) throws NotFoundException, IOException {
+		LinkedList<INode> out = new LinkedList<>();
+		int cnt = 0;
+		int first = page * size;
+		for (PNodeInfo info : engine.storageGetAssignedFlowNodes(user)) {
+			PCase caze = engine.getCase(info.getCaseId());
+			try {
+				if (cnt >= first) {
+					PNode node = engine.getFlowNode(info.getId());
+					out.add(new INode(caze, node));
+				}
+				cnt++;
+			} catch (Exception e) {
+				log().d(info,e);
+			}
+			if (out.size() >= size) break;
+		}
+		return out;
+	}
+
+	public List<INode> getUnassignedNodes(int page, int size) throws NotFoundException, IOException {
+		LinkedList<INode> out = new LinkedList<>();
+		int cnt = 0;
+		int first = page * size;
+		for (PNodeInfo info : engine.storageGetAssignedFlowNodes(null)) {
+			PCase caze = engine.getCase(info.getCaseId());
+			if (hasReadAccess(caze.getUri())) {
+				try {
+					if (cnt >= first) {
+						PNode node = engine.getFlowNode(info.getId());
+						out.add(new INode(caze, node));
+					}
+					cnt++;
+				} catch (Exception e) {
+					log().d(info,e);
+				}
+				if (out.size() >= size) break;
+			}
+		}
+		return out;
+	}
+	
 	public List<INode> getNodes(int page, int size, UUID caseId, STATE_NODE state) throws NotFoundException, IOException {
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;

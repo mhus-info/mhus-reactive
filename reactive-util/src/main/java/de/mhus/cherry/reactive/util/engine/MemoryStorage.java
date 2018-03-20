@@ -13,6 +13,7 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.errors.NotFoundException;
 
 public class MemoryStorage implements StorageProvider {
@@ -139,7 +140,7 @@ public class MemoryStorage implements StorageProvider {
 	public Result<PNodeInfo> getAssignedFlowNodes(String user) throws IOException {
 		ResultList<PNodeInfo> out = new ResultList<>();
 		flowNodes.values().forEach(value -> {
-			if (user.equals(value.getAssignedUser()))
+			if (MSystem.equals(user, value.getAssignedUser()))
 				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
 		});
 		return out;
