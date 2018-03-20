@@ -171,5 +171,9 @@ public class PCase implements Externalizable {
 	public int getClosedCode() {
 		return closedCode;
 	}
+	
+	public boolean isFailed() {
+		return state == STATE_CASE.CLOSED && closedCode < 0;
+	}
 
 }

@@ -195,7 +195,7 @@ public class Engine extends MLog {
 				if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
 					allRuntime.add(node.getId());
 				} else
-				if (node.getType() != TYPE_NODE.RUNTIME && node.getState() != STATE_NODE.CLOSED) {
+				if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
 					found = true;
 					usedRuntime.add(node.getRuntimeId());
 				}
@@ -1083,19 +1083,31 @@ public class Engine extends MLog {
 	 * 
 	 * @param caseId
 	 * @param migrator
+	 * @param toUri 
 	 * @throws MException
 	 * @throws IOException
 	 */
-	public void migrateCase(UUID caseId, Migrator migrator) throws MException, IOException {
+	public void migrateCase(UUID caseId, Migrator migrator, String toUri) throws MException, IOException {
 		PCase caze = getCase(caseId);
 		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
 			throw new MException("already is not suspended",caseId);
 		
 		config.listener.migrateCase(caze,migrator);
 		
-		// create context
-		EngineContext context = createContext(caze);
+		// create from context
+		EngineContext fromContext = createContext(caze);
 		
+		// create to context
+		MUri uri = MUri.toUri(toUri);
+		EProcess process = getProcess(uri);
+		EPool pool = getPool(process, uri);
+		
+		EngineContext toContext = new EngineContext(this);
+		toContext.setUri(uri.toString());
+		toContext.setEProcess(process);
+		toContext.setEPool(pool);
+		
+		// load all nodes
 		LinkedList<PNode> nodes = new LinkedList<>();
 		for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
 			PNode node = getFlowNode(nodeId.getId());
@@ -1108,17 +1120,17 @@ public class Engine extends MLog {
 			archive.saveFlowNode(node);
 
 		// migrate
-		migrator.doMigrate(context, nodes);
+		migrator.doMigrate(new EngineMigrateContext(fromContext, toContext, caze, nodes));
 		
 		// validate output
-		if (context.getPCase().getState() != STATE_CASE.SUSPENDED && context.getPCase().getState() != STATE_CASE.CLOSED)
+		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
 			throw new MException("It's not allowed to change case state, change suspendedState instead");
 		for (PNode node : nodes)
 			if (node.getState() != STATE_NODE.SUSPENDED && node.getState() != STATE_NODE.CLOSED)
 				throw new MException("It's not allowed to change flow node state, change suspendedState instead");
 		
 		// store
-		storage.saveCase(context.getPCase());
+		storage.saveCase(caze);
 		for (PNode node : nodes)
 			storage.saveFlowNode(node);
 		

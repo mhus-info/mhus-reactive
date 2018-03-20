@@ -23,7 +23,7 @@ public class PNode implements Externalizable {
 	// STOPPED: Some kind of SUSPENDED
 	// CLOSED: The task is done and can be archived with the case, needed for history
 	
-	public enum STATE_NODE {NEW, RUNNING,SCHEDULED,WAITING,FAILED,SUSPENDED,STOPPED,CLOSED};
+	public enum STATE_NODE {NEW, RUNNING,SCHEDULED,WAITING,FAILED,SUSPENDED,STOPPED,CLOSED,ZOMBIE};
 	public enum TYPE_NODE {NODE,HUMAN,RUNTIME,MESSAGE,SIGNAL,EXTERN};
 	
 	// ident of this flow node
@@ -62,7 +62,7 @@ public class PNode implements Externalizable {
 	
 	protected UUID runtimeNode;
 	
-	protected int tryCount = 3;
+	protected int tryCount = EngineConst.DEFAULT_TRY_COUNT;
 	private long activityTimeout = EngineConst.DEFAULT_ACTIVITY_TIMEOUT;
 
 	public PNode() {}
