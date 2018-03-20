@@ -81,11 +81,35 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("closedMessage", caze.getClosedMessage() == null ? "" : caze.getClosedMessage() );
 			prop.put("uri", caze.getUri());
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET content_=$content$,modified_=$modified$,state_=$state$,closed_code_=$closedCode$,closed_message_=$closedMessage$ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET "
+						+ "content_=$content$,"
+						+ "modified_=$modified$,"
+						+ "state_=$state$,"
+						+ "closed_code_=$closedCode$,"
+						+ "closed_message_=$closedMessage$"
+						+ " WHERE id_=$id$");
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
-				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_case_ (id_,content_,created_,modified_,state_,uri_,closed_code_,closed_message_) VALUES ($id$,$content$,$created$,$modified$,$state$,$uri$,$closedCode$,$closedMessage$)");
+				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_case_ ("
+						+ "id_,"
+						+ "content_,"
+						+ "created_,"
+						+ "modified_,"
+						+ "state_,"
+						+ "uri_,"
+						+ "closed_code_,"
+						+ "closed_message_"
+						+ ") VALUES ("
+						+ "$id$,"
+						+ "$content$,"
+						+ "$created$,"
+						+ "$modified$,"
+						+ "$state$,"
+						+ "$uri$,"
+						+ "$closedCode$,"
+						+ "$closedMessage$"
+						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
 			}
@@ -174,11 +198,43 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("scheduled", scheduledLong);
 			
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET content_=$content$,modified_=$modified$,state_=$state$,signal_=$signal$,message_=$message$,scheduled_=$scheduled$,assigned_=$assigned$ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET "
+						+ "content_=$content$,"
+						+ "modified_=$modified$,"
+						+ "state_=$state$,"
+						+ "signal_=$signal$,"
+						+ "message_=$message$,"
+						+ "scheduled_=$scheduled$,"
+						+ "assigned_=$assigned$"
+						+ " WHERE id_=$id$");
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
-				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ (id_,case_,content_,created_,modified_,state_,name_,scheduled_,assigned_) VALUES ($id$,$case$,$content$,$created$,$modified$,$state$,$name$,$scheduled$,$assigned$)");
+				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ ("
+						+ "id_,"
+						+ "case_,"
+						+ "content_,"
+						+ "created_,"
+						+ "modified_,"
+						+ "state_,"
+						+ "name_,"
+						+ "scheduled_,"
+						+ "assigned_,"
+						+ "signal_,"
+						+ "message_"
+						+ ") VALUES ("
+						+ "$id$,"
+						+ "$case$,"
+						+ "$content$,"
+						+ "$created$,"
+						+ "$modified$,"
+						+ "$state$,"
+						+ "$name$,"
+						+ "$scheduled$,"
+						+ "$assigned$,"
+						+ "$signal$,"
+						+ "$message$"
+						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
 			}
@@ -268,11 +324,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null) {
 				prop.setLong("scheduled", scheduled);
-				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$ and scheduled_ != 0");
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$");
 			} else {
 				prop.setLong("scheduled", scheduled);
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$ and scheduled_ != 0");
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
@@ -295,7 +351,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE signal_ like $signal$");
 			} else {
 				prop.setString("signal", "%" + PNode.getSignalAsString(signal) + "%");
-				prop.setString("state", state.name());
+				prop.put("state", state);
 				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and signal_ like $signal$");
 			}
 			DbResult res = sta.executeQuery(prop);
@@ -316,7 +372,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE message_ like $message$");
 			} else {
 				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
-				prop.setString("state", state.name());
+				prop.put("state", state);
 				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE state_=$state$ and message_ like $message$");
 			}
 			DbResult res = sta.executeQuery(prop);

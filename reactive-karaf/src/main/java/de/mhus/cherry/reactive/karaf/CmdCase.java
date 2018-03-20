@@ -7,12 +7,14 @@ import java.util.UUID;
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
@@ -37,6 +39,9 @@ public class CmdCase extends MLog implements Action {
 			+ "", multiValued=false)
     String cmd;
 
+	@Option(name="-a", aliases="--all", description="Print all",required=false)
+	private boolean all;
+
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
 
@@ -46,6 +51,9 @@ public class CmdCase extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("resave")) {
+			api.getEngine().resaveCase(UUID.fromString(parameters[0]));
+		} else
 		if (cmd.equals("migrate")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
 			api.getEngine().migrateCase(caze.getId(), parameters[1], parameters[2]);
@@ -71,14 +79,16 @@ public class CmdCase extends MLog implements Action {
 			table.setHeaderValues("Id","CName","State","Type","Scheduled");
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
-				String scheduled = "-";
-				Entry<String, Long> scheduledEntry = node.getNextScheduled();
-				if (scheduledEntry != null) {
-					long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-					if (diff > 0)
-						scheduled = MTimeInterval.getIntervalAsString(diff);
+				if (all || node.getState() != STATE_NODE.CLOSED) {
+					String scheduled = "-";
+					Entry<String, Long> scheduledEntry = node.getNextScheduled();
+					if (scheduledEntry != null) {
+						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+						if (diff > 0)
+							scheduled = MTimeInterval.getIntervalAsString(diff);
+					}
+					table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), scheduled);
 				}
-				table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), scheduled);
 			}
 			table.print(System.out);
 		} else
@@ -90,7 +100,8 @@ public class CmdCase extends MLog implements Action {
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : api.getEngine().storageGetCases(state)) {
 				PCase caze = api.getEngine().getCase(info.getId());
-				table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+				if (all || caze.getState() != STATE_CASE.CLOSED)
+					table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 			}
 			table.print(System.out);
 		} else

@@ -37,7 +37,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		ProcessContainer container = new ProcessContainer(loader);
 		String name = container.getCanonicalName() + ":" + container.getVersion();
 		if (processes.containsKey(name))
-			throw new MException("Process already defined",container.getProcessName());
+			log().w("Process already defined, overwrite",container.getProcessName());
 		processes.put(name, container);
 		return name;
 	}

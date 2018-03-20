@@ -7,10 +7,13 @@ import java.util.UUID;
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
@@ -35,6 +38,9 @@ public class CmdNode extends MLog implements Action {
 			+ "", multiValued=false)
     String cmd;
 
+	@Option(name="-a", aliases="--all", description="Print all",required=false)
+	private boolean all;
+
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
 
@@ -44,6 +50,9 @@ public class CmdNode extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("resave")) {
+			api.getEngine().resaveFlowNode(UUID.fromString(parameters[0]));
+		} else
 		if (cmd.equals("running")) {
 			
 			ConsoleTable table = new ConsoleTable();
@@ -67,15 +76,17 @@ public class CmdNode extends MLog implements Action {
 			table.setHeaderValues("Id","Case","Name","State","Type","Scheduled","CaseId");
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(null,state)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
-				String scheduled = "-";
-				Entry<String, Long> scheduledEntry = node.getNextScheduled();
-				if (scheduledEntry != null) {
-					long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-					if (diff > 0)
-						scheduled = MTimeInterval.getIntervalAsString(diff);
+				if (all || (node.getState() != STATE_NODE.CLOSED && node.getType() != TYPE_NODE.RUNTIME) ) {
+					String scheduled = "-";
+					Entry<String, Long> scheduledEntry = node.getNextScheduled();
+					if (scheduledEntry != null) {
+						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+						if (diff > 0)
+							scheduled = MTimeInterval.getIntervalAsString(diff);
+					}
+					PCase caze = api.getEngine().getCase(node.getCaseId());
+					table.addRowValues(node.getId(),caze.getName(), node.getName(),node.getState(),node.getType(), scheduled, node.getCaseId());
 				}
-				PCase caze = api.getEngine().getCase(node.getCaseId());
-				table.addRowValues(node.getId(),caze.getName(), node.getName(),node.getState(),node.getType(), scheduled, node.getCaseId());
 			}
 			table.print(System.out);
 		} else
@@ -105,6 +116,11 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("TryCount  : " + node.getTryCount());
 			System.out.println("CaseId    : " + node.getCaseId());
 			System.out.println("RuntimeId : " + node.getRuntimeId());
+			System.out.println("Event     : " + node.getEvent());
+			System.out.println("NextScheduled: " + node.getNextScheduled());
+			System.out.println("MessageList: " + node.getMessagesAsString());
+			System.out.println("SignalList : " + node.getSignalsAsString());
+			System.out.println();
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
 				System.out.println(entry.getKey() + "=" + entry.getValue());
 		} else

@@ -11,7 +11,10 @@ import de.mhus.cherry.reactive.util.activity.RServiceTask;
 		outputs = {
 				@Output(name="step2",activity=S1Step2.class),
 				@Output(name="step3",activity=S1Step3.class),
-				@Output(name="human",activity=S1HumanStep.class)
+				@Output(name="human",activity=S1HumanStep.class),
+				@Output(name="external",activity=S1EventExternal.class),
+				@Output(name="message",activity=S1EventMessage.class),
+				@Output(name="signal",activity=S1EventSignal.class)
 				},
 		lane = S1Lane1.class,
 		triggers = {
@@ -36,10 +39,11 @@ public class S1Step1 extends RServiceTask<S1Pool> {
 			return "step2";
 		case "third":
 			return "step3";
-		case "human":
-			return "human";
+		case "Moin":
+			return null;
+		default:
+			return getPool().getText1();
 		}
-		return null;
 	}
 
 }

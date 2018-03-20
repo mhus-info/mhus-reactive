@@ -153,8 +153,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 		if (info == null) 
 			throw new MException("Process not found",name);
-		if (info.deployedName != null)
-			throw new MException("Process already deployed",name);
+		if (info.deployedName != null) {
+			log().w("Process already deployed, redeploy",name);
+			undeploy(name);
+		}
 		
 		info.deployedName = ((DefaultProcessProvider)config.processProvider).addProcess(info.loader);
 		

@@ -208,23 +208,23 @@ public class PNode implements Externalizable {
 		if (signalTriggers == null) {
 			if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.SIGNAL) {
 				String sig = event;
-				sig = sig.replace('|', '_');
-				return "|" + sig + "|";
+				sig = sig.replace(';', '_');
+				return ";" + sig + ";";
 			}
 			return "";
 		}
 		StringBuilder out = new StringBuilder();
 		if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.SIGNAL) {
 			String sig = event;
-			sig = sig.replace('|', '_');
-			out.append("|").append(sig);
+			sig = sig.replace(';', '_');
+			out.append(";").append(sig);
 		}
 		for (String sig : signalTriggers.values()) {
-			sig = sig.replace('|', '_');
-			out.append("|").append(sig);
+			sig = sig.replace(';', '_');
+			out.append(";").append(sig);
 		}
 		if (out.length() > 0)
-			out.append("|");
+			out.append(";");
 		return out.toString();
 	}
 	
@@ -232,34 +232,34 @@ public class PNode implements Externalizable {
 		if (messageTriggers == null) {
 			if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.MESSAGE) {
 				String sig = event;
-				sig = sig.replace('|', '_');
-				return "|" + sig + "|";
+				sig = sig.replace(';', '_');
+				return ";" + sig + ";";
 			}
 			return "";
 		}
 		StringBuilder out = new StringBuilder();
 		if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.MESSAGE) {
 			String sig = event;
-			sig = sig.replace('|', '_');
-			out.append("|").append(sig);
+			sig = sig.replace(';', '_');
+			out.append(";").append(sig);
 		}
 		for (String msg : messageTriggers.values()) {
-			msg = msg.replace('|', '_');
-			out.append("|").append(msg);
+			msg = msg.replace(';', '_');
+			out.append(";").append(msg);
 		}
 		if (out.length() > 0)
-			out.append("|");
+			out.append(";");
 		return out.toString();
 	}
 	
 	public static String getSignalAsString(String entity) {
-		entity = entity.replace('|', '_');
-		return "|" + entity + "|";
+		entity = entity.replace(';', '_');
+		return ";" + entity + ";";
 	}
 	
 	public static String getMessageAsString(String entity) {
-		entity = entity.replace('|', '_');
-		return "|" + entity + "|";
+		entity = entity.replace(';', '_');
+		return ";" + entity + ";";
 	}
 
 	public String getCanonicalName() {

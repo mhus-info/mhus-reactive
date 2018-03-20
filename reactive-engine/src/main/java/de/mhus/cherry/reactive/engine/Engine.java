@@ -286,6 +286,37 @@ public class Engine extends MLog {
 		}
 	}
 	
+	public void resaveFlowNode(UUID nodeId) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		EngineContext context = createContext(caze, node);
+		
+		{
+			node.getSchedulers().clear();
+			HashMap<String, Long> list = context.getENode().getSchedulerList();
+			if (list != null)
+				node.getSchedulers().putAll(list);
+		}
+		{
+			node.getMessageTriggers().clear();
+			HashMap<String, String> list = context.getENode().getMessageList();
+			if (list != null)
+				node.getMessageTriggers().putAll(list);
+		}
+		{
+			node.getSignalTriggers().clear();
+			HashMap<String, String> list = context.getENode().getSignalList();
+			if (list != null)
+				node.getSignalTriggers().putAll(list);
+		}
+		storage.saveFlowNode(node);
+	}
+	
+	public void resaveCase(UUID caseId) throws IOException, NotFoundException {
+		PCase caze = getCase(caseId);
+		storage.saveCase(caze);
+	}
+	
 	private void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException {
 		config.listener.saveFlowNode(flow,activity);
 		PCase caze = context.getPCase();
@@ -407,7 +438,7 @@ public class Engine extends MLog {
 	
 				// check for timer trigger
 				Entry<String, Long> nextScheduled = pNode.getNextScheduled();
-				if (!nextScheduled.getKey().equals("")) {
+				if (nextScheduled != null && !nextScheduled.getKey().equals("")) {
 					// do trigger
 					Trigger trigger = getTrigger(context,nextScheduled.getKey());
 					if (trigger == null) {
