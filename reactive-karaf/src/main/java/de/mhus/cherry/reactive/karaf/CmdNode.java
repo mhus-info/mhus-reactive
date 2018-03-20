@@ -38,6 +38,20 @@ public class CmdNode extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("running")) {
+			
+			ConsoleTable table = new ConsoleTable();
+			table.fitToConsole();
+			table.setHeaderValues("Id","Case","Name","Time","State","Type","CaseId");
+			for (UUID nodeId : api.getEngine().getRunning()) {
+				PNode node = api.getEngine().getFlowNode(nodeId);
+				PCase caze = api.getEngine().getCase(node.getCaseId());
+				String time = MTimeInterval.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
+				table.addRowValues(node.getId(),caze.getName(), node.getName(),time,node.getState(),node.getType(), node.getCaseId());
+			}
+			table.print(System.out);
+
+		} else
 		if (cmd.equals("list")) {
 			PNode.STATE_NODE state = null;
 			if (parameters != null) state = PNode.STATE_NODE.valueOf(parameters[0].toUpperCase());

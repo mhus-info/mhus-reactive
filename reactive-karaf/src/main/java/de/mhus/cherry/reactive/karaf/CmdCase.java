@@ -38,6 +38,10 @@ public class CmdCase extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("migrate")) {
+			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
+			api.getEngine().migrateCase(caze.getId(), parameters[1], parameters[2]);
+		} else
 		if (cmd.equals("view")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
 			System.out.println("Uri      : " + caze.getUri());

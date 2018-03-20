@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.osgi.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,6 +21,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
+import de.mhus.cherry.reactive.engine.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
@@ -26,6 +29,7 @@ import de.mhus.cherry.reactive.engine.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.EngineUtil;
 import de.mhus.cherry.reactive.engine.PoolValidator;
 import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
+import de.mhus.cherry.reactive.engine.PoolValidator.LEVEL;
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
@@ -84,6 +88,16 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 
 	@Override
+	public String addProcess(File file, boolean remember) throws FileNotFoundException {
+		if (!file.exists()) throw new FileNotFoundException(file.getAbsolutePath());
+		DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {file});
+		addProcess(file.getAbsolutePath(),loader);
+		if (remember)
+			config.persistent.getParameters().put("osgi.process.path:", file.getAbsolutePath());
+		return loader.getProcessCanonicalName();
+	}
+	
+	@Override
 	public boolean addProcess(String info, ProcessLoader loader) {
 		if (info == null) {
 			info = "";
@@ -141,8 +155,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			validator = new PoolValidator(pool);
 			validator.validate();
 			for (PoolValidator.Finding finding : validator.getFindings()) {
-				log().e("***",finding);
-				foundError = true;
+				if (finding.getLevel() == LEVEL.ERROR || finding.getLevel() == LEVEL.FATAL ) {
+					log().e("***",finding);
+					foundError = true;
+				}
 			}
 		}
 		if (foundError) {
@@ -363,6 +379,30 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			config.listener = EngineListenerUtil.createLogInfoListener();
 			
 			engine = new Engine(config);
+			
+			// auto add process
+			for (String key : config.persistent.getParameters().keySet()) {
+				if (key.startsWith("osgi.process.path:")) {
+					String name = key.substring(18);
+					String fileName = String.valueOf(config.persistent.getParameters().get(key));
+					File file = new File(fileName);
+					if (file.exists()) {
+						addProcess(name, new DefaultProcessLoader(new File[] {file}));
+					}
+				}
+			}
+			
+			// auto deploy
+			synchronized (availableProcesses) {
+				for (ProcessInfo info : availableProcesses.values()) {
+					if (autoDeploy && isProcessActivated(info.canonicalName) )
+						try {
+							deploy(info.canonicalName, false, false);
+						} catch (MException e) {
+							log().e(info.canonicalName,e);
+						}
+				}
+			}
 		} catch (Throwable t) {
 			engine = null;
 			config = null;

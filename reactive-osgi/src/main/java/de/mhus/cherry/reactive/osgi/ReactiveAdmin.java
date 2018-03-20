@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.osgi;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,5 +40,7 @@ public interface ReactiveAdmin {
 	STATE_ENGINE getEngineState();
 
 	String getProcessInfo(String name);
+
+	String addProcess(File file, boolean remember) throws FileNotFoundException;
 
 }

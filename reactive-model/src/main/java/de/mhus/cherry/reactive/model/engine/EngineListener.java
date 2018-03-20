@@ -59,7 +59,7 @@ public interface EngineListener {
 
 	void retryFlowNode(PNode node);
 
-	void migrateCase(PCase caze, Migrator migrator);
+	void migrateCase(PCase caze, String uri, String migrator);
 
 	void restoreCase(PCase caze);
 

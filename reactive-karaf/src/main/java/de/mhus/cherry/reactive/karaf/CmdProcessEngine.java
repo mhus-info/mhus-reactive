@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.karaf;
 
+import java.io.File;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;
@@ -30,6 +31,13 @@ public class CmdProcessEngine extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("uninstall")) {
+			api.removeProcess(parameters[0]);
+		} else
+		if (cmd.equals("install")) {
+			File file = new File(parameters[0]);
+			System.out.println(api.addProcess(file, true));
+		} else
 		if (cmd.equals("cleanup")) {
 			api.getEngine().cleanup();
 			System.out.println("OK");

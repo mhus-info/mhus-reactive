@@ -1087,12 +1087,12 @@ public class Engine extends MLog {
 	 * @throws MException
 	 * @throws IOException
 	 */
-	public void migrateCase(UUID caseId, Migrator migrator, String toUri) throws MException, IOException {
+	public void migrateCase(UUID caseId, String toUri, String migrator) throws MException, IOException {
 		PCase caze = getCase(caseId);
 		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
 			throw new MException("already is not suspended",caseId);
 		
-		config.listener.migrateCase(caze,migrator);
+		config.listener.migrateCase(caze, toUri, migrator);
 		
 		// create from context
 		EngineContext fromContext = createContext(caze);
@@ -1107,6 +1107,19 @@ public class Engine extends MLog {
 		toContext.setEProcess(process);
 		toContext.setEPool(pool);
 		
+		// create migrator
+		Migrator migratorObj = null;
+		for (Class<? extends Migrator> ano : process.getProcessDescription().migrator())
+				if (ano.getName().equals(migrator)) {
+					try {
+						migratorObj = ano.newInstance();
+					} catch (InstantiationException | IllegalAccessException e) {
+						throw new MException(toUri,migrator,e);
+					}
+				}
+		if (migratorObj == null)
+			throw new MException("migrator not found",migrator);
+		
 		// load all nodes
 		LinkedList<PNode> nodes = new LinkedList<>();
 		for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
@@ -1120,7 +1133,7 @@ public class Engine extends MLog {
 			archive.saveFlowNode(node);
 
 		// migrate
-		migrator.doMigrate(new EngineMigrateContext(fromContext, toContext, caze, nodes));
+		migratorObj.doMigrate(new EngineMigrateContext(fromContext, toContext, caze, nodes));
 		
 		// validate output
 		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
