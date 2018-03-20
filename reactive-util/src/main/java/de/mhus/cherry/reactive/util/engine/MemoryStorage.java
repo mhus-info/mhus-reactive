@@ -136,6 +136,16 @@ public class MemoryStorage implements StorageProvider {
 	}
 
 	@Override
+	public Result<PNodeInfo> getAssignedFlowNodes(String user) throws IOException {
+		ResultList<PNodeInfo> out = new ResultList<>();
+		flowNodes.values().forEach(value -> {
+			if (user.equals(value.getAssignedUser()))
+				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
+		});
+		return out;
+	}
+
+	@Override
 	public PEngine loadEngine() {
 		return engine;
 	}
@@ -144,4 +154,5 @@ public class MemoryStorage implements StorageProvider {
 	public void saveEngine(PEngine engine) {
 		this.engine = new PEngine(engine);
 	}
+
 }

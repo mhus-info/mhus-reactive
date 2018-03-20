@@ -14,6 +14,7 @@ import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
+import de.mhus.cherry.reactive.model.activity.Actor;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
@@ -1302,6 +1303,45 @@ public class Engine extends MLog {
 		} catch (NotFoundException | IOException e) {
 			log().e(e);
 		}
+	}
+
+	public boolean hasReadAccess(String uri, String user) {
+				
+		MUri muri = MUri.toUri(uri);
+		try {
+			EProcess process = getProcess(muri);
+			EPool pool = getPool(process, muri);
+			EngineContext context = new EngineContext(this);
+			context.setUri(uri);
+			context.setEProcess(process);
+			context.setEPool(pool);
+			
+			{
+				Class<? extends Actor>[] actorClasss = pool.getPoolDescription().actorRead();
+				for (Class<? extends Actor> actorClass : actorClasss) {
+					Actor actor = actorClass.newInstance();
+					((ContextRecipient)actor).setContext(context);
+					boolean hasAccess = actor.hasAccess(user);
+					if (hasAccess) return true;
+				}
+			}
+			{
+				Class<? extends Actor>[] actorClasss = pool.getPoolDescription().actorWrite();
+				for (Class<? extends Actor> actorClass : actorClasss) {
+					Actor actor = actorClass.newInstance();
+					((ContextRecipient)actor).setContext(context);
+					boolean hasAccess = actor.hasAccess(user);
+					if (hasAccess) return true;
+				}
+			}
+			
+			return false;
+			
+		} catch (Throwable t) {
+			log().e(uri,user,t);
+			return false;
+		}
+
 	}
 
 }

@@ -165,6 +165,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("name", flow.getName());
 			prop.put("signal", flow.getSignalsAsString());
 			prop.put("message", flow.getMessagesAsString());
+			if (flow.getAssignedUser() != null)
+				prop.put("assigned", flow.getAssignedUser());
 			Entry<String, Long> scheduled = flow.getNextScheduled();
 			long scheduledLong = 0;
 			if (scheduled != null && scheduled.getValue() != null)
@@ -172,11 +174,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("scheduled", scheduledLong);
 			
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET content_=$content$,modified_=$modified$,state_=$state$,signal_=$signal$,message_=$message$,scheduled_=$scheduled$ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET content_=$content$,modified_=$modified$,state_=$state$,signal_=$signal$,message_=$message$,scheduled_=$scheduled$,assigned_=$assigned$ WHERE id_=$id$");
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
-				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ (id_,case_,content_,created_,modified_,state_,name_,scheduled_) VALUES ($id$,$case$,$content$,$created$,$modified$,$state$,$name$,$scheduled$)");
+				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ (id_,case_,content_,created_,modified_,state_,name_,scheduled_,assigned_) VALUES ($id$,$case$,$content$,$created$,$modified$,$state$,$name$,$scheduled$,$assigned$)");
 				sta.executeUpdate(prop);
 				sta.close();
 			}
@@ -323,6 +325,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			throw new IOException(e);
 		}
 	}
+
+	@Override
+	public Result<PNodeInfo> getAssignedFlowNodes(String user) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			if (user == null) {
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE assigned is null");
+			} else {
+				prop.setString("user", user);
+				sta = con.createStatement("SELECT id_,case_ FROM " + prefix + "_node_ WHERE assigned_=$user$");
+			}
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}	
 
 	@Override
 	public PEngine loadEngine() throws IOException, NotFoundException {
@@ -482,5 +503,6 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				throw new MRuntimeException(e);
 			}
 		}
-	}	
+	}
+
 }
