@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
-import de.mhus.cherry.reactive.model.activity.AActor;
+import de.mhus.cherry.reactive.model.activity.Actor;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.APool;
@@ -47,6 +47,7 @@ public class PoolValidator {
 		try {
 			elem.getElementClass().newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
 			findings.add(new Finding(LEVEL.FATAL, name, "Can't initialize: " + e.toString()));
 			return;
 		}
@@ -57,10 +58,6 @@ public class PoolValidator {
 		}
 		if (elem.is(APool.class)) {
 			validatePool(name,elem);
-			return;
-		}
-		if (elem.is(AActor.class)) {
-			validateActor(name, elem);
 			return;
 		}
 		if (elem.is(AActivity.class)) {
@@ -133,11 +130,6 @@ public class PoolValidator {
 		}
 	}
 	
-	private void validateActor(String name, EElement elem) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private void validatePool(String name, EElement elem) {
 		// TODO Auto-generated method stub
 		

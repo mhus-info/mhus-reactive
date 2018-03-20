@@ -217,10 +217,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			MProperties prop = new MProperties();
 			DbStatement sta = null;
 			if (state == null) {
-				sta = con.createStatement("SELECT id_ FROM " + prefix + "_case_");
+				sta = con.createStatement("SELECT id_,uri_ FROM " + prefix + "_case_");
 			} else {
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_ FROM " + prefix + "_case_ WHERE state_=$state$");
+				sta = con.createStatement("SELECT id_,uri_ FROM " + prefix + "_case_ WHERE state_=$state$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultCase(con,res);
@@ -425,7 +425,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		public PCaseInfo next() {
 			if (res == null) return null;
 			try {
-				PCaseInfo out = new PCaseInfo(UUID.fromString(res.getString("id_")));
+				PCaseInfo out = new PCaseInfo(UUID.fromString(res.getString("id_")), res.getString("uri_"));
 				hasNext = res.next();
 				return out;
 			} catch (Exception e) {

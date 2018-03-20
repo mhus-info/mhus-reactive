@@ -10,11 +10,11 @@ import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActivityDescription {
 
-//	public Class<? extends AActivity<?>>[] outputs();
 	public Output[] outputs() default {};
 	public Trigger[] triggers() default {};
 	public Class<? extends ASwimlane<?>> lane() default DefaultSwimlane.class;
 	String description() default "";
+	String displayName() default "";
 	String caption() default "";
 	public Class<? extends RuntimeNode> runtime() default RuntimeNode.class;
 	public String name() default "";

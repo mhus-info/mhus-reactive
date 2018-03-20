@@ -1117,6 +1117,12 @@ public class Engine extends MLog {
 						throw new MException(toUri,migrator,e);
 					}
 				}
+		if (migratorObj == null) {
+			try {
+				migratorObj = (Migrator) this.getClass().getClassLoader().loadClass(migrator).newInstance();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			}
+		}
 		if (migratorObj == null)
 			throw new MException("migrator not found",migrator);
 		

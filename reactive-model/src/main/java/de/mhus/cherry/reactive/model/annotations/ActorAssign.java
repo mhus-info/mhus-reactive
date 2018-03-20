@@ -3,9 +3,9 @@ package de.mhus.cherry.reactive.model.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import de.mhus.cherry.reactive.model.activity.AActor;
+import de.mhus.cherry.reactive.model.activity.Actor;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActorAssign {
-	Class<? extends AActor<?>> value();
+	Class<? extends Actor> value();
 }

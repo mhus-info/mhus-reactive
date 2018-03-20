@@ -1,24 +1,22 @@
 package de.mhus.cherry.reactive.util.activity;
 
-import de.mhus.cherry.reactive.model.activity.AActor;
-import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.activity.Actor;
 import de.mhus.cherry.reactive.model.annotations.ActorDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
-public class RActor<P extends APool<?>> implements AActor<P>, ContextRecipient {
+public class RActor implements Actor, ContextRecipient {
 
-	private ProcessContext<P> context;
+	private ProcessContext<?> context;
 
-	protected ProcessContext<P> getContext() {
+	protected ProcessContext<?> getContext() {
 		return context;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void setContext(ProcessContext<?> context) {
-		this.context = (ProcessContext<P>) context;
+		this.context = (ProcessContext<?>) context;
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public class MemoryStorage implements StorageProvider {
 	@Override
 	public Result<PCaseInfo> getCases(STATE_CASE state) throws IOException {
 		ResultList<PCaseInfo> out = new ResultList<>();
-		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(new PCaseInfo(entry.getId())); } );
+		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(new PCaseInfo(entry.getId(),entry.getUri())); } );
 		return out;
 	}
 
