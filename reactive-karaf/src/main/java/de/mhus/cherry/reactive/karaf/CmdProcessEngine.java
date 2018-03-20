@@ -23,7 +23,7 @@ public class CmdProcessEngine extends MLog implements Action {
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " parameter [<key=value>*] - set engine configuration parameters. Will not be saved by default.\n"
 			+ " fire external <nodeId> [<key=value>*]          - fire external event\n"
-			+ " fire message <caseId> <message> [<key=value>*] - fire message to case\n"
+			+ " fire message <caseId> <message> [<key=value>*] - fire message to case or * for any case\n"
 			+ " fire signal <signal> [<key=value>*]            - fire signal to the engine\n"
 			+ " uninstall <name>        - uninstall process\n"
 			+ " install [<path>*]       - install process, give pathes to jar files or 'classes' folders\n"
@@ -69,7 +69,10 @@ public class CmdProcessEngine extends MLog implements Action {
 					String v = MString.afterIndex(parts, '=');
 					p.put(k, v);
 				}
-				api.getEngine().fireMessage(UUID.fromString(parameters[1]), parameters[2], p);
+				if (parameters[1].equals("*"))
+					api.getEngine().fireMessage(null, parameters[2], p);
+				else
+					api.getEngine().fireMessage(UUID.fromString(parameters[1]), parameters[2], p);
 				System.out.println("OK");
 			} else
 			if (parameters[0].equals("signal")) {
