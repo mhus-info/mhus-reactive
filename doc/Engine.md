@@ -24,6 +24,10 @@ P* classes
 - P stands for Persistent
 - These are the classes they are persisted with StorageProviders
 
+I* classes
+- ICase, INode (FlowNode)
+- Classes to access the model via user interface. The classes will prepare the correct view and
+  check access rights
 
 
 == Parameters

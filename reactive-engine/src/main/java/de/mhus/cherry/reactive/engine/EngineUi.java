@@ -18,6 +18,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.matcher.Context;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.NotFoundException;
@@ -27,6 +28,7 @@ public class EngineUi extends MLog {
 	private Engine engine;
 	private String user;
 	private SoftHashMap<String, Boolean> cacheAccess = new SoftHashMap<>();
+	private SoftHashMap<String, EngineContext> cacheContext = new SoftHashMap<>();
 
 	public EngineUi(Engine engine, String user) {
 		this.engine = engine;
@@ -41,7 +43,7 @@ public class EngineUi extends MLog {
 			if (hasReadAccess(info.getUri())) {
 				if (cnt >= first) {
 					PCase caze = engine.getCase(info.getId());
-					out.add(new ICase(caze));
+					out.add(new ICase(getContext(caze.getUri()), caze));
 				}
 				cnt++;
 				if (out.size() >= size) break;
@@ -60,7 +62,7 @@ public class EngineUi extends MLog {
 				try {
 					if (cnt >= first) {
 						PNode node = engine.getFlowNode(info.getId());
-						out.add(new INode(caze, node));
+						out.add(new INode(getContext(caze.getUri()), caze, node));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -81,7 +83,7 @@ public class EngineUi extends MLog {
 			try {
 				if (cnt >= first) {
 					PNode node = engine.getFlowNode(info.getId());
-					out.add(new INode(caze, node));
+					out.add(new INode(getContext(caze.getUri()), caze, node));
 				}
 				cnt++;
 			} catch (Exception e) {
@@ -102,7 +104,7 @@ public class EngineUi extends MLog {
 				try {
 					if (cnt >= first) {
 						PNode node = engine.getFlowNode(info.getId());
-						out.add(new INode(caze, node));
+						out.add(new INode(getContext(caze.getUri()),caze, node));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -124,7 +126,7 @@ public class EngineUi extends MLog {
 					try {
 						if (cnt >= first) {
 							PNode node = engine.getFlowNode(info.getId());
-							out.add(new INode(caze, node));
+							out.add(new INode(getContext(caze.getUri()), caze, node));
 						}
 						cnt++;
 					} catch (Exception e) {
@@ -136,6 +138,28 @@ public class EngineUi extends MLog {
 		return out;
 	}
 	
+	private EngineContext getContext(String uri) {
+		synchronized (cacheContext) {
+			EngineContext context = cacheContext.get(uri);
+			if (context != null) return context;
+		}
+		MUri muri = MUri.toUri(uri);
+		try {
+			EProcess process = engine.getProcess(muri);
+			EPool pool = engine.getPool(process, muri);
+			EngineContext context = new EngineContext(engine);
+			context.setEProcess(process);
+			context.setEPool(pool);
+			synchronized (cacheContext) {
+				cacheContext.put(uri, context);
+			}
+			return context;
+		} catch (Throwable t) {
+			log().e(uri,user,t);
+			return null;
+		}
+	}
+
 	public boolean hasReadAccess(String uri) {	
 		synchronized (cacheAccess) {
 			Boolean hasAccess = cacheAccess.get(uri);
