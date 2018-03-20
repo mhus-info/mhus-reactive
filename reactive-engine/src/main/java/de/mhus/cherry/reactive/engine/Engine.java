@@ -41,6 +41,7 @@ import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.errors.TaskException;
 import de.mhus.cherry.reactive.model.errors.TechnicalException;
 import de.mhus.cherry.reactive.model.migrate.Migrator;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.IProperties;
@@ -786,9 +787,9 @@ public class Engine extends MLog {
 				0,
 				STATE_NODE.NEW,
 				STATE_NODE.NEW, 
-				null,
-				null,
-				null,
+				start.getSchedulerList(),
+				start.getSignalList(),
+				start.getMessageList(),
 				false, 
 				TYPE_NODE.NODE, 
 				null, 
@@ -821,9 +822,9 @@ public class Engine extends MLog {
 				0,
 				STATE_NODE.NEW,
 				STATE_NODE.NEW, 
-				null,
-				null,
-				null,
+				start.getSchedulerList(),
+				start.getSignalList(),
+				start.getMessageList(),
 				false, 
 				TYPE_NODE.NODE, 
 				null, 
@@ -1437,7 +1438,7 @@ public class Engine extends MLog {
 		}
 	}
 	
-	public void fireMessage(UUID caseId, String message, Map<String, Object> parameters) throws NotFoundException, IOException {
+	public void fireMessage(UUID caseId, String message, Map<String, Object> parameters) throws Exception {
 		
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
@@ -1446,12 +1447,31 @@ public class Engine extends MLog {
 			synchronized (caze) {
 				if (node.getType() == TYPE_NODE.MESSAGE) {
 					if (node.getState() == STATE_NODE.SUSPENDED) {
-						if (node.getSuspendedState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeInfo.getId());
-						node.setSuspendedState(STATE_NODE.RUNNING);
+						log().w("message for suspended node will not be delivered",node,message);
+						continue;
 					} else {
-						if (node.getState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeInfo.getId());
-						node.setState(STATE_NODE.RUNNING);
+						if (node.getState() != STATE_NODE.WAITING) continue;
 					}
+					try {
+						// find a trigger with the name
+						EngineContext context = createContext(caze, node);
+						for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+							if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
+								// found one ... start new, close current
+								PNode nextNode = createActivity(context, node, context.getENode());
+								nextNode.setMessage(parameters);
+								saveFlowNode(context, nextNode, null);
+								closeFlowNode(context, node, STATE_NODE.CLOSED);
+								res.close();
+								return;
+							}
+						}
+					} catch(MException e) {
+						config.listener.error(node,e);
+						log().e(node,e);
+						continue;
+					}
+					node.setState(STATE_NODE.RUNNING);
 					node.setMessage(parameters);
 					storage.saveFlowNode(node);
 					res.close();
@@ -1472,12 +1492,31 @@ public class Engine extends MLog {
 				synchronized (caze) {
 					if (node.getType() == TYPE_NODE.SIGNAL) {
 						if (node.getState() == STATE_NODE.SUSPENDED) {
-							if (node.getSuspendedState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeInfo.getId());
-							node.setSuspendedState(STATE_NODE.RUNNING);
+							log().w("signal for suspended node will not be delivered",node,signal);
+							continue;
 						} else {
 							if (node.getState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeInfo.getId());
-							node.setState(STATE_NODE.RUNNING);
 						}
+						try {
+							// find a trigger with the name
+							EngineContext context = createContext(caze, node);
+							for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+								if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
+									// found one ... start new, close current
+									PNode nextNode = createActivity(context, node, context.getENode());
+									nextNode.setMessage(parameters);
+									saveFlowNode(context, nextNode, null);
+									closeFlowNode(context, node, STATE_NODE.CLOSED);
+									continue;
+								}
+							}
+						} catch(MException e) {
+							config.listener.error(node,e);
+							log().e(node,e);
+							continue;
+						}
+						// trigger not found - its the message
+						node.setState(STATE_NODE.RUNNING);
 						node.setMessage(parameters);
 						storage.saveFlowNode(node);
 					}

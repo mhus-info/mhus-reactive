@@ -13,6 +13,6 @@ public @interface Trigger {
 	String name() default "";
 	String description() default "";
 	Class<? extends AActivity<?>> activity();
-	
+	String event() default "";
 	
 }

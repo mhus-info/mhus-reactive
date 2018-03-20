@@ -65,7 +65,9 @@ public class PNode implements Externalizable {
 	protected int tryCount = EngineConst.DEFAULT_TRY_COUNT;
 	private long activityTimeout = EngineConst.DEFAULT_ACTIVITY_TIMEOUT;
 	private Map<String, Object> message;
-
+	
+	private String event;
+	
 	public PNode() {}
 	
 	public PNode(UUID id, UUID caseId, String name, String canonicalName, long creationDate, long lastRunDate, STATE_NODE state,
@@ -118,6 +120,7 @@ public class PNode implements Externalizable {
 		this.tryCount = clone.getTryCount();
 		if (clone.getMessage() != null)
 			this.message = new HashMap<>(clone.getMessage());
+		this.event = clone.getEvent();
 	}
 	
 	public UUID getCaseId() {
@@ -202,8 +205,20 @@ public class PNode implements Externalizable {
 	}
 
 	public String getSignalsAsString() {
-		if (signalTriggers == null) return "";
+		if (signalTriggers == null) {
+			if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.SIGNAL) {
+				String sig = event;
+				sig = sig.replace('|', '_');
+				return "|" + sig + "|";
+			}
+			return "";
+		}
 		StringBuilder out = new StringBuilder();
+		if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.SIGNAL) {
+			String sig = event;
+			sig = sig.replace('|', '_');
+			out.append("|").append(sig);
+		}
 		for (String sig : signalTriggers.values()) {
 			sig = sig.replace('|', '_');
 			out.append("|").append(sig);
@@ -214,8 +229,20 @@ public class PNode implements Externalizable {
 	}
 	
 	public String getMessagesAsString() {
-		if (messageTriggers == null) return "";
+		if (messageTriggers == null) {
+			if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.MESSAGE) {
+				String sig = event;
+				sig = sig.replace('|', '_');
+				return "|" + sig + "|";
+			}
+			return "";
+		}
 		StringBuilder out = new StringBuilder();
+		if (event != null && state == STATE_NODE.WAITING && type == TYPE_NODE.MESSAGE) {
+			String sig = event;
+			sig = sig.replace('|', '_');
+			out.append("|").append(sig);
+		}
 		for (String msg : messageTriggers.values()) {
 			msg = msg.replace('|', '_');
 			out.append("|").append(msg);
@@ -322,7 +349,6 @@ public class PNode implements Externalizable {
 		return message;
 	}
 
-
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(1);
@@ -349,6 +375,7 @@ public class PNode implements Externalizable {
 		out.writeObject(runtimeNode);
 		out.writeInt(tryCount);
 		out.writeObject(message);
+		out.writeObject(event);
 		
 		out.flush();
 	}
@@ -381,7 +408,16 @@ public class PNode implements Externalizable {
 		runtimeNode = (UUID) in.readObject();
 		tryCount = in.readInt();
 		message = (Map<String, Object>) in.readObject();
+		event = (String) in.readObject();
 		
+	}
+
+	public String getEvent() {
+		return event;
+	}
+
+	public void setEvent(String event) {
+		this.event = event;
 	}
 	
 }

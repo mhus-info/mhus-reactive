@@ -372,6 +372,46 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public String toString() {
 			return getCanonicalName();
 		}
+
+		@Override
+		public HashMap<String, Long> getSchedulerList() {
+			Trigger[] triggers = getTriggers();
+			if (triggers.length == 0) return null;
+			HashMap<String, Long> out = new HashMap<>();
+			for (Trigger trigger : triggers) {
+				if (trigger.type() == TYPE.TIMER) {
+					long time = EngineUtil.getNextScheduledTime(trigger.timer());
+					out.put(trigger.name(), time);
+				}
+			}
+			return out;
+		}
+
+		@Override
+		public HashMap<String, String> getSignalList() {
+			Trigger[] triggers = getTriggers();
+			if (triggers.length == 0) return null;
+			HashMap<String, String> out = new HashMap<>();
+			for (Trigger trigger : triggers) {
+				if (trigger.type() == TYPE.SIGNAL) {
+					out.put(trigger.name(), trigger.event());
+				}
+			}
+			return out;
+		}
+
+		@Override
+		public HashMap<String, String> getMessageList() {
+			Trigger[] triggers = getTriggers();
+			if (triggers.length == 0) return null;
+			HashMap<String, String> out = new HashMap<>();
+			for (Trigger trigger : triggers) {
+				if (trigger.type() == TYPE.MESSAGE) {
+					out.put(trigger.name(), trigger.event());
+				}
+			}
+			return out;
+		}
 	}
 
 	public Set<String> getProcessNames() {
