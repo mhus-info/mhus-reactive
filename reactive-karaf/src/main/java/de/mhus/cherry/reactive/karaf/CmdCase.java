@@ -26,7 +26,15 @@ import de.mhus.lib.core.console.ConsoleTable;
 public class CmdCase extends MLog implements Action {
 
 
-	@Argument(index=0, name="cmd", required=true, description="Command: ", multiValued=false)
+	@Argument(index=0, name="cmd", required=true, description="Command:\n"
+			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
+			+ " view <id>    - view case details\n"
+			+ " nodes <id>   - print case bound nodes\n"
+			+ " list [state] - list all cases\n"
+			+ " resume <id>  - resume case\n"
+			+ " suspend <id> - suspend case\n"
+			+ " archive <id> - archive case\n"
+			+ "", multiValued=false)
     String cmd;
 
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)

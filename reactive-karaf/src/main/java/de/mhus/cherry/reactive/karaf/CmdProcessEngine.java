@@ -13,13 +13,31 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MString;
 
 @Command(scope = "reactive", name = "pengine", description = "Engine modifiations")
 @Service
 public class CmdProcessEngine extends MLog implements Action {
 
 
-	@Argument(index=0, name="cmd", required=true, description="Command: parameter", multiValued=false)
+	@Argument(index=0, name="cmd", required=true, description="Command:\n"
+			+ " parameter [<key=value>*] - set engine configuration parameters. Will not be saved by default.\n"
+			+ " fire external <nodeId> [<key=value>*]          - fire external event\n"
+			+ " fire message <caseId> <message> [<key=value>*] - fire message to case\n"
+			+ " fire signal <signal> [<key=value>*]            - fire signal to the engine\n"
+			+ " uninstall <name>        - uninstall process\n"
+			+ " install [<path>*]       - install process, give pathes to jar files or 'classes' folders\n"
+			+ " cleanup                 - execute engine cleanup\n"
+			+ " execute                 - execute engine next step\n"
+			+ " save                    - save engine configuration\n"
+			+ " load                    - load engine configuration\n"
+			+ " state                   - print current engine state\n"
+			+ " suspend                 - suspent automatic engine steps\n"
+			+ " resume                  - resume automatic engine steps\n"
+			+ " start                   - start engine\n"
+			+ " stop                    - stop and destroy engine\n"
+			+ " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
+			+ "", multiValued=false)
     String cmd;
 
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
@@ -31,6 +49,44 @@ public class CmdProcessEngine extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("fire")) {
+			if (parameters[0].equals("external")) {
+				MProperties p = new MProperties();
+				for (int i = 2; i < parameters.length; i++) {
+					String parts = parameters[i];
+					String k = MString.beforeIndex(parts, '=');
+					String v = MString.afterIndex(parts, '=');
+					p.put(k, v);
+				}
+				api.getEngine().fireExternal(UUID.fromString(parameters[1]), p);
+				System.out.println("OK");
+			} else
+			if (parameters[0].equals("message")) {
+				MProperties p = new MProperties();
+				for (int i = 3; i < parameters.length; i++) {
+					String parts = parameters[i];
+					String k = MString.beforeIndex(parts, '=');
+					String v = MString.afterIndex(parts, '=');
+					p.put(k, v);
+				}
+				api.getEngine().fireMessage(UUID.fromString(parameters[1]), parameters[2], p);
+				System.out.println("OK");
+			} else
+			if (parameters[0].equals("signal")) {
+				MProperties p = new MProperties();
+				for (int i = 2; i < parameters.length; i++) {
+					String parts = parameters[i];
+					String k = MString.beforeIndex(parts, '=');
+					String v = MString.afterIndex(parts, '=');
+					p.put(k, v);
+				}
+				api.getEngine().fireSignal(parameters[1], p);
+				System.out.println("OK");
+			} else {
+				System.out.println("Unknown type");
+			}
+				
+		} else
 		if (cmd.equals("uninstall")) {
 			api.removeProcess(parameters[0]);
 		} else

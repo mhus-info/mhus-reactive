@@ -1,6 +1,5 @@
 package de.mhus.cherry.reactive.examples.simple1;
 
-import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
@@ -10,8 +9,9 @@ import de.mhus.cherry.reactive.util.activity.RServiceTask;
 
 @ActivityDescription(
 		outputs = {
-				@Output(activity=S1Step2.class),
-				@Output(activity=S1Step3.class)
+				@Output(name="step2",activity=S1Step2.class),
+				@Output(name="step3",activity=S1Step3.class),
+				@Output(name="human",activity=S1HumanStep.class)
 				},
 		lane = S1Lane1.class,
 		triggers = {
@@ -25,7 +25,7 @@ public class S1Step1 extends RServiceTask<S1Pool> {
 	private String localText;
 	
 	@Override
-	public Class<? extends AActivity<S1Pool>> doExecute()  throws Exception {
+	public String doExecute()  throws Exception {
 		
 		switch( getPool().getText1() ) {
 		case "error1":
@@ -33,9 +33,11 @@ public class S1Step1 extends RServiceTask<S1Pool> {
 		case "fatal":
 			throw new Exception("Mist");
 		case "second":
-			return S1Step2.class;
+			return "step2";
 		case "third":
-			return S1Step3.class;
+			return "step3";
+		case "human":
+			return "human";
 		}
 		return null;
 	}

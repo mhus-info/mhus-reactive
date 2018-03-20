@@ -64,6 +64,7 @@ public class PNode implements Externalizable {
 	
 	protected int tryCount = EngineConst.DEFAULT_TRY_COUNT;
 	private long activityTimeout = EngineConst.DEFAULT_ACTIVITY_TIMEOUT;
+	private Map<String, Object> message;
 
 	public PNode() {}
 	
@@ -115,6 +116,8 @@ public class PNode implements Externalizable {
 		this.assignedUser = clone.getAssignedUser();
 		this.runtimeNode = clone.getRuntimeId();
 		this.tryCount = clone.getTryCount();
+		if (clone.getMessage() != null)
+			this.message = new HashMap<>(clone.getMessage());
 	}
 	
 	public UUID getCaseId() {
@@ -310,6 +313,15 @@ public class PNode implements Externalizable {
 	public void setActivityTimeout(long activityTimeout) {
 		this.activityTimeout = activityTimeout;
 	}
+	
+	public void setMessage(Map<String, Object> message) {
+		this.message = message;
+	}
+	
+	public Map<String, Object> getMessage() {
+		return message;
+	}
+
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -336,9 +348,12 @@ public class PNode implements Externalizable {
 		out.writeObject(assignedUser);
 		out.writeObject(runtimeNode);
 		out.writeInt(tryCount);
+		out.writeObject(message);
+		
 		out.flush();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		int version = in.readInt();
@@ -365,6 +380,8 @@ public class PNode implements Externalizable {
 		assignedUser = (String) in.readObject();
 		runtimeNode = (UUID) in.readObject();
 		tryCount = in.readInt();
+		message = (Map<String, Object>) in.readObject();
+		
 	}
 	
 }

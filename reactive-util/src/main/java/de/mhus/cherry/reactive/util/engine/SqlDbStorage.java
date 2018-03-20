@@ -285,7 +285,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 
 	@Override
-	public Result<PNodeInfo> getSignaledFlowNodes(STATE_NODE state, String signal) throws IOException {
+	public Result<PNodeInfo> getSignalFlowNodes(STATE_NODE state, String signal) throws IOException {
 		try {
 			DbConnection con = pool.getConnection();
 			MProperties prop = new MProperties();

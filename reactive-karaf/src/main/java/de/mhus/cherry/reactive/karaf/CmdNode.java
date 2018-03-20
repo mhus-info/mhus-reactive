@@ -26,7 +26,13 @@ import de.mhus.lib.core.console.ConsoleTable;
 public class CmdNode extends MLog implements Action {
 
 
-	@Argument(index=0, name="cmd", required=true, description="Command: ", multiValued=false)
+	@Argument(index=0, name="cmd", required=true, description="Command:\n"
+			+ " running       - print currently running nodes\n"
+			+ " list [state]  - list all nodes\n"
+			+ " view <id>     - view node details\n"
+			+ " cancel <id>   - cancel node\n"
+			+ " retry <id>    - set node back to running\n"
+			+ "", multiValued=false)
     String cmd;
 
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)

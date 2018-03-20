@@ -93,7 +93,7 @@ public interface StorageProvider {
 	 */
 	Result<PNodeInfo> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled) throws IOException;
 	
-	Result<PNodeInfo> getSignaledFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
+	Result<PNodeInfo> getSignalFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
 	
 	Result<PNodeInfo> getMessageFlowNodes(UUID caseId, PNode.STATE_NODE state, String message) throws IOException;
 

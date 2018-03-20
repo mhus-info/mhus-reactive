@@ -105,7 +105,7 @@ public class MemoryStorage implements StorageProvider {
 	}
 
 	@Override
-	public Result<PNodeInfo> getSignaledFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
+	public Result<PNodeInfo> getSignalFlowNodes(de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state,
 	        String signal) throws IOException {
 		ResultList<PNodeInfo> out = new ResultList<>();
 		String intSig = PNode.getSignalAsString(signal);
