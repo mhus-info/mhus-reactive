@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
+import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
@@ -43,6 +44,7 @@ import de.mhus.cherry.reactive.model.errors.TechnicalException;
 import de.mhus.cherry.reactive.model.migrate.Migrator;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.CloseActivity;
+import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
@@ -51,6 +53,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.matcher.Context;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
@@ -580,7 +583,7 @@ public class Engine extends MLog {
 			return node;
 		}
 	}
-
+	
 // ---
 		
 	public UUID start(String uri) throws Exception {
@@ -1558,5 +1561,56 @@ public class Engine extends MLog {
 		}
 	}
 	
+	public void assign(UUID nodeId, String user) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		synchronized (caze) {
+			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
+			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getAssignedUser() != null) throw new MException("node is already assigned",nodeId,node.getAssignedUser());
+			node.setAssignedUser(user);
+			storage.saveFlowNode(node);
+		}
+	}
 
+	public void unassign(UUID nodeId) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		synchronized (caze) {
+			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
+			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
+			node.setAssignedUser(null);
+			storage.saveFlowNode(node);
+		}
+	}
+	
+	public void doSubmit(UUID nodeId, IProperties values) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		synchronized (caze) {
+			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
+			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
+		
+			EngineContext context = createContext(caze, node);
+			AElement<?> aNode = context.getANode();
+			if (!(aNode instanceof AHumanTask<?>))
+				throw new MException("node activity is not AHumanTask",nodeId,aNode.getClass().getCanonicalName());
+			
+			((AHumanTask<?>)aNode).setFormValues(values);
+			
+			node.setState(STATE_NODE.RUNNING);
+			saveFlowNode(context, node, (AActivity<?>) aNode);
+		}
+	}
+
+	public AElement<?> getANode(UUID nodeId) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		EngineContext context = createContext(caze, node);
+		AElement<?> aNode = context.getANode();
+		return aNode;
+	}
+	
 }

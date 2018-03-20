@@ -3,6 +3,9 @@ package de.mhus.cherry.reactive.util.activity;
 import java.util.Map.Entry;
 
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.MPojo;
@@ -12,6 +15,13 @@ import de.mhus.lib.core.pojo.PojoModel;
 public abstract class RHumanTask<P extends RPool<?>> extends RTask<P> implements AHumanTask<P> {
 
 	@Override
+	public void initializeActivity() throws Exception {
+		getContext().getPNode().setState(STATE_NODE.WAITING);
+		getContext().getPNode().setType(TYPE_NODE.HUMAN);
+	}
+
+	@Override
+	@Hidden
 	public IProperties getFormValues() {
 		
 		P pool = getContext().getPool();

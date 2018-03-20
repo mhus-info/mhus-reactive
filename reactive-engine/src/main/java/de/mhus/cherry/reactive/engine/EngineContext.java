@@ -148,6 +148,8 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		if (aNode == null) {
 			try {
 				aNode = engine.createActivityObject(getENode());
+				if (aNode instanceof ContextRecipient)
+					((ContextRecipient)aNode).setContext(this);
 			} catch (InstantiationException | IllegalAccessException e) {
 				log().w(e);
 			}

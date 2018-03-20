@@ -10,6 +10,8 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.model.activity.AElement;
+import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -21,6 +23,8 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -49,9 +53,29 @@ public class CmdNode extends MLog implements Action {
 	public Object execute() throws Exception {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
-		
+
+		if (cmd.equals("submit")) {
+			MProperties p = new MProperties();
+			for (int i = 1; i < parameters.length; i++) {
+				String parts = parameters[i];
+				String k = MString.beforeIndex(parts, '=');
+				String v = MString.afterIndex(parts, '=');
+				p.put(k, v);
+			}
+			api.getEngine().doSubmit(UUID.fromString(parameters[0]), p);
+			System.out.println("OK");
+		} else
+		if (cmd.equals("unassign")) {
+			api.getEngine().unassign(UUID.fromString(parameters[0]));
+			System.out.println("OK");
+		} else
+		if (cmd.equals("assign")) {
+			api.getEngine().assign(UUID.fromString(parameters[0]), parameters[1]);
+			System.out.println("OK");
+		} else
 		if (cmd.equals("resave")) {
 			api.getEngine().resaveFlowNode(UUID.fromString(parameters[0]));
+			System.out.println("OK");
 		} else
 		if (cmd.equals("running")) {
 			
@@ -120,6 +144,13 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("NextScheduled: " + node.getNextScheduled());
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());
+			
+			if (node.getType() == TYPE_NODE.HUMAN) {
+				AElement<?> aNode = api.getEngine().getANode(node.getId());
+				System.out.println("Form:\n" + ((AHumanTask<?>)aNode).createForm().build());
+				System.out.println("\nValues:\n" + ((AHumanTask<?>)aNode).getFormValues());
+			}
+			
 			System.out.println();
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
 				System.out.println(entry.getKey() + "=" + entry.getValue());

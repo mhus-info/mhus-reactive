@@ -10,5 +10,5 @@ public interface AHumanTask<P extends APool<?>> extends ATask<P> {
 	void setFormValues(IProperties values);
 
 	HumanForm createForm();
-
+	
 }
