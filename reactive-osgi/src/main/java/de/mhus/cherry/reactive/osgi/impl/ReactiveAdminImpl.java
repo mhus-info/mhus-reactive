@@ -88,13 +88,25 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 
 	@Override
-	public String addProcess(File file, boolean remember) throws FileNotFoundException {
-		if (!file.exists()) throw new FileNotFoundException(file.getAbsolutePath());
-		DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {file});
-		addProcess(file.getAbsolutePath(),loader);
+	public String addProcess(String[] fileNames, boolean remember) throws FileNotFoundException {
+		StringBuffer names = new StringBuffer();
+		File[] files = new File[fileNames.length];
+		for (int i = 0; i < fileNames.length; i++) {
+			files[i] = new File(fileNames[i]);
+			if (!files[i].exists()) throw new FileNotFoundException(fileNames[i]);
+			if (names.length() != 0) names.append(',');
+			names.append(fileNames[i]);
+		}
+		DefaultProcessLoader loader = new DefaultProcessLoader(files);
+		addProcess(names.toString(),loader);
 		if (remember)
-			config.persistent.getParameters().put("osgi.process.path:", file.getAbsolutePath());
+			config.persistent.getParameters().put("osgi.process.path:" + loader.getProcessCanonicalName(), names.toString());
 		return loader.getProcessCanonicalName();
+	}
+	
+	public void forgetProcess(String name) {
+		config.persistent.getParameters().remove("osgi.process.path:" + name);
+		
 	}
 	
 	@Override
@@ -384,11 +396,17 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			for (String key : config.persistent.getParameters().keySet()) {
 				if (key.startsWith("osgi.process.path:")) {
 					String name = key.substring(18);
-					String fileName = String.valueOf(config.persistent.getParameters().get(key));
-					File file = new File(fileName);
-					if (file.exists()) {
-						addProcess(name, new DefaultProcessLoader(new File[] {file}));
+					String[] fileNames = String.valueOf(config.persistent.getParameters().get(key)).split(",");
+					File[] files = new File[fileNames.length];
+					for (int i = 0; i < fileNames.length; i++) {
+						files[i] = new File(fileNames[i]);
+						if (!files[i].exists()) {
+							files = null;
+							break;
+						}
 					}
+					if (files != null)
+						addProcess(name, new DefaultProcessLoader(files));
 				}
 			}
 			

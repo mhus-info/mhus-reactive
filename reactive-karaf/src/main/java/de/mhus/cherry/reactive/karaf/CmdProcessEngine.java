@@ -35,8 +35,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			api.removeProcess(parameters[0]);
 		} else
 		if (cmd.equals("install")) {
-			File file = new File(parameters[0]);
-			System.out.println(api.addProcess(file, true));
+			System.out.println(api.addProcess(parameters, true));
 		} else
 		if (cmd.equals("cleanup")) {
 			api.getEngine().cleanup();

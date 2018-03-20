@@ -41,6 +41,6 @@ public interface ReactiveAdmin {
 
 	String getProcessInfo(String name);
 
-	String addProcess(File file, boolean remember) throws FileNotFoundException;
+	String addProcess(String[] fileNames, boolean remember) throws FileNotFoundException;
 
 }
