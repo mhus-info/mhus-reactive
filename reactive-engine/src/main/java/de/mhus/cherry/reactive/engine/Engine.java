@@ -1599,7 +1599,7 @@ public class Engine extends MLog implements EEngine {
 		return cnt;
 	}
 	
-	public void assign(UUID nodeId, String user) throws IOException, MException {
+	public void assignHumanTask(UUID nodeId, String user) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
@@ -1611,7 +1611,7 @@ public class Engine extends MLog implements EEngine {
 		}
 	}
 
-	public void unassign(UUID nodeId) throws IOException, MException {
+	public void unassignHumanTask(UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
@@ -1623,7 +1623,7 @@ public class Engine extends MLog implements EEngine {
 		}
 	}
 	
-	public void doSubmit(UUID nodeId, IProperties values) throws IOException, MException {
+	public void submitHumanTask(UUID nodeId, IProperties values) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {

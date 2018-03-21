@@ -104,7 +104,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			api.getEngine().execute();
 			System.out.println("OK");
 		} else
-		if (cmd.equals("parameter")) {
+		if (cmd.equals("parameters")) {
 			PEngine persistent = api.getEnginePersistence();
 			if (parameters != null) {
 				MProperties properties = MProperties.explodeToMProperties(parameters);

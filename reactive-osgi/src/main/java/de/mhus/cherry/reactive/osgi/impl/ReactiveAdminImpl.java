@@ -37,10 +37,15 @@ import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
+import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.cfg.CfgString;
+import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
@@ -56,11 +61,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private EngineConfiguration config;
 	private Engine engine;
 	private BundleContext context;
-	private String storageDsName = "reactive-storage";
+	private CfgString storageDsName = new CfgString(ReactiveAdmin.class, "storageDsName", "reactive-storage");
 	private DataSource storageDataSource;
 	private DataSourceProvider storageDsProvider;
 	private DefaultDbPool storagePool;
-	private String archiveDsName = "reactive-archive";
+	private CfgString archiveDsName = new CfgString(ReactiveAdmin.class, "archiveDsName", "reactive-archive");
 	private DataSource archiveDataSource;
 	private DataSourceProvider archiveDsProvider;
 	private DefaultDbPool archivePool;
@@ -347,15 +352,36 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	 		// start engine
 			config = new EngineConfiguration();
 			// storage
-			storageDsProvider = new DataSourceProvider();
-			updateStorageDataSource();
-			storagePool = new DefaultDbPool(storageDsProvider);
-			config.storage = new SqlDbStorage(storagePool,"storage");
+			if (storageDsName.value().equals("*")) {
+				log().w("Engine: Using memory storage");
+				config.storage = new MemoryStorage();
+				PEngine e = new PEngine();
+				IConfig cfg = MApi.getCfg(ReactiveAdmin.class);
+				if (cfg != null) {
+					IConfig cfgEngine = cfg.getNode("engine");
+					if (cfgEngine != null) {
+						for (IConfig cfgPa : cfgEngine.getNodes("parameter")) {
+							e.getParameters().put(cfgPa.getString("name"),cfgPa.getString("value"));
+						}
+					}
+				}
+				config.storage.saveEngine(e);
+			} else {
+				storageDsProvider = new DataSourceProvider();
+				updateStorageDataSource();
+				storagePool = new DefaultDbPool(storageDsProvider);
+				config.storage = new SqlDbStorage(storagePool,"storage");
+			}
 			// archive
-			archiveDsProvider = new DataSourceProvider();
-			updateArchiveDataSource();
-			archivePool = new DefaultDbPool(archiveDsProvider);
-			config.archive = new SqlDbStorage(archivePool,"archive");
+			if (archiveDsName.value().equals("*")) {
+				log().w("Engine: Using memory archive");
+				config.archive = new MemoryStorage();
+			} else {
+				archiveDsProvider = new DataSourceProvider();
+				updateArchiveDataSource();
+				archivePool = new DefaultDbPool(archiveDsProvider);
+				config.archive = new SqlDbStorage(archivePool,"archive");
+			}
 			// aaa
 			config.aaa = new AaaProvider() {
 				

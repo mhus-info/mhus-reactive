@@ -62,15 +62,15 @@ public class CmdNode extends MLog implements Action {
 				String v = MString.afterIndex(parts, '=');
 				p.put(k, v);
 			}
-			api.getEngine().doSubmit(UUID.fromString(parameters[0]), p);
+			api.getEngine().submitHumanTask(UUID.fromString(parameters[0]), p);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("unassign")) {
-			api.getEngine().unassign(UUID.fromString(parameters[0]));
+			api.getEngine().unassignHumanTask(UUID.fromString(parameters[0]));
 			System.out.println("OK");
 		} else
 		if (cmd.equals("assign")) {
-			api.getEngine().assign(UUID.fromString(parameters[0]), parameters[1]);
+			api.getEngine().assignHumanTask(UUID.fromString(parameters[0]), parameters[1]);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("resave")) {
