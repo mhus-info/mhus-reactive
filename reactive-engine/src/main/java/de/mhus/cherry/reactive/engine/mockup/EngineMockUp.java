@@ -50,7 +50,7 @@ public class EngineMockUp {
 		if (step.getNr() != cnt) throw new IOException("Wrong Step Number " + step.getNr());
 		for (PCaseInfo info : storage.getCases(null)) {
 			PCase caze = storage.loadCase(info.getId());
-			step.check(cnt,caze);
+			step.check(warn,cnt,caze);
 		}
 		for (PNodeInfo info : storage.getFlowNodes(null, null)) {
 			PNode node = storage.loadFlowNode(info.getId());

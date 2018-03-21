@@ -11,6 +11,8 @@ public class S1Pool extends RPool<S1Pool> {
 
 	@DbPersistent
 	private String text1 = "Moin";
+	@DbPersistent
+	private String text2 = "";
 
 	public String getText1() {
 		return text1;
@@ -23,6 +25,10 @@ public class S1Pool extends RPool<S1Pool> {
 	@Override
 	protected void checkInputParameters(Map<String, Object> parameters) throws Exception {
 		
+	}
+
+	public Object getText2() {
+		return text2;
 	}
 		
 	

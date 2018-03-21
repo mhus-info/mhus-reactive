@@ -127,13 +127,17 @@ public class Step {
 		
 	}
 
-	public void check(int cnt, PCase caze) throws NotFoundException {
+	public void check(boolean warn,int cnt, PCase caze) throws NotFoundException {
 		Iterator<PCase> iter = cases.iterator();
 		while(iter.hasNext()) {
 			PCase c = iter.next();
 			boolean b = compare(c,caze); 
 			if (b) {
 				iter.remove();
+				if (warn) {
+					System.out.println(cnt+" --- CASE FOUND: " + toString(caze));
+					System.out.println(cnt+"     CASE FOUND: " + toString(c));
+				}
 				return;
 			}
 		}
@@ -141,7 +145,8 @@ public class Step {
 		for (PCase c : cases) {
 			System.err.println("    LEFT: " + toString(c));
 		}
-		throw new NotFoundException("case not found",toString(caze));
+		if (!warn)
+			throw new NotFoundException("case not found",toString(caze));
 	}
 
 	public void check(boolean warn, int cnt, PNode node) throws NotFoundException {
@@ -201,7 +206,12 @@ public class Step {
 	private boolean compare(Map<String, Object> p1, Map<String, Object> p2) {
 		for (Entry<String, Object> e2 : p2.entrySet()) {
 			if (e2.getValue().getClass().isPrimitive() || e2.getValue().getClass() == String.class) {
-				if (!String.valueOf(e2.getValue()).equals(p1.get(e2.getKey()))) return false;
+				if (p1.get(e2.getKey()) == null) continue; // not recorded
+				String v1 = String.valueOf(p1.get(e2.getKey()));
+				String v2 = String.valueOf(e2.getValue());
+				
+				if (!v1.equals(v2)) 
+					return false;
 			}
 		}
 		return true;

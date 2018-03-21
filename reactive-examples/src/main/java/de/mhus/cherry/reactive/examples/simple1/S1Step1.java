@@ -15,7 +15,8 @@ import de.mhus.cherry.reactive.util.activity.RTask;
 				@Output(name="human",activity=S1HumanStep.class),
 				@Output(name="external",activity=S1EventExternal.class),
 				@Output(name="message",activity=S1EventMessage.class),
-				@Output(name="signal",activity=S1EventSignal.class)
+				@Output(name="signal",activity=S1EventSignal.class),
+				@Output(name="exclusive",activity=S1ExclusiveGateway.class)
 				},
 		lane = S1Lane1.class,
 		triggers = {

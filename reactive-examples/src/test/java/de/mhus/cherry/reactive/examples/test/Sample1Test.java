@@ -365,7 +365,38 @@ public class Sample1Test extends TestCase {
 		}
 		
 		archiveEngine(engine, config);
+
+		{ // exclusive kirk
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_exclusivekirk.xml"));
+			mockup.setWarn(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=exclusive&text2=kirk";
+			System.out.println("------------------------------------------------------------------------");
+			System.out.println("URI: " + uri);
+			UUID caseId1 = engine.start(uri);
+			
+			System.out.println(config.storage);
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				Thread.sleep(sleep);
+				System.out.println();
+				System.out.println("Step " + i);
+				engine.step();
+				System.out.println(config.storage);
+				mockup.step();
 				
+				PCase caze1 = engine.getCase(caseId1);
+				if (caze1.getState() == STATE_CASE.CLOSED) {
+					assertEquals(2, caze1.getClosedCode());
+					break;
+				}
+			}
+			mockup.close();
+		}
+		
+		archiveEngine(engine, config);
+
 	}
 		
 	private void archiveEngine(Engine engine, EngineConfiguration config) throws IOException, MException {
