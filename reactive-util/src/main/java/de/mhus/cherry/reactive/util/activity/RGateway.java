@@ -2,25 +2,27 @@ package de.mhus.cherry.reactive.util.activity;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AGateway;
+import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 
 public abstract class RGateway<P extends RPool<?>> extends RActivity<P> implements AGateway<P> {
 
 	@Override
 	public void doExecuteActivity() throws Exception {
-		Class<? extends AActivity<?>>[] next = doExecute();
+		Output[] next = doExecute();
 		if (next != null) {
-			for (Class<? extends AActivity<?>> n : next) {
+			for (Output output : next) {
+				Class<? extends AActivity<?>> act = output.activity();
 				try {
-					getContext().createActivity(n);
+					getContext().createActivity(act);
 				} catch (Throwable t) {
-					log().w(n,t);
+					log().w(act,t);
 				}
 			}
 			getContext().getPNode().setState(STATE_NODE.CLOSED);
 		}
 	}
 
-	public abstract Class<? extends AActivity<?>>[] doExecute()  throws Exception;
+	public abstract Output[] doExecute()  throws Exception;
 
 }

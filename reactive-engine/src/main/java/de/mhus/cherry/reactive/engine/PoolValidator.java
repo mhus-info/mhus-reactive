@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
-import de.mhus.cherry.reactive.model.activity.Actor;
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.APool;

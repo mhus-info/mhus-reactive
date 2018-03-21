@@ -1,12 +1,12 @@
 package de.mhus.cherry.reactive.util.activity;
 
-import de.mhus.cherry.reactive.model.activity.Actor;
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.annotations.ActorDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
-public class RActor implements Actor, ContextRecipient {
+public class RActor implements AActor, ContextRecipient {
 
 	private ProcessContext<?> context;
 

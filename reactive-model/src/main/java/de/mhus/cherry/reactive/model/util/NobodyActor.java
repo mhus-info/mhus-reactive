@@ -1,9 +1,9 @@
 package de.mhus.cherry.reactive.model.util;
 
-import de.mhus.cherry.reactive.model.activity.Actor;
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.APool;
 
-public class NobodyActor implements Actor {
+public class NobodyActor implements AActor {
 
 	@Override
 	public boolean hasAccess(String user) {

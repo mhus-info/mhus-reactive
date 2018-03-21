@@ -1,9 +1,15 @@
 package de.mhus.cherry.reactive.model.util;
 
+import java.util.LinkedList;
+
 import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
+import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EPool;
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
 public class ActivityUtil {
 
@@ -43,4 +49,42 @@ public class ActivityUtil {
 		return desc.triggers();
 	}
 
+	public static Output[] getOutputs(AActivity<?> element) {
+		return getOutputs(element.getClass());
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static Output[] getOutputs(Class<? extends AActivity> element) {
+		ActivityDescription desc = element.getAnnotation(ActivityDescription.class);
+		if (desc == null || desc.outputs() == null) return new Output[0];
+		return desc.outputs();
+	}
+	
+	public static Class<? extends AElement<?>>[] getInputs(AActivity<?> element) {
+		return getInputs(element.getContext(), element.getClass());
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Class<? extends AElement<?>>[] getInputs(ProcessContext<?> context, Class<? extends AActivity> element) {
+		LinkedList<Class<? extends AElement<?>>> out = new LinkedList<>();
+		
+		EPool pool = context.getEPool();
+		for (String name : pool.getElementNames()) {
+			EElement item = pool.getElement(name);
+			ActivityDescription desc = item.getActivityDescription();
+			if (desc != null) {
+				for (Output output : desc.outputs()) {
+					if (output.activity() == element)
+						out.add(item.getElementClass());
+				}
+				for (Trigger trigger : desc.triggers()) {
+					if (trigger.activity() == element)
+						out.add(item.getElementClass());
+				}
+			}
+		}
+		
+		return (Class<? extends AActivity<?>>[]) out.toArray(new Class<?>[out.size()]);
+	}
+		
 }

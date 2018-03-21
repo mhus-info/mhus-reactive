@@ -12,6 +12,7 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EEngine;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -165,6 +166,11 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		return engine;
 	}
 
+	@Override
+	public EEngine getEEngine() {
+		return engine;
+	}
+	
 	void setUri(String uri) {
 		this.uri = uri;
 	}

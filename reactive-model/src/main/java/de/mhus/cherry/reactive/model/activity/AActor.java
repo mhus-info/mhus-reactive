@@ -1,6 +1,6 @@
 package de.mhus.cherry.reactive.model.activity;
 
-public interface Actor {
+public interface AActor {
 
 	boolean hasAccess(String user);
 }

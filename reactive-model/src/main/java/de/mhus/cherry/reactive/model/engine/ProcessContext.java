@@ -26,5 +26,6 @@ public interface ProcessContext<P extends APool<?>> {
 	void saveRuntime() throws IOException;
 	AaaProvider getAaaProvider();
 	void doCloseActivity(RuntimeNode runtimeNode, UUID caseId) throws MException, IOException;
+	EEngine getEEngine();
 	
 }

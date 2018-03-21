@@ -16,13 +16,14 @@ import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
-import de.mhus.cherry.reactive.model.activity.Actor;
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EEngine;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
@@ -34,6 +35,7 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
@@ -61,7 +63,7 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
 
-public class Engine extends MLog {
+public class Engine extends MLog implements EEngine {
 
 	private StorageProvider storage;
 	private StorageProvider archive;
@@ -320,6 +322,19 @@ public class Engine extends MLog {
 		storage.saveCase(caze);
 	}
 	
+	@Override
+	public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
+		config.listener.saveFlowNode(flow,null);
+		PCase caze = getCase(flow.getCaseId());
+		synchronized (caze) {
+			synchronized (nodeCache) {
+				storage.saveFlowNode(flow);
+				nodeCache.put(flow.getId(), flow);
+				flow.updateStartState();
+			}
+		}
+	}
+	
 	private void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException {
 		config.listener.saveFlowNode(flow,activity);
 		PCase caze = context.getPCase();
@@ -573,6 +588,7 @@ public class Engine extends MLog {
 		}
 	}
 
+	@Override
 	public PNode getFlowNode(UUID nodeId) throws NotFoundException, IOException {
 		synchronized (nodeCache) {
 			PNode node = nodeCache.get(nodeId);
@@ -1304,26 +1320,32 @@ public class Engine extends MLog {
 
 	// -- storage
 	
+	@Override
 	public Result<PCaseInfo> storageGetCases(STATE_CASE state) throws IOException {
 		return storage.getCases(state);
 	}
 
+	@Override
 	public Result<PNodeInfo> storageGetFlowNodes(UUID caseId, STATE_NODE state) throws IOException {
 		return storage.getFlowNodes(caseId, state);
 	}
 
+	@Override
 	public Result<PNodeInfo> storageGetAssignedFlowNodes(String user) throws IOException {
 		return storage.getAssignedFlowNodes(user);
 	}
 	
+	@Override
 	public Result<PNodeInfo> storageGetScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
 		return storage.getScheduledFlowNodes(state, scheduled);
 	}
 
+	@Override
 	public Result<PNodeInfo> storageGetSignaledFlowNodes(STATE_NODE state, String signal) throws IOException {
 		return storage.getSignalFlowNodes(state, signal);
 	}
 
+	@Override
 	public Result<PNodeInfo> storageGetMessageFlowNodes(UUID caseId, STATE_NODE state, String message) throws IOException {
 		return storage.getMessageFlowNodes(caseId, state, message);
 	}
@@ -1428,18 +1450,18 @@ public class Engine extends MLog {
 			context.setEPool(pool);
 			
 			{
-				Class<? extends Actor>[] actorClasss = pool.getPoolDescription().actorRead();
-				for (Class<? extends Actor> actorClass : actorClasss) {
-					Actor actor = actorClass.newInstance();
+				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorRead();
+				for (Class<? extends AActor> actorClass : actorClasss) {
+					AActor actor = actorClass.newInstance();
 					((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
 					if (hasAccess) return true;
 				}
 			}
 			{
-				Class<? extends Actor>[] actorClasss = pool.getPoolDescription().actorWrite();
-				for (Class<? extends Actor> actorClass : actorClasss) {
-					Actor actor = actorClass.newInstance();
+				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
+				for (Class<? extends AActor> actorClass : actorClasss) {
+					AActor actor = actorClass.newInstance();
 					((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
 					if (hasAccess) return true;
