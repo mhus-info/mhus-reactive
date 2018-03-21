@@ -123,13 +123,13 @@ public class MemoryStorage implements StorageProvider {
 	public Result<PNodeInfo> getMessageFlowNodes(UUID caseId,
 	        de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE state, String message) throws IOException {
 		ResultList<PNodeInfo> out = new ResultList<>();
-		String intSig = PNode.getMessageAsString(message);
+		String intMsg = PNode.getMessageAsString(message);
 		flowNodes.values().forEach(value -> {
 			if (	(caseId == null || caseId.equals(value.getCaseId()))
 					&&
 					(state == null || value.getState() == state) 
 					&& 
-					value.getSignalsAsString().contains(intSig)
+					value.getMessagesAsString().contains(intMsg)
 				)
 				out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType()));
 		});

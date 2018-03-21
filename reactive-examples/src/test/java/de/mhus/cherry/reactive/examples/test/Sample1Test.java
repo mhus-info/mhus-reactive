@@ -29,12 +29,15 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import junit.framework.TestCase;
 
 public class Sample1Test extends TestCase {
 
 	public void testEngine() throws Exception {
+		
+		long sleep = 10;
 		
 		File f = new File("target/classes");
 		System.out.println(f.getAbsolutePath());
@@ -70,7 +73,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -98,7 +101,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -115,7 +118,7 @@ public class Sample1Test extends TestCase {
 		
 		{ // error1
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_error1.xml"));
-			mockup.setWarn(true);
+			mockup.setWarn(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=error1";
 			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
@@ -126,7 +129,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -154,7 +157,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -171,7 +174,7 @@ public class Sample1Test extends TestCase {
 		
 		{ // none - try stopped after retry
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_none.xml"));
-			mockup.setWarn(true);
+			mockup.setWarn(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=none";
 			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
@@ -182,7 +185,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -208,7 +211,7 @@ public class Sample1Test extends TestCase {
 
 		{ // custom startpoint
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_startpoint.xml"));
-			mockup.setWarn(true);
+			mockup.setWarn(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool#de.mhus.cherry.reactive.examples.simple1.S1Start2";
 			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
@@ -219,7 +222,7 @@ public class Sample1Test extends TestCase {
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(100);
+				Thread.sleep(sleep);
 				System.out.println();
 				System.out.println("Step " + i);
 				engine.step();
@@ -234,6 +237,135 @@ public class Sample1Test extends TestCase {
 		
 		archiveEngine(engine, config);
 
+		{ // fire external
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_fireexternal.xml"));
+			mockup.setWarn(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=external";
+			System.out.println("------------------------------------------------------------------------");
+			System.out.println("URI: " + uri);
+			UUID caseId = engine.start(uri);
+			
+			System.out.println(config.storage);
+			mockup.step();
+			
+			boolean found = false;
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				Thread.sleep(sleep);
+				System.out.println();
+				System.out.println("Step " + i);
+				engine.step();
+				System.out.println(config.storage);
+				mockup.step();
+
+				if (i == 5) {
+					for (PNodeInfo node : engine.storageGetFlowNodes(caseId, STATE_NODE.WAITING)) {
+						if (node.getType() == TYPE_NODE.EXTERN) {
+							engine.fireExternal(node.getId(), new MProperties());
+							found = true;
+						}
+					}
+				}
+				
+				PCase caze = engine.getCase(caseId);
+				if (caze.getState() == STATE_CASE.CLOSED) break;
+			}
+			assertTrue(found);
+			mockup.close();
+		}
+		
+		archiveEngine(engine, config);
+		
+		{ // fire signal
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firesignal.xml"));
+			mockup.setWarn(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=signal";
+			System.out.println("------------------------------------------------------------------------");
+			System.out.println("URI: " + uri);
+			UUID caseId1 = engine.start(uri);
+			UUID caseId2 = engine.start(uri);
+			
+			System.out.println(config.storage);
+			mockup.step();
+			
+			boolean found = false;
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				Thread.sleep(sleep);
+				System.out.println();
+				System.out.println("Step " + i);
+				engine.step();
+				System.out.println(config.storage);
+				mockup.step();
+
+				if (i == 5) {
+					for (PNodeInfo node : engine.storageGetFlowNodes(caseId1, STATE_NODE.WAITING)) {
+						if (node.getType() == TYPE_NODE.SIGNAL) {
+							engine.fireSignal("signal", new MProperties());
+							found = true;
+						}
+					}
+				}
+				
+				PCase caze1 = engine.getCase(caseId1);
+				PCase caze2 = engine.getCase(caseId2);
+				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
+			}
+			assertTrue(found);
+			mockup.close();
+		}
+		
+		archiveEngine(engine, config);
+
+		{ // fire message
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firemessage.xml"));
+			mockup.setWarn(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=message";
+			System.out.println("------------------------------------------------------------------------");
+			System.out.println("URI: " + uri);
+			UUID caseId1 = engine.start(uri);
+			UUID caseId2 = engine.start(uri);
+			
+			System.out.println(config.storage);
+			mockup.step();
+			
+			boolean found = false;
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				Thread.sleep(sleep);
+				System.out.println();
+				System.out.println("Step " + i);
+				engine.step();
+				System.out.println(config.storage);
+				mockup.step();
+
+				if (i == 5) {
+					for (PNodeInfo node : engine.storageGetFlowNodes(caseId1, STATE_NODE.WAITING)) {
+						if (node.getType() == TYPE_NODE.MESSAGE) {
+							engine.fireMessage(caseId1, "message", new MProperties());
+							found = true;
+						}
+					}
+				}
+				if (i == 6) {
+					for (PNodeInfo node : engine.storageGetFlowNodes(caseId2, STATE_NODE.WAITING)) {
+						if (node.getType() == TYPE_NODE.MESSAGE) {
+							engine.fireMessage(caseId2, "message", new MProperties());
+							found = true;
+						}
+					}
+				}
+				
+				PCase caze1 = engine.getCase(caseId1);
+				PCase caze2 = engine.getCase(caseId2);
+				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
+			}
+			assertTrue(found);
+			mockup.close();
+		}
+		
+		archiveEngine(engine, config);
+				
 	}
 		
 	private void archiveEngine(Engine engine, EngineConfiguration config) throws IOException, MException {

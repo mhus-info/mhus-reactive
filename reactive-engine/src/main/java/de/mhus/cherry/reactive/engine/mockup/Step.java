@@ -145,12 +145,17 @@ public class Step {
 	}
 
 	public void check(boolean warn, int cnt, PNode node) throws NotFoundException {
+		if (node.getType() == TYPE_NODE.RUNTIME) return;
 		Iterator<PNode> iter = nodes.iterator();
 		while(iter.hasNext()) {
 			PNode c = iter.next();
 			boolean b = compare(c,node); 
 			if (b) {
 				iter.remove();
+				if (warn) {
+					System.out.println(cnt+" --- NODE FOUND: " + toString(node));
+					System.out.println(cnt+"     NODE FOUND: " + toString(c));
+				}
 				return;
 			}
 		}
@@ -181,7 +186,6 @@ public class Step {
 	}
 
 	private boolean compare(PNode c, PNode node) {
-		if (node.getType() == TYPE_NODE.RUNTIME) return true;
 		return  c.getState() == node.getState() 
 				&& 
 				c.getCanonicalName().equals(node.getCanonicalName())
