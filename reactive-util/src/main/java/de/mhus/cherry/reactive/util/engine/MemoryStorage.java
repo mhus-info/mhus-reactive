@@ -56,7 +56,7 @@ public class MemoryStorage implements StorageProvider {
 	@Override
 	public Result<PCaseInfo> getCases(STATE_CASE state) throws IOException {
 		ResultList<PCaseInfo> out = new ResultList<>();
-		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(new PCaseInfo(entry.getId(),entry.getUri())); } );
+		cases.values().forEach(entry -> {if (state == null || entry.getState() == state) out.add(new PCaseInfo(entry.getId(),entry.getUri(), entry.getCanonicalName(), entry.getState() )); } );
 		return out;
 	}
 
@@ -68,7 +68,7 @@ public class MemoryStorage implements StorageProvider {
 			if ( (caseId == null || value.getCaseId().equals(caseId))
 					&& 
 				 (state == null || value.getState() == state)
-				) out.add(new PNodeInfo(value.getId(),value.getCaseId()) ); });
+				) out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType() ) ); });
 		return out;
 	}
 
@@ -99,7 +99,7 @@ public class MemoryStorage implements StorageProvider {
 					(state == null || state == value.getState()) 
 					&&
 					entry.getValue() > 0 && entry.getValue() <= scheduled)
-				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
+				out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType()));
 		});
 		return out;
 	}
@@ -114,7 +114,7 @@ public class MemoryStorage implements StorageProvider {
 					&& 
 					value.getSignalsAsString().contains(intSig)
 				)
-				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
+				out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType()));
 		});
 		return out;
 	}
@@ -131,7 +131,7 @@ public class MemoryStorage implements StorageProvider {
 					&& 
 					value.getSignalsAsString().contains(intSig)
 				)
-				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
+				out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType()));
 		});
 		return out;
 	}
@@ -141,7 +141,7 @@ public class MemoryStorage implements StorageProvider {
 		ResultList<PNodeInfo> out = new ResultList<>();
 		flowNodes.values().forEach(value -> {
 			if (MSystem.equals(user, value.getAssignedUser()))
-				out.add(new PNodeInfo(value.getId(),value.getCaseId()));
+				out.add(new PNodeInfo(value.getId(),value.getCaseId(), value.getCanonicalName(), value.getAssignedUser(), value.getState(), value.getType()));
 		});
 		return out;
 	}
