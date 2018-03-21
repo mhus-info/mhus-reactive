@@ -15,9 +15,8 @@ import de.mhus.cherry.reactive.util.activity.RSignalEvent;
 public class S1EventSignal extends RSignalEvent<S1Pool> {
 
 	@Override
-	public String doExecute() throws Exception {
+	public void doExecute() throws Exception {
 		log().i(getContext().getPNode().getMessage());
-		return "";
 	}
 
 }

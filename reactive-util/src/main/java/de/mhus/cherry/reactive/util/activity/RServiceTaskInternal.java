@@ -10,7 +10,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 
-public abstract class RServiceTaskInternal<P extends RPool<?>> extends RServiceTask<P> {
+public abstract class RServiceTaskInternal<P extends RPool<?>> extends RTask<P> {
 
 	private PojoModel pojoModel;
 

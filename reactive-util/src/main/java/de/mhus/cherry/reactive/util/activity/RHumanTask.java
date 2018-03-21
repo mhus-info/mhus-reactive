@@ -5,14 +5,16 @@ import java.util.Map.Entry;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
+import de.mhus.lib.core.pojo.PojoParser;
 
-public abstract class RHumanTask<P extends RPool<?>> extends RTask<P> implements AHumanTask<P> {
+public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> implements AHumanTask<P> {
 
 	@Override
 	public void initializeActivity() throws Exception {
@@ -25,8 +27,8 @@ public abstract class RHumanTask<P extends RPool<?>> extends RTask<P> implements
 	public IProperties getFormValues() {
 		
 		P pool = getContext().getPool();
-		PojoModel modelTask = MPojo.getDefaultModelFactory().createPojoModel(getClass());
-		PojoModel modelPool = MPojo.getDefaultModelFactory().createPojoModel(pool.getClass());
+		PojoModel modelTask = createFormPojoModel(getClass());
+		PojoModel modelPool = createFormPojoModel(pool.getClass());
 		
 		MProperties out = new MProperties();
 		for (PojoAttribute<?> attr : modelTask)
@@ -45,12 +47,17 @@ public abstract class RHumanTask<P extends RPool<?>> extends RTask<P> implements
 		return out;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public PojoModel createFormPojoModel(Class<?> clazz) {
+		return new PojoParser().parse(clazz, ".", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
+	}
+
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setFormValues(IProperties values) {
 		P pool = getContext().getPool();
-		PojoModel modelTask = MPojo.getDefaultModelFactory().createPojoModel(getClass());
-		PojoModel modelPool = MPojo.getDefaultModelFactory().createPojoModel(pool.getClass());
+		PojoModel modelTask = createFormPojoModel(getClass());
+		PojoModel modelPool = createFormPojoModel(pool.getClass());
 		for (Entry<String, Object> entry : values.entrySet()) {
 			PojoAttribute attr = modelTask.getAttribute(entry.getKey());
 			Object target = this;

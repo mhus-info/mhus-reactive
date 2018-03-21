@@ -79,7 +79,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	@Override
 	@SuppressWarnings("unchecked")
 	public PojoModel createPojoModel(Class<?> clazz) {
-		return new PojoParser().parse(clazz, "_", new Class[] { DbPersistent.class, DbPrimaryKey.class, DbRelation.class }).filter(true,false,true,false,true).getModel();
+		return new PojoParser().parse(clazz, ".", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
 	}
 	
 	@Override

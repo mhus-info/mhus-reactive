@@ -13,6 +13,8 @@ import de.mhus.lib.core.pojo.PojoModel;
 
 public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>, ContextRecipient {
 
+	public static String RETRY = "[RETRY]\u0001";
+
 	private PojoModel pojoModel;
 	private ProcessContext<P> context;
 

@@ -4,7 +4,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 
-public abstract class RMessageEvent<P extends RPool<?>> extends RServiceTask<P>{
+public abstract class RMessageEvent<P extends RPool<?>> extends REvent<P>{
 
 	@Override
 	public void initializeActivity() throws Exception {

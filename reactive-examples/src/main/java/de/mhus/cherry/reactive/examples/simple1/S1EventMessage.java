@@ -15,9 +15,8 @@ import de.mhus.cherry.reactive.util.activity.RServiceTaskInternal;
 public class S1EventMessage extends RMessageEvent<S1Pool> {
 
 	@Override
-	public String doExecute() throws Exception {
+	public void doExecute() throws Exception {
 		log().i(getContext().getPNode().getMessage());
-		return "";
 	}
 
 }

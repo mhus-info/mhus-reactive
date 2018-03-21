@@ -6,6 +6,8 @@ import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
 public interface AActivity<P extends APool<?>> extends AElement<P> {
 
+	String DEFAULT_OUTPUT = "";
+	
 	ProcessContext<P> getContext();
 	
 	default P getPool() {
