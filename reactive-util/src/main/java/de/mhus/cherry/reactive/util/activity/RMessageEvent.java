@@ -10,7 +10,7 @@ public abstract class RMessageEvent<P extends RPool<?>> extends REvent<P>{
 	public void initializeActivity() throws Exception {
 		getContext().getPNode().setState(STATE_NODE.WAITING);
 		getContext().getPNode().setType(TYPE_NODE.MESSAGE);
-		getContext().getPNode().setEvent(ActivityUtil.getEvent(this));
+		getContext().getPNode().setMessageEvent(ActivityUtil.getEvent(this));
 	}
 
 }

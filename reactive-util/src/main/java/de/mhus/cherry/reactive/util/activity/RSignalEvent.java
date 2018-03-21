@@ -10,7 +10,7 @@ public abstract class RSignalEvent<P extends RPool<?>> extends REvent<P>{
 	public void initializeActivity() throws Exception {
 		getContext().getPNode().setState(STATE_NODE.WAITING);
 		getContext().getPNode().setType(TYPE_NODE.SIGNAL);
-		getContext().getPNode().setEvent(ActivityUtil.getEvent(this));
+		getContext().getPNode().setSignalEvent(ActivityUtil.getEvent(this));
 	}
 
 }

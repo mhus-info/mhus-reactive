@@ -140,7 +140,6 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("TryCount  : " + node.getTryCount());
 			System.out.println("CaseId    : " + node.getCaseId());
 			System.out.println("RuntimeId : " + node.getRuntimeId());
-			System.out.println("Event     : " + node.getEvent());
 			System.out.println("NextScheduled: " + node.getNextScheduled());
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());

@@ -1483,11 +1483,23 @@ public class Engine extends MLog {
 					if (node.getState() == STATE_NODE.SUSPENDED) {
 						log().w("message for suspended node will not be delivered",node,message);
 						continue;
-					} else {
-						if (node.getState() != STATE_NODE.WAITING) continue;
+					} else 
+					if (node.getState() != STATE_NODE.WAITING) 
+						continue;
+					
+					// is task listening ? check trigger list for ""
+					String taskEvent = node.getMessageTriggers().get("");
+					if (taskEvent != null && taskEvent.equals(message)) {
+						node.setState(STATE_NODE.RUNNING);
+						node.setMessage(parameters);
+						storage.saveFlowNode(node);
+						res.close();
+						// message delivered ... bye
+						return;
 					}
+
 					try {
-						// find a trigger with the name
+						// find a trigger with the event
 						EngineContext context = createContext(caze, node);
 						for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
 							if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
@@ -1505,20 +1517,15 @@ public class Engine extends MLog {
 						log().e(node,e);
 						continue;
 					}
-					node.setState(STATE_NODE.RUNNING);
-					node.setMessage(parameters);
-					storage.saveFlowNode(node);
-					res.close();
-					// message delivered ... bye
-					return;
 				}
 			}
 		} 
 		throw new NotFoundException("node not found for message",caseId,message);
 	}
 	
-	public void fireSignal(String signal, Map<String, Object> parameters) throws NotFoundException, IOException {
+	public int fireSignal(String signal, Map<String, Object> parameters) throws NotFoundException, IOException {
 		
+		int cnt = 0;
 		for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
 			try {
 				PNode node = getFlowNode(nodeInfo.getId());
@@ -1528,37 +1535,46 @@ public class Engine extends MLog {
 						if (node.getState() == STATE_NODE.SUSPENDED) {
 							log().w("signal for suspended node will not be delivered",node,signal);
 							continue;
-						} else {
-							if (node.getState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeInfo.getId());
-						}
-						try {
-							// find a trigger with the name
-							EngineContext context = createContext(caze, node);
-							for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-								if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
-									// found one ... start new, close current
-									PNode nextNode = createActivity(context, node, context.getENode());
-									nextNode.setMessage(parameters);
-									saveFlowNode(context, nextNode, null);
-									closeFlowNode(context, node, STATE_NODE.CLOSED);
-									continue;
-								}
-							}
-						} catch(MException e) {
-							config.listener.error(node,e);
-							log().e(node,e);
+						} else 
+						if (node.getState() != STATE_NODE.WAITING)
 							continue;
+						
+						// is task listening ? check trigger list for ""
+						String taskEvent = node.getSignalTriggers().get("");
+						if (taskEvent != null && taskEvent.equals(signal)) {
+							// trigger not found - its the message
+							node.setState(STATE_NODE.RUNNING);
+							node.setMessage(parameters);
+							storage.saveFlowNode(node);
+							cnt++;
+						} else {
+							try {
+								// find a trigger with the name
+								EngineContext context = createContext(caze, node);
+								for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+									if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
+										// found one ... start new, close current
+										PNode nextNode = createActivity(context, node, context.getENode());
+										nextNode.setMessage(parameters);
+										saveFlowNode(context, nextNode, null);
+										closeFlowNode(context, node, STATE_NODE.CLOSED);
+										cnt++;
+										continue;
+									}
+								}
+							} catch(MException e) {
+								config.listener.error(node,e);
+								log().e(node,e);
+								continue;
+							}
 						}
-						// trigger not found - its the message
-						node.setState(STATE_NODE.RUNNING);
-						node.setMessage(parameters);
-						storage.saveFlowNode(node);
 					}
 				}
 			} catch (Throwable t) {
 				log().d(nodeInfo.getId(),t);
 			}
 		}
+		return cnt;
 	}
 	
 	public void assign(UUID nodeId, String user) throws IOException, MException {
