@@ -141,13 +141,21 @@ public class Engine extends MLog implements EEngine {
 				PNode node = getFlowNode(nodeId.getId());
 				PCase caze = getCase(node.getCaseId());
 				if (isProcessActive(caze)) {
-					doneCnt++;
-					FlowNodeExecutor executor = new FlowNodeExecutor(node);
-					Thread thread = new Thread(executor);
-					executor.thread = thread;
-					thread.start();
-					if (threads.size() >= maxThreads) break;
-				}
+					if (caze.getState() == STATE_CASE.RUNNING) {
+						doneCnt++;
+						FlowNodeExecutor executor = new FlowNodeExecutor(node);
+						Thread thread = new Thread(executor);
+						executor.thread = thread;
+						thread.start();
+						if (threads.size() >= maxThreads) break;
+					} else
+					if (caze.getState() == STATE_CASE.CLOSED) {
+						// stop node also
+						node.setSuspendedState(node.getState());
+						node.setState(STATE_NODE.STOPPED);
+						storage.saveFlowNode(node);
+					}
+				} 
 			}
 			
 			while (threads.size() > 0) {
@@ -163,12 +171,20 @@ public class Engine extends MLog implements EEngine {
 				PNode node = getFlowNode(nodeId.getId());
 				PCase caze = getCase(node.getCaseId());
 				if (isProcessActive(caze)) {
-					synchronized (running) {
-						running.add(nodeId.getId());
-					}
-					doFlowNode(node);
-					synchronized (running) {
-						running.remove(nodeId);
+					if (caze.getState() == STATE_CASE.RUNNING) {
+						synchronized (running) {
+							running.add(nodeId.getId());
+						}
+						doFlowNode(node);
+						synchronized (running) {
+							running.remove(nodeId);
+						}
+					} else
+					if (caze.getState() == STATE_CASE.CLOSED) {
+						// stop node also
+						node.setSuspendedState(node.getState());
+						node.setState(STATE_NODE.STOPPED);
+						storage.saveFlowNode(node);
 					}
 				}
 			}
