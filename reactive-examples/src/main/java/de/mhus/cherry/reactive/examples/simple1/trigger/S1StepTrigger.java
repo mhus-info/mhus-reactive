@@ -1,5 +1,9 @@
-package de.mhus.cherry.reactive.examples.simple1;
+package de.mhus.cherry.reactive.examples.simple1.trigger;
 
+import de.mhus.cherry.reactive.examples.simple1.S1ActorSpecialist;
+import de.mhus.cherry.reactive.examples.simple1.S1Pool;
+import de.mhus.cherry.reactive.examples.simple1.S1Terminate2;
+import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
@@ -13,11 +17,12 @@ import de.mhus.cherry.reactive.util.activity.RTask;
 @ActivityDescription(
 		outputs=@Output(activity=S1TheEnd.class),
 		triggers={
-				@Trigger(type=TYPE.TIMER,event="1s",activity=S1TheEnd2.class),
+				@Trigger(type=TYPE.MESSAGE,event="message",activity=S1Terminate2.class),
+				@Trigger(type=TYPE.SIGNAL,event="signal",activity=S1Terminate2.class)
 		}
 		)
 @ActorAssign(S1ActorSpecialist.class)
-public class S1Step5 extends RHumanTask<S1Pool> {
+public class S1StepTrigger extends RHumanTask<S1Pool> {
 
 	@Override
 	public String doExecute() {

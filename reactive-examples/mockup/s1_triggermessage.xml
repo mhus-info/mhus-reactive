@@ -7,7 +7,7 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
 <parameters/>
@@ -22,14 +22,14 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.2="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:false" msg.3="connect:10a23de1-8949-447c-8a87-086f23c15acc,a6ae0005-ca66-4058-96fe-6dd6215be039" msg.4="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:true" msg.5="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.6="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.2="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:false" msg.3="connect:54d73b91-72ca-42e7-96f3-92b29151b060,3d845623-e3db-4537-8a4c-e3d3f71fa1af" msg.4="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:true" msg.5="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.6="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
 <parameters/>
 </de.mhus.cherry.reactive.examples.simple1.S1Start1>
-<de.mhus.cherry.reactive.examples.simple1.S1Step1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step1" name="S1Step1" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step1>
 </nodes>
 </step>
 <step nr="3">
@@ -40,17 +40,17 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.10="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doActivityStop" msg.11="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.2="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:false" msg.3="connect:10a23de1-8949-447c-8a87-086f23c15acc,a6ae0005-ca66-4058-96fe-6dd6215be039" msg.4="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:true" msg.5="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.6="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.7="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:false" msg.8="connect:a6ae0005-ca66-4058-96fe-6dd6215be039,461d3738-474c-4db7-9c9b-0131c7e61511" msg.9="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doNodeLifecycle init:true"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.10="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doActivityStop" msg.11="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.2="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:false" msg.3="connect:54d73b91-72ca-42e7-96f3-92b29151b060,3d845623-e3db-4537-8a4c-e3d3f71fa1af" msg.4="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:true" msg.5="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.6="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.7="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:false" msg.8="connect:3d845623-e3db-4537-8a4c-e3d3f71fa1af,23ec7268-b904-4670-ad3a-be5689423283" msg.9="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doNodeLifecycle init:true"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger" name="S1StepTrigger" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
 <parameters/>
 </de.mhus.cherry.reactive.examples.simple1.S1Start1>
-<de.mhus.cherry.reactive.examples.simple1.S1Step4 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step4" name="S1Step4" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step4>
-<de.mhus.cherry.reactive.examples.simple1.S1Step1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step1" name="S1Step1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step1>
 </nodes>
 </step>
 <step nr="4">
@@ -61,17 +61,17 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.10="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doActivityStop" msg.11="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.2="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:false" msg.3="connect:10a23de1-8949-447c-8a87-086f23c15acc,a6ae0005-ca66-4058-96fe-6dd6215be039" msg.4="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:true" msg.5="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.6="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.7="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:false" msg.8="connect:a6ae0005-ca66-4058-96fe-6dd6215be039,461d3738-474c-4db7-9c9b-0131c7e61511" msg.9="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doNodeLifecycle init:true"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.10="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doActivityStop" msg.11="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.2="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:false" msg.3="connect:54d73b91-72ca-42e7-96f3-92b29151b060,3d845623-e3db-4537-8a4c-e3d3f71fa1af" msg.4="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:true" msg.5="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.6="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.7="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:false" msg.8="connect:3d845623-e3db-4537-8a4c-e3d3f71fa1af,23ec7268-b904-4670-ad3a-be5689423283" msg.9="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doNodeLifecycle init:true"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger" name="S1StepTrigger" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
 <parameters/>
 </de.mhus.cherry.reactive.examples.simple1.S1Start1>
-<de.mhus.cherry.reactive.examples.simple1.S1Step4 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step4" name="S1Step4" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step4>
-<de.mhus.cherry.reactive.examples.simple1.S1Step1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step1" name="S1Step1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step1>
 </nodes>
 </step>
 <step nr="5">
@@ -82,17 +82,17 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.10="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doActivityStop" msg.11="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.2="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:false" msg.3="connect:10a23de1-8949-447c-8a87-086f23c15acc,a6ae0005-ca66-4058-96fe-6dd6215be039" msg.4="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:true" msg.5="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.6="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.7="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:false" msg.8="connect:a6ae0005-ca66-4058-96fe-6dd6215be039,461d3738-474c-4db7-9c9b-0131c7e61511" msg.9="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doNodeLifecycle init:true"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.10="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doActivityStop" msg.11="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.2="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:false" msg.3="connect:54d73b91-72ca-42e7-96f3-92b29151b060,3d845623-e3db-4537-8a4c-e3d3f71fa1af" msg.4="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:true" msg.5="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.6="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.7="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:false" msg.8="connect:3d845623-e3db-4537-8a4c-e3d3f71fa1af,23ec7268-b904-4670-ad3a-be5689423283" msg.9="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doNodeLifecycle init:true"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger" name="S1StepTrigger" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
 <parameters/>
 </de.mhus.cherry.reactive.examples.simple1.S1Start1>
-<de.mhus.cherry.reactive.examples.simple1.S1Step4 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step4" name="S1Step4" state="WAITING" suspended="WAITING" tryCount="3" type="HUMAN">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step4>
-<de.mhus.cherry.reactive.examples.simple1.S1Step1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step1" name="S1Step1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step1>
 </nodes>
 </step>
 <step nr="6">
@@ -103,20 +103,20 @@
 </cases>
 <nodes>
 <de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
-<parameters msg.0="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:true" msg.1="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.10="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doActivityStop" msg.11="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.12="connect:461d3738-474c-4db7-9c9b-0131c7e61511,1bbc7734-a3fd-48f7-99aa-2766550d7126" msg.13="flow:1bbc7734-a3fd-48f7-99aa-2766550d7126,S1TheEnd2 doNodeLifecycle init:true" msg.14="flow:1bbc7734-a3fd-48f7-99aa-2766550d7126,S1TheEnd2 doActivityStop" msg.15="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 closedActivity" msg.16="flow:1bbc7734-a3fd-48f7-99aa-2766550d7126,S1TheEnd2 doNodeLifecycle init:false" msg.17="flow:1bbc7734-a3fd-48f7-99aa-2766550d7126,S1TheEnd2 doActivityStop" msg.2="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doNodeLifecycle init:false" msg.3="connect:10a23de1-8949-447c-8a87-086f23c15acc,a6ae0005-ca66-4058-96fe-6dd6215be039" msg.4="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:true" msg.5="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doActivityStop" msg.6="flow:10a23de1-8949-447c-8a87-086f23c15acc,S1Start1 doActivityStop" msg.7="flow:a6ae0005-ca66-4058-96fe-6dd6215be039,S1Step1 doNodeLifecycle init:false" msg.8="connect:a6ae0005-ca66-4058-96fe-6dd6215be039,461d3738-474c-4db7-9c9b-0131c7e61511" msg.9="flow:461d3738-474c-4db7-9c9b-0131c7e61511,S1Step4 doNodeLifecycle init:true"/>
+<parameters msg.0="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:true" msg.1="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.10="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doActivityStop" msg.11="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.12="connect:23ec7268-b904-4670-ad3a-be5689423283,80a2dbda-4682-406f-ad62-45affa86b421" msg.13="flow:80a2dbda-4682-406f-ad62-45affa86b421,S1Terminate2 doNodeLifecycle init:true" msg.14="flow:80a2dbda-4682-406f-ad62-45affa86b421,S1Terminate2 doActivityStop" msg.15="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger closedActivity" msg.16="flow:80a2dbda-4682-406f-ad62-45affa86b421,S1Terminate2 doNodeLifecycle init:false" msg.17="flow:80a2dbda-4682-406f-ad62-45affa86b421,S1Terminate2 doActivityStop" msg.2="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doNodeLifecycle init:false" msg.3="connect:54d73b91-72ca-42e7-96f3-92b29151b060,3d845623-e3db-4537-8a4c-e3d3f71fa1af" msg.4="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:true" msg.5="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doActivityStop" msg.6="flow:54d73b91-72ca-42e7-96f3-92b29151b060,S1Start1 doActivityStop" msg.7="flow:3d845623-e3db-4537-8a4c-e3d3f71fa1af,S1StepMain doNodeLifecycle init:false" msg.8="connect:3d845623-e3db-4537-8a4c-e3d3f71fa1af,23ec7268-b904-4670-ad3a-be5689423283" msg.9="flow:23ec7268-b904-4670-ad3a-be5689423283,S1StepTrigger doNodeLifecycle init:true"/>
 </de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger" name="S1StepTrigger" state="CLOSED" suspended="CLOSED" tryCount="3" type="HUMAN">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.trigger.S1StepTrigger>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
 <de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
 <parameters/>
 </de.mhus.cherry.reactive.examples.simple1.S1Start1>
-<de.mhus.cherry.reactive.examples.simple1.S1TheEnd2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1TheEnd2" name="S1TheEnd2" state="RUNNING" suspended="RUNNING" tryCount="2" type="NODE">
+<de.mhus.cherry.reactive.examples.simple1.S1Terminate2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Terminate2" name="S1Terminate2" state="RUNNING" suspended="RUNNING" tryCount="2" type="NODE">
 <parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1TheEnd2>
-<de.mhus.cherry.reactive.examples.simple1.S1Step4 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step4" name="S1Step4" state="CLOSED" suspended="CLOSED" tryCount="3" type="HUMAN">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step4>
-<de.mhus.cherry.reactive.examples.simple1.S1Step1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Step1" name="S1Step1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
-<parameters/>
-</de.mhus.cherry.reactive.examples.simple1.S1Step1>
+</de.mhus.cherry.reactive.examples.simple1.S1Terminate2>
 </nodes>
 </step>
 </config>

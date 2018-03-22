@@ -1,16 +1,21 @@
-package de.mhus.cherry.reactive.examples.simple1;
+package de.mhus.cherry.reactive.examples.simple1.events;
 
+import de.mhus.cherry.reactive.examples.simple1.S1Lane1;
+import de.mhus.cherry.reactive.examples.simple1.S1Pool;
+import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.util.activity.RExternalEvent;
+import de.mhus.cherry.reactive.util.activity.RSignalEvent;
 import de.mhus.cherry.reactive.util.old.RServiceTaskInternal;
 
 @ActivityDescription(
+		event = "signal",
 		outputs = @Output(activity=S1TheEnd.class), 
 		lane = S1Lane1.class
 		)
-public class S1EventExternal extends RExternalEvent<S1Pool> {
+public class S1EventSignal extends RSignalEvent<S1Pool> {
 
 	@Override
 	public void doExecute() throws Exception {

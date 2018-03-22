@@ -2,6 +2,7 @@ package de.mhus.cherry.reactive.model.engine;
 
 import java.util.HashMap;
 
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
@@ -34,5 +35,7 @@ public interface EElement {
 	HashMap<String, String> getSignalList();
 
 	HashMap<String, String> getMessageList();
+
+	Class<? extends AActor> getAssignedActor(EPool pool);
 
 }

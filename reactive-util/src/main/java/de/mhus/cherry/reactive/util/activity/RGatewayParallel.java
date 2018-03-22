@@ -12,7 +12,7 @@ import de.mhus.cherry.reactive.model.util.ActivityUtil;
  *
  * @param <P>
  */
-public class RParallelGateway<P extends RPool<?>> extends RGateway<P> implements AParallelGateway<P> {
+public class RGatewayParallel<P extends RPool<?>> extends RGateway<P> implements AParallelGateway<P> {
 
 	@Override
 	public Output[] doExecute() throws Exception {

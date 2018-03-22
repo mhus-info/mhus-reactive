@@ -1,5 +1,6 @@
-package de.mhus.cherry.reactive.examples.simple1;
+package de.mhus.cherry.reactive.examples.simple1.exclusive;
 
+import de.mhus.cherry.reactive.examples.simple1.S1Pool;
 import de.mhus.cherry.reactive.model.activity.ACondition;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 

@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.model.activity.AActor;
-import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -18,7 +16,6 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.matcher.Context;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.NotFoundException;
@@ -27,7 +24,9 @@ public class EngineUi extends MLog {
 
 	private Engine engine;
 	private String user;
-	private SoftHashMap<String, Boolean> cacheAccess = new SoftHashMap<>();
+	private SoftHashMap<String, Boolean> cacheAccessRead = new SoftHashMap<>();
+	private SoftHashMap<String, Boolean> cacheAccessWrite = new SoftHashMap<>();
+	private SoftHashMap<UUID, Boolean> cacheAccessExecute = new SoftHashMap<>();
 	private SoftHashMap<String, EngineContext> cacheContext = new SoftHashMap<>();
 
 	public EngineUi(Engine engine, String user) {
@@ -161,18 +160,42 @@ public class EngineUi extends MLog {
 	}
 
 	public boolean hasReadAccess(String uri) {	
-		synchronized (cacheAccess) {
-			Boolean hasAccess = cacheAccess.get(uri);
+		synchronized (cacheAccessRead) {
+			Boolean hasAccess = cacheAccessRead.get(uri);
 			if (hasAccess != null) return hasAccess;
 		}
 
 		boolean hasAccess = engine.hasReadAccess(uri, user);
-		synchronized (cacheAccess) {
-			cacheAccess.put(uri,hasAccess);
+		synchronized (cacheAccessRead) {
+			cacheAccessRead.put(uri,hasAccess);
 		}
 		return hasAccess;
 	}
 		
+	public boolean hasWriteAccess(String uri) {	
+		synchronized (cacheAccessWrite) {
+			Boolean hasAccess = cacheAccessWrite.get(uri);
+			if (hasAccess != null) return hasAccess;
+		}
 
+		boolean hasAccess = engine.hasWriteAccess(uri, user);
+		synchronized (cacheAccessWrite) {
+			cacheAccessWrite.put(uri,hasAccess);
+		}
+		return hasAccess;
+	}
+
+	public boolean hasWriteAccess(UUID nodeId) {	
+		synchronized (cacheAccessExecute) {
+			Boolean hasAccess = cacheAccessExecute.get(nodeId);
+			if (hasAccess != null) return hasAccess;
+		}
+
+		boolean hasAccess = engine.hasExecuteAccess(nodeId, user);
+		synchronized (cacheAccessExecute) {
+			cacheAccessExecute.put(nodeId,hasAccess);
+		}
+		return hasAccess;
+	}
 	
 }

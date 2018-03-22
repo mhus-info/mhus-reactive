@@ -18,6 +18,7 @@ import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
@@ -1497,7 +1498,70 @@ public class Engine extends MLog implements EEngine {
 		}
 
 	}
+
+	public boolean hasWriteAccess(String uri, String user) {
+		
+		MUri muri = MUri.toUri(uri);
+		try {
+			EProcess process = getProcess(muri);
+			EPool pool = getPool(process, muri);
+			EngineContext context = new EngineContext(this);
+			context.setUri(uri);
+			context.setEProcess(process);
+			context.setEPool(pool);
+			
+			{
+				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
+				for (Class<? extends AActor> actorClass : actorClasss) {
+					AActor actor = actorClass.newInstance();
+					((ContextRecipient)actor).setContext(context);
+					boolean hasAccess = actor.hasAccess(user);
+					if (hasAccess) return true;
+				}
+			}
+			
+			return false;
+			
+		} catch (Throwable t) {
+			log().e(uri,user,t);
+			return false;
+		}
+
+	}
+
+	public boolean hasExecuteAccess(UUID nodeId, String user) {
+		
+		try {
+			// find actor
+			PNode node = getFlowNode(nodeId);
+			PCase caze = getCase(node.getCaseId());
+			String uri = caze.getUri();
+			
+			MUri muri = MUri.toUri(uri);
+			EProcess process = getProcess(muri);
+			EPool pool = getPool(process, muri);
+			EngineContext context = new EngineContext(this, node);
+			context.setUri(uri);
+			context.setEProcess(process);
+			context.setEPool(pool);
+			context.setPCase(caze);
+			EElement eNode = context.getENode();
+			Class<? extends AActor> actorClass = eNode.getAssignedActor(pool);
+			
+			// create actor and let check access
+			AActor actor = actorClass.newInstance();
+			((ContextRecipient)actor).setContext(context);
+			boolean hasAccess = actor.hasAccess(user);
+			
+			return hasAccess;
 	
+		} catch (Throwable t) {
+			log().e(nodeId,user,t);
+			return false;
+		}
+
+	}
+
 	public void fireExternal(UUID nodeId, Map<String, Object> parameters) throws NotFoundException, IOException {
 		config.listener.fireExternal(nodeId,parameters);
 		PNode node = getFlowNode(nodeId);

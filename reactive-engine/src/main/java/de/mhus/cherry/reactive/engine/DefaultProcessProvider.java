@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
@@ -22,10 +24,12 @@ import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
+import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.activator.DefaultActivator;
 import de.mhus.lib.errors.MException;
 
 public class DefaultProcessProvider extends MLog implements ProcessProvider {
@@ -413,6 +417,22 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 				}
 			}
 			return out;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Class<? extends AActor> getAssignedActor(EPool pool) {
+			ActorAssign actorAssign = getElementClass().getAnnotation(ActorAssign.class);
+			if (actorAssign != null) return actorAssign.value();
+			Class<? extends ASwimlane<?>> lane = getSwimlane();
+			if (lane == null || lane == DefaultSwimlane.class) {
+				
+			}
+			actorAssign = lane.getAnnotation(ActorAssign.class);
+			if (actorAssign != null) return actorAssign.value();
+			if (pool != null)
+				return pool.getPoolDescription().actorDefault();
+			return (Class<? extends AActor>)DefaultActivator.class;
 		}
 	}
 
