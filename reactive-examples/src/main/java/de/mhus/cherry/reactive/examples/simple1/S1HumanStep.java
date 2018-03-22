@@ -4,6 +4,7 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.cherry.reactive.util.activity.RHumanTask;
+import de.mhus.lib.core.M;
 import de.mhus.lib.form.definition.FmColumns;
 import de.mhus.lib.form.definition.FmText;
 
@@ -18,15 +19,16 @@ public class S1HumanStep extends RHumanTask<S1Pool> {
 		return "";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public HumanForm createForm() {
 		return new HumanForm().add(
-			new FmText(S1Pool::getText1, "Text1", ""),
-			new FmText(S1Pool::getText1, "Text1", "",new FmColumns(2))
+			new FmText(M.n(S1Pool::getText1), "Text1", ""),
+			new FmText(M.n(S1Pool::getText1), "Text1", "",new FmColumns(2))
 		).add(
-			new FmText(S1Pool::getText1, "Text1", ""),
-			new FmText(S1Pool::getText1, "Text1", ""),
-			new FmText(S1Pool::getText1, "Text1", "")
+			new FmText(M.n(S1Pool::getText1), "Text1", ""),
+			new FmText(M.n(S1Pool::getText1), "Text1", ""),
+			new FmText(M.n(S1Pool::getText1), "Text1", "")
 		);
 	}
 

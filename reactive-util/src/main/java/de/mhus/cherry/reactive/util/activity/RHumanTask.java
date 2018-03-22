@@ -49,7 +49,7 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 	
 	@SuppressWarnings("unchecked")
 	public PojoModel createFormPojoModel(Class<?> clazz) {
-		return new PojoParser().parse(clazz, ".", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
+		return new PojoParser().parse(clazz, "_", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
 	}
 
 	@Override
