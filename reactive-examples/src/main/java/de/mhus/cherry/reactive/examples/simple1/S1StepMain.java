@@ -14,7 +14,6 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.errors.TaskException;
 import de.mhus.cherry.reactive.util.activity.RServiceTask;
-import de.mhus.cherry.reactive.util.activity.RTask;
 
 @ActivityDescription(
 		outputs = {

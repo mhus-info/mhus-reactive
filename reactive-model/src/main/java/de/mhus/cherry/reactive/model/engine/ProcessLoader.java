@@ -11,7 +11,7 @@ public interface ProcessLoader {
 	/**
 	 * Return all found classes that implements AElement.
 	 * 
-	 * @return
+	 * @return all elements
 	 */
 	List<Class<? extends AElement<?>>> getElements();
 	

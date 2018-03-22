@@ -9,7 +9,6 @@ import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoParser;

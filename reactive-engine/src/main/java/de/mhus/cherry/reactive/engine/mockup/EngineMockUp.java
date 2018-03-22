@@ -15,12 +15,12 @@ import de.mhus.lib.core.MXml;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.core.config.XmlConfig;
 import de.mhus.lib.core.config.XmlConfigFile;
-import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
 public class EngineMockUp {
 
 	private StorageProvider storage;
+	@SuppressWarnings("unused")
 	private Engine engine;
 	private LinkedList<Step> steps = new LinkedList<>();
 	private File file;

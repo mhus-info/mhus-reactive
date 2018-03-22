@@ -1,6 +1,5 @@
 package de.mhus.cherry.reactive.osgi;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;

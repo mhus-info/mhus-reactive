@@ -1,12 +1,10 @@
 package de.mhus.cherry.reactive.model.ui;
 
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.model.engine.EPool;
-import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
-import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
 public class INode {
 

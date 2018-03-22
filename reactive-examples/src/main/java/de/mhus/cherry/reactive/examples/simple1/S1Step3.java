@@ -4,7 +4,6 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.util.activity.RServiceTask;
-import de.mhus.cherry.reactive.util.activity.RTask;
 
 @ActivityDescription(
 		outputs=@Output(name=S1Step3.END,activity=S1TheEnd.class),

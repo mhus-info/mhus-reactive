@@ -1,7 +1,6 @@
 package de.mhus.cherry.reactive.examples.simple1.parallel;
 
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
-import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.util.activity.RServiceTask;

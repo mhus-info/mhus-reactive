@@ -8,8 +8,6 @@ import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.lib.annotations.adb.DbPersistent;
-import de.mhus.lib.annotations.adb.DbPrimaryKey;
-import de.mhus.lib.annotations.adb.DbRelation;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;

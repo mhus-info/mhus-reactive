@@ -1,6 +1,5 @@
 package de.mhus.cherry.reactive.karaf;
 
-import java.io.File;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;

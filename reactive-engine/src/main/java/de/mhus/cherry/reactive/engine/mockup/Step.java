@@ -7,10 +7,10 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase;
+import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.core.directory.WritableResourceNode;

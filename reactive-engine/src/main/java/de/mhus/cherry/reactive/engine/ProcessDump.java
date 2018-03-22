@@ -15,7 +15,6 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ANSIConsole;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
-import de.mhus.lib.core.console.XTermConsole;
 
 public class ProcessDump {
 

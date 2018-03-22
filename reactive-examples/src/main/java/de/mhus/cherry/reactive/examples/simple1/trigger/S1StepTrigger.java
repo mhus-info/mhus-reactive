@@ -11,8 +11,6 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.cherry.reactive.util.activity.RHumanTask;
-import de.mhus.cherry.reactive.util.activity.RServiceTask;
-import de.mhus.cherry.reactive.util.activity.RTask;
 
 @ActivityDescription(
 		outputs=@Output(activity=S1TheEnd.class),

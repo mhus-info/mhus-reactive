@@ -2,7 +2,6 @@ package de.mhus.cherry.reactive.util.activity;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AEvent;
-import de.mhus.cherry.reactive.model.activity.ATask;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
