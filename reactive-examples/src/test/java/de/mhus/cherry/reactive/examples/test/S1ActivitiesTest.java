@@ -30,166 +30,175 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.console.Console;
+import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.NotFoundException;
 import junit.framework.TestCase;
 
-public class Sample1Test extends TestCase {
+public class S1ActivitiesTest extends TestCase {
 
-	public void testEngine() throws Exception {
+	private EngineConfiguration config;
+	private Engine engine;
+	long sleep = 10;
+	private Console console;
+	
+	public void testSecond() throws Exception {
+				
+		createEnigne();
 		
-		long sleep = 10;
-		
-		File f = new File("target/classes");
-		System.out.println(f.getAbsolutePath());
-		DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
-		DefaultProcessProvider provider = new DefaultProcessProvider();
-		provider.addProcess(loader);
-
-		EngineConfiguration config = new EngineConfiguration();
-		config.storage = new MemoryStorage();
-		config.archive = new MemoryStorage();
-		config.aaa = new SimpleAaaProvider();
-		config.parameters = new HashMap<>();
-		config.parameters.put("process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions", "0.0.1");
-		config.parameters.put(EngineConst.ENGINE_EXECUTE_PARALLEL, "false");
-		
-		config.listener = EngineListenerUtil.createStdErrListener();
-		
-		config.processProvider = provider;
-		
-		Engine engine = new Engine(config);
-
-		
-		{ // step second
+		try { // step second
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_second.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=second";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 
 		archiveEngine(engine, config);
+	}
+	
+	public void testThird() throws Exception {
 		
-		{ // step third
+		createEnigne();
+			
+		try { // step third
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_third.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=third";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
+	}
+	
+	public void testError1() throws Exception {
 		
-		{ // error1
+		createEnigne();
+		
+		try { // error1
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_error1.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=error1";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 
 		archiveEngine(engine, config);
+	}
+	
+	public void testFatal() throws Exception {
 		
-		{ // fatal
+		createEnigne();
+		
+		try { // fatal
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_fatal.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=fatal";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 
 		archiveEngine(engine, config);
+	}
+	
+	public void testNone() throws Exception {
 		
-		{ // none - try stopped after retry
+		createEnigne();
+		
+		try { // none - try stopped after retry
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_none.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=none";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				boolean found = false;
@@ -201,61 +210,72 @@ public class Sample1Test extends TestCase {
 				}
 				if (!found) break;
 			}
-			
+			assertTrue(i < 10);
 			mockup.close();
 			engine.closeCase(caseId, true, -1, "test");
 			
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 
 		archiveEngine(engine, config);
-
-		{ // custom startpoint
+	}
+	
+	public void testStartpoint() throws Exception {
+		
+		createEnigne();
+		
+		try { // custom startpoint
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_startpoint.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool#de.mhus.cherry.reactive.examples.simple1.S1Start2";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
+	}
+	
+	public void testExternal() throws Exception {
+		
+		createEnigne();
 
-		{ // fire external
+		try { // fire external
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_fireexternal.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=external";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			boolean found = false;
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 
 				if (i == 5) {
@@ -270,38 +290,45 @@ public class Sample1Test extends TestCase {
 				PCase caze = engine.getCase(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
+			assertTrue(i < 10);
 			assertTrue(found);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
+	}
+	
+	public void testSignal() throws Exception {
 		
-		{ // fire signal
+		createEnigne();
+		
+		try { // fire signal
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firesignal.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=signal";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);
 			UUID caseId2 = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			boolean found = false;
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 
 				if (i == 5) {
 					for (PNodeInfo node : engine.storageGetFlowNodes(caseId1, STATE_NODE.WAITING)) {
 						if (node.getType() == TYPE_NODE.SIGNAL) {
-							engine.fireSignal("signal", new MProperties());
+							int cnt = engine.fireSignal("signal", new MProperties());
+							assertEquals(2, cnt);
 							found = true;
 						}
 					}
@@ -312,31 +339,38 @@ public class Sample1Test extends TestCase {
 				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(found);
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
+	}
+	
+	public void testMessage() throws Exception {
+		
+		createEnigne();
 
-		{ // fire message
+		try { // fire message
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firemessage.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=message";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);
 			UUID caseId2 = engine.start(uri);
-			
-			System.out.println(config.storage);
+			System.out.println("CASE1 " + caseId1);
+			System.out.println("CASE2 " + caseId2);
+			printStorage();
 			mockup.step();
 			
 			boolean found = false;
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 
 				if (i == 5) {
@@ -361,29 +395,35 @@ public class Sample1Test extends TestCase {
 				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(found);
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
+	}
+	
+	public void testExclusiveGateway() throws Exception {
+		
+		createEnigne();
 
-		{ // exclusive kirk
+		try { // exclusive kirk
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_exclusivekirk.xml"));
 			mockup.setWarn(false);
+			mockup.setVerbose(false);
 			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=exclusive&text2=kirk";
-			System.out.println("------------------------------------------------------------------------");
 			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);
 			
-			System.out.println(config.storage);
+			printStorage();
 			mockup.step();
 			
 			int i = 0;
 			for (i = 1; i <= 10; i++) {
-				Thread.sleep(sleep);
-				System.out.println();
-				System.out.println("Step " + i);
-				engine.step();
-				System.out.println(config.storage);
+				step(i);
 				mockup.step();
 				
 				PCase caze1 = engine.getCase(caseId1);
@@ -392,13 +432,47 @@ public class Sample1Test extends TestCase {
 					break;
 				}
 			}
+			assertTrue(i < 10);
 			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
 		}
 		
 		archiveEngine(engine, config);
 
 	}
 		
+	private void createEnigne() throws MException {
+		
+		console = Console.get();
+		console.setColor(COLOR.RED, null);
+		System.out.println("========================================================================================");
+		System.out.println(MSystem.findSourceMethod(3));
+		System.out.println("========================================================================================");
+		console.cleanup();
+		File f = new File("target/classes");
+		System.out.println(f.getAbsolutePath());
+		DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
+		DefaultProcessProvider provider = new DefaultProcessProvider();
+		provider.addProcess(loader);
+
+		config = new EngineConfiguration();
+		config.storage = new MemoryStorage();
+		config.archive = new MemoryStorage();
+		config.aaa = new SimpleAaaProvider();
+		config.parameters = new HashMap<>();
+		config.parameters.put("process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions", "0.0.1");
+		config.parameters.put(EngineConst.ENGINE_EXECUTE_PARALLEL, "false");
+		
+		config.listener = EngineListenerUtil.createAnsiListener();
+		
+		config.processProvider = provider;
+		
+		engine = new Engine(config);
+
+	}
+	
 	private void archiveEngine(Engine engine, EngineConfiguration config) throws IOException, MException {
 		
 		// find runtime
@@ -416,7 +490,7 @@ public class Sample1Test extends TestCase {
 		
 		engine.archiveAll();
 		
-		System.out.println(config.storage);
+		printStorage();
 
 		{
 			int cnt = 0;
@@ -430,32 +504,39 @@ public class Sample1Test extends TestCase {
 		}
 		
 	}
-
-	@Test
-	public void testValidate() throws MException {
-		File f = new File("target/classes");
-		System.out.println(f.getAbsolutePath());
-		DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
-		DefaultProcessProvider provider = new DefaultProcessProvider();
-		provider.addProcess(loader);
-		
-		for (String processName : provider.getProcessNames()) {
-			System.out.println(">>> Process: " + processName);
-			EProcess process = provider.getProcess(processName);
-			for (String poolName : process.getPoolNames()) {
-				System.out.println("   >>> Pool: " + poolName);
-				EPool pool = process.getPool(poolName);
-				PoolValidator validator = new PoolValidator(pool);
-				validator.validate();
-				for (PoolValidator.Finding finding : validator.getFindings()) {
-					System.out.println("   *** " + finding);
-				}
-			}
-			ProcessDump dump = new ProcessDump(process);
-			dump.dump(System.out);
-		}
-
+	
+	private void step(int i) throws InterruptedException, NotFoundException, IOException {
+		Thread.sleep(sleep);
+		System.out.println();
+		console.setColor(COLOR.GREEN, null);
+		System.out.println("------------------------------------------------------------------------");
+		System.out.println(MSystem.findSourceMethod(3) + " Step " + i);
+		System.out.println("------------------------------------------------------------------------");
+		console.cleanup();
+		System.out.flush();
+		engine.step();
+		printStorage();
 	}
+
+	public void printStorage() {
+		console.setColor(COLOR.BLUE, null);
+		try {
+			for (PCaseInfo info : config.storage.getCases(null)) {
+				System.out.println("CASE: " + info.getState() + " " + info.getCanonicalName() + " " + info.getId() + " " + info.getUri());
+			}
+		} catch (IOException e) {
+		}
+		console.setColor(COLOR.YELLOW, null);
+		try {
+			for (PNodeInfo info : config.storage.getFlowNodes(null,null)) {
+				if (info.getState() != STATE_NODE.CLOSED)
+					System.out.println("NODE: " + info.getState() + " " + info.getType() + " " + info.getCanonicalName() + " " + info.getId() + " " + info.getCaseId());
+			}
+		} catch (IOException e) {
+		}
+		console.cleanup();
+	}
+
 	
 //	private void assertCaseState(EngineConfiguration config, STATE_CASE ... states) throws IOException, MException {
 //		System.out.print("CaseState: ");

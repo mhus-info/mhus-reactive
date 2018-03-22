@@ -1,6 +1,8 @@
 package de.mhus.cherry.reactive.model.engine;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.APool;
@@ -62,5 +64,11 @@ public interface EngineListener {
 	void migrateCase(PCase caze, String uri, String migrator);
 
 	void restoreCase(PCase caze);
+
+	void fireMessage(UUID caseId, String message, Map<String, Object> parameters);
+
+	void fireExternal(UUID nodeId, Map<String, Object> parameters);
+
+	void fireSignal(String signal, Map<String, Object> parameters);
 
 }

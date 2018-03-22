@@ -27,6 +27,7 @@ public class EngineMockUp {
 	private boolean recording;
 	private int cnt;
 	private boolean warn = false;
+	private boolean verbose;
 
 	public EngineMockUp(StorageProvider storage, Engine engine, File file) throws FileNotFoundException, Exception {
 		this.storage = storage;
@@ -50,11 +51,11 @@ public class EngineMockUp {
 		if (step.getNr() != cnt) throw new IOException("Wrong Step Number " + step.getNr());
 		for (PCaseInfo info : storage.getCases(null)) {
 			PCase caze = storage.loadCase(info.getId());
-			step.check(warn,cnt,caze);
+			step.check(warn,verbose,cnt,caze);
 		}
 		for (PNodeInfo info : storage.getFlowNodes(null, null)) {
 			PNode node = storage.loadFlowNode(info.getId());
-			step.check(warn,cnt,node);
+			step.check(warn,verbose,cnt,node);
 		}
 	}
 	
@@ -104,5 +105,9 @@ public class EngineMockUp {
 	public void setWarn(boolean warn) {
 		this.warn = warn;
 	}
-	
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
+	}
+
 }

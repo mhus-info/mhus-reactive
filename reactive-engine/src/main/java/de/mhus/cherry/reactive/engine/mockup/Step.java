@@ -127,14 +127,14 @@ public class Step {
 		
 	}
 
-	public void check(boolean warn,int cnt, PCase caze) throws NotFoundException {
+	public void check(boolean warn,boolean verbose, int cnt, PCase caze) throws NotFoundException {
 		Iterator<PCase> iter = cases.iterator();
 		while(iter.hasNext()) {
 			PCase c = iter.next();
 			boolean b = compare(c,caze); 
 			if (b) {
 				iter.remove();
-				if (warn) {
+				if (verbose) {
 					System.out.println(cnt+" --- CASE FOUND: " + toString(caze));
 					System.out.println(cnt+"     CASE FOUND: " + toString(c));
 				}
@@ -149,7 +149,7 @@ public class Step {
 			throw new NotFoundException("case not found",toString(caze));
 	}
 
-	public void check(boolean warn, int cnt, PNode node) throws NotFoundException {
+	public void check(boolean warn, boolean verbose, int cnt, PNode node) throws NotFoundException {
 		if (node.getType() == TYPE_NODE.RUNTIME) return;
 		Iterator<PNode> iter = nodes.iterator();
 		while(iter.hasNext()) {
@@ -157,7 +157,7 @@ public class Step {
 			boolean b = compare(c,node); 
 			if (b) {
 				iter.remove();
-				if (warn) {
+				if (verbose) {
 					System.out.println(cnt+" --- NODE FOUND: " + toString(node));
 					System.out.println(cnt+"     NODE FOUND: " + toString(c));
 				}

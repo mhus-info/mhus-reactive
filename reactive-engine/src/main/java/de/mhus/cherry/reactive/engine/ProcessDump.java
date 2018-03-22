@@ -12,16 +12,22 @@ import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.console.ANSIConsole;
+import de.mhus.lib.core.console.Console;
+import de.mhus.lib.core.console.Console.COLOR;
+import de.mhus.lib.core.console.XTermConsole;
 
 public class ProcessDump {
 
 	private EProcess process;
 	private int width = 40;
+	private boolean ansi;
 
 	public ProcessDump(EProcess process) {
 		this.process = process;
+		this.ansi = Console.get().isAnsi();
 	}
-	
+		
 	public void dump(PrintStream out) {
 		for (String poolName : process.getPoolNames()) {
 			HashSet<String> done = new HashSet<>();
@@ -36,16 +42,17 @@ public class ProcessDump {
 					String current = needed.iterator().next();
 					needed.remove(current);
 					EElement cur = pool.getElement(current);
-
-					out.println();
+					
+					out.println("--------------------------------------------------------");
 					printElement(out,cur);
-					out.println();
+					out.println("");
 					printElementInfo(out, cur, done, needed);
 
 					List<EElement> outputs = pool.getOutputElements(cur);
 					while (true) {
 						if (outputs.size() == 0) break;
-						out.println("   |");
+						out.println("                       ||");
+						out.println("                       \\/");
 						EElement n = null;
 						EElement f = null;
 						for (EElement o : outputs) {
@@ -70,6 +77,7 @@ public class ProcessDump {
 	}
 
 	private void printElement(PrintStream out, EElement cur) {
+		if (ansi) out.print( ANSIConsole.ansiForeground(COLOR.RED));
 		if (cur.is(APoint.class)) out.print('(');
 		if (cur.is(ATask.class)) out.print('[');
 		if (cur.is(AGateway.class)) out.print('<');
@@ -77,6 +85,7 @@ public class ProcessDump {
 		if (cur.is(APoint.class)) out.print(')');
 		if (cur.is(ATask.class)) out.print(']');
 		if (cur.is(AGateway.class)) out.print('>');
+		if (ansi) out.print(ANSIConsole.ansiCleanup());
 	}
 	
 	private void printElementInfo(PrintStream out, EElement cur, HashSet<String> done, HashSet<String> needed) {

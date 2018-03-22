@@ -158,7 +158,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sta.execute(prop);
 			}
 			{
-				DbStatement sta = con.createStatement("DELETE FROM " + prefix + "_node_ WHERE id_=$id$");
+				DbStatement sta = con.createStatement("DELETE FROM " + prefix + "_node_ WHERE case_=$id$");
 				sta.execute(prop);
 			}
 			con.commit();
@@ -375,14 +375,26 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbConnection con = pool.getConnection();
 			MProperties prop = new MProperties();
 			DbStatement sta = null;
-			if (state == null) {
+			if (state == null && caseId == null) {
 				prop.setString("message", "%" + PNode.getMessageAsString(message) + "%");
 				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE message_ like $message$");
-			} else {
+			} else
+			if (caseId == null) {
 				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
 				prop.put("state", state);
 				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$ and message_ like $message$");
+			} else
+			if (state == null) {
+				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
+				prop.put("case", caseId);
+				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE case_=$case$ and message_ like $message$");
+			} else {
+				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
+				prop.put("case", caseId);
+				prop.put("state", state);
+				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE case_=$case$ and state_=$state$ and message_ like $message$");
 			}
+				
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
 		} catch (Exception e) {

@@ -83,7 +83,7 @@ public class Engine extends MLog implements EEngine {
 		try {
 			config.persistent = storage.loadEngine();
 		} catch (NotFoundException | IOException e) {
-			log().i(e);
+			log().i(e.toString());
 		}
 		if (config.persistent == null) {
 			log().i("Initial new engine persistence");
@@ -1494,6 +1494,7 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 	public void fireExternal(UUID nodeId, Map<String, Object> parameters) throws NotFoundException, IOException {
+		config.listener.fireExternal(nodeId,parameters);
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
@@ -1506,12 +1507,13 @@ public class Engine extends MLog implements EEngine {
 				node.setState(STATE_NODE.RUNNING);
 			}
 			node.setMessage(parameters);
-			storage.saveFlowNode(node);
+			saveFlowNode(node);
 		}
 	}
 	
 	public void fireMessage(UUID caseId, String message, Map<String, Object> parameters) throws Exception {
 		
+		config.listener.fireMessage(caseId,message,parameters);
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
 			PNode node = getFlowNode(nodeInfo.getId());
@@ -1530,7 +1532,7 @@ public class Engine extends MLog implements EEngine {
 					if (taskEvent != null && taskEvent.equals(message)) {
 						node.setState(STATE_NODE.RUNNING);
 						node.setMessage(parameters);
-						storage.saveFlowNode(node);
+						saveFlowNode(node);
 						res.close();
 						// message delivered ... bye
 						return;
@@ -1563,6 +1565,7 @@ public class Engine extends MLog implements EEngine {
 	
 	public int fireSignal(String signal, Map<String, Object> parameters) throws NotFoundException, IOException {
 		
+		config.listener.fireSignal(signal,parameters);
 		int cnt = 0;
 		for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
 			try {
@@ -1583,7 +1586,7 @@ public class Engine extends MLog implements EEngine {
 							// trigger not found - its the message
 							node.setState(STATE_NODE.RUNNING);
 							node.setMessage(parameters);
-							storage.saveFlowNode(node);
+							saveFlowNode(node);
 							cnt++;
 						} else {
 							try {

@@ -4,7 +4,7 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.util.activity.RExternalEvent;
-import de.mhus.cherry.reactive.util.activity.RServiceTaskInternal;
+import de.mhus.cherry.reactive.util.old.RServiceTaskInternal;
 
 @ActivityDescription(
 		outputs = @Output(activity=S1TheEnd.class), 

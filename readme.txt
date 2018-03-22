@@ -7,6 +7,7 @@ feature:repo-add mvn:de.mhus.osgi/mhu-karaf-feature/$version/xml/features
 feature:install mhu-osgi-base
 
 version=1.0.0-SNAPSHOT
+install -s mvn:org.hsqldb/hsqldb/2.3.2
 install -s mvn:de.mhus.cherry.reactive/reactive-osgi/$version
 install -s mvn:de.mhus.cherry.reactive/reactive-karaf/$version
 

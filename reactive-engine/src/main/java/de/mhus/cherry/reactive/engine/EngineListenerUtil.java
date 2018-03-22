@@ -6,6 +6,8 @@ import java.lang.reflect.Proxy;
 
 import de.mhus.cherry.reactive.model.engine.EngineListener;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.console.Console;
+import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.core.logging.Log;
 
 public class EngineListenerUtil {
@@ -25,6 +27,18 @@ public class EngineListenerUtil {
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				System.out.println(MSystem.toString(method.getName(), args));
+				return null;
+			}
+		});
+	}
+	
+	public static EngineListener createAnsiListener() {
+		return (EngineListener) Proxy.newProxyInstance(EngineListener.class.getClassLoader(), new Class[] {EngineListener.class} , new InvocationHandler() {
+			@Override
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				if (Console.get().isAnsi()) Console.get().setColor(COLOR.MAGENTA, null);
+				System.out.println(MSystem.toString(method.getName(), args));
+				if (Console.get().isAnsi()) Console.get().cleanup();
 				return null;
 			}
 		});
