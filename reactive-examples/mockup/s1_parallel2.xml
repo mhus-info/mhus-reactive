@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><config>
+<step nr="1">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+</nodes>
+</step>
+<step nr="2">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+</nodes>
+</step>
+<step nr="3">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.10="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.11="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.7="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:false" msg.8="connect:0f2e654c-1082-4ac1-8463-7a8730a37ca8,edcb27f3-7d42-4cd6-aa61-9def7afc8a1a" msg.9="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:true"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2" name="S1GatewayParallel2" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2>
+</nodes>
+</step>
+<step nr="4">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2" name="S1Parallel2Way2" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.10="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.11="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.12="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:false" msg.13="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,52531b32-9c1a-4aad-ba9b-aba454a98523" msg.14="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:true" msg.15="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.16="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3" msg.17="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:true" msg.18="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.19="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.7="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:false" msg.8="connect:0f2e654c-1082-4ac1-8463-7a8730a37ca8,edcb27f3-7d42-4cd6-aa61-9def7afc8a1a" msg.9="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:true"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1" name="S1Parallel2Way1" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2" name="S1GatewayParallel2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2>
+</nodes>
+</step>
+<step nr="5">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2" name="S1Parallel2Way2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.10="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.11="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.12="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:false" msg.13="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,52531b32-9c1a-4aad-ba9b-aba454a98523" msg.14="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:true" msg.15="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.16="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3" msg.17="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:true" msg.18="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.19="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.20="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:false" msg.21="connect:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e" msg.22="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doNodeLifecycle init:true" msg.23="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doActivityStop" msg.24="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.25="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:false" msg.26="connect:52531b32-9c1a-4aad-ba9b-aba454a98523,9c244844-00ee-4c23-bc73-0b58f6f1716a" msg.27="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doNodeLifecycle init:true" msg.28="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doActivityStop" msg.29="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.7="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:false" msg.8="connect:0f2e654c-1082-4ac1-8463-7a8730a37ca8,edcb27f3-7d42-4cd6-aa61-9def7afc8a1a" msg.9="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:true"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1" name="S1Parallel2Way1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2" name="S1GatewayParallel2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+</nodes>
+</step>
+<step nr="6">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1TheEnd assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1TheEnd" name="S1TheEnd" state="RUNNING" suspended="RUNNING" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1TheEnd>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2" name="S1Parallel2Way2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="WAITING" suspended="WAITING" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.10="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.11="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.12="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:false" msg.13="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,52531b32-9c1a-4aad-ba9b-aba454a98523" msg.14="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:true" msg.15="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.16="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3" msg.17="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:true" msg.18="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.19="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.20="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:false" msg.21="connect:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e" msg.22="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doNodeLifecycle init:true" msg.23="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doActivityStop" msg.24="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.25="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:false" msg.26="connect:52531b32-9c1a-4aad-ba9b-aba454a98523,9c244844-00ee-4c23-bc73-0b58f6f1716a" msg.27="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doNodeLifecycle init:true" msg.28="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doActivityStop" msg.29="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.30="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doNodeLifecycle init:false" msg.31="connect:9c244844-00ee-4c23-bc73-0b58f6f1716a,036f8cdd-72ba-4212-98ee-d87f31f08462" msg.32="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doNodeLifecycle init:true" msg.33="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doActivityStop" msg.34="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doActivityStop" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.7="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:false" msg.8="connect:0f2e654c-1082-4ac1-8463-7a8730a37ca8,edcb27f3-7d42-4cd6-aa61-9def7afc8a1a" msg.9="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:true"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1" name="S1Parallel2Way1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2" name="S1GatewayParallel2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+</nodes>
+</step>
+<step nr="7">
+<cases>
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="CLOSED" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<parameters text1="parallel2" text2=""/>
+</de.mhus.cherry.reactive.examples.simple1.S1Pool>
+</cases>
+<nodes>
+<de.mhus.cherry.reactive.examples.simple1.S1TheEnd assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1TheEnd" name="S1TheEnd" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1TheEnd>
+<de.mhus.cherry.reactive.examples.simple1.S1StepMain assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1StepMain" name="S1StepMain" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1StepMain>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2" name="S1Parallel2Way2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way2>
+<de.mhus.cherry.reactive.model.engine.RuntimeNode assigned="null" canonical="de.mhus.cherry.reactive.model.engine.RuntimeNode" name="runtime" state="CLOSED" suspended="CLOSED" tryCount="0" type="RUNTIME">
+<parameters msg.0="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:true" msg.1="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.10="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.11="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.12="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:false" msg.13="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,52531b32-9c1a-4aad-ba9b-aba454a98523" msg.14="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:true" msg.15="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.16="connect:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3" msg.17="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:true" msg.18="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.19="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doActivityStop" msg.2="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doNodeLifecycle init:false" msg.20="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doNodeLifecycle init:false" msg.21="connect:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e" msg.22="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doNodeLifecycle init:true" msg.23="flow:f60d8d2f-4b1b-4d43-8fc6-08ea1cdaf00e,S1GatewayJoin doActivityStop" msg.24="flow:1d6fdfe3-2eca-4e8c-ad1d-00bd55f0d3d3,S1Parallel2Way2 doActivityStop" msg.25="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doNodeLifecycle init:false" msg.26="connect:52531b32-9c1a-4aad-ba9b-aba454a98523,9c244844-00ee-4c23-bc73-0b58f6f1716a" msg.27="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doNodeLifecycle init:true" msg.28="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doActivityStop" msg.29="flow:52531b32-9c1a-4aad-ba9b-aba454a98523,S1Parallel2Way1 doActivityStop" msg.3="connect:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,0f2e654c-1082-4ac1-8463-7a8730a37ca8" msg.30="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doNodeLifecycle init:false" msg.31="connect:9c244844-00ee-4c23-bc73-0b58f6f1716a,036f8cdd-72ba-4212-98ee-d87f31f08462" msg.32="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doNodeLifecycle init:true" msg.33="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doActivityStop" msg.34="flow:9c244844-00ee-4c23-bc73-0b58f6f1716a,S1GatewayJoin doActivityStop" msg.35="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doNodeLifecycle init:false" msg.36="flow:036f8cdd-72ba-4212-98ee-d87f31f08462,S1TheEnd doActivityStop" msg.4="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:true" msg.5="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doActivityStop" msg.6="flow:45cfb5dd-c205-4185-99cf-c6d39e9e2d2b,S1Start1 doActivityStop" msg.7="flow:0f2e654c-1082-4ac1-8463-7a8730a37ca8,S1StepMain doNodeLifecycle init:false" msg.8="connect:0f2e654c-1082-4ac1-8463-7a8730a37ca8,edcb27f3-7d42-4cd6-aa61-9def7afc8a1a" msg.9="flow:edcb27f3-7d42-4cd6-aa61-9def7afc8a1a,S1GatewayParallel2 doNodeLifecycle init:true"/>
+</de.mhus.cherry.reactive.model.engine.RuntimeNode>
+<de.mhus.cherry.reactive.examples.simple1.S1Start1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.S1Start1" name="S1Start1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.S1Start1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1" name="S1Parallel2Way1" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1Parallel2Way1>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2 assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2" name="S1GatewayParallel2" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2>
+<de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin assigned="null" canonical="de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin" name="S1GatewayJoin" state="CLOSED" suspended="CLOSED" tryCount="3" type="NODE">
+<parameters/>
+</de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayJoin>
+</nodes>
+</step>
+</config>

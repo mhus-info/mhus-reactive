@@ -45,6 +45,74 @@ public class S1ActivitiesTest extends TestCase {
 	long sleep = 10;
 	private Console console;
 
+	public void testParallel2() throws Exception {
+		
+		createEnigne();
+		
+		try { // step second
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_parallel2.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel2";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId = engine.start(uri);
+
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze = engine.getCase(caseId);
+				if (caze.getState() == STATE_CASE.CLOSED) break;
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+
+		archiveEngine(engine, config);
+	}
+
+	public void testParallel1() throws Exception {
+		
+		createEnigne();
+		
+		try { // step second
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_parallel1.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel1";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId = engine.start(uri);
+
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze = engine.getCase(caseId);
+				if (caze.getState() == STATE_CASE.CLOSED) break;
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+
+		archiveEngine(engine, config);
+	}
+
 	public void testTriggerTimer() throws Exception {
 		
 		createEnigne();
