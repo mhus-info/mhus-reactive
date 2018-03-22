@@ -27,4 +27,47 @@ RTask/RServiceTask/RHumanTask/... Output:
 * Return null or DEFAULT_OUTPUT to execute the default output (without specified name)
 * Return RETRY to execute doExecute again. Attention: Set the tryCount() in PNode, by default only ONE execution is allowed
 
+TimerTrigger:
+* Timer works only for activities in state WAITING
+
+Event Triggers (Message, Signal, External):
+* Trigger works NOT for SUSPENDED activities, it will not be queued
+* The type of the activity must be the same as the event
+* The send message will be stored in the new created node in PNode.getMessage()
+
+RMessageEven:
+* Wait for a message and then executes the default output
+* Define the name of the message in ActivityDescription.event
+* A message can be consumed only by ONE activity or trigger
+* The send message will be stored in the PNode.getMessage()
+
+RSignalEven:
+* Wait for a signal and then executes the default output
+* Define the name of the message in ActivityDescription.event
+* A signal will be consumed by ALL activity and triggers waiting for it
+* The send message will be stored in the PNode.getMessage()
+
+RExternalEven:
+* Wait for an external event and then executes the default output
+* Define the name of the message in ActivityDescription.event
+* A external event will be consumed by a defined (nodeId) node waiting for it
+* The send message will be stored in the PNode.getMessage()
+
+AProcess:
+* Define this ONE time in the project or package to define the process name/display name/description and version
+* Also migrator classes can be defined do transform older versions of the process to the current structure
+
+RPool:
+* A pool defines a executable process. All elements of the process must be bind to the pool. Exactly must have a template
+definition of the pool. The element itself can't have a template definition. e.g. 'public class MyTask extends RTask<MyPool>'
+binds the Task 'MyTask' to the poll 'MyPool'.
+
+RTerminate:
+* Will stop the hole case. You can set a exitCode (closeCode) and exitMessage (closeMessage)
+
+REndPoint:
+* Use it to start a runtime thread
+* Every start point of the pool will be executed if a case will be started
+* Mark a start point with 'InactiveStartPoint' to prevent automatic starting on case creation
+
 

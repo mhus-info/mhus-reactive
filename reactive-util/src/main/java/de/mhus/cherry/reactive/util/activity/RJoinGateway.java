@@ -18,7 +18,7 @@ import de.mhus.cherry.reactive.model.util.ActivityUtil;
  *
  * @param <P>
  */
-public class RGatewayJoin<P extends RPool<?>> extends RGateway<P> {
+public class RJoinGateway<P extends RPool<?>> extends RGateway<P> {
 
 	@Override
 	public void initializeActivity() throws Exception {

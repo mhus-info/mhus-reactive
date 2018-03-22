@@ -6,7 +6,7 @@ import de.mhus.cherry.reactive.examples.simple1.S1Terminate3;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RGatewayExclusive;
+import de.mhus.cherry.reactive.util.activity.RExclusiveGateway;
 
 @ActivityDescription(
 		outputs={
@@ -15,6 +15,6 @@ import de.mhus.cherry.reactive.util.activity.RGatewayExclusive;
 				@Output(activity=S1Terminate3.class)
 		}
 		)
-public class S1GatewayExclusive extends RGatewayExclusive<S1Pool> {
+public class S1GatewayExclusive extends RExclusiveGateway<S1Pool> {
 
 }

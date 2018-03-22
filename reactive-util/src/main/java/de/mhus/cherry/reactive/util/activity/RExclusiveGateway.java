@@ -18,7 +18,7 @@ import de.mhus.lib.errors.MException;
  *
  * @param <P>
  */
-public class RGatewayExclusive<P extends RPool<?>> extends RGateway<P> implements AExclusiveGateway<P> {
+public class RExclusiveGateway<P extends RPool<?>> extends RGateway<P> implements AExclusiveGateway<P> {
 
 	@SuppressWarnings("unchecked")
 	@Override
