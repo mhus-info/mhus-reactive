@@ -70,7 +70,7 @@ public class Engine extends MLog implements EEngine {
 	private ProcessProvider processProvider;
 	private SoftHashMap<UUID,PCase> caseCache = new SoftHashMap<>();
 	private SoftHashMap<UUID,PNode> nodeCache = new SoftHashMap<>();
-	private HashSet<UUID> running = new HashSet<>();
+	private HashSet<UUID> executing = new HashSet<>();
 	private EngineConfiguration config;
 
 	public Engine(EngineConfiguration config) {
@@ -126,6 +126,9 @@ public class Engine extends MLog implements EEngine {
 				saveFlowNode(null, node, null);
 			}
 		}
+		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now)) {
+			fireScheduledTrigger(nodeInfo);
+		}
 
 		// READY NODES
 		config.listener.doStep("execute");
@@ -135,8 +138,8 @@ public class Engine extends MLog implements EEngine {
 			int maxThreads = MCast.toint(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_MAX_THREADS), 10);
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
 			for (PNodeInfo nodeId : result) {
-				synchronized (running) {
-					if (running.contains(nodeId)) continue;
+				synchronized (executing) {
+					if (executing.contains(nodeId)) continue;
 				}
 				PNode node = getFlowNode(nodeId.getId());
 				PCase caze = getCase(node.getCaseId());
@@ -165,19 +168,19 @@ public class Engine extends MLog implements EEngine {
 		} else {
 			for (PNodeInfo nodeId : result) {
 				doneCnt++;
-				synchronized (running) {
-					if (running.contains(nodeId)) continue;
+				synchronized (executing) {
+					if (executing.contains(nodeId)) continue;
 				}
 				PNode node = getFlowNode(nodeId.getId());
 				PCase caze = getCase(node.getCaseId());
 				if (isProcessActive(caze)) {
 					if (caze.getState() == STATE_CASE.RUNNING) {
-						synchronized (running) {
-							running.add(nodeId.getId());
+						synchronized (executing) {
+							executing.add(nodeId.getId());
 						}
 						doFlowNode(node);
-						synchronized (running) {
-							running.remove(nodeId);
+						synchronized (executing) {
+							executing.remove(nodeId);
 						}
 					} else
 					if (caze.getState() == STATE_CASE.CLOSED) {
@@ -281,8 +284,8 @@ public class Engine extends MLog implements EEngine {
 
 		@Override
 		public void run() {
-			synchronized (running) {
-				running.add(node.getId());
+			synchronized (executing) {
+				executing.add(node.getId());
 			}
 			start = System.currentTimeMillis();
 			try {
@@ -293,17 +296,17 @@ public class Engine extends MLog implements EEngine {
 					config.listener.error(node,t);
 				} catch (Throwable t2) {}
 			}
-			synchronized (running) {
-				running.remove(node.getId());
+			synchronized (executing) {
+				executing.remove(node.getId());
 			}
 			finished = true;
 		}
 		
 	}
 
-	public List<UUID> getRunning() {
-		synchronized (running) {
-			return new LinkedList<UUID>(running);
+	public List<UUID> getExecuting() {
+		synchronized (executing) {
+			return new LinkedList<UUID>(executing);
 		}
 	}
 	
@@ -1519,46 +1522,47 @@ public class Engine extends MLog implements EEngine {
 			PNode node = getFlowNode(nodeInfo.getId());
 			PCase caze = getCase(node.getCaseId());
 			synchronized (caze) {
-				if (node.getType() == TYPE_NODE.MESSAGE) {
-					if (node.getState() == STATE_NODE.SUSPENDED) {
-						log().w("message for suspended node will not be delivered",node,message);
-						continue;
-					} else 
-					if (node.getState() != STATE_NODE.WAITING) 
-						continue;
-					
-					// is task listening ? check trigger list for ""
-					String taskEvent = node.getMessageTriggers().get("");
-					if (taskEvent != null && taskEvent.equals(message)) {
-						node.setState(STATE_NODE.RUNNING);
-						node.setMessage(parameters);
-						saveFlowNode(node);
-						res.close();
-						// message delivered ... bye
-						return;
-					}
+				if (node.getState() == STATE_NODE.SUSPENDED) {
+					log().w("message for suspended node will not be delivered",node,message);
+					continue;
+				} else 
+				if (isExecuting(nodeInfo.getId())) {
+					// to late ... 
+					continue;
+				}
+				
+				// is task listening ? check trigger list for ""
+				String taskEvent = node.getMessageTriggers().get("");
+				if (taskEvent != null && taskEvent.equals(message) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.MESSAGE) {
+					node.setState(STATE_NODE.RUNNING);
+					node.setMessage(parameters);
+					saveFlowNode(node);
+					res.close();
+					// message delivered ... bye
+					return;
+				}
 
-					try {
-						// find a trigger with the event
-						EngineContext context = createContext(caze, node);
-						for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-							if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
-								// found one ... start new, close current
-								PNode nextNode = createActivity(context, node, context.getENode());
-								nextNode.setMessage(parameters);
-								saveFlowNode(context, nextNode, null);
-								closeFlowNode(context, node, STATE_NODE.CLOSED);
-								res.close();
-								return;
-							}
+				try {
+					// find a trigger with the event
+					EngineContext context = createContext(caze, node);
+					for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+						if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
+							// found one ... start new, close current
+							PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+							nextNode.setMessage(parameters);
+							saveFlowNode(context, nextNode, null);
+							closeFlowNode(context, node, STATE_NODE.CLOSED);
+							res.close();
+							return;
 						}
-					} catch(MException e) {
-						config.listener.error(node,e);
-						log().e(node,e);
-						continue;
 					}
+				} catch(MException e) {
+					config.listener.error(node,e);
+					log().e(node,e);
+					continue;
 				}
 			}
+		
 		} 
 		throw new NotFoundException("node not found for message",caseId,message);
 	}
@@ -1572,44 +1576,44 @@ public class Engine extends MLog implements EEngine {
 				PNode node = getFlowNode(nodeInfo.getId());
 				PCase caze = getCase(node.getCaseId());
 				synchronized (caze) {
-					if (node.getType() == TYPE_NODE.SIGNAL) {
-						if (node.getState() == STATE_NODE.SUSPENDED) {
-							log().w("signal for suspended node will not be delivered",node,signal);
-							continue;
-						} else 
-						if (node.getState() != STATE_NODE.WAITING)
-							continue;
-						
-						// is task listening ? check trigger list for ""
-						String taskEvent = node.getSignalTriggers().get("");
-						if (taskEvent != null && taskEvent.equals(signal)) {
-							// trigger not found - its the message
-							node.setState(STATE_NODE.RUNNING);
-							node.setMessage(parameters);
-							saveFlowNode(node);
-							cnt++;
-						} else {
-							try {
-								// find a trigger with the name
-								EngineContext context = createContext(caze, node);
-								for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-									if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
-										// found one ... start new, close current
-										PNode nextNode = createActivity(context, node, context.getENode());
-										nextNode.setMessage(parameters);
-										saveFlowNode(context, nextNode, null);
-										closeFlowNode(context, node, STATE_NODE.CLOSED);
-										cnt++;
-										continue;
-									}
+					if (node.getState() == STATE_NODE.SUSPENDED) {
+						log().w("signal for suspended node will not be delivered",node,signal);
+						continue;
+					} else 
+					if (isExecuting(nodeInfo.getId())) {
+						// to late ... 
+						continue;
+					}
+					// is task listening ? check trigger list for ""
+					String taskEvent = node.getSignalTriggers().get("");
+					if (taskEvent != null && taskEvent.equals(signal) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.SIGNAL) {
+						// trigger not found - its the message
+						node.setState(STATE_NODE.RUNNING);
+						node.setMessage(parameters);
+						saveFlowNode(node);
+						cnt++;
+					} else {
+						try {
+							// find a trigger with the name
+							EngineContext context = createContext(caze, node);
+							for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+								if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
+									// found one ... start new, close current
+									PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+									nextNode.setMessage(parameters);
+									saveFlowNode(context, nextNode, null);
+									closeFlowNode(context, node, STATE_NODE.CLOSED);
+									cnt++;
+									continue;
 								}
-							} catch(MException e) {
-								config.listener.error(node,e);
-								log().e(node,e);
-								continue;
 							}
+						} catch(MException e) {
+							config.listener.error(node,e);
+							log().e(node,e);
+							continue;
 						}
 					}
+					
 				}
 			} catch (Throwable t) {
 				log().d(nodeInfo.getId(),t);
@@ -1618,6 +1622,53 @@ public class Engine extends MLog implements EEngine {
 		return cnt;
 	}
 	
+	private void fireScheduledTrigger(PNodeInfo nodeInfo) {
+		if (nodeInfo.getState() != STATE_NODE.WAITING) return;
+		try {
+			PNode node = getFlowNode(nodeInfo.getId());
+			PCase caze = getCase(node.getCaseId());
+			synchronized (caze) {
+				if (isExecuting(nodeInfo.getId())) {
+					// to late ... 
+					return;
+				}
+				Entry<String, Long> entry = node.getNextTriggerScheduled();
+				if (entry == null) {
+					node.setScheduled(System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5); // TODO calculate next !!!!
+					saveFlowNode(node);
+					return;
+				}
+				String triggerName = entry.getKey();
+				if (triggerName.equals("")) return; // for secure
+				// find trigger
+				EngineContext context = createContext(caze, node);
+				for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+					if (trigger.type() == TYPE.TIMER && trigger.name().equals(triggerName)) {
+						// found one ... start new, close current
+						PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+						saveFlowNode(context, nextNode, null);
+						closeFlowNode(context, node, STATE_NODE.CLOSED);
+						return;
+					}
+				}
+				// trigger not found
+				config.listener.error("Trigger for timer not found",triggerName,node);
+				node.setSuspendedState(node.getState());
+				node.setState(STATE_NODE.STOPPED);
+				saveFlowNode(node);
+			}
+		} catch (Throwable t) {
+			log().e(nodeInfo.getId(),t);
+		}
+	}
+
+	
+	public boolean isExecuting(UUID nodeId) {
+		synchronized (executing) {
+			return executing.contains(nodeId);
+		}
+	}
+
 	public void assignHumanTask(UUID nodeId, String user) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());

@@ -91,7 +91,7 @@ public class ProcessDump {
 	private void printElementInfo(PrintStream out, EElement cur, HashSet<String> done, HashSet<String> needed) {
 		out.println("   Lane: " + cur.getSwimlane().getCanonicalName());
 		for (Trigger trigger : cur.getTriggers()) {
-			out.println("   Trigger: " + trigger.type() +": " + trigger.timer() + " " + trigger.name() + " -> " + trigger.activity().getCanonicalName() );
+			out.println("   Trigger: " + trigger.type() +": " + trigger.event() + " " + trigger.name() + " -> " + trigger.activity().getCanonicalName() );
 			if (!done.contains(trigger.activity().getCanonicalName()))
 				needed.add(trigger.activity().getCanonicalName());
 		}

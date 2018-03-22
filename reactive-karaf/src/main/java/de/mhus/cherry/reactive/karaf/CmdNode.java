@@ -34,7 +34,7 @@ public class CmdNode extends MLog implements Action {
 
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
-			+ " running       - print currently running nodes\n"
+			+ " executing       - print currently executing nodes\n"
 			+ " list [state]  - list all nodes\n"
 			+ " view <id>     - view node details\n"
 			+ " cancel <id>   - cancel node\n"
@@ -77,12 +77,12 @@ public class CmdNode extends MLog implements Action {
 			api.getEngine().resaveFlowNode(UUID.fromString(parameters[0]));
 			System.out.println("OK");
 		} else
-		if (cmd.equals("running")) {
+		if (cmd.equals("executing")) {
 			
 			ConsoleTable table = new ConsoleTable();
 			table.fitToConsole();
 			table.setHeaderValues("Id","Case","Name","Time","State","Type","CaseId");
-			for (UUID nodeId : api.getEngine().getRunning()) {
+			for (UUID nodeId : api.getEngine().getExecuting()) {
 				PNode node = api.getEngine().getFlowNode(nodeId);
 				PCase caze = api.getEngine().getCase(node.getCaseId());
 				String time = MTimeInterval.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());

@@ -31,6 +31,7 @@ import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.errors.MException;
@@ -43,7 +44,136 @@ public class S1ActivitiesTest extends TestCase {
 	private Engine engine;
 	long sleep = 10;
 	private Console console;
-	
+	/*
+	public void testTriggerTimer() throws Exception {
+		
+		createEnigne();
+		
+		try {
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggertimer.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=triggertimer";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId = engine.start(uri);
+
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze1 = engine.getCase(caseId);
+				if (caze1.getState() == STATE_CASE.CLOSED) {
+					assertEquals(2, caze1.getClosedCode());
+					break;
+				}
+				
+				if (i == 4) {
+				    ((MemoryStorage)config.storage).dumpNodes();
+					MThread.sleep(2000);
+				}
+				
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+
+		archiveEngine(engine, config);
+	}
+	*/
+	public void testTriggerMessage() throws Exception {
+		
+		createEnigne();
+		
+		try {
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggermessage.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId = engine.start(uri);
+
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze1 = engine.getCase(caseId);
+				if (caze1.getState() == STATE_CASE.CLOSED) {
+					assertEquals(2, caze1.getClosedCode());
+					break;
+				}
+				
+				if (i == 4) {
+				    ((MemoryStorage)config.storage).dumpNodes();
+					engine.fireSignal("signal", new MProperties());
+				}
+				
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+
+		archiveEngine(engine, config);
+	}
+
+	public void testTriggerSignal() throws Exception {
+		
+		createEnigne();
+		
+		try {
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggersignal.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId = engine.start(uri);
+
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze1 = engine.getCase(caseId);
+				if (caze1.getState() == STATE_CASE.CLOSED) {
+					assertEquals(2, caze1.getClosedCode());
+					break;
+				}
+				
+				if (i == 4) {
+				    // ((MemoryStorage)config.storage).dumpNodes();
+					engine.fireMessage(caseId, "message", new MProperties());
+				}
+				
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+
+		archiveEngine(engine, config);
+	}
+
 	public void testSecond() throws Exception {
 				
 		createEnigne();

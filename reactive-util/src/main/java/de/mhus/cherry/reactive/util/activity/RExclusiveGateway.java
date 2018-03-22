@@ -25,14 +25,14 @@ public class RExclusiveGateway<P extends RPool<?>> extends RGateway<P> implement
 	public Output[] doExecute() throws Exception {
 		Output current = null;
 		Output defaultOutput = null;
-		int currentRes = Integer.MIN_VALUE;
+		int currentRes = ACondition.FALSE;
 		for (Output output : ActivityUtil.getOutputs(this)) {
 			if (output.condition() == NoCondition.class)
 				defaultOutput = output;
 			else {
 				Class<? extends ACondition<P>> condition = (Class<? extends ACondition<P>>) output.condition();
 				int res = condition.newInstance().check(getContext());
-				if (res > currentRes) {
+				if (res >= 0 && res > currentRes) {
 					currentRes = res;
 					current = output;
 				}

@@ -46,5 +46,9 @@ public class PNodeInfo {
 	public TYPE_NODE getType() {
 		return type;
 	}
-	
+
+	@Override
+	public String toString() {
+		return id + " " + caseId + " " + canonicalName + " " + assigned + " " + state + " " + type;
+	}
 }

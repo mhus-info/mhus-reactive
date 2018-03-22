@@ -380,7 +380,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			HashMap<String, Long> out = new HashMap<>();
 			for (Trigger trigger : triggers) {
 				if (trigger.type() == TYPE.TIMER) {
-					long time = EngineUtil.getNextScheduledTime(trigger.timer());
+					long time = EngineUtil.getNextScheduledTime(trigger.event());
 					out.put(trigger.name(), time);
 				}
 			}

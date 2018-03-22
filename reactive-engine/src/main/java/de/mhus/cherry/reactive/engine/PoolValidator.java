@@ -111,7 +111,7 @@ public class PoolValidator {
 					findings.add(new Finding(LEVEL.WARN, name, "task without more then one timer trigger"));
 				else
 					timerTrigger = true;
-				long next = EngineUtil.getNextScheduledTime(trigger.timer());
+				long next = EngineUtil.getNextScheduledTime(trigger.event());
 				if (next < 0)
 					findings.add(new Finding(LEVEL.FATAL, name, "timer trigger with invalid time interval definition"));
 			}

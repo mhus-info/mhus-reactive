@@ -9,7 +9,6 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 public @interface Trigger {
 	enum TYPE {ERROR,DEFAULT_ERROR,TIMER,MESSAGE,SIGNAL,NOOP};
 	TYPE type();
-	String timer() default "";
 	String name() default "";
 	String description() default "";
 	Class<? extends AActivity<?>> activity();

@@ -607,4 +607,22 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		if (index < 0 || index >= TYPE_NODE.values().length) return TYPE_NODE.NODE;
 		return TYPE_NODE.values()[index];
 	}
+	
+	public void dumpNodes() {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = con.createStatement("SELECT * FROM " + prefix + "_node_");
+			DbResult res = sta.executeQuery(prop);
+			while(res.next()) {
+				System.out.println("NODE:");
+				for (String name : res.getColumnNames())
+					if (!name.toLowerCase().equals("content_"))
+					System.out.println("  " + name + ": " + res.getString(name));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

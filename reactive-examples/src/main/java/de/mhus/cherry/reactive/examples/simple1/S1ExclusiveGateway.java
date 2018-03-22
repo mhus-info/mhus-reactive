@@ -7,7 +7,8 @@ import de.mhus.cherry.reactive.util.activity.RExclusiveGateway;
 @ActivityDescription(
 		outputs={
 				@Output(activity=S1TheEnd.class,condition=S1ConditionSpock.class),
-				@Output(activity=S1TheEnd2.class,condition=S1ConditionKirk.class)
+				@Output(activity=S1TheEnd2.class,condition=S1ConditionKirk.class),
+				@Output(activity=S1TheEnd3.class)
 		}
 		)
 public class S1ExclusiveGateway extends RExclusiveGateway<S1Pool> {

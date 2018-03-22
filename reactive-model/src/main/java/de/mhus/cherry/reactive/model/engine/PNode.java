@@ -201,6 +201,15 @@ public class PNode implements Externalizable {
 		return out;
 	}
 
+	public Map.Entry<String, Long> getNextTriggerScheduled() {
+		if (schedulers == null) return null;
+		Map.Entry<String, Long> out = null;
+		for (Entry<String, Long> entry : schedulers.entrySet())
+			if (!entry.getKey().equals("") && (out == null || entry.getValue() < out.getValue()))
+				out = entry;
+		return out;
+	}
+	
 	public String getSignalsAsString() {
 		if (signalTriggers == null)
 			return "";
