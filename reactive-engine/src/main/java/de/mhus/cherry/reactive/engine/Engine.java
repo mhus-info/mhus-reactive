@@ -867,7 +867,7 @@ public class Engine extends MLog implements EEngine {
 				runtimeId,
 				EngineConst.TRY_COUNT
 			);
-		flow.setScheduled(System.currentTimeMillis());
+		flow.setScheduledNow();
 		config.listener.createStartNode(context.getPCase(),start,flow);
 		context = new EngineContext(context, flow);
 		synchronized (context.getPCase()) {
@@ -902,7 +902,7 @@ public class Engine extends MLog implements EEngine {
 				runtimeId,
 				EngineConst.TRY_COUNT
 			);
-		flow.setScheduled(System.currentTimeMillis());
+		flow.setScheduledNow();
 		config.listener.createActivity(context.getPCase(),previous,start,flow);
 		context.getARuntime().createActivity(flow, previousId);
 		context = new EngineContext(context, flow);
@@ -936,12 +936,14 @@ public class Engine extends MLog implements EEngine {
 				activity.doExecuteActivity();
 			}
 			// secure switch state away from NEW
-			if (flow.getState() == STATE_NODE.NEW)
+			if (flow.getState() == STATE_NODE.NEW) {
 				flow.setState(STATE_NODE.RUNNING);
-			else
+				flow.setScheduledNow();
+			} else
 			if (flow.getStartState() == STATE_NODE.RUNNING && flow.getState() == STATE_NODE.RUNNING) {
 				flow.setTryCount(flow.getTryCount()-1);
 				if (flow.getTryCount() <= 0) {
+					flow.setSuspendedState(STATE_NODE.RUNNING);
 					flow.setState(STATE_NODE.STOPPED);
 				} else {
 					flow.setScheduled(newScheduledTime(flow));
@@ -1208,7 +1210,7 @@ public class Engine extends MLog implements EEngine {
 			config.listener.retryFlowNode(node);
 			node.setSuspendedState(node.getState());
 			node.setState(STATE_NODE.RUNNING);
-			node.setScheduled(System.currentTimeMillis());
+			node.setScheduledNow();
 			storage.saveFlowNode(node);
 		}
 	}
@@ -1508,6 +1510,7 @@ public class Engine extends MLog implements EEngine {
 			} else {
 				if (node.getState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeId);
 				node.setState(STATE_NODE.RUNNING);
+				node.setScheduledNow();
 			}
 			node.setMessage(parameters);
 			saveFlowNode(node);
@@ -1535,6 +1538,7 @@ public class Engine extends MLog implements EEngine {
 				String taskEvent = node.getMessageTriggers().get("");
 				if (taskEvent != null && taskEvent.equals(message) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.MESSAGE) {
 					node.setState(STATE_NODE.RUNNING);
+					node.setScheduledNow();
 					node.setMessage(parameters);
 					saveFlowNode(node);
 					res.close();
@@ -1589,6 +1593,7 @@ public class Engine extends MLog implements EEngine {
 					if (taskEvent != null && taskEvent.equals(signal) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.SIGNAL) {
 						// trigger not found - its the message
 						node.setState(STATE_NODE.RUNNING);
+						node.setScheduledNow();
 						node.setMessage(parameters);
 						saveFlowNode(node);
 						cnt++;
@@ -1634,7 +1639,9 @@ public class Engine extends MLog implements EEngine {
 				}
 				Entry<String, Long> entry = node.getNextTriggerScheduled();
 				if (entry == null) {
-					node.setScheduled(System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5); // TODO calculate next !!!!
+					// There is no need to be scheduled ....
+					node.setScheduled(EngineConst.END_OF_DAYS);
+					config.listener.setScheduledToWaiting(node);
 					saveFlowNode(node);
 					return;
 				}
@@ -1642,14 +1649,20 @@ public class Engine extends MLog implements EEngine {
 				if (triggerName.equals("")) return; // for secure
 				// find trigger
 				EngineContext context = createContext(caze, node);
+				int cnt = 0;
 				for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-					if (trigger.type() == TYPE.TIMER && trigger.name().equals(triggerName)) {
+					if (trigger.type() == TYPE.TIMER && (
+							trigger.name().equals(triggerName)
+							||
+							triggerName.startsWith("trigger.") && cnt == MCast.toint(triggerName.substring(8), -1)
+							)) {
 						// found one ... start new, close current
 						PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
 						saveFlowNode(context, nextNode, null);
 						closeFlowNode(context, node, STATE_NODE.CLOSED);
 						return;
 					}
+					cnt++;
 				}
 				// trigger not found
 				config.listener.error("Trigger for timer not found",triggerName,node);
@@ -1709,6 +1722,7 @@ public class Engine extends MLog implements EEngine {
 			((AHumanTask<?>)aNode).setFormValues(values);
 			
 			node.setState(STATE_NODE.RUNNING);
+			node.setScheduledNow();
 			saveFlowNode(context, node, (AActivity<?>) aNode);
 		}
 	}

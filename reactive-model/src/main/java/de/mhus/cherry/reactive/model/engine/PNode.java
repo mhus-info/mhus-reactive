@@ -267,8 +267,10 @@ public class PNode implements Externalizable {
 	}
 
 	public void setScheduled(long scheduled) {
-		if (scheduled <= 0 ) return;
-		getSchedulers().put("", scheduled);
+		if (scheduled < 0 ) 
+			getSchedulers().remove("");
+		else
+			getSchedulers().put("", scheduled);
 	}
 
 	public void setMessageEvent(String message) {
@@ -406,6 +408,10 @@ public class PNode implements Externalizable {
 		tryCount = in.readInt();
 		message = (Map<String, Object>) in.readObject();
 		
+	}
+
+	public void setScheduledNow() {
+		setScheduled(0);
 	}
 	
 }

@@ -44,7 +44,7 @@ public class S1ActivitiesTest extends TestCase {
 	private Engine engine;
 	long sleep = 10;
 	private Console console;
-	/*
+
 	public void testTriggerTimer() throws Exception {
 		
 		createEnigne();
@@ -74,7 +74,7 @@ public class S1ActivitiesTest extends TestCase {
 				
 				if (i == 4) {
 				    ((MemoryStorage)config.storage).dumpNodes();
-					MThread.sleep(2000);
+					MThread.sleep(1200);
 				}
 				
 			}
@@ -87,7 +87,7 @@ public class S1ActivitiesTest extends TestCase {
 
 		archiveEngine(engine, config);
 	}
-	*/
+
 	public void testTriggerMessage() throws Exception {
 		
 		createEnigne();

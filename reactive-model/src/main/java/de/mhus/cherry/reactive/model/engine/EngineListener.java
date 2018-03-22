@@ -71,4 +71,6 @@ public interface EngineListener {
 
 	void fireSignal(String signal, Map<String, Object> parameters);
 
+	void setScheduledToWaiting(PNode node);
+
 }
