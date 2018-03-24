@@ -86,7 +86,7 @@ public class EngineListenerUtil {
 
 	public static EngineListener createEngineEventProcessor(final EngineConfiguration config) {
 		return (EngineListener) Proxy.newProxyInstance(EngineListener.class.getClassLoader(), new Class[] {EngineListener.class} , new InvocationHandler() {
-			Log log = Log.getLog(Engine.class);
+//			Log log = Log.getLog(Engine.class);
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				

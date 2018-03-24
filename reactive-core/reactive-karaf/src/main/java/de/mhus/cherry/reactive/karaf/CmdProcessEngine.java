@@ -8,6 +8,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.PEngine;
+import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
@@ -48,6 +49,11 @@ public class CmdProcessEngine extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("cleanup")) {
+			IEngineAdmin uiApi = MApi.lookup(IEngineAdmin.class);
+			uiApi.cleanupCache();
+			System.out.println("OK");
+		} else
 		if (cmd.equals("fire")) {
 			if (parameters[0].equals("external")) {
 				MProperties p = new MProperties();

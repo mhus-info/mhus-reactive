@@ -2,9 +2,9 @@ package de.mhus.cherry.reactive.model.ui;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
@@ -20,5 +20,9 @@ public interface IEngine {
 	ICase getCase(UUID id) throws Exception;
 
 	INode getNode(UUID id) throws Exception;
+
+	Locale getLocale();
+
+	String getUser();
 	
 }

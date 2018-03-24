@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.util.Locale;
+
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.engine.EElement;
@@ -12,8 +14,10 @@ import de.mhus.lib.core.MProperties;
 public class UiProcess implements IProcess {
 
 	private MProperties properties = new MProperties();
+	private UiEngine engine;
 	
-	public UiProcess(EProcess process) {
+	public UiProcess(UiEngine engine, EProcess process) {
+		this.engine = engine;
 		for (String poolName : process.getPoolNames()) {
 			EPool pool = process.getPool(poolName);
 			String pUri = EngineConst.SCHEME_REACTIVE + "://" + process.getCanonicalName() + ":" + process.getVersion() + "/" + pool.getCanonicalName();
@@ -39,12 +43,26 @@ public class UiProcess implements IProcess {
 
 	@Override
 	public String getDisplayName(String uri, String canonicalName) {
+		Locale locale = engine.getLocale();
+		if (locale != null) {
+			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#displayName?" + locale.getLanguage(), null);
+			if (out != null) return out;
+		}
 		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#displayName", canonicalName);
 	}
 
 	@Override
 	public String getDescription(String uri, String canonicalName) {
+		Locale locale = engine.getLocale();
+		if (locale != null) {
+			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#description?" + locale.getLanguage(), null);
+			if (out != null) return out;
+		}
 		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#description", "");
 	}
 
+	public MProperties getProperties() {
+		return properties;
+	}
+	
 }

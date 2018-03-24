@@ -1,7 +1,9 @@
 package de.mhus.cherry.reactive.karaf;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;
@@ -10,18 +12,18 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import de.mhus.cherry.reactive.engine.ui.UiEngine;
+import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
-import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.ui.ICase;
-import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.IEngineFactory;
+import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
@@ -39,7 +41,7 @@ public class CmdNode extends MLog implements Action {
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " executing       - print currently executing nodes\n"
 			+ " list [search: state=,name=,search=,index0..9=,uri=,case=]  - list all nodes\n"
-			+ " view <id>     - view node details\n"
+			+ " view <id> [user] [lang] - view node details\n"
 			+ " cancel <id>   - cancel node\n"
 			+ " retry <id>    - set node back to running\n"
 			+ "", multiValued=false)
@@ -192,12 +194,21 @@ public class CmdNode extends MLog implements Action {
 			
 			if (parameters.length > 1) {
 				String user = parameters[1];
-				UiEngine engine = new UiEngine(api.getEngine(), user);
+				Locale locale = null;
+				if (parameters.length > 2)
+					locale = Locale.forLanguageTag(parameters[2]);
+				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
+				IEngine engine = uiFactory.create(user, locale);
 				INode inode = engine.getNode(node.getId());
 				System.out.println();
-				System.out.println("User: " + user);
+				System.out.println("User        : " + engine.getUser());
+				System.out.println("Locale      : " + engine.getLocale());
 				System.out.println("Display name: " + inode.getDisplayName());
 				System.out.println("Description : " + inode.getDescription());
+				System.out.println();
+				if (all)
+					for (Entry<String, Object> entry : new TreeMap<String,Object>(((UiProcess)engine.getProcess(inode.getUri())).getProperties()).entrySet())
+						System.out.println(entry.getKey() + "=" + entry.getValue());
 			}
 
 			

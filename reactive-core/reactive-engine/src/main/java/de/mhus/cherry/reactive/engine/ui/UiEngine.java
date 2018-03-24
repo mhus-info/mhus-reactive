@@ -3,12 +3,10 @@ package de.mhus.cherry.reactive.engine.ui;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.engine.EngineContext;
-import de.mhus.cherry.reactive.model.engine.EPool;
-import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
@@ -17,6 +15,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.MException;
@@ -29,11 +28,14 @@ public class UiEngine extends MLog implements IEngine {
 	private SoftHashMap<String, Boolean> cacheAccessRead = new SoftHashMap<>();
 	private SoftHashMap<String, Boolean> cacheAccessWrite = new SoftHashMap<>();
 	private SoftHashMap<UUID, Boolean> cacheAccessExecute = new SoftHashMap<>();
-	private SoftHashMap<String, EngineContext> cacheContext = new SoftHashMap<>();
+//	private SoftHashMap<String, EngineContext> cacheContext = new SoftHashMap<>();
+	private Locale locale;
+	private MProperties defaultProcessProperties = new MProperties();
 
-	public UiEngine(Engine engine, String user) {
+	public UiEngine(Engine engine, String user, Locale locale) {
 		this.engine = engine;
 		this.user = user;
+		this.locale = locale;
 	}
 	
 	@Override
@@ -78,27 +80,27 @@ public class UiEngine extends MLog implements IEngine {
 		return out;
 	}
 
-	private EngineContext getContext(String uri) {
-		synchronized (cacheContext) {
-			EngineContext context = cacheContext.get(uri);
-			if (context != null) return context;
-		}
-		MUri muri = MUri.toUri(uri);
-		try {
-			EProcess process = engine.getProcess(muri);
-			EPool pool = engine.getPool(process, muri);
-			EngineContext context = new EngineContext(engine);
-			context.setEProcess(process);
-			context.setEPool(pool);
-			synchronized (cacheContext) {
-				cacheContext.put(uri, context);
-			}
-			return context;
-		} catch (Throwable t) {
-			log().e(uri,user,t);
-			return null;
-		}
-	}
+//	private EngineContext getContext(String uri) {
+//		synchronized (cacheContext) {
+//			EngineContext context = cacheContext.get(uri);
+//			if (context != null) return context;
+//		}
+//		MUri muri = MUri.toUri(uri);
+//		try {
+//			EProcess process = engine.getProcess(muri);
+//			EPool pool = engine.getPool(process, muri);
+//			EngineContext context = new EngineContext(engine);
+//			context.setEProcess(process);
+//			context.setEPool(pool);
+//			synchronized (cacheContext) {
+//				cacheContext.put(uri, context);
+//			}
+//			return context;
+//		} catch (Throwable t) {
+//			log().e(uri,user,t);
+//			return null;
+//		}
+//	}
 
 	public boolean hasReadAccess(String uri) {	
 		synchronized (cacheAccessRead) {
@@ -141,7 +143,9 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public IProcess getProcess(String uri) throws MException {
-		return new UiProcess(engine.getProcess(MUri.toUri(uri)));
+		UiProcess out = new UiProcess(this, engine.getProcess(MUri.toUri(uri)));
+		out.getProperties().putAll(defaultProcessProperties);
+		return out;
 	}
 
 	@Override
@@ -152,6 +156,24 @@ public class UiEngine extends MLog implements IEngine {
 	@Override
 	public INode getNode(UUID id) throws Exception {
 		return new UiNode(this, engine.storageGetFlowNodeInfo(id));
+	}
+
+	@Override
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public MProperties getDefaultProcessProperties() {
+		return defaultProcessProperties;
+	}
+
+	@Override
+	public String getUser() {
+		return user;
+	}
+
+	public void setDefaultProcessProperties(MProperties defaultProcessProperties) {
+		this.defaultProcessProperties = defaultProcessProperties;
 	}
 	
 }

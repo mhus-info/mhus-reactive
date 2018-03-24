@@ -1,6 +1,8 @@
 package de.mhus.cherry.reactive.karaf;
 
 import java.util.Date;
+import java.util.Locale;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -10,7 +12,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import de.mhus.cherry.reactive.engine.ui.UiEngine;
+import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -19,11 +21,12 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
+import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -33,7 +36,7 @@ public class CmdCase extends MLog implements Action {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
-			+ " view <id> [user] - view case details\n"
+			+ " view <id> [user] [lang ]- view case details\n"
 			+ " nodes <id>       - print case bound nodes\n"
 			+ " list [search: state=,name=,search=,index0..9=,uri=] - list all cases\n"
 			+ " resume <id>      - resume case\n"
@@ -91,12 +94,20 @@ public class CmdCase extends MLog implements Action {
 			
 			if (parameters.length > 1) {
 				String user = parameters[1];
-				UiEngine engine = new UiEngine(api.getEngine(), user);
+				Locale locale = null;
+				if (parameters.length > 2)
+					locale = Locale.forLanguageTag(parameters[2]);
+				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
+				IEngine engine = uiFactory.create(user, locale);
 				ICase icase = engine.getCase(caze.getId());
 				System.out.println();
-				System.out.println("User: " + user);
+				System.out.println("User        : " + engine.getUser());
+				System.out.println("Locale      : " + engine.getLocale());
 				System.out.println("Display name: " + icase.getDisplayName());
 				System.out.println("Description : " + icase.getDescription());
+				if (all)
+					for (Entry<String, Object> entry : new TreeMap<String,Object>(((UiProcess)engine.getProcess(icase.getUri())).getProperties()).entrySet())
+						System.out.println(entry.getKey() + "=" + entry.getValue());
 			}
 			
 		} else
