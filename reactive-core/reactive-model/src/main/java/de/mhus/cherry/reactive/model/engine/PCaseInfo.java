@@ -10,16 +10,18 @@ public class PCaseInfo {
 	private String uri;
 	private String canonicalName;
 	private STATE_CASE state;
+	private String customId;
 
-	public PCaseInfo(UUID id, String uri, String canonicalName, STATE_CASE state) {
+	public PCaseInfo(UUID id, String uri, String canonicalName, STATE_CASE state, String customId) {
 		this.id = id;
 		this.uri = uri;
 		this.canonicalName = canonicalName;
 		this.state = state;
+		this.customId = customId;
 	}
 
 	public PCaseInfo(PCase caze) {
-		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState());
+		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState(), caze.getCustomId());
 	}
 
 	public UUID getId() {
@@ -38,4 +40,8 @@ public class PCaseInfo {
 		return state;
 	}
 
+	public String getCustomId() {
+		return customId;
+	}
+	
 }

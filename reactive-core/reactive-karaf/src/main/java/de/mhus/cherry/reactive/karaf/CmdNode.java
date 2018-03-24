@@ -13,6 +13,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
+import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
@@ -95,7 +96,7 @@ public class CmdNode extends MLog implements Action {
 			
 			ConsoleTable table = new ConsoleTable();
 			table.fitToConsole();
-			table.setHeaderValues("Id","Case","Name","State","Type","Scheduled","CaseId");
+			table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(null,state)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
 				if (all || (node.getState() != STATE_NODE.CLOSED && node.getType() != TYPE_NODE.RUNTIME) ) {
@@ -106,18 +107,31 @@ public class CmdNode extends MLog implements Action {
 						if (diff > 0)
 							scheduled = MTimeInterval.getIntervalAsString(diff);
 					}
-					PCase caze = api.getEngine().getCase(node.getCaseId());
-					table.addRowValues(node.getId(),caze.getName(), node.getName(),node.getState(),node.getType(), scheduled, node.getCaseId());
+					table.addRowValues(
+							node.getId(),
+							info.getCustomId(), 
+							node.getName(),
+							node.getState(),
+							node.getType(), 
+							scheduled, 
+							node.getCaseId(),
+							node.getAssignedUser(),
+							info.getUri()
+							);
 				}
 			}
 			table.print(System.out);
 		} else
 		if (cmd.equals("view")) {
 			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
+			PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getCaseId());
+			
 			System.out.println("Name      : " + node.getName());
 			System.out.println("Id        : " + node.getId());
 			System.out.println("State     : " + node.getState());
 			System.out.println("CName     : " + node.getCanonicalName());
+			System.out.println("Uri       : " + info.getUri());
+			System.out.println("CustomId  : " + info.getCustomId());
 			System.out.println("Created   : " + MDate.toIso8601(new Date(node.getCreationDate())));
 			String scheduled = "-";
 			Entry<String, Long> scheduledEntry = node.getNextScheduled();

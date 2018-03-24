@@ -39,7 +39,6 @@ public interface StorageProvider {
 	
 	/**
 	 * Save or update the flow node.
-	 * 
 	 * @param flow
 	 * @throws IOException 
 	 */

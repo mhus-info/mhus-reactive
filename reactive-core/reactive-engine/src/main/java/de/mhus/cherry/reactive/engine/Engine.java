@@ -1808,8 +1808,10 @@ public class Engine extends MLog implements EEngine {
 	public PNodeInfo getFlowNodeInfo(UUID nodeId) throws Exception {
 		synchronized (nodeCache) {
 			PNode node = nodeCache.get(nodeId);
-			if (node != null)
-				return new PNodeInfo(node);
+			if (node != null) {
+				PCaseInfo caseInfo = getCaseInfo(node.getCaseId());
+				return new PNodeInfo(caseInfo, node);
+			}
 		}
 		return storage.loadFlowNodeInfo(nodeId);
 	}

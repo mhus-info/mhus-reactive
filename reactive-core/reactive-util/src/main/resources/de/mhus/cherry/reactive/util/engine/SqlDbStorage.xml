@@ -3,12 +3,13 @@
 	  <field name="id" type="string" size="36" />
 	  <field name="content" type="blob" />
 	  <field name="uri" type="string" size="700" />
-	  <field name="state" type="int" size="20" />
+	  <field name="state" type="int" />
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
 	  <field name="closed_message" type="string" size="400" />
 	  <field name="closed_code" type="int"/>
 	  <field name="name" type="string" size="700" />
+	  <field name="custom" type="string" size="700" />
 	</table>
 	<table name="$/prefix$_node" primary_key="id">
 	  <field name="id" type="string" size="36" />
@@ -23,6 +24,8 @@
 	  <field name="scheduled" type="long" />
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
+	  <field name="custom" type="string" size="700" />
+	  <field name="uri" type="string" size="700" />
 	</table>
 	<table name="$/prefix$_engine" primary_key="id">
 	  <field name="id" type="string" size="36" />

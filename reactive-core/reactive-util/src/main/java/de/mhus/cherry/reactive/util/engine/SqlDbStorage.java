@@ -22,6 +22,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
@@ -35,8 +36,8 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_";
-	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_";
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_";
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_";
 	private DbPool pool;
 	private String prefix;
 	
@@ -76,14 +77,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			caze.writeExternal(new ObjectOutputStream(outStream));
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-			prop.put("content", inStream);
-			prop.put("created", new Date());
-			prop.put("modified", new Date());
-			prop.put("state", caze.getState());
-			prop.put("name", caze.getCanonicalName());
-			prop.put("closedCode", caze.getClosedCode());
-			prop.put("closedMessage", caze.getClosedMessage() == null ? "" : caze.getClosedMessage() );
-			prop.put("uri", caze.getUri());
+			prop.put("content", 		inStream);
+			prop.put("created", 		new Date());
+			prop.put("modified", 		new Date());
+			prop.put("state", 			caze.getState());
+			prop.put("custom", 			M.trunc(caze.getCustomId(), 700));
+			prop.put("name", 			caze.getCanonicalName());
+			prop.put("closedCode", 		caze.getClosedCode());
+			prop.put("closedMessage", 	M.trunc(caze.getClosedMessage() == null ? "" : caze.getClosedMessage(), 400) );
+			prop.put("uri", 			M.trunc(caze.getUri(), 700));
 			if (exists) {
 				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET "
 						+ "content_=$content$,"
@@ -104,7 +106,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "uri_,"
 						+ "closed_code_,"
 						+ "closed_message_,"
-						+ "name_"
+						+ "name_,"
+						+ "custom_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$content$,"
@@ -114,7 +117,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$uri$,"
 						+ "$closedCode$,"
 						+ "$closedMessage$,"
-						+ "$name$"
+						+ "$name$,"
+						+ "$custom$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -172,6 +176,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 	@Override
 	public void saveFlowNode(PNode flow) throws IOException {
+		
 		try {
 			DbConnection con = pool.getConnection();
 			boolean exists = false;
@@ -187,15 +192,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			flow.writeExternal(new ObjectOutputStream(outStream));
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-			prop.put("content", inStream);
-			prop.put("case",flow.getCaseId());
-			prop.put("created", new Date());
-			prop.put("modified", new Date());
-			prop.put("state", flow.getState());
-			prop.put("type", flow.getType());
-			prop.put("name", flow.getCanonicalName());
-			prop.put("signal", flow.getSignalsAsString());
-			prop.put("message", flow.getMessagesAsString());
+			prop.put("content", 	inStream);
+			prop.put("modified", 	new Date());
+			prop.put("state", 		flow.getState());
+			prop.put("type", 		flow.getType());
+			prop.put("signal", 		M.trunc(flow.getSignalsAsString(), 700));
+			prop.put("message", 	M.trunc(flow.getMessagesAsString(), 700));
+			
+			if (!exists) {
+				PCaseInfo caze = loadCaseInfo(flow.getCaseId());
+				if (caze == null) throw new IOException("Case "+ flow.getCaseId()+" not found to create node " + flow.getId());
+				prop.put("name", 		M.trunc(flow.getCanonicalName(), 700));
+				prop.put("case",		flow.getCaseId());
+				prop.put("created", 	new Date());
+				prop.put("custom", 		M.trunc(caze.getCustomId(), 700));
+				prop.put("uri", 		M.trunc(caze.getUri(), 700));
+			}
+			
 			if (flow.getAssignedUser() != null)
 				prop.put("assigned", flow.getAssignedUser());
 			Entry<String, Long> scheduled = flow.getNextScheduled();
@@ -230,7 +243,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "scheduled_,"
 						+ "assigned_,"
 						+ "signal_,"
-						+ "message_"
+						+ "message_,"
+						+ "uri_,"
+						+ "custom_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$case$,"
@@ -243,7 +258,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$scheduled$,"
 						+ "$assigned$,"
 						+ "$signal$,"
-						+ "$message$"
+						+ "$message$,"
+						+ "$uri$,"
+						+ "$custom$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -595,7 +612,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("name_"),
 				res.getString("assigned_"),
 				toNodeState(res.getInt("state_")),
-				toNodeType(res.getInt("type_"))
+				toNodeType(res.getInt("type_")),
+				res.getString("uri_"),
+				res.getString("custom_")
 				);
 		return out;
 	}
@@ -605,7 +624,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("id_")), 
 				res.getString("uri_"), 
 				res.getString("name_"),
-				toCaseState(res.getInt("state_"))
+				toCaseState(res.getInt("state_")),
+				res.getString("custom_")
 				);
 		return out;
 	}

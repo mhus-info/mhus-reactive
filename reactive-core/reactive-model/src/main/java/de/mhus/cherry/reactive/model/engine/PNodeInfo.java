@@ -13,18 +13,22 @@ public class PNodeInfo {
 	private String assigned;
 	private STATE_NODE state;
 	private TYPE_NODE type;
+	private String customId;
+	private String uri;
 
-	public PNodeInfo(UUID id, UUID caseId, String canonicalName, String assigned, STATE_NODE state, TYPE_NODE type) {
+	public PNodeInfo(UUID id, UUID caseId, String canonicalName, String assigned, STATE_NODE state, TYPE_NODE type, String uri, String customId) {
 		this.id = id;
 		this.caseId = caseId;
 		this.canonicalName = canonicalName;
 		this.assigned = assigned;
 		this.state = state;
 		this.type = type;
+		this.uri = uri;
+		this.customId = customId;
 	}
 
-	public PNodeInfo(PNode node) {
-		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType());
+	public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
+		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType(), cazeInfo.getCustomId(), cazeInfo.getUri());
 	}
 
 	public UUID getId() {
@@ -55,4 +59,13 @@ public class PNodeInfo {
 	public String toString() {
 		return id + " " + caseId + " " + canonicalName + " " + assigned + " " + state + " " + type;
 	}
+	
+	public String getUri() {
+		return uri;
+	}
+
+	public String getCustomId() {
+		return customId;
+	}
+
 }
