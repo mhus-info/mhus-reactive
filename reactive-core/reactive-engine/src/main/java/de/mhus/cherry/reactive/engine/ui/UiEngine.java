@@ -1,28 +1,28 @@
-package de.mhus.cherry.reactive.engine;
+package de.mhus.cherry.reactive.engine.ui;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
-import de.mhus.cherry.reactive.model.engine.PCase;
-import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
-import de.mhus.cherry.reactive.model.engine.PNode;
-import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.SoftHashMap;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
-public class EngineUi extends MLog implements IEngine {
+public class UiEngine extends MLog implements IEngine {
 
 	private Engine engine;
 	private String user;
@@ -31,62 +31,21 @@ public class EngineUi extends MLog implements IEngine {
 	private SoftHashMap<UUID, Boolean> cacheAccessExecute = new SoftHashMap<>();
 	private SoftHashMap<String, EngineContext> cacheContext = new SoftHashMap<>();
 
-	public EngineUi(Engine engine, String user) {
+	public UiEngine(Engine engine, String user) {
 		this.engine = engine;
 		this.user = user;
 	}
 	
-	public List<ICase> getCases(int page, int size, STATE_CASE state) throws IOException, NotFoundException {
-		LinkedList<ICase> out = new LinkedList<>();
-		int cnt = 0;
-		int first = page * size;
-		for (PCaseInfo info : engine.storageGetCases(state)) {
-			if (hasReadAccess(info.getUri())) {
-				if (cnt >= first) {
-					PCase caze = engine.getCase(info.getId());
-					out.add(new ICase(getContext(caze.getUri()), caze));
-				}
-				cnt++;
-				if (out.size() >= size) break;
-			}
-		}
-		return out;
-	}
-	
-	public List<INode> getNodes(int page, int size, STATE_NODE state) throws NotFoundException, IOException {
-		LinkedList<INode> out = new LinkedList<>();
-		int cnt = 0;
-		int first = page * size;
-		for (PNodeInfo info : engine.storageGetFlowNodes(null,state)) {
-			PCase caze = engine.getCase(info.getCaseId());
-			if (hasReadAccess(caze.getUri())) {
-				try {
-					if (cnt >= first) {
-						PNode node = engine.getFlowNode(info.getId());
-						out.add(new INode(getContext(caze.getUri()), caze, node));
-					}
-					cnt++;
-				} catch (Exception e) {
-					log().d(info,e);
-				}
-				if (out.size() >= size) break;
-			}
-		}
-		return out;
-	}
-
 	@Override
 	public List<INode> searchNodes(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException {
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
 		for (PNodeInfo info : engine.storageSearchFlowNodes(criterias)) {
-			PCase caze = engine.getCase(info.getCaseId());
-			if (user.equals(info.getAssigned()) || hasReadAccess(caze.getUri())) {
+			if (user.equals(info.getAssigned()) || hasReadAccess(info.getUri())) {
 				try {
 					if (cnt >= first) {
-						PNode node = engine.getFlowNode(info.getId());
-						out.add(new INode(getContext(caze.getUri()),caze, node));
+						out.add(new UiNode(this,info));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -97,53 +56,28 @@ public class EngineUi extends MLog implements IEngine {
 		}
 		return out;
 	}
-	
-	private boolean match(PNodeInfo info, PCase caze, String[] filters) {
-		if (filters == null || filters.length == 0) return true;
-		for (String filter:filters) {
-			if (filter.startsWith("!")) {
-				filter = filter.substring(1);
-				if (filter.equals(caze.getCanonicalName() + ":" + info.getCanonicalName() ))
-					return false;
-				if (filter.equals(caze.getCanonicalName()))
-					return false;
-				if (filter.equals(":" + info.getCanonicalName() ))
-					return false;
-			} else {
-				if (filter.equals(caze.getCanonicalName() + ":" + info.getCanonicalName() ))
-					return true;
-				if (filter.equals(caze.getCanonicalName()))
-					return true;
-				if (filter.equals(":" + info.getCanonicalName() ))
-					return true;
-			}
-		}
-		return false;
-	}
 
 	@Override
-	public List<INode> getNodes(int page, int size, UUID caseId, STATE_NODE state) throws NotFoundException, IOException {
-		LinkedList<INode> out = new LinkedList<>();
+	public List<ICase> searchCases(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException {
+		LinkedList<ICase> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
-		PCase caze = engine.getCase(caseId);
-		if (hasReadAccess(caze.getUri())) {
-			for (PNodeInfo info : engine.storageGetFlowNodes(caseId,state)) {
-					try {
-						if (cnt >= first) {
-							PNode node = engine.getFlowNode(info.getId());
-							out.add(new INode(getContext(caze.getUri()), caze, node));
-						}
-						cnt++;
-					} catch (Exception e) {
-						log().d(info,e);
+		for (PCaseInfo info : engine.storageSearchCases(criterias)) {
+			if (hasReadAccess(info.getUri())) {
+				try {
+					if (cnt >= first) {
+						out.add(new UiCase(this, info));
 					}
-					if (out.size() >= size) break;
+					cnt++;
+				} catch (Exception e) {
+					log().d(info,e);
+				}
+				if (out.size() >= size) break;
 			}
 		}
 		return out;
 	}
-	
+
 	private EngineContext getContext(String uri) {
 		synchronized (cacheContext) {
 			EngineContext context = cacheContext.get(uri);
@@ -203,6 +137,11 @@ public class EngineUi extends MLog implements IEngine {
 			cacheAccessExecute.put(nodeId,hasAccess);
 		}
 		return hasAccess;
+	}
+
+	@Override
+	public IProcess getProcess(String uri) throws MException {
+		return new UiProcess(engine.getProcess(MUri.toUri(uri)));
 	}
 	
 }

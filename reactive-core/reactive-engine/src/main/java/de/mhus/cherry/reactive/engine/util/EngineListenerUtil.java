@@ -1,10 +1,12 @@
-package de.mhus.cherry.reactive.engine;
+package de.mhus.cherry.reactive.engine.util;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.LinkedList;
 
+import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.model.engine.EngineListener;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;

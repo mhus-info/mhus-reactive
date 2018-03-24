@@ -119,7 +119,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		return ePool;
 	}
 
-	void setEPool(EPool ePool) {
+	public void setEPool(EPool ePool) {
 		this.ePool = ePool;
 	}
 
@@ -180,7 +180,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		return uri;
 	}
 
-	void setEProcess(EProcess eProcess) {
+	public void setEProcess(EProcess eProcess) {
 		this.eProcess = eProcess;
 	}
 	

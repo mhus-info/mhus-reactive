@@ -1,4 +1,4 @@
-package de.mhus.cherry.reactive.engine;
+package de.mhus.cherry.reactive.engine.util;
 
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;

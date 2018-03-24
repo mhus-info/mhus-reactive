@@ -1,41 +1,26 @@
 package de.mhus.cherry.reactive.model.ui;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.model.engine.PCase;
-import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import java.util.UUID;
 
-public class ICase {
+import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 
-	private String uri;
-	private String caseName;
-	private String caseCanonicalName;
-	private ActivityDescription caseDescription;
+public interface ICase {
 
-	public ICase(ProcessContext<?> context, PCase caze) {
-		this.uri = caze.getUri();
-		this.caseName = caze.getName();
-		this.caseCanonicalName = caze.getCanonicalName();
-		this.caseDescription = context.getEPool().getElement(caze.getCanonicalName()).getActivityDescription();
-	}
+	String getUri();
 
-	public String getUri() {
-		return uri;
-	}
+	String getCaseCanonicalName();
 
-	public String getCaseName() {
-		return caseName;
-	}
+	String getIndexValue(int index);
 
-	public String getCaseCanonicalName() {
-		return caseCanonicalName;
-	}
+	String getCustomId();
 
-	public String getCaseDisplayName() {
-		return caseDescription.displayName();
-	}
-	
-	public String getCaseDescription() {
-		return caseDescription.description();
-	}
+	STATE_CASE getState();
+
+	UUID getId();
+
+	String getDisplayName();
+
+	String getDescription();
+
 
 }

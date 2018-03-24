@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -37,6 +38,7 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
+	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
 	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_" + INDEX_COLUMNS;
 	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_" + INDEX_COLUMNS;
@@ -102,7 +104,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 				if (caze.getIndexValues() != null) {
 					String[] idx = caze.getIndexValues();
-					for (int i = 0; i < 10; i++)
+					for (int i = 0; i < MAX_INDEX_VALUES; i++)
 						if (idx.length > i && idx[i] != null) {
 							prop.put("index" + i, M.trunc(idx[i], 300));
 							sql = sql + ",index" + i + "_=$index"+i+"$";
@@ -118,7 +120,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (caze.getIndexValues() != null) {
 					String[] idx = caze.getIndexValues();
-					for (int i = 0; i < 10; i++)
+					for (int i = 0; i < MAX_INDEX_VALUES; i++)
 						if (idx.length > i) 
 							prop.put("index" + i, M.trunc(idx[i], 300));
 				}
@@ -276,7 +278,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (flow.getIndexValues() != null) {
 					String[] idx = flow.getIndexValues();
-					for (int i = 0; i < 10; i++)
+					for (int i = 0; i < MAX_INDEX_VALUES; i++)
 						if (idx.length > i && idx[i] != null) {
 							prop.put("index" + i, M.trunc(idx[i], 300));
 							sql = sql + ",index" + i + "_=$index"+i+"$";
@@ -292,7 +294,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (flow.getIndexValues() != null) {
 					String[] idx = flow.getIndexValues();
-					for (int i = 0; i < 10; i++)
+					for (int i = 0; i < MAX_INDEX_VALUES; i++)
 						if (idx.length > i) 
 							prop.put("index" + i, M.trunc(idx[i], 300));
 				}
@@ -555,7 +557,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			}
 
 			if (search.index != null) {
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {
 						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 						whereAdded = true;
@@ -606,7 +608,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			}
 
 			if (search.index != null) {
-				for (int i = 0; i < 10; i++) {
+				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {
 						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 						whereAdded = true;

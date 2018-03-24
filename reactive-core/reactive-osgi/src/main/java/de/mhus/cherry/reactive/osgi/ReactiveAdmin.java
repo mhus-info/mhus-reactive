@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.engine.PoolValidator.Finding;
+import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.lib.errors.MException;
