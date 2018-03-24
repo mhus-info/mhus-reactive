@@ -32,4 +32,10 @@ public class S1HumanStep extends RHumanTask<S1Pool> {
 		);
 	}
 
+	@Override
+	public String[] createIndexValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -13,7 +13,7 @@ public interface EEngine {
 
 	Result<PNodeInfo> storageGetFlowNodes(UUID caseId, STATE_NODE state) throws IOException;
 
-	Result<PNodeInfo> storageGetAssignedFlowNodes(String user) throws IOException;
+	Result<PNodeInfo> storageSearchFlowNodes(SearchCriterias criterias) throws IOException;
 
 	Result<PNodeInfo> storageGetScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException;
 

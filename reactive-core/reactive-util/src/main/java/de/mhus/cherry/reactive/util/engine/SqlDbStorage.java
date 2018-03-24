@@ -21,6 +21,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
@@ -36,8 +37,9 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_";
-	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_";
+	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_";
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_" + INDEX_COLUMNS;
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_" + INDEX_COLUMNS;
 	private DbPool pool;
 	private String prefix;
 	
@@ -78,25 +80,49 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			caze.writeExternal(new ObjectOutputStream(outStream));
 			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 			prop.put("content", 		inStream);
-			prop.put("created", 		new Date());
 			prop.put("modified", 		new Date());
 			prop.put("state", 			caze.getState());
-			prop.put("custom", 			M.trunc(caze.getCustomId(), 700));
-			prop.put("name", 			caze.getCanonicalName());
 			prop.put("closedCode", 		caze.getClosedCode());
 			prop.put("closedMessage", 	M.trunc(caze.getClosedMessage() == null ? "" : caze.getClosedMessage(), 400) );
-			prop.put("uri", 			M.trunc(caze.getUri(), 700));
+			
+			if (!exists) {
+				prop.put("created", 		new Date());
+				prop.put("custom", 			M.trunc(caze.getCustomId(), 700));
+				prop.put("name", 			caze.getCanonicalName());
+				prop.put("uri", 			M.trunc(caze.getUri(), 700));
+			}
+			
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_case_ SET "
+				String sql = "UPDATE " + prefix + "_case_ SET "
 						+ "content_=$content$,"
 						+ "modified_=$modified$,"
 						+ "state_=$state$,"
 						+ "closed_code_=$closedCode$,"
-						+ "closed_message_=$closedMessage$"
-						+ " WHERE id_=$id$");
+						+ "closed_message_=$closedMessage$";
+
+				if (caze.getIndexValues() != null) {
+					String[] idx = caze.getIndexValues();
+					for (int i = 0; i < 5; i++)
+						if (idx.length > i && idx[i] != null) {
+							prop.put("index" + i, M.trunc(idx[i], 300));
+							sql = sql + ",index" + i + "_=$index"+i+"$";
+						}
+				}
+				
+				sql = sql + " WHERE id_=$id$";
+				
+				DbStatement sta = con.createStatement(sql);
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
+				
+				if (caze.getIndexValues() != null) {
+					String[] idx = caze.getIndexValues();
+					for (int i = 0; i < 5; i++)
+						if (idx.length > i) 
+							prop.put("index" + i, M.trunc(idx[i], 300));
+				}
+
 				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_case_ ("
 						+ "id_,"
 						+ "content_,"
@@ -107,7 +133,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "closed_code_,"
 						+ "closed_message_,"
 						+ "name_,"
-						+ "custom_"
+						+ "custom_,"
+						+ "index0_,"
+						+ "index1_,"
+						+ "index2_,"
+						+ "index3_,"
+						+ "index4_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$content$,"
@@ -118,7 +149,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$closedCode$,"
 						+ "$closedMessage$,"
 						+ "$name$,"
-						+ "$custom$"
+						+ "$custom$,"
+						+ "$index0$,"
+						+ "$index1$,"
+						+ "$index2$,"
+						+ "$index3$,"
+						+ "$index4$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -218,7 +254,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("scheduled", scheduledLong);
 			
 			if (exists) {
-				DbStatement sta = con.createStatement("UPDATE " + prefix + "_node_ SET "
+				String sql = "UPDATE " + prefix + "_node_ SET "
 						+ "content_=$content$,"
 						+ "modified_=$modified$,"
 						+ "state_=$state$,"
@@ -226,11 +262,31 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "signal_=$signal$,"
 						+ "message_=$message$,"
 						+ "scheduled_=$scheduled$,"
-						+ "assigned_=$assigned$"
-						+ " WHERE id_=$id$");
+						+ "assigned_=$assigned$";
+				
+				if (flow.getIndexValues() != null) {
+					String[] idx = flow.getIndexValues();
+					for (int i = 0; i < 5; i++)
+						if (idx.length > i && idx[i] != null) {
+							prop.put("index" + i, M.trunc(idx[i], 300));
+							sql = sql + ",index" + i + "_=$index"+i+"$";
+						}
+				}
+				
+				sql = sql + " WHERE id_=$id$";
+						
+				DbStatement sta = con.createStatement(sql);
 				sta.executeUpdate(prop);
 				sta.close();
 			} else {
+				
+				if (flow.getIndexValues() != null) {
+					String[] idx = flow.getIndexValues();
+					for (int i = 0; i < 5; i++)
+						if (idx.length > i) 
+							prop.put("index" + i, M.trunc(idx[i], 300));
+				}
+
 				DbStatement sta = con.createStatement("INSERT INTO " + prefix + "_node_ ("
 						+ "id_,"
 						+ "case_,"
@@ -245,7 +301,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "signal_,"
 						+ "message_,"
 						+ "uri_,"
-						+ "custom_"
+						+ "custom_,"
+						+ "index0_,"
+						+ "index1_,"
+						+ "index2_,"
+						+ "index3_,"
+						+ "index4_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$case$,"
@@ -260,7 +321,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$signal$,"
 						+ "$message$,"
 						+ "$uri$,"
-						+ "$custom$"
+						+ "$custom$,"
+						+ "$index0$,"
+						+ "$index1$,"
+						+ "$index2$,"
+						+ "$index3$,"
+						+ "$index4$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -422,17 +488,44 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 
 	@Override
-	public Result<PNodeInfo> getAssignedFlowNodes(String user) throws IOException {
+	public Result<PNodeInfo> searchFlowNodes(SearchCriterias search) throws IOException {
 		try {
-			DbConnection con = pool.getConnection();
+			StringBuilder sql = new StringBuilder("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ ");
+			boolean whereAdded = false;
 			MProperties prop = new MProperties();
-			DbStatement sta = null;
-			if (user == null) {
-				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE assigned is null");
-			} else {
-				prop.setString("user", user);
-				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE assigned_=$user$");
+			if (search.unassigned) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				sql.append("assigned is null ");
+			} else
+			if (search.assigned != null)
+			{
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.setString("user", search.assigned);
+				sql.append("assigned=$user$ ");
 			}
+			
+			if (search.nodeState != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("state", search.nodeState);
+				sql.append("state=$state$ ");
+			}
+			
+			if (search.index != null) {
+				for (int i = 0; i < 5; i++) {
+					if (search.index.length > i && search.index[i] != null) {
+						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+						whereAdded = true;
+						prop.setString("index" + i, search.index[i]);
+						sql.append("index"+i+"_=$index"+i+"$ ");
+					}
+				}
+			}
+			
+			DbConnection con = pool.getConnection();
+			DbStatement sta = con.createStatement(sql.toString());
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
 		} catch (Exception e) {

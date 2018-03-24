@@ -25,6 +25,8 @@ public class PCase implements Externalizable {
 	private String canonicalName;
 	private int closedCode = 0;
 	private String closedMessage;
+	// will not be stored
+	private String[] indexValues;
 
 	public PCase() {}
 
@@ -174,6 +176,14 @@ public class PCase implements Externalizable {
 	
 	public boolean isFailed() {
 		return state == STATE_CASE.CLOSED && closedCode < 0;
+	}
+	
+	public void setIndexValues(String[] indexValues) {
+		this.indexValues = indexValues;
+	}
+	
+	public String[] getIndexValues() {
+		return indexValues;
 	}
 
 }

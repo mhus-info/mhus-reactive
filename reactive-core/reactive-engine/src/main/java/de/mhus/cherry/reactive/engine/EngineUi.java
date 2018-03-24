@@ -13,6 +13,7 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
@@ -75,36 +76,13 @@ public class EngineUi extends MLog implements IEngine {
 	}
 
 	@Override
-	public List<INode> getAssignedNodes(String[] filter, int page, int size) throws NotFoundException, IOException {
+	public List<INode> searchNodes(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException {
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
-		for (PNodeInfo info : engine.storageGetAssignedFlowNodes(user)) {
+		for (PNodeInfo info : engine.storageSearchFlowNodes(criterias)) {
 			PCase caze = engine.getCase(info.getCaseId());
-			if (!match(info, caze, filter)) continue;
-			try {
-				if (cnt >= first) {
-					PNode node = engine.getFlowNode(info.getId());
-					out.add(new INode(getContext(caze.getUri()), caze, node));
-				}
-				cnt++;
-			} catch (Exception e) {
-				log().d(info,e);
-			}
-			if (out.size() >= size) break;
-		}
-		return out;
-	}
-
-	@Override
-	public List<INode> getUnassignedNodes(String[] filter, int page, int size) throws NotFoundException, IOException {
-		LinkedList<INode> out = new LinkedList<>();
-		int cnt = 0;
-		int first = page * size;
-		for (PNodeInfo info : engine.storageGetAssignedFlowNodes(null)) {
-			PCase caze = engine.getCase(info.getCaseId());
-			if (!match(info, caze, filter)) continue;
-			if (hasReadAccess(caze.getUri())) {
+			if (user.equals(info.getAssigned()) || hasReadAccess(caze.getUri())) {
 				try {
 					if (cnt >= first) {
 						PNode node = engine.getFlowNode(info.getId());

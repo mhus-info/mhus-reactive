@@ -2,7 +2,9 @@ package de.mhus.cherry.reactive.model.activity;
 
 import java.util.Map;
 
-public interface APool<P extends APool<?>> extends AElement<P> {
+import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
+
+public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvider {
 
 	Map<String, Object> exportParamters();
 	

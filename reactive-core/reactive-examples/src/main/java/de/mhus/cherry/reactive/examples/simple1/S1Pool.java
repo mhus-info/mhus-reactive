@@ -30,6 +30,12 @@ public class S1Pool extends RPool<S1Pool> {
 	public Object getText2() {
 		return text2;
 	}
+
+	@Override
+	public String[] createIndexValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 		
 	
 }

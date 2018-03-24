@@ -28,4 +28,9 @@ public class NoPool implements APool<NoPool> {
 		throw new NotSupportedException();
 	}
 
+	@Override
+	public String[] createIndexValues() {
+		return null;
+	}
+
 }

@@ -25,6 +25,12 @@ public class S1Pool2 extends RPool<S1Pool2> {
 	protected void checkInputParameters(Map<String, Object> parameters) throws Exception {
 		
 	}
+
+	@Override
+	public String[] createIndexValues() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 		
 	
 }

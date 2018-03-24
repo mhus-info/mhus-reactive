@@ -44,6 +44,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.errors.TaskException;
@@ -52,6 +53,7 @@ import de.mhus.cherry.reactive.model.migrate.Migrator;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
+import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
@@ -365,6 +367,13 @@ public class Engine extends MLog implements EEngine {
 				try {
 					Map<String, Object> newParameters = activity.exportParamters();
 					flow.getParameters().putAll(newParameters);
+					
+					if (activity instanceof IndexValuesProvider) {
+						flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues() );
+					} else {
+						flow.setIndexValues(null);
+					}
+					
 				} catch (Throwable t) {
 					log().e(t);
 					fireEvent.error(flow,activity,t);
@@ -1360,8 +1369,8 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	@Override
-	public Result<PNodeInfo> storageGetAssignedFlowNodes(String user) throws IOException {
-		return storage.getAssignedFlowNodes(user);
+	public Result<PNodeInfo> storageSearchFlowNodes(SearchCriterias criterias) throws IOException {
+		return storage.searchFlowNodes(criterias);
 	}
 	
 	@Override

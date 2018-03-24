@@ -65,6 +65,8 @@ public class PNode implements Externalizable {
 	protected int tryCount = EngineConst.DEFAULT_TRY_COUNT;
 	private long activityTimeout = EngineConst.DEFAULT_ACTIVITY_TIMEOUT;
 	private Map<String, Object> message;
+	// will not be stored
+	private String[] indexValues;
 		
 	public PNode() {}
 	
@@ -412,6 +414,14 @@ public class PNode implements Externalizable {
 
 	public void setScheduledNow() {
 		setScheduled(0);
+	}
+
+	public void setIndexValues(String[] indexValues) {
+		this.indexValues = indexValues;
+	}
+	
+	public String[] getIndexValues() {
+		return indexValues;
 	}
 	
 }
