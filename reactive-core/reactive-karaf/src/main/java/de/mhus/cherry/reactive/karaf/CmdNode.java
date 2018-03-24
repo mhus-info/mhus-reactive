@@ -18,6 +18,7 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
@@ -34,7 +35,7 @@ public class CmdNode extends MLog implements Action {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " executing       - print currently executing nodes\n"
-			+ " list [state]  - list all nodes\n"
+			+ " list [search]  - list all nodes\n"
 			+ " view <id>     - view node details\n"
 			+ " cancel <id>   - cancel node\n"
 			+ " retry <id>    - set node back to running\n"
@@ -91,13 +92,12 @@ public class CmdNode extends MLog implements Action {
 
 		} else
 		if (cmd.equals("list")) {
-			PNode.STATE_NODE state = null;
-			if (parameters != null) state = PNode.STATE_NODE.valueOf(parameters[0].toUpperCase());
+			SearchCriterias criterias = new SearchCriterias(parameters);
 			
 			ConsoleTable table = new ConsoleTable();
 			table.fitToConsole();
 			table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
-			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(null,state)) {
+			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
 				if (all || (node.getState() != STATE_NODE.CLOSED && node.getType() != TYPE_NODE.RUNTIME) ) {
 					String scheduled = "-";

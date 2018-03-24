@@ -1359,6 +1359,11 @@ public class Engine extends MLog implements EEngine {
 	// -- storage
 	
 	@Override
+	public Result<PCaseInfo> storageSearchCases(SearchCriterias criterias) throws IOException {
+		return storage.searchCases(criterias);
+	}
+	
+	@Override
 	public Result<PCaseInfo> storageGetCases(STATE_CASE state) throws IOException {
 		return storage.getCases(state);
 	}

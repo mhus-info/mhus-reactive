@@ -37,7 +37,7 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
-	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_";
+	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
 	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_" + INDEX_COLUMNS;
 	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_" + INDEX_COLUMNS;
 	private DbPool pool;
@@ -102,7 +102,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 				if (caze.getIndexValues() != null) {
 					String[] idx = caze.getIndexValues();
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 10; i++)
 						if (idx.length > i && idx[i] != null) {
 							prop.put("index" + i, M.trunc(idx[i], 300));
 							sql = sql + ",index" + i + "_=$index"+i+"$";
@@ -118,7 +118,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (caze.getIndexValues() != null) {
 					String[] idx = caze.getIndexValues();
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 10; i++)
 						if (idx.length > i) 
 							prop.put("index" + i, M.trunc(idx[i], 300));
 				}
@@ -138,7 +138,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "index1_,"
 						+ "index2_,"
 						+ "index3_,"
-						+ "index4_"
+						+ "index4_,"
+						+ "index5_,"
+						+ "index6_,"
+						+ "index7_,"
+						+ "index8_,"
+						+ "index9_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$content$,"
@@ -154,7 +159,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$index1$,"
 						+ "$index2$,"
 						+ "$index3$,"
-						+ "$index4$"
+						+ "$index4$,"
+						+ "$index5$,"
+						+ "$index6$,"
+						+ "$index7$,"
+						+ "$index8$,"
+						+ "$index9$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -266,7 +276,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (flow.getIndexValues() != null) {
 					String[] idx = flow.getIndexValues();
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 10; i++)
 						if (idx.length > i && idx[i] != null) {
 							prop.put("index" + i, M.trunc(idx[i], 300));
 							sql = sql + ",index" + i + "_=$index"+i+"$";
@@ -282,7 +292,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				
 				if (flow.getIndexValues() != null) {
 					String[] idx = flow.getIndexValues();
-					for (int i = 0; i < 5; i++)
+					for (int i = 0; i < 10; i++)
 						if (idx.length > i) 
 							prop.put("index" + i, M.trunc(idx[i], 300));
 				}
@@ -306,7 +316,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "index1_,"
 						+ "index2_,"
 						+ "index3_,"
-						+ "index4_"
+						+ "index4_,"
+						+ "index5_,"
+						+ "index6_,"
+						+ "index7_,"
+						+ "index8_,"
+						+ "index9_"
 						+ ") VALUES ("
 						+ "$id$,"
 						+ "$case$,"
@@ -326,7 +341,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$index1$,"
 						+ "$index2$,"
 						+ "$index3$,"
-						+ "$index4$"
+						+ "$index4$,"
+						+ "$index5$,"
+						+ "$index6$,"
+						+ "$index7$,"
+						+ "$index8$,"
+						+ "$index9$"
 						+ ")");
 				sta.executeUpdate(prop);
 				sta.close();
@@ -512,14 +532,31 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				prop.put("state", search.nodeState);
 				sql.append("state=$state$ ");
 			}
-			
+
+			if (search.uri != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("uri", search.uri);
+				sql.append("uri_ like $uri$ ");
+			}
+
+			if (search.caseId != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("case", search.caseId);
+				sql.append("case_=$case$ ");
+			}
+
 			if (search.index != null) {
-				for (int i = 0; i < 5; i++) {
+				for (int i = 0; i < 10; i++) {
 					if (search.index.length > i && search.index[i] != null) {
 						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 						whereAdded = true;
 						prop.setString("index" + i, search.index[i]);
-						sql.append("index"+i+"_=$index"+i+"$ ");
+						if (search.index[i].startsWith("%") || search.index[i].endsWith("%"))
+							sql.append("index"+i+"_ like $index"+i+"$ ");
+						else
+							sql.append("index"+i+"_=$index"+i+"$ ");
 					}
 				}
 			}
@@ -528,6 +565,50 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = con.createStatement(sql.toString());
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}	
+
+	@Override
+	public Result<PCaseInfo> searchCases(SearchCriterias search) throws IOException {
+		try {
+			StringBuilder sql = new StringBuilder("SELECT "+CASE_COLUMNS+" FROM " + prefix + "_case_ ");
+			boolean whereAdded = false;
+			MProperties prop = new MProperties();
+			
+			if (search.caseState != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("state", search.nodeState);
+				sql.append("state=$state$ ");
+			}
+			
+			if (search.uri != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("uri", search.uri);
+				sql.append("uri_ like $uri$ ");
+			}
+			
+			if (search.index != null) {
+				for (int i = 0; i < 10; i++) {
+					if (search.index.length > i && search.index[i] != null) {
+						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+						whereAdded = true;
+						prop.setString("index" + i, search.index[i]);
+						if (search.index[i].startsWith("%") || search.index[i].endsWith("%"))
+							sql.append("index"+i+"_ like $index"+i+"$ ");
+						else
+							sql.append("index"+i+"_=$index"+i+"$ ");
+					}
+				}
+			}
+			
+			DbConnection con = pool.getConnection();
+			DbStatement sta = con.createStatement(sql.toString());
+			DbResult res = sta.executeQuery(prop);
+			return new SqlResultCase(con,res);
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
@@ -707,7 +788,19 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				toNodeState(res.getInt("state_")),
 				toNodeType(res.getInt("type_")),
 				res.getString("uri_"),
-				res.getString("custom_")
+				res.getString("custom_"),
+				new String[] {
+						res.getString("index0_"),
+						res.getString("index1_"),
+						res.getString("index2_"),
+						res.getString("index3_"),
+						res.getString("index4_"),
+						res.getString("index5_"),
+						res.getString("index6_"),
+						res.getString("index7_"),
+						res.getString("index8_"),
+						res.getString("index9_")
+					}
 				);
 		return out;
 	}
@@ -718,7 +811,19 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("uri_"), 
 				res.getString("name_"),
 				toCaseState(res.getInt("state_")),
-				res.getString("custom_")
+				res.getString("custom_"),
+				new String[] {
+						res.getString("index0_"),
+						res.getString("index1_"),
+						res.getString("index2_"),
+						res.getString("index3_"),
+						res.getString("index4_"),
+						res.getString("index5_"),
+						res.getString("index6_"),
+						res.getString("index7_"),
+						res.getString("index8_"),
+						res.getString("index9_")
+					}
 				);
 		return out;
 	}

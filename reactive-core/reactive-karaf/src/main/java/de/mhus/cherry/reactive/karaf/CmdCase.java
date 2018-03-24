@@ -16,10 +16,12 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -27,16 +29,15 @@ import de.mhus.lib.core.console.ConsoleTable;
 @Service
 public class CmdCase extends MLog implements Action {
 
-
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
-			+ " view <id>    - view case details\n"
-			+ " nodes <id>   - print case bound nodes\n"
-			+ " list [state] - list all cases\n"
-			+ " resume <id>  - resume case\n"
-			+ " suspend <id> - suspend case\n"
-			+ " archive <id> - archive case\n"
-			+ " locked       - print locked cases"
+			+ " view <id>     - view case details\n"
+			+ " nodes <id>    - print case bound nodes\n"
+			+ " list [search] - list all cases\n"
+			+ " resume <id>   - resume case\n"
+			+ " suspend <id>  - suspend case\n"
+			+ " archive <id>  - archive case\n"
+			+ " locked        - print locked cases"
 			+ "", multiValued=false)
     String cmd;
 
@@ -104,12 +105,12 @@ public class CmdCase extends MLog implements Action {
 			table.print(System.out);
 		} else
 		if (cmd.equals("list")) {
-			STATE_CASE state = null;
-			if (parameters != null) state = STATE_CASE.valueOf(parameters[0].toUpperCase());
+			SearchCriterias criterias = new SearchCriterias(parameters);
+			
 			ConsoleTable table = new ConsoleTable();
 			table.fitToConsole();
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
-			for (PCaseInfo info : api.getEngine().storageGetCases(state)) {
+			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 				PCase caze = api.getEngine().getCase(info.getId());
 				if (all || caze.getState() != STATE_CASE.CLOSED)
 					table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );

@@ -15,6 +15,11 @@
 	  <field name="index2" type="string" size="300" />
 	  <field name="index3" type="string" size="300" />
 	  <field name="index4" type="string" size="300" />
+	  <field name="index5" type="string" size="300" />
+	  <field name="index6" type="string" size="300" />
+	  <field name="index7" type="string" size="300" />
+	  <field name="index8" type="string" size="300" />
+	  <field name="index9" type="string" size="300" />
 	</table>
 	<table name="$/prefix$_node" primary_key="id">
 	  <field name="id" type="string" size="36" />
@@ -36,6 +41,11 @@
 	  <field name="index2" type="string" size="300" />
 	  <field name="index3" type="string" size="300" />
 	  <field name="index4" type="string" size="300" />
+	  <field name="index5" type="string" size="300" />
+	  <field name="index6" type="string" size="300" />
+	  <field name="index7" type="string" size="300" />
+	  <field name="index8" type="string" size="300" />
+	  <field name="index9" type="string" size="300" />
 	</table>
 	<table name="$/prefix$_engine" primary_key="id">
 	  <field name="id" type="string" size="36" />

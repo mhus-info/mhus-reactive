@@ -9,6 +9,8 @@ import de.mhus.lib.errors.NotFoundException;
 
 public interface EEngine {
 
+	Result<PCaseInfo> storageSearchCases(SearchCriterias criterias) throws IOException;
+	
 	Result<PCaseInfo> storageGetCases(STATE_CASE state) throws IOException;
 
 	Result<PNodeInfo> storageGetFlowNodes(UUID caseId, STATE_NODE state) throws IOException;

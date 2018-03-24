@@ -96,7 +96,7 @@ public interface StorageProvider {
 	
 	Result<PNodeInfo> getMessageFlowNodes(UUID caseId, PNode.STATE_NODE state, String message) throws IOException;
 
-	Result<PNodeInfo> searchFlowNodes(SearchCriterias search) throws IOException;
+	Result<PNodeInfo> searchFlowNodes(SearchCriterias criterias) throws IOException;
 	
 	/**
 	 * Return new engine persistence status. If no engine status is stored return null.
@@ -111,5 +111,7 @@ public interface StorageProvider {
 	PNodeInfo loadFlowNodeInfo(UUID nodeId) throws IOException;
 
 	PCaseInfo loadCaseInfo(UUID caseId) throws IOException;
+
+	Result<PCaseInfo> searchCases(SearchCriterias criterias) throws IOException;
 	
 }
