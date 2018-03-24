@@ -540,6 +540,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sql.append("uri_ like $uri$ ");
 			}
 
+			if (search.name != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("name", search.name);
+				sql.append("name_=$name$ ");
+			}
+
 			if (search.caseId != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
@@ -591,6 +598,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sql.append("uri_ like $uri$ ");
 			}
 			
+			if (search.name != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("name", search.name);
+				sql.append("name_=$name$ ");
+			}
+
 			if (search.index != null) {
 				for (int i = 0; i < 10; i++) {
 					if (search.index.length > i && search.index[i] != null) {

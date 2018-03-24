@@ -9,6 +9,7 @@ import de.mhus.lib.core.MString;
 
 public class SearchCriterias {
 
+	public String name;
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {
@@ -27,6 +28,9 @@ public class SearchCriterias {
 				break;
 			case "uri":
 				uri = v;
+				break;
+			case "name":
+				name = v;
 				break;
 			case "case":
 				caseId = UUID.fromString(v);
