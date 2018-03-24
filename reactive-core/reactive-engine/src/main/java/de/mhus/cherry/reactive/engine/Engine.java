@@ -1,13 +1,19 @@
 package de.mhus.cherry.reactive.engine;
 
 import java.io.IOException;
+import java.lang.management.LockInfo;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AActor;
@@ -51,6 +57,7 @@ import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.util.MUri;
@@ -70,6 +77,7 @@ public class Engine extends MLog implements EEngine {
 	private HashSet<UUID> executing = new HashSet<>();
 	private EngineConfiguration config;
 	private EngineListener fireEvent = null;
+	private WeakHashMap<UUID, Object> cacheCaseLock = new WeakHashMap<>();
 
 	public Engine(EngineConfiguration config) {
 		this.config = config;
@@ -116,10 +124,9 @@ public class Engine extends MLog implements EEngine {
 		fireEvent.doStep("scheduled");
 		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now)) {
 			PNode node = getFlowNode(nodeId.getId());
-			PCase caze = getCase(node.getCaseId());
 			// set state back to ready
 			fireEvent.setScheduledToRunning(node);
-			synchronized (caze) {
+			synchronized (getCaseLock(node)) {
 				node.setState(STATE_NODE.RUNNING);
 				saveFlowNode(null, node, null);
 			}
@@ -213,14 +220,13 @@ public class Engine extends MLog implements EEngine {
 				
 		// scan for closeable cases and runtimes
 		fireEvent.doStep("cleanup");
-		for (PCaseInfo caseId : storage.getCases(STATE_CASE.RUNNING)) {
-			PCase caze = getCase(caseId.getId());
-			synchronized (caze) {
+		for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
+			synchronized (getCaseLock(caseInfo)) {
 				boolean found = false;
 				HashSet<UUID> allRuntime = new HashSet<>();
 				HashSet<UUID> usedRuntime = new HashSet<>();
 				
-				for ( PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
+				for ( PNodeInfo nodeId : storage.getFlowNodes(caseInfo.getId(), null)) {
 					PNode node = getFlowNode(nodeId.getId());
 					if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
 						allRuntime.add(node.getId());
@@ -244,6 +250,7 @@ public class Engine extends MLog implements EEngine {
 				}
 				if (!found) {
 					// close case without active node
+					PCase caze = getCase(caseInfo.getId());
 					closeCase(caze, false, 0, "");
 				}
 			}
@@ -342,8 +349,7 @@ public class Engine extends MLog implements EEngine {
 	@Override
 	public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
 		fireEvent.saveFlowNode(flow,null);
-		PCase caze = getCase(flow.getCaseId());
-		synchronized (caze) {
+		synchronized (getCaseLock(flow)) {
 			synchronized (nodeCache) {
 				storage.saveFlowNode(flow);
 				nodeCache.put(flow.getId(), flow);
@@ -354,8 +360,7 @@ public class Engine extends MLog implements EEngine {
 	
 	private void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException {
 		fireEvent.saveFlowNode(flow,activity);
-		PCase caze = context.getPCase();
-		synchronized (caze) {
+		synchronized (getCaseLock(flow)) {
 			if (activity != null) {
 				try {
 					Map<String, Object> newParameters = activity.exportParamters();
@@ -406,7 +411,7 @@ public class Engine extends MLog implements EEngine {
 				fireEvent.error(caze,t);
 			}
 		}
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
 			caze.close(code, msg);
 			synchronized (caseCache) {
 				storage.saveCase(caze);
@@ -461,7 +466,7 @@ public class Engine extends MLog implements EEngine {
 				closeFlowNode(null, pNode, STATE_NODE.STOPPED);
 				return;
 			}
-			synchronized (caze) {
+			synchronized (getCaseLock(caze)) {
 				if (caze.getState() != STATE_CASE.RUNNING) {
 					pNode.setScheduled(newScheduledTime(pNode));
 					fireEvent.doFlowNodeScheduled(pNode);
@@ -577,7 +582,7 @@ public class Engine extends MLog implements EEngine {
 			fireEvent.closedActivity(context.getARuntime(), pNode);
 		
 		if (context != null && context.getPCase() != null) {
-			synchronized (context.getPCase()) {
+			synchronized (context.getLock()) {
 				pNode.setState(state);
 				synchronized (nodeCache) {
 					storage.saveFlowNode(pNode);
@@ -727,7 +732,7 @@ public class Engine extends MLog implements EEngine {
 		aPool.initializeCase(properties);
 		pCase.getParameters().clear(); // cleanup before first save, will remove parameters from external input
 		savePCase(pCase, aPool);
-		synchronized (pCase) {
+		synchronized (getCaseLock(pCase)) {
 			// create start point flow nodes
 			Throwable isError = null;
 			for (EElement start : startPoints) {
@@ -759,7 +764,7 @@ public class Engine extends MLog implements EEngine {
 		Map<String, Object> newParameters = aPool.exportParamters();
 		pCase.getParameters().putAll(newParameters);
 		fireEvent.saveCase(pCase, aPool);
-		synchronized (pCase) {
+		synchronized (getCaseLock(pCase)) {
 			synchronized (caseCache) {
 				caseCache.put(pCase.getId(), pCase);
 				storage.saveCase(pCase);
@@ -868,7 +873,7 @@ public class Engine extends MLog implements EEngine {
 		flow.setScheduledNow();
 		fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(),start);
 		context = new EngineContext(context, flow);
-		synchronized (context.getPCase()) {
+		synchronized (context.getLock()) {
 			doNodeLifecycle(context, flow);
 		}
 	}
@@ -903,7 +908,7 @@ public class Engine extends MLog implements EEngine {
 		fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);
 		context = new EngineContext(context, flow);
 		
-		synchronized (context.getPCase()) {
+		synchronized (context.getLock()) {
 			doNodeLifecycle(context, flow);
 		}
 		
@@ -1069,7 +1074,7 @@ public class Engine extends MLog implements EEngine {
 			archive.saveEngine(config.persistent);
 			for (PCaseInfo caseId : storage.getCases(STATE_CASE.CLOSED)) {
 				PCase caze = getCase(caseId.getId());
-				synchronized (caze) {
+				synchronized (getCaseLock(caze)) {
 					fireEvent.archiveCase(caze);
 					archive.saveCase(caze);
 					for (PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
@@ -1095,7 +1100,7 @@ public class Engine extends MLog implements EEngine {
 		try {
 			PCase caze = getCase(caseId);
 			if (caze != null) {
-				synchronized (caze) {
+				synchronized (getCaseLock(caze)) {
 					fireEvent.archiveCase(caze);
 					if (caze.getState() != STATE_CASE.CLOSED)
 						throw new MException("case is not closed",caseId);
@@ -1137,7 +1142,7 @@ public class Engine extends MLog implements EEngine {
 	 */
 	public void suspendCase(UUID caseId) throws IOException, MException {
 		PCase caze = getCase(caseId);
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
 			if (caze.getState() == STATE_CASE.SUSPENDED)
 				throw new MException("case already suspended",caseId);
 			fireEvent.suspendCase(caze);
@@ -1163,7 +1168,7 @@ public class Engine extends MLog implements EEngine {
 	 */
 	public void resumeCase(UUID caseId) throws IOException, MException {
 		PCase caze = getCase(caseId);
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
 			if (caze.getState() != STATE_CASE.SUSPENDED)
 				throw new MException("already is not suspended",caseId);
 			fireEvent.unsuspendCase(caze);
@@ -1189,8 +1194,7 @@ public class Engine extends MLog implements EEngine {
 	 */
 	public void cancelFlowNode(UUID nodeId) throws MException, IOException {
 		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+		synchronized (getCaseLock(node)) {
 			if (node.getStartState() == STATE_NODE.SUSPENDED)
 				throw new MException("node is suspended",nodeId);
 			fireEvent.cancelFlowNode(node);
@@ -1208,7 +1212,7 @@ public class Engine extends MLog implements EEngine {
 	 */
 	public void retryFlowNode(UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
-		synchronized (node) {
+		synchronized (getCaseLock(node)) {
 			if (node.getStartState() == STATE_NODE.SUSPENDED)
 				throw new MException("node is suspended",nodeId);
 			fireEvent.retryFlowNode(node);
@@ -1276,7 +1280,7 @@ public class Engine extends MLog implements EEngine {
 			nodes.add(node);
 		}
 		
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
 			// archive the case state
 			archive.saveCase(caze);
 			for (PNode node : nodes)
@@ -1321,10 +1325,10 @@ public class Engine extends MLog implements EEngine {
 		}
 		PCase caze = archive.loadCase(caseId);
 		fireEvent.restoreCase(caze);
-		caze.setState(STATE_CASE.SUSPENDED);
-		storage.saveCase(caze);
-		caze = getCase(caseId);
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
+			caze.setState(STATE_CASE.SUSPENDED);
+			storage.saveCase(caze);
+			caze = getCase(caseId);
 			for (PNodeInfo nodeId : archive.getFlowNodes(caseId, null)) {
 				PNode node = getFlowNode(nodeId.getId());
 				// set to suspended
@@ -1439,7 +1443,7 @@ public class Engine extends MLog implements EEngine {
 	public void doCloseActivity(RuntimeNode runtimeNode, UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+		synchronized (getCaseLock(caze)) {
 			EngineContext context = createContext(caze, node);
 			AElement<?> aNode = context.getANode();
 			((CloseActivity)aNode).doClose(context,runtimeNode);
@@ -1568,8 +1572,7 @@ public class Engine extends MLog implements EEngine {
 	public void fireExternal(UUID nodeId, Map<String, Object> parameters) throws NotFoundException, IOException {
 		fireEvent.fireExternal(nodeId,parameters);
 		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+		synchronized (getCaseLock(node)) {
 			if (node.getType() != TYPE_NODE.EXTERN) throw new NotFoundException("not external",nodeId);
 			if (node.getState() == STATE_NODE.SUSPENDED) {
 				if (node.getSuspendedState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeId);
@@ -1590,8 +1593,7 @@ public class Engine extends MLog implements EEngine {
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
 			PNode node = getFlowNode(nodeInfo.getId());
-			PCase caze = getCase(node.getCaseId());
-			synchronized (caze) {
+			synchronized (getCaseLock(node)) {
 				if (node.getState() == STATE_NODE.SUSPENDED) {
 					log().w("message for suspended node will not be delivered",node,message);
 					continue;
@@ -1615,6 +1617,7 @@ public class Engine extends MLog implements EEngine {
 
 				try {
 					// find a trigger with the event
+					PCase caze = getCase(caseId);
 					EngineContext context = createContext(caze, node);
 					for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
 						if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
@@ -1645,8 +1648,7 @@ public class Engine extends MLog implements EEngine {
 		for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
 			try {
 				PNode node = getFlowNode(nodeInfo.getId());
-				PCase caze = getCase(node.getCaseId());
-				synchronized (caze) {
+				synchronized (getCaseLock(node)) {
 					if (node.getState() == STATE_NODE.SUSPENDED) {
 						log().w("signal for suspended node will not be delivered",node,signal);
 						continue;
@@ -1667,6 +1669,7 @@ public class Engine extends MLog implements EEngine {
 					} else {
 						try {
 							// find a trigger with the name
+							PCase caze = getCase(node.getCaseId());
 							EngineContext context = createContext(caze, node);
 							for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
 								if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
@@ -1698,8 +1701,7 @@ public class Engine extends MLog implements EEngine {
 		if (nodeInfo.getState() != STATE_NODE.WAITING) return;
 		try {
 			PNode node = getFlowNode(nodeInfo.getId());
-			PCase caze = getCase(node.getCaseId());
-			synchronized (caze) {
+			synchronized (getCaseLock(node)) {
 				if (isExecuting(nodeInfo.getId())) {
 					// to late ... 
 					return;
@@ -1715,6 +1717,7 @@ public class Engine extends MLog implements EEngine {
 				String triggerName = entry.getKey();
 				if (triggerName.equals("")) return; // for secure
 				// find trigger
+				PCase caze = getCase(node.getCaseId());
 				EngineContext context = createContext(caze, node);
 				int cnt = 0;
 				for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
@@ -1800,6 +1803,58 @@ public class Engine extends MLog implements EEngine {
 		EngineContext context = createContext(caze, node);
 		AElement<?> aNode = context.getANode();
 		return aNode;
+	}
+	
+	public PNodeInfo getFlowNodeInfo(UUID nodeId) throws Exception {
+		synchronized (nodeCache) {
+			PNode node = nodeCache.get(nodeId);
+			if (node != null)
+				return new PNodeInfo(node);
+		}
+		return storage.loadFlowNodeInfo(nodeId);
+	}
+	
+	public PCaseInfo getCaseInfo(UUID caseId) throws Exception {
+		synchronized (caseCache) {
+			PCase caze = caseCache.get(caseId);
+			if (caze != null)
+				return new PCaseInfo(caze);
+		}
+		return storage.loadCaseInfo(caseId);
+	}
+	
+	public Object getCaseLock(PCaseInfo caseInfo) {
+		return getCaseLock(caseInfo.getId());
+	}
+	
+	public Object getCaseLock(PCase caze) {
+		return getCaseLock(caze.getId());
+	}
+	
+	public Object getCaseLock(PNode node) {
+		return getCaseLock(node.getCaseId());
+	}
+	
+	public Object getCaseLock(UUID caseId) {
+		synchronized (cacheCaseLock) {
+			Object lock = cacheCaseLock.get(caseId);
+			if (lock == null) {
+				lock = new Object();
+				cacheCaseLock.put(caseId, lock);
+			}
+			return lock;
+		}
+	}
+	
+	public List<UUID> getLockedCases() {
+		synchronized (cacheCaseLock) {
+			LinkedList<UUID> out = new LinkedList<UUID>();
+
+			for (Entry<UUID, Object> entry : cacheCaseLock.entrySet())
+				if (MSystem.isLockedByThread(entry.getValue()))
+							out.add(entry.getKey());
+			return out;
+		}
 	}
 	
 }

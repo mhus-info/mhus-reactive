@@ -35,6 +35,8 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_";
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_";
 	private DbPool pool;
 	private String prefix;
 	
@@ -283,10 +285,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			MProperties prop = new MProperties();
 			DbStatement sta = null;
 			if (state == null) {
-				sta = con.createStatement("SELECT id_,uri_,name_,state_ FROM " + prefix + "_case_");
+				sta = con.createStatement("SELECT "+CASE_COLUMNS+" FROM " + prefix + "_case_");
 			} else {
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,uri_,name_,state_ FROM " + prefix + "_case_ WHERE state_=$state$");
+				sta = con.createStatement("SELECT "+CASE_COLUMNS+" FROM " + prefix + "_case_ WHERE state_=$state$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultCase(con,res);
@@ -302,19 +304,19 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			MProperties prop = new MProperties();
 			DbStatement sta = null;
 			if (caseId == null && state == null) {
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_");
 			} else 
 			if (caseId == null) {
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$");
 			} else
 			if (state == null) {
 				prop.setString("case", caseId.toString());
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE case_=$case$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE case_=$case$");
 			} else {
 				prop.setString("case", caseId.toString());
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$ and case_=$case$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and case_=$case$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
@@ -332,11 +334,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null) {
 				prop.setLong("scheduled", scheduled);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$");
 			} else {
 				prop.setLong("scheduled", scheduled);
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
@@ -356,11 +358,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null) {
 				prop.setString("signal", "%" + PNode.getSignalAsString(signal) + "%");
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE signal_ like $signal$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE signal_ like $signal$");
 			} else {
 				prop.setString("signal", "%" + PNode.getSignalAsString(signal) + "%");
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$ and signal_ like $signal$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and signal_ like $signal$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
@@ -377,22 +379,22 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null && caseId == null) {
 				prop.setString("message", "%" + PNode.getMessageAsString(message) + "%");
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE message_ like $message$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE message_ like $message$");
 			} else
 			if (caseId == null) {
 				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE state_=$state$ and message_ like $message$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and message_ like $message$");
 			} else
 			if (state == null) {
 				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
 				prop.put("case", caseId);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE case_=$case$ and message_ like $message$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE case_=$case$ and message_ like $message$");
 			} else {
 				prop.setString("message", "%"+ PNode.getMessageAsString(message) +"%");
 				prop.put("case", caseId);
 				prop.put("state", state);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE case_=$case$ and state_=$state$ and message_ like $message$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE case_=$case$ and state_=$state$ and message_ like $message$");
 			}
 				
 			DbResult res = sta.executeQuery(prop);
@@ -409,10 +411,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			MProperties prop = new MProperties();
 			DbStatement sta = null;
 			if (user == null) {
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE assigned is null");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE assigned is null");
 			} else {
 				prop.setString("user", user);
-				sta = con.createStatement("SELECT id_,case_,name_,assigned_,state_,type_ FROM " + prefix + "_node_ WHERE assigned_=$user$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE assigned_=$user$");
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);
@@ -522,12 +524,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		public PCaseInfo next() {
 			if (res == null) return null;
 			try {
-				PCaseInfo out = new PCaseInfo(UUID.fromString(
-						res.getString("id_")), 
-						res.getString("uri_"), 
-						res.getString("name_"),
-						toCaseState(res.getInt("state_"))
-						);
+				PCaseInfo out = newPCase(res);
 				hasNext = res.next();
 				return out;
 			} catch (Exception e) {
@@ -577,14 +574,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		public PNodeInfo next() {
 			if (res == null) return null;
 			try {
-				PNodeInfo out = new PNodeInfo(
-						UUID.fromString(res.getString("id_")), 
-						UUID.fromString(res.getString("case_")),
-						res.getString("name_"),
-						res.getString("assigned_"),
-						toNodeState(res.getInt("state_")),
-						toNodeType(res.getInt("type_"))
-						);
+				PNodeInfo out = newPNode(res);
 				hasNext = res.next();
 				return out;
 			} catch (Exception e) {
@@ -598,6 +588,28 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		return STATE_CASE.values()[index];
 	}
 
+	protected static PNodeInfo newPNode(DbResult res) throws Exception {
+		PNodeInfo out = new PNodeInfo(
+				UUID.fromString(res.getString("id_")), 
+				UUID.fromString(res.getString("case_")),
+				res.getString("name_"),
+				res.getString("assigned_"),
+				toNodeState(res.getInt("state_")),
+				toNodeType(res.getInt("type_"))
+				);
+		return out;
+	}
+
+	protected static PCaseInfo newPCase(DbResult res) throws Exception {
+		PCaseInfo out = new PCaseInfo(UUID.fromString(
+				res.getString("id_")), 
+				res.getString("uri_"), 
+				res.getString("name_"),
+				toCaseState(res.getInt("state_"))
+				);
+		return out;
+	}
+
 	protected static STATE_NODE toNodeState(int index) {
 		if (index < 0 || index >= STATE_NODE.values().length) return STATE_NODE.CLOSED;
 		return STATE_NODE.values()[index];
@@ -608,6 +620,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		return TYPE_NODE.values()[index];
 	}
 	
+	public void dumpCases() {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = con.createStatement("SELECT * FROM " + prefix + "_case_");
+			DbResult res = sta.executeQuery(prop);
+			while(res.next()) {
+				System.out.println("CASE:");
+				for (String name : res.getColumnNames())
+					if (!name.toLowerCase().equals("content_"))
+					System.out.println("  " + name + ": " + res.getString(name));
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void dumpNodes() {
 		try {
 			DbConnection con = pool.getConnection();
@@ -622,6 +651,53 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+
+	@Override
+	public PCaseInfo loadCaseInfo(UUID caseId) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", caseId);
+			sta = con.createStatement("SELECT "+CASE_COLUMNS+" FROM " + prefix + "_case_ WHERE id_=$id$");
+			DbResult res = sta.executeQuery(prop);
+			if (!res.next()) {
+				res.close();
+				con.close();
+				return null;
+			}
+			PCaseInfo out = newPCase(res);
+			res.close();
+			con.close();
+			return out;
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+	}
+	
+	@Override
+	public PNodeInfo loadFlowNodeInfo(UUID nodeId) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", nodeId);
+			sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE id_=$id$");
+			DbResult res = sta.executeQuery(prop);
+			if (!res.next()) {
+				res.close();
+				con.close();
+				return null;
+			}
+			PNodeInfo out = newPNode(res);
+			res.close();
+			con.close();
+			return out;
+		} catch (Exception e) {
+			throw new IOException(e);
 		}
 	}
 

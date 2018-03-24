@@ -36,6 +36,7 @@ public class CmdCase extends MLog implements Action {
 			+ " resume <id>  - resume case\n"
 			+ " suspend <id> - suspend case\n"
 			+ " archive <id> - archive case\n"
+			+ " locked       - print locked cases"
 			+ "", multiValued=false)
     String cmd;
 
@@ -51,6 +52,16 @@ public class CmdCase extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("locked")) {
+			ConsoleTable table = new ConsoleTable();
+			table.fitToConsole();
+			table.setHeaderValues("Id","CustomId","Uri","State","Close");
+			for (UUID id : api.getEngine().getLockedCases()) {
+				PCase caze = api.getEngine().getCase(id);
+				table.addRowValues(caze.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+			}
+			table.print(System.out);
+		} else
 		if (cmd.equals("resave")) {
 			api.getEngine().resaveCase(UUID.fromString(parameters[0]));
 		} else

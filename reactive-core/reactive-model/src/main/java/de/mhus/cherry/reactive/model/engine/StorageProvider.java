@@ -108,5 +108,9 @@ public interface StorageProvider {
 	PEngine loadEngine() throws IOException, NotFoundException;
 	
 	void saveEngine(PEngine engine) throws IOException;
+
+	PNodeInfo loadFlowNodeInfo(UUID nodeId) throws IOException;
+
+	PCaseInfo loadCaseInfo(UUID caseId) throws IOException;
 	
 }

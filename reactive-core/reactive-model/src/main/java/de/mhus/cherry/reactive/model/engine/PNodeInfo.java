@@ -23,6 +23,10 @@ public class PNodeInfo {
 		this.type = type;
 	}
 
+	public PNodeInfo(PNode node) {
+		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType());
+	}
+
 	public UUID getId() {
 		return id;
 	}

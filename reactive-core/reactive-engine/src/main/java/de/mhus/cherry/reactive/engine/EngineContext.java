@@ -256,4 +256,13 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		engine.doCloseActivity(runtimeNode, nodeId);
 	}
 
+	@Override
+	public Object getLock() {
+		if (pNode != null)
+			return engine.getCaseLock(pNode.getCaseId());
+		if (pCase != null)
+			return engine.getCaseLock(pCase.getId());
+		return engine;
+	}
+
 }

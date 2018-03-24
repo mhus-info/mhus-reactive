@@ -18,6 +18,10 @@ public class PCaseInfo {
 		this.state = state;
 	}
 
+	public PCaseInfo(PCase caze) {
+		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState());
+	}
+
 	public UUID getId() {
 		return id;
 	}
