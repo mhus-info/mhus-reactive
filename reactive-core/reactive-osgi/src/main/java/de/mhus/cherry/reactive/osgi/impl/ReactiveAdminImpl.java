@@ -93,7 +93,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
 	@Override
 	public String addProcess(String[] fileNames, boolean remember) throws FileNotFoundException {
-		StringBuffer names = new StringBuffer();
+		StringBuilder names = new StringBuilder();
 		File[] files = new File[fileNames.length];
 		for (int i = 0; i < fileNames.length; i++) {
 			files[i] = new File(fileNames[i]);
@@ -415,7 +415,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			config.processProvider = new DefaultProcessProvider();
 			
 			// listener
-			config.listener = EngineListenerUtil.createLogInfoListener();
+			config.listener.add(EngineListenerUtil.createLogInfoListener());
 			
 			engine = new Engine(config);
 			

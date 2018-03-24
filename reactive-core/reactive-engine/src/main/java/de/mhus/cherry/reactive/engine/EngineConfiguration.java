@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.engine;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
@@ -15,7 +16,7 @@ public class EngineConfiguration {
 	public ProcessProvider processProvider;
 	public AaaProvider aaa;
 	public Map<String,Object> parameters;
-	public EngineListener listener;
+	public LinkedList<EngineListener> listener = new LinkedList<>();
 	public PEngine persistent;
 	
 }

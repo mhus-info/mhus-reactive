@@ -51,30 +51,42 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		this.parameters = parameters;
 	}
 
-	public void doActivityFailed(PNode flow) {
-		addFlowMessage(flow.getId(),flow.getName() + " doActivityFailed");
+	public void doEvent(String name, PNode flow, Object[] args) {
+		if (name.equals("createActivity")) {
+			UUID previousId = (UUID) args[2];
+			addFlowConnect(previousId, flow.getId());
+		} else {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 2; i < args.length; i++)
+				MSystem.serialize(sb, args[i], null);
+			addFlowMessage(	flow.getId(), sb.toString());
+		}
 	}
 
-	public void doNodeLifecycle(PNode flow, boolean init) {
-		addFlowMessage(flow.getId(),flow.getName() + " doNodeLifecycle init:" + init);
-	}
+//	public void doActivityFailed(PNode flow) {
+//		addFlowMessage(flow.getId(),flow.getName() + " doActivityFailed");
+//	}
 
-	public void doActivityStop(PNode flow) {
-		addFlowMessage(flow.getId(), flow.getName() + " doActivityStop");
-	}
+//	public void doNodeLifecycle(PNode flow, boolean init) {
+//		addFlowMessage(flow.getId(),flow.getName() + " doNodeLifecycle init:" + init);
+//	}
 
-	public void createActivity(PNode flow, UUID previousId) {
-		addFlowConnect(previousId, flow.getId());
-	}
+//	public void doActivityStop(PNode flow) {
+//		addFlowMessage(flow.getId(), flow.getName() + " doActivityStop");
+//	}
+
+//	public void createActivity(PNode flow, UUID previousId) {
+//		addFlowConnect(previousId, flow.getId());
+//	}
 
 	public void doErrorMsg(PNode flow, Object ... objects) {
 		addMessage(EngineMessage.ERROR_PREFIX +  flow.getId() + "," + flow.getName() + " " + MSystem.toString("Error", objects));
 		save();
 	}
 
-	public void closedActivity(PNode flow) {
-		addFlowMessage(flow.getId(), flow.getName() + " closedActivity");
-	}
+//	public void closedActivity(PNode flow) {
+//		addFlowMessage(flow.getId(), flow.getName() + " closedActivity");
+//	}
 
 	public void setCloseActivity(UUID id) {
 		parameters.put(CLOSE_ACTIVITY, id.toString());

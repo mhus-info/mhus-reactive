@@ -26,6 +26,7 @@ import de.mhus.cherry.reactive.model.engine.EEngine;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
+import de.mhus.cherry.reactive.model.engine.EngineListener;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -68,12 +69,13 @@ public class Engine extends MLog implements EEngine {
 	private SoftHashMap<UUID,PNode> nodeCache = new SoftHashMap<>();
 	private HashSet<UUID> executing = new HashSet<>();
 	private EngineConfiguration config;
+	private EngineListener fireEvent = null;
 
 	public Engine(EngineConfiguration config) {
 		this.config = config;
+		fireEvent = EngineListenerUtil.createEngineEventProcessor(config);
 		storage = config.storage;
 		archive = config.archive;
-		if (config.listener == null) config.listener = EngineListenerUtil.createQuietListener();
 		processProvider = config.processProvider;
 		
 		try {
@@ -111,12 +113,12 @@ public class Engine extends MLog implements EEngine {
 		long now = System.currentTimeMillis();
 
 		// SCHEDULED NODES
-		config.listener.doStep("scheduled");
+		fireEvent.doStep("scheduled");
 		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now)) {
 			PNode node = getFlowNode(nodeId.getId());
 			PCase caze = getCase(node.getCaseId());
 			// set state back to ready
-			config.listener.setScheduledToRunning(node);
+			fireEvent.setScheduledToRunning(node);
 			synchronized (caze) {
 				node.setState(STATE_NODE.RUNNING);
 				saveFlowNode(null, node, null);
@@ -127,7 +129,7 @@ public class Engine extends MLog implements EEngine {
 		}
 
 		// READY NODES
-		config.listener.doStep("execute");
+		fireEvent.doStep("execute");
 		boolean parallel = MCast.toboolean(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_PARALLEL), true);
 		Result<PNodeInfo> result = storage.getScheduledFlowNodes(STATE_NODE.RUNNING, now);
 		if (parallel) {
@@ -190,7 +192,7 @@ public class Engine extends MLog implements EEngine {
 		}
 		result.close();
 				
-		config.listener.doStep("execute finished");
+		fireEvent.doStep("execute finished");
 	
 		return doneCnt;
 	}
@@ -210,7 +212,7 @@ public class Engine extends MLog implements EEngine {
 	public void cleanup() throws IOException, NotFoundException {
 				
 		// scan for closeable cases and runtimes
-		config.listener.doStep("cleanup");
+		fireEvent.doStep("cleanup");
 		for (PCaseInfo caseId : storage.getCases(STATE_CASE.RUNNING)) {
 			PCase caze = getCase(caseId.getId());
 			synchronized (caze) {
@@ -237,7 +239,7 @@ public class Engine extends MLog implements EEngine {
 						closeRuntime(runtime);
 					} catch (Throwable t) {
 						log().e(rId,t);
-						config.listener.error(rId,t);
+						fireEvent.error(rId,t);
 					}
 				}
 				if (!found) {
@@ -247,7 +249,7 @@ public class Engine extends MLog implements EEngine {
 			}
 		}
 		
-		config.listener.doStep("cleanup finished");
+		fireEvent.doStep("cleanup finished");
 				
 	}
 
@@ -268,7 +270,7 @@ public class Engine extends MLog implements EEngine {
 			if (finished || outtimed) return true;
 			try {
 				if (MTimeInterval.isTimeOut(start, node.getActivityTimeout())) {
-					config.listener.error("activity timeout",node);
+					fireEvent.error("activity timeout",node);
 					outtimed = true;
 					return true;
 				}
@@ -289,7 +291,7 @@ public class Engine extends MLog implements EEngine {
 			} catch (Throwable t) {
 				try {
 					log().e(node,t);
-					config.listener.error(node,t);
+					fireEvent.error(node,t);
 				} catch (Throwable t2) {}
 			}
 			synchronized (executing) {
@@ -339,7 +341,7 @@ public class Engine extends MLog implements EEngine {
 	
 	@Override
 	public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
-		config.listener.saveFlowNode(flow,null);
+		fireEvent.saveFlowNode(flow,null);
 		PCase caze = getCase(flow.getCaseId());
 		synchronized (caze) {
 			synchronized (nodeCache) {
@@ -351,7 +353,7 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 	private void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException {
-		config.listener.saveFlowNode(flow,activity);
+		fireEvent.saveFlowNode(flow,activity);
 		PCase caze = context.getPCase();
 		synchronized (caze) {
 			if (activity != null) {
@@ -360,7 +362,7 @@ public class Engine extends MLog implements EEngine {
 					flow.getParameters().putAll(newParameters);
 				} catch (Throwable t) {
 					log().e(t);
-					config.listener.error(flow,activity,t);
+					fireEvent.error(flow,activity,t);
 					// set failed
 					flow.setSuspendedState(flow.getState());
 					flow.setState(STATE_NODE.STOPPED);
@@ -382,7 +384,7 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 	public void closeCase(PCase caze, boolean hard, int code, String msg) throws IOException {
-		config.listener.closeCase(caze,hard);
+		fireEvent.closeCase(caze,hard);
 		if (!hard) {
 			try {
 				MUri uri = MUri.toUri(caze.getUri());
@@ -401,7 +403,7 @@ public class Engine extends MLog implements EEngine {
 				caze.getParameters().putAll(newParameters);
 			} catch (Throwable t) {
 				log().e(caze,t);
-				config.listener.error(caze,t);
+				fireEvent.error(caze,t);
 			}
 		}
 		synchronized (caze) {
@@ -414,13 +416,13 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	public void closeRuntime(PNode pNode) throws MException, IOException {
-		config.listener.closeRuntime(pNode);
+		fireEvent.closeRuntime(pNode);
 		PCase caze = null;
 		try {
 			caze = getCase(pNode.getCaseId());
 		} catch (Throwable t) {
 			log().e(pNode.getCaseId(),t);
-			config.listener.error(pNode,t);
+			fireEvent.error(pNode,t);
 			return; // ignore - try next time
 		}
 			
@@ -441,7 +443,7 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	private void doFlowNode(PNode pNode) {
-		config.listener.doFlowNode(pNode);
+		fireEvent.doFlowNode(pNode);
 		try {
 			
 			PCase caze = null;
@@ -449,20 +451,20 @@ public class Engine extends MLog implements EEngine {
 				caze = getCase(pNode.getCaseId());
 			} catch (Throwable t) {
 				log().e(pNode.getCaseId(),t);
-				config.listener.error(pNode,t);
+				fireEvent.error(pNode,t);
 				return; // ignore - try next time
 			}
 			
 			if (caze == null) {
 				// node without case ... puh
-				config.listener.error("node without case",pNode,pNode.getCaseId());
+				fireEvent.error("node without case",pNode,pNode.getCaseId());
 				closeFlowNode(null, pNode, STATE_NODE.STOPPED);
 				return;
 			}
 			synchronized (caze) {
 				if (caze.getState() != STATE_CASE.RUNNING) {
 					pNode.setScheduled(newScheduledTime(pNode));
-					config.listener.doFlowNodeScheduled(pNode);
+					fireEvent.doFlowNodeScheduled(pNode);
 					return;
 				}
 				
@@ -478,7 +480,7 @@ public class Engine extends MLog implements EEngine {
 						// set to error
 						log().e("Unknown trigger",pNode,nextScheduled.getKey());
 						context.getARuntime().doErrorMsg(pNode, "Unknown trigger",nextScheduled.getKey());
-						config.listener.error("Unknown trigger",pNode,nextScheduled.getKey());
+						fireEvent.error("Unknown trigger",pNode,nextScheduled.getKey());
 						closeFlowNode(context, pNode, STATE_NODE.STOPPED);
 						return;
 					}
@@ -495,7 +497,7 @@ public class Engine extends MLog implements EEngine {
 			}
 		} catch (Throwable t) {
 			log().e(pNode,t);
-			config.listener.error(pNode,t);
+			fireEvent.error(pNode,t);
 		}
 	}
 
@@ -515,14 +517,14 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	private void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
-		config.listener.doNodeErrorHandling(context,pNode,t);
+		fireEvent.doNodeErrorHandling(context,pNode,t);
 		
 		if (t instanceof TechnicalException) {
 			try {
 				closeFlowNode(context, pNode, STATE_NODE.FAILED);
 			} catch (IOException e) {
 				log().e(pNode,e);
-				config.listener.error(pNode,e);
+				fireEvent.error(pNode,e);
 			}
 			return;
 		}
@@ -532,7 +534,7 @@ public class Engine extends MLog implements EEngine {
 				closeFlowNode(context, pNode, STATE_NODE.STOPPED);
 			} catch (IOException e) {
 				log().e(pNode,e);
-				config.listener.error(pNode,e);
+				fireEvent.error(pNode,e);
 			}
 			return;
 		}
@@ -562,17 +564,17 @@ public class Engine extends MLog implements EEngine {
 				return;
 			} catch (Exception e) {
 				log().e(e);
-				config.listener.error(pNode,start,e);
+				fireEvent.error(pNode,start,e);
 			}
 		}
 		
 	}
 
 	public void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state) throws IOException {
-		config.listener.closeFlowNode(pNode, state);
+		fireEvent.closeFlowNode(pNode, state);
 		
 		if (context != null)
-			context.getARuntime().closedActivity(pNode);
+			fireEvent.closedActivity(context.getARuntime(), pNode);
 		
 		if (context != null && context.getPCase() != null) {
 			synchronized (context.getPCase()) {
@@ -692,7 +694,7 @@ public class Engine extends MLog implements EEngine {
 		String createdBy = config.aaa.getCurrentUserId();
 		
 		// everything fine ... start creating
-		config.listener.startCase(originalUri,uri, properties, process, pool, startPoints, options, createdBy);
+		fireEvent.startCase(originalUri,uri, properties, process, pool, startPoints, options, createdBy);
 
 		// the context
 		EngineContext context = new EngineContext(this);
@@ -733,7 +735,7 @@ public class Engine extends MLog implements EEngine {
 					createStartPoint(context, start);
 				} catch (Throwable t) {
 					log().w(start,t);
-					config.listener.error(pCase,start,t);
+					fireEvent.error(pCase,start,t);
 					isError = t;
 					break;
 				}
@@ -756,7 +758,7 @@ public class Engine extends MLog implements EEngine {
 	public void savePCase(PCase pCase, APool<?> aPool) throws IOException {
 		Map<String, Object> newParameters = aPool.exportParamters();
 		pCase.getParameters().putAll(newParameters);
-		config.listener.saveCase(pCase, aPool);
+		fireEvent.saveCase(pCase, aPool);
 		synchronized (pCase) {
 			synchronized (caseCache) {
 				caseCache.put(pCase.getId(), pCase);
@@ -811,7 +813,7 @@ public class Engine extends MLog implements EEngine {
 		Class<? extends RuntimeNode> runtimeClass = desc.runtime();
 		
 		UUID caseId = context.getPCase().getId();
-		config.listener.createStartPoint(context.getPCase(),start);
+		fireEvent.createStartPoint(context.getPCase(),start);
 		
 		// create runtime
 		PNode runtime = new PNode(
@@ -834,7 +836,7 @@ public class Engine extends MLog implements EEngine {
 				null,
 				0
 				);
-		config.listener.createRuntime(context.getPCase(),start,runtime);
+		fireEvent.createRuntime(context.getPCase(),start,runtime);
 		synchronized (nodeCache) {
 			storage.saveFlowNode(runtime);
 			nodeCache.put(runtime.getId(), runtime);
@@ -864,7 +866,7 @@ public class Engine extends MLog implements EEngine {
 				EngineConst.TRY_COUNT
 			);
 		flow.setScheduledNow();
-		config.listener.createStartNode(context.getPCase(),start,flow);
+		fireEvent.createStartNode(context.getPCase(),start,flow);
 		context = new EngineContext(context, flow);
 		synchronized (context.getPCase()) {
 			doNodeLifecycle(context, flow);
@@ -899,8 +901,7 @@ public class Engine extends MLog implements EEngine {
 				EngineConst.TRY_COUNT
 			);
 		flow.setScheduledNow();
-		config.listener.createActivity(context.getPCase(),previous,start,flow);
-		context.getARuntime().createActivity(flow, previousId);
+		fireEvent.createActivity(context.getARuntime(), context.getPCase(),previous,start,flow);
 		context = new EngineContext(context, flow);
 		
 		synchronized (context.getPCase()) {
@@ -920,8 +921,7 @@ public class Engine extends MLog implements EEngine {
 		AActivity<?> activity = (AActivity<?>) createActivityObject(start);
 		context.setANode(activity);
 		RuntimeNode runtime = context.getARuntime();
-		config.listener.doNodeLifecycle(start,activity,runtime,flow,init);
-		runtime.doNodeLifecycle(flow,init);
+		fireEvent.doNodeLifecycle(runtime,start,activity,flow,init);
 		if (activity instanceof ContextRecipient)
 			((ContextRecipient)activity).setContext(context);
 		try {
@@ -947,8 +947,8 @@ public class Engine extends MLog implements EEngine {
 			}
 		} catch (Throwable t) {
 			// remember
-			config.listener.error(flow,t);
-			runtime.doActivityFailed(flow);
+			fireEvent.error(flow,t);
+			fireEvent.activityFailed(runtime,flow);
 			doNodeErrorHandling(context, flow, t);
 			return;
 		}
@@ -958,7 +958,7 @@ public class Engine extends MLog implements EEngine {
 		// save
 		saveFlowNode(context, flow,activity);
 		
-		runtime.doActivityStop(flow);
+		fireEvent.activityStop(runtime,flow);
 	}
 	
 	private long newScheduledTime(PNode flow) {
@@ -1045,7 +1045,7 @@ public class Engine extends MLog implements EEngine {
 				pRuntime.getParameters().putAll(parameters);
 			}
 		}
-		config.listener.saveRuntime(pRuntime, aRuntime);
+		fireEvent.saveRuntime(pRuntime, aRuntime);
 		synchronized (nodeCache) {
 			storage.saveFlowNode(pRuntime);
 			nodeCache.put(pRuntime.getId(), pRuntime);
@@ -1062,7 +1062,7 @@ public class Engine extends MLog implements EEngine {
 			for (PCaseInfo caseId : storage.getCases(STATE_CASE.CLOSED)) {
 				PCase caze = getCase(caseId.getId());
 				synchronized (caze) {
-					config.listener.archiveCase(caze);
+					fireEvent.archiveCase(caze);
 					archive.saveCase(caze);
 					for (PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
 						PNode node = getFlowNode(nodeId.getId());
@@ -1088,7 +1088,7 @@ public class Engine extends MLog implements EEngine {
 			PCase caze = getCase(caseId);
 			if (caze != null) {
 				synchronized (caze) {
-					config.listener.archiveCase(caze);
+					fireEvent.archiveCase(caze);
 					if (caze.getState() != STATE_CASE.CLOSED)
 						throw new MException("case is not closed",caseId);
 					archive.saveCase(caze);
@@ -1132,7 +1132,7 @@ public class Engine extends MLog implements EEngine {
 		synchronized (caze) {
 			if (caze.getState() == STATE_CASE.SUSPENDED)
 				throw new MException("case already suspended",caseId);
-			config.listener.suspendCase(caze);
+			fireEvent.suspendCase(caze);
 			caze.setState(STATE_CASE.SUSPENDED);
 			storage.saveCase(caze);
 			for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
@@ -1158,7 +1158,7 @@ public class Engine extends MLog implements EEngine {
 		synchronized (caze) {
 			if (caze.getState() != STATE_CASE.SUSPENDED)
 				throw new MException("already is not suspended",caseId);
-			config.listener.unsuspendCase(caze);
+			fireEvent.unsuspendCase(caze);
 			caze.setState(STATE_CASE.RUNNING);
 			storage.saveCase(caze);
 			for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
@@ -1185,7 +1185,7 @@ public class Engine extends MLog implements EEngine {
 		synchronized (caze) {
 			if (node.getStartState() == STATE_NODE.SUSPENDED)
 				throw new MException("node is suspended",nodeId);
-			config.listener.cancelFlowNode(node);
+			fireEvent.cancelFlowNode(node);
 			node.setSuspendedState(node.getState());
 			node.setState(STATE_NODE.CLOSED);
 			storage.saveFlowNode(node);
@@ -1203,7 +1203,7 @@ public class Engine extends MLog implements EEngine {
 		synchronized (node) {
 			if (node.getStartState() == STATE_NODE.SUSPENDED)
 				throw new MException("node is suspended",nodeId);
-			config.listener.retryFlowNode(node);
+			fireEvent.retryFlowNode(node);
 			node.setSuspendedState(node.getState());
 			node.setState(STATE_NODE.RUNNING);
 			node.setScheduledNow();
@@ -1227,7 +1227,7 @@ public class Engine extends MLog implements EEngine {
 		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
 			throw new MException("already is not suspended",caseId);
 		
-		config.listener.migrateCase(caze, toUri, migrator);
+		fireEvent.migrateCase(caze, toUri, migrator);
 		
 		// create from context
 		EngineContext fromContext = createContext(caze);
@@ -1304,7 +1304,7 @@ public class Engine extends MLog implements EEngine {
 		try {
 			PCase caze = getCase(caseId);
 			if (caze != null) {
-				config.listener.archiveCase(caze);
+				fireEvent.archiveCase(caze);
 				if (caze.getState() != STATE_CASE.CLOSED && caze.getState() != STATE_CASE.SUSPENDED)
 					throw new MException("case is not closed or suspended",caseId);
 			}
@@ -1312,7 +1312,7 @@ public class Engine extends MLog implements EEngine {
 			log().d(caseId,e);
 		}
 		PCase caze = archive.loadCase(caseId);
-		config.listener.restoreCase(caze);
+		fireEvent.restoreCase(caze);
 		caze.setState(STATE_CASE.SUSPENDED);
 		storage.saveCase(caze);
 		caze = getCase(caseId);
@@ -1558,7 +1558,7 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	public void fireExternal(UUID nodeId, Map<String, Object> parameters) throws NotFoundException, IOException {
-		config.listener.fireExternal(nodeId,parameters);
+		fireEvent.fireExternal(nodeId,parameters);
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
@@ -1578,7 +1578,7 @@ public class Engine extends MLog implements EEngine {
 	
 	public void fireMessage(UUID caseId, String message, Map<String, Object> parameters) throws Exception {
 		
-		config.listener.fireMessage(caseId,message,parameters);
+		fireEvent.fireMessage(caseId,message,parameters);
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
 			PNode node = getFlowNode(nodeInfo.getId());
@@ -1620,7 +1620,7 @@ public class Engine extends MLog implements EEngine {
 						}
 					}
 				} catch(MException e) {
-					config.listener.error(node,e);
+					fireEvent.error(node,e);
 					log().e(node,e);
 					continue;
 				}
@@ -1632,7 +1632,7 @@ public class Engine extends MLog implements EEngine {
 	
 	public int fireSignal(String signal, Map<String, Object> parameters) throws NotFoundException, IOException {
 		
-		config.listener.fireSignal(signal,parameters);
+		fireEvent.fireSignal(signal,parameters);
 		int cnt = 0;
 		for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
 			try {
@@ -1672,7 +1672,7 @@ public class Engine extends MLog implements EEngine {
 								}
 							}
 						} catch(MException e) {
-							config.listener.error(node,e);
+							fireEvent.error(node,e);
 							log().e(node,e);
 							continue;
 						}
@@ -1700,7 +1700,7 @@ public class Engine extends MLog implements EEngine {
 				if (entry == null) {
 					// There is no need to be scheduled ....
 					node.setScheduled(EngineConst.END_OF_DAYS);
-					config.listener.setScheduledToWaiting(node);
+					fireEvent.setScheduledToWaiting(node);
 					saveFlowNode(node);
 					return;
 				}
@@ -1724,7 +1724,7 @@ public class Engine extends MLog implements EEngine {
 					cnt++;
 				}
 				// trigger not found
-				config.listener.error("Trigger for timer not found",triggerName,node);
+				fireEvent.error("Trigger for timer not found",triggerName,node);
 				node.setSuspendedState(node.getState());
 				node.setState(STATE_NODE.STOPPED);
 				saveFlowNode(node);

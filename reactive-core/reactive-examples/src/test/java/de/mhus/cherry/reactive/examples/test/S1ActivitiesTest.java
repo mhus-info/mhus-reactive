@@ -657,7 +657,7 @@ public class S1ActivitiesTest extends TestCase {
 		config.parameters.put("process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions", "0.0.1");
 		config.parameters.put(EngineConst.ENGINE_EXECUTE_PARALLEL, "false");
 		
-		config.listener = EngineListenerUtil.createAnsiListener();
+		config.listener.add(EngineListenerUtil.createAnsiListener());
 		
 		config.processProvider = provider;
 		

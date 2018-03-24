@@ -42,9 +42,9 @@ public interface EngineListener {
 
 	void createStartNode(PCase pCase, EElement start, PNode flow);
 
-	void createActivity(PCase pCase, PNode previous, EElement start, PNode flow);
+	void createActivity(RuntimeNode runtimeNode, PCase pCase, PNode previous, EElement start, PNode flow);
 
-	void doNodeLifecycle(EElement start, AActivity<?> activity, RuntimeNode runtime, PNode flow, boolean init);
+	void doNodeLifecycle(RuntimeNode runtime, EElement start, AActivity<?> activity, PNode flow, boolean init);
 
 	void saveFlowNode(PNode flow, AActivity<?> activity);
 
@@ -71,5 +71,11 @@ public interface EngineListener {
 	void fireSignal(String signal, Map<String, Object> parameters);
 
 	void setScheduledToWaiting(PNode node);
+
+	void activityFailed(RuntimeNode runtime, PNode flow);
+
+	void activityStop(RuntimeNode runtime, PNode flow);
+
+	void closedActivity(RuntimeNode aRuntime, PNode pNode);
 
 }
