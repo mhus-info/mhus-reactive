@@ -16,5 +16,9 @@ public interface IEngine {
 	List<ICase> searchCases(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException;
 
 	IProcess getProcess(String uri) throws MException;
+
+	ICase getCase(UUID id) throws Exception;
+
+	INode getNode(UUID id) throws Exception;
 	
 }

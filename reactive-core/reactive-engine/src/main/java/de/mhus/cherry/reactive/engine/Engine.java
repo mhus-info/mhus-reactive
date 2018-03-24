@@ -1825,13 +1825,21 @@ public class Engine extends MLog implements EEngine {
 		}
 		return storage.loadFlowNodeInfo(nodeId);
 	}
-	
+
+	public PNodeInfo storageGetFlowNodeInfo(UUID nodeId) throws Exception {
+		return storage.loadFlowNodeInfo(nodeId);
+	}
+
 	public PCaseInfo getCaseInfo(UUID caseId) throws Exception {
 		synchronized (caseCache) {
 			PCase caze = caseCache.get(caseId);
 			if (caze != null)
 				return new PCaseInfo(caze);
 		}
+		return storage.loadCaseInfo(caseId);
+	}
+	
+	public PCaseInfo storageGetCaseInfo(UUID caseId) throws Exception {
 		return storage.loadCaseInfo(caseId);
 	}
 	

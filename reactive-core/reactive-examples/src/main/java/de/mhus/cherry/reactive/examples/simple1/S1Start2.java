@@ -7,7 +7,9 @@ import de.mhus.cherry.reactive.util.activity.RStartPoint;
 
 @ActivityDescription(
 		outputs=@Output(activity=S1Step2.class),
-		lane = S1Lane1.class
+		lane = S1Lane1.class,
+		displayName="Extra Start Point",
+		description="Another not automatically executed startpoint"
 		)
 public class S1Start2 extends RStartPoint<S1Pool> implements InactiveStartPoint {
 

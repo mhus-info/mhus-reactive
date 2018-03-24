@@ -10,6 +10,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.ui.UiEngine;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -17,6 +18,8 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.ui.ICase;
+import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
@@ -149,7 +152,7 @@ public class CmdNode extends MLog implements Action {
 		} else
 		if (cmd.equals("view")) {
 			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
-			PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getCaseId());
+			PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getId());
 			
 			System.out.println("Name      : " + node.getName());
 			System.out.println("Id        : " + node.getId());
@@ -180,12 +183,23 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("NextScheduled: " + node.getNextScheduled());
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());
-			
+
 			if (node.getType() == TYPE_NODE.HUMAN) {
 				AElement<?> aNode = api.getEngine().getANode(node.getId());
 				System.out.println("Form:\n" + ((AHumanTask<?>)aNode).createForm().build());
 				System.out.println("\nValues:\n" + ((AHumanTask<?>)aNode).getFormValues());
 			}
+			
+			if (parameters.length > 1) {
+				String user = parameters[1];
+				UiEngine engine = new UiEngine(api.getEngine(), user);
+				INode inode = engine.getNode(node.getId());
+				System.out.println();
+				System.out.println("User: " + user);
+				System.out.println("Display name: " + inode.getDisplayName());
+				System.out.println("Description : " + inode.getDescription());
+			}
+
 			
 			System.out.println();
 			for (Entry<String, Object> entry : node.getParameters().entrySet())

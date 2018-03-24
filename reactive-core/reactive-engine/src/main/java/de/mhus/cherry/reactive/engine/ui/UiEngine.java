@@ -143,5 +143,15 @@ public class UiEngine extends MLog implements IEngine {
 	public IProcess getProcess(String uri) throws MException {
 		return new UiProcess(engine.getProcess(MUri.toUri(uri)));
 	}
+
+	@Override
+	public ICase getCase(UUID id) throws Exception {
+		return new UiCase(this, engine.storageGetCaseInfo(id));
+	}
+	
+	@Override
+	public INode getNode(UUID id) throws Exception {
+		return new UiNode(this, engine.storageGetFlowNodeInfo(id));
+	}
 	
 }

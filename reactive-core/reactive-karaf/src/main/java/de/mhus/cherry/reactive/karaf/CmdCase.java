@@ -10,6 +10,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.ui.UiEngine;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -17,6 +18,7 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
@@ -31,13 +33,13 @@ public class CmdCase extends MLog implements Action {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
-			+ " view <id>     - view case details\n"
-			+ " nodes <id>    - print case bound nodes\n"
+			+ " view <id> [user] - view case details\n"
+			+ " nodes <id>       - print case bound nodes\n"
 			+ " list [search: state=,name=,search=,index0..9=,uri=] - list all cases\n"
-			+ " resume <id>   - resume case\n"
-			+ " suspend <id>  - suspend case\n"
-			+ " archive <id>  - archive case\n"
-			+ " locked        - print locked cases"
+			+ " resume <id>      - resume case\n"
+			+ " suspend <id>     - suspend case\n"
+			+ " archive <id>     - archive case\n"
+			+ " locked           - print locked cases"
 			+ "", multiValued=false)
     String cmd;
 
@@ -86,6 +88,17 @@ public class CmdCase extends MLog implements Action {
 			System.out.println("Scheduled: " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
 			System.out.println("Close    : " + caze.getClosedCode() + " " + caze.getClosedMessage());
 			System.out.println("Options  : " + caze.getOptions());
+			
+			if (parameters.length > 1) {
+				String user = parameters[1];
+				UiEngine engine = new UiEngine(api.getEngine(), user);
+				ICase icase = engine.getCase(caze.getId());
+				System.out.println();
+				System.out.println("User: " + user);
+				System.out.println("Display name: " + icase.getDisplayName());
+				System.out.println("Description : " + icase.getDescription());
+			}
+			
 		} else
 		if (cmd.equals("nodes")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));

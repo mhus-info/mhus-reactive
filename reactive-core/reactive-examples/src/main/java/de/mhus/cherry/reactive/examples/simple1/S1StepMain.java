@@ -16,6 +16,8 @@ import de.mhus.cherry.reactive.model.errors.TaskException;
 import de.mhus.cherry.reactive.util.activity.RServiceTask;
 
 @ActivityDescription(
+		displayName="Main Cross Road",
+		description="The main node to fork for all test cases",
 		outputs = {
 				@Output(name="step2",activity=S1Step2.class),
 				@Output(name="step3",activity=S1Step3.class),

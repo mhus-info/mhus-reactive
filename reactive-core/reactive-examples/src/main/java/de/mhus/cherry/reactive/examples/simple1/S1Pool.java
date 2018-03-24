@@ -6,7 +6,10 @@ import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.util.activity.RPool;
 import de.mhus.lib.annotations.adb.DbPersistent;
 
-@PoolDescription()
+@PoolDescription(
+		displayName="Example Pool",
+		description="This pool is used to test the current development"
+		)
 public class S1Pool extends RPool<S1Pool> {
 
 	@DbPersistent
