@@ -35,7 +35,7 @@ public class CmdNode extends MLog implements Action {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " executing       - print currently executing nodes\n"
-			+ " list [search]  - list all nodes\n"
+			+ " list [search: state=,name=,search=,index0..9=,uri=,case=]  - list all nodes\n"
 			+ " view <id>     - view node details\n"
 			+ " cancel <id>   - cancel node\n"
 			+ " retry <id>    - set node back to running\n"
@@ -45,6 +45,9 @@ public class CmdNode extends MLog implements Action {
 	@Option(name="-a", aliases="--all", description="Print all",required=false)
 	private boolean all;
 
+	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
+	private boolean full;
+	
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
 
@@ -79,8 +82,7 @@ public class CmdNode extends MLog implements Action {
 		} else
 		if (cmd.equals("executing")) {
 			
-			ConsoleTable table = new ConsoleTable();
-			table.fitToConsole();
+			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","Case","Name","Time","State","Type","CaseId");
 			for (UUID nodeId : api.getEngine().getExecuting()) {
 				PNode node = api.getEngine().getFlowNode(nodeId);
@@ -91,11 +93,34 @@ public class CmdNode extends MLog implements Action {
 			table.print(System.out);
 
 		} else
-		if (cmd.equals("list")) {
+		if (cmd.equals("values")) {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
-			ConsoleTable table = new ConsoleTable();
-			table.fitToConsole();
+			ConsoleTable table = new ConsoleTable(full);
+			table.setHeaderValues("Id","0","1","2","3","4","5","6","7","8","9");
+			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
+				if (all || (info.getState() != STATE_NODE.CLOSED && info.getType() != TYPE_NODE.RUNTIME) ) {
+					table.addRowValues(
+							info.getId(),
+							info.getIndexValue(0),
+							info.getIndexValue(1),
+							info.getIndexValue(2),
+							info.getIndexValue(3),
+							info.getIndexValue(4),
+							info.getIndexValue(5),
+							info.getIndexValue(6),
+							info.getIndexValue(7),
+							info.getIndexValue(8),
+							info.getIndexValue(9)
+							);
+					}
+				}
+				table.print(System.out);
+			} else
+			if (cmd.equals("list")) {
+			SearchCriterias criterias = new SearchCriterias(parameters);
+			
+			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
 			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());

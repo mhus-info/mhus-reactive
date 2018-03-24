@@ -33,7 +33,7 @@ public class CmdCase extends MLog implements Action {
 			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
 			+ " view <id>     - view case details\n"
 			+ " nodes <id>    - print case bound nodes\n"
-			+ " list [search] - list all cases\n"
+			+ " list [search: state=,name=,search=,index0..9=,uri=] - list all cases\n"
 			+ " resume <id>   - resume case\n"
 			+ " suspend <id>  - suspend case\n"
 			+ " archive <id>  - archive case\n"
@@ -41,11 +41,15 @@ public class CmdCase extends MLog implements Action {
 			+ "", multiValued=false)
     String cmd;
 
+	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
+	String[] parameters;
+	
 	@Option(name="-a", aliases="--all", description="Print all",required=false)
 	private boolean all;
 
-	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
-    String[] parameters;
+	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
+	private boolean full;
+
 
 	
 	@Override
@@ -54,8 +58,7 @@ public class CmdCase extends MLog implements Action {
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
 		if (cmd.equals("locked")) {
-			ConsoleTable table = new ConsoleTable();
-			table.fitToConsole();
+			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (UUID id : api.getEngine().getLockedCases()) {
 				PCase caze = api.getEngine().getCase(id);
@@ -86,8 +89,7 @@ public class CmdCase extends MLog implements Action {
 		} else
 		if (cmd.equals("nodes")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
-			ConsoleTable table = new ConsoleTable();
-			table.fitToConsole();
+			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CName","State","Type","Scheduled");
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
@@ -107,8 +109,7 @@ public class CmdCase extends MLog implements Action {
 		if (cmd.equals("list")) {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
-			ConsoleTable table = new ConsoleTable();
-			table.fitToConsole();
+			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 				PCase caze = api.getEngine().getCase(info.getId());

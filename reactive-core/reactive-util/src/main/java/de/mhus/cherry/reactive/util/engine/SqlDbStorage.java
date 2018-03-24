@@ -530,7 +530,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
 				prop.put("state", search.nodeState);
-				sql.append("state=$state$ ");
+				sql.append("state_=$state$ ");
 			}
 
 			if (search.uri != null) {
@@ -588,7 +588,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
 				prop.put("state", search.nodeState);
-				sql.append("state=$state$ ");
+				sql.append("state_=$state$ ");
 			}
 			
 			if (search.uri != null) {
