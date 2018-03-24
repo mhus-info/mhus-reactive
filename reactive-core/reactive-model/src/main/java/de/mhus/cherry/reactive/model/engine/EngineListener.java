@@ -11,6 +11,11 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
 
+/*
+ * Events will automatically forwarded to runtime nodes if
+ * the first argument is RuntimeNode and the second is PNode.
+ * 
+ */
 public interface EngineListener {
 
 	void doFlowNode(PNode ready);
@@ -25,6 +30,7 @@ public interface EngineListener {
 
 	void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t);
 
+	// Don't change !!!
 	void saveRuntime(PNode pRuntime, RuntimeNode aRuntime);
 
 	void doFlowNodeScheduled(PNode pNode);
@@ -40,11 +46,14 @@ public interface EngineListener {
 
 	void createRuntime(PCase pCase, EElement start, PNode runtime);
 
-	void createStartNode(PCase pCase, EElement start, PNode flow);
+	// Don't change !!!
+	void createStartNode(RuntimeNode runtime, PNode flow, PCase pCase, EElement start);
 
-	void createActivity(RuntimeNode runtimeNode, PCase pCase, PNode previous, EElement start, PNode flow);
+	// Don't change !!!
+	void createActivity(RuntimeNode runtimeNode, PNode flow, PCase pCase, PNode previous, EElement start);
 
-	void doNodeLifecycle(RuntimeNode runtime, EElement start, AActivity<?> activity, PNode flow, boolean init);
+	// Don't change !!!
+	void executeStart(RuntimeNode runtime, PNode flow, EElement start, AActivity<?> activity);
 
 	void saveFlowNode(PNode flow, AActivity<?> activity);
 
@@ -72,10 +81,20 @@ public interface EngineListener {
 
 	void setScheduledToWaiting(PNode node);
 
-	void activityFailed(RuntimeNode runtime, PNode flow);
+	// Don't change !!!
+	void executeFailed(RuntimeNode runtime, PNode flow);
 
-	void activityStop(RuntimeNode runtime, PNode flow);
+	// Don't change !!!
+	void executeStop(RuntimeNode runtime, PNode flow);
 
-	void closedActivity(RuntimeNode aRuntime, PNode pNode);
+	// Don't change !!!
+	void closedActivity(RuntimeNode aRuntime, PNode flow);
+
+	// Don't change !!!
+	void initStart(RuntimeNode runtime, PNode flow, EElement start, AActivity<?> activity);
+
+	void initFailed(RuntimeNode runtime, PNode flow);
+
+	void initStop(RuntimeNode runtime, PNode flow);
 
 }

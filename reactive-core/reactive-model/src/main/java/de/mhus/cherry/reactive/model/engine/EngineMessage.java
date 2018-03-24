@@ -4,9 +4,10 @@ import java.util.UUID;
 
 public class EngineMessage {
 
-	public enum TYPE {OTHER,FLOW,ERROR,CONNECT}
+	public enum TYPE {OTHER,FLOW,ERROR,CONNECT,START}
 	public static final String FLOW_PREFIX = "flow:";
 	public static final String CONNECT_PREFIX = "connect:";
+	public static final String START_PREFIX = "start:";
 	public static final String ERROR_PREFIX = "error:";
 	private TYPE type = TYPE.OTHER;
 	private String msg;
@@ -23,6 +24,7 @@ public class EngineMessage {
 			case FLOW_PREFIX: type = TYPE.FLOW;break;
 			case ERROR_PREFIX: type = TYPE.ERROR;break;
 			case CONNECT_PREFIX: type = TYPE.CONNECT;break;
+			case START_PREFIX: type = TYPE.START;break;
 			}
 			if (type != TYPE.OTHER)
 				msg = msg.substring(p+1);
@@ -35,6 +37,7 @@ public class EngineMessage {
 				}
 				break;
 			case FLOW:
+			case START:
 				p = msg.indexOf(',');
 				if (p > 0) {
 					fromNode = UUID.fromString(msg.substring(0, p));

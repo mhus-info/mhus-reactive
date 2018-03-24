@@ -16,17 +16,22 @@ import de.mhus.lib.core.console.ANSIConsole;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
 
-public class ProcessDump {
+public class ProcessTrace {
 
 	private EProcess process;
 	private int width = 40;
 	private boolean ansi;
 
-	public ProcessDump(EProcess process) {
+	public ProcessTrace(EProcess process) {
 		this.process = process;
 		this.ansi = Console.get().isAnsi();
+		trace();
 	}
 		
+	private void trace() {
+		// TODO create model
+	}
+
 	public void dump(PrintStream out) {
 		for (String poolName : process.getPoolNames()) {
 			HashSet<String> done = new HashSet<>();
@@ -94,5 +99,21 @@ public class ProcessDump {
 			if (!done.contains(trigger.activity().getCanonicalName()))
 				needed.add(trigger.activity().getCanonicalName());
 		}
+	}
+
+	public boolean isAnsi() {
+		return ansi;
+	}
+
+	public void setAnsi(boolean ansi) {
+		this.ansi = ansi;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
 }

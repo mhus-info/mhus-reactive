@@ -21,8 +21,8 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 
 	private ProcessContext<?> context;
 
-	private void addFlowMessage(UUID id, String msg) {
-		addMessage(EngineMessage.FLOW_PREFIX + id + "," + msg);
+	private void addFlowMessage(PNode flow, String name, String msg) {
+		addMessage(EngineMessage.FLOW_PREFIX + flow.getId() + "," + flow.getState() + "," + name + "," + msg);
 	}
 
 	private synchronized void addMessage(String msg) {
@@ -42,6 +42,10 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		addMessage(EngineMessage.CONNECT_PREFIX + previousId + "," + id);
 	}
 
+	private void addStartCreated(PNode flow) {
+		addMessage(EngineMessage.START_PREFIX + flow.getId() + "," + flow.getCanonicalName());
+	}
+
 	
 	public Map<String, Object> exportParamters() {
 		return parameters;
@@ -53,31 +57,20 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 
 	public void doEvent(String name, PNode flow, Object[] args) {
 		if (name.equals("createActivity")) {
-			UUID previousId = (UUID) args[2];
-			addFlowConnect(previousId, flow.getId());
+			PNode previous = (PNode) args[3];
+			addFlowMessage(flow, name, flow.getCanonicalName());
+			if (previous != null)
+				addFlowConnect(previous.getId(), flow.getId());
+		} else 
+		if (name.equals("createStartNode")) {
+			addStartCreated(flow);
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 2; i < args.length; i++)
 				MSystem.serialize(sb, args[i], null);
-			addFlowMessage(	flow.getId(), sb.toString());
+			addFlowMessage(	flow, name, sb.toString());
 		}
 	}
-
-//	public void doActivityFailed(PNode flow) {
-//		addFlowMessage(flow.getId(),flow.getName() + " doActivityFailed");
-//	}
-
-//	public void doNodeLifecycle(PNode flow, boolean init) {
-//		addFlowMessage(flow.getId(),flow.getName() + " doNodeLifecycle init:" + init);
-//	}
-
-//	public void doActivityStop(PNode flow) {
-//		addFlowMessage(flow.getId(), flow.getName() + " doActivityStop");
-//	}
-
-//	public void createActivity(PNode flow, UUID previousId) {
-//		addFlowConnect(previousId, flow.getId());
-//	}
 
 	public void doErrorMsg(PNode flow, Object ... objects) {
 		addMessage(EngineMessage.ERROR_PREFIX +  flow.getId() + "," + flow.getName() + " " + MSystem.toString("Error", objects));

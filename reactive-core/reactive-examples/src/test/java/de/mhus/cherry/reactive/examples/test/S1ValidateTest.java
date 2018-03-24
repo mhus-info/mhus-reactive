@@ -5,7 +5,7 @@ import java.io.File;
 import de.mhus.cherry.reactive.engine.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.PoolValidator;
-import de.mhus.cherry.reactive.engine.ProcessDump;
+import de.mhus.cherry.reactive.engine.ProcessTrace;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.lib.errors.MException;
@@ -32,7 +32,7 @@ public class S1ValidateTest extends TestCase {
 					System.out.println("   *** " + finding);
 				}
 			}
-			ProcessDump dump = new ProcessDump(process);
+			ProcessTrace dump = new ProcessTrace(process);
 			dump.dump(System.out);
 		}
 

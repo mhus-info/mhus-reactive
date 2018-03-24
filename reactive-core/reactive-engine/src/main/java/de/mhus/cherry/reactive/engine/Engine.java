@@ -866,7 +866,7 @@ public class Engine extends MLog implements EEngine {
 				EngineConst.TRY_COUNT
 			);
 		flow.setScheduledNow();
-		fireEvent.createStartNode(context.getPCase(),start,flow);
+		fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(),start);
 		context = new EngineContext(context, flow);
 		synchronized (context.getPCase()) {
 			doNodeLifecycle(context, flow);
@@ -877,7 +877,6 @@ public class Engine extends MLog implements EEngine {
 		
 		UUID caseId = context.getPCase().getId();
 		UUID runtimeId = previous.getRuntimeId();
-		UUID previousId = previous.getId();
 		
 		// create flow node
 		PNode flow = new PNode(
@@ -901,7 +900,7 @@ public class Engine extends MLog implements EEngine {
 				EngineConst.TRY_COUNT
 			);
 		flow.setScheduledNow();
-		fireEvent.createActivity(context.getARuntime(), context.getPCase(),previous,start,flow);
+		fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);
 		context = new EngineContext(context, flow);
 		
 		synchronized (context.getPCase()) {
@@ -921,7 +920,10 @@ public class Engine extends MLog implements EEngine {
 		AActivity<?> activity = (AActivity<?>) createActivityObject(start);
 		context.setANode(activity);
 		RuntimeNode runtime = context.getARuntime();
-		fireEvent.doNodeLifecycle(runtime,start,activity,flow,init);
+		if (init)
+			fireEvent.initStart(runtime,flow,start,activity);
+		else
+			fireEvent.executeStart(runtime,flow,start,activity);
 		if (activity instanceof ContextRecipient)
 			((ContextRecipient)activity).setContext(context);
 		try {
@@ -948,7 +950,10 @@ public class Engine extends MLog implements EEngine {
 		} catch (Throwable t) {
 			// remember
 			fireEvent.error(flow,t);
-			fireEvent.activityFailed(runtime,flow);
+			if (init)
+				fireEvent.initFailed(runtime,flow);
+			else
+				fireEvent.executeFailed(runtime,flow);
 			doNodeErrorHandling(context, flow, t);
 			return;
 		}
@@ -958,7 +963,10 @@ public class Engine extends MLog implements EEngine {
 		// save
 		saveFlowNode(context, flow,activity);
 		
-		fireEvent.activityStop(runtime,flow);
+		if (init)
+			fireEvent.initStop(runtime,flow);
+		else
+			fireEvent.executeStop(runtime,flow);
 	}
 	
 	private long newScheduledTime(PNode flow) {

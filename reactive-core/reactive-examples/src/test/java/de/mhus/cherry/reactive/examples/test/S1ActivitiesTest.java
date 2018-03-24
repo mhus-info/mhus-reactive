@@ -11,6 +11,7 @@ import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.EngineListenerUtil;
+import de.mhus.cherry.reactive.engine.RuntimeTrace;
 import de.mhus.cherry.reactive.engine.mockup.EngineMockUp;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
@@ -638,6 +639,7 @@ public class S1ActivitiesTest extends TestCase {
 	private void createEnigne() throws MException {
 		
 		console = Console.get();
+		console.setBold(true);
 		console.setColor(COLOR.RED, null);
 		System.out.println("========================================================================================");
 		System.out.println(MSystem.findSourceMethod(3));
@@ -674,9 +676,12 @@ public class S1ActivitiesTest extends TestCase {
 				PCase caze = engine.getCase(node.getCaseId());
 				EngineContext context = engine.createContext(caze);
 				RuntimeNode runtime = engine.createRuntimeObject(context, node);
-				System.out.println("Runtime protocol:");
-				for (EngineMessage message : runtime.getMessages())
-					System.out.println("*** " + message);
+				RuntimeTrace trace = new RuntimeTrace(runtime);
+				console.setBold(true);
+				console.setColor(COLOR.RED, null);
+				System.out.println("Runtime protocol: " + node.getId() + " " + node.getState() + " " + node.getCaseId());
+				console.cleanup();
+				trace.dumpMessages(System.out);
 			}
 		}
 		
@@ -700,6 +705,7 @@ public class S1ActivitiesTest extends TestCase {
 	private void step(int i) throws InterruptedException, NotFoundException, IOException {
 		Thread.sleep(sleep);
 		System.out.println();
+		console.setBold(true);
 		console.setColor(COLOR.GREEN, null);
 		System.out.println("------------------------------------------------------------------------");
 		System.out.println(MSystem.findSourceMethod(3) + " Step " + i);
