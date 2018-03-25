@@ -22,4 +22,9 @@ public class HumanForm {
 		root.build();
 		return this;
 	}
+	
+	public DefRoot getRoot() {
+		return root;
+	}
+	
 }

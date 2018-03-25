@@ -5,13 +5,16 @@ import java.util.Map.Entry;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoParser;
+import de.mhus.lib.errors.MException;
 
 public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> implements AHumanTask<P> {
 
@@ -23,7 +26,14 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 
 	@Override
 	@Hidden
-	public IProperties getFormValues() {
+	public IProperties getFormValues() throws MException {
+		
+		DefRoot form = createForm().build().getRoot();
+		
+		for (Entry<String, Object> item : form) {
+			
+		}
+		
 		
 		P pool = getContext().getPool();
 		PojoModel modelTask = createFormPojoModel(getClass());
@@ -53,7 +63,7 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void setFormValues(IProperties values) {
+	public void doSubmit(IProperties values) {
 		P pool = getContext().getPool();
 		PojoModel modelTask = createFormPojoModel(getClass());
 		PojoModel modelPool = createFormPojoModel(pool.getClass());

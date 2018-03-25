@@ -1799,7 +1799,7 @@ public class Engine extends MLog implements EEngine {
 			if (!(aNode instanceof AHumanTask<?>))
 				throw new MException("node activity is not AHumanTask",nodeId,aNode.getClass().getCanonicalName());
 			
-			((AHumanTask<?>)aNode).setFormValues(values);
+			((AHumanTask<?>)aNode).doSubmit(values);
 			
 			node.setState(STATE_NODE.RUNNING);
 			node.setScheduledNow();

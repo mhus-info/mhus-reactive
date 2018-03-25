@@ -240,11 +240,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
-			<version>${mhulib.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>5.0.0</version>
@@ -261,6 +256,11 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-core</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
 		<dependency>
         	<groupId>de.mhus.lib</groupId>
         	<artifactId>mhu-lib-vaadin</artifactId>
