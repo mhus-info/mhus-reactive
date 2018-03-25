@@ -13,6 +13,7 @@ import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
+import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -153,7 +154,7 @@ public class CmdNode extends MLog implements Action {
 			table.print(System.out);
 		} else
 		if (cmd.equals("view")) {
-			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
+			PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
 			PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getId());
 			
 			System.out.println("Name      : " + node.getName());
@@ -162,6 +163,7 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("CName     : " + node.getCanonicalName());
 			System.out.println("Uri       : " + info.getUri());
 			System.out.println("CustomId  : " + info.getCustomId());
+			System.out.println("CustomerId: " + info.getCustomerId());
 			System.out.println("Created   : " + MDate.toIso8601(new Date(node.getCreationDate())));
 			String scheduled = "-";
 			Entry<String, Long> scheduledEntry = node.getNextScheduled();

@@ -12,18 +12,20 @@ public class PCaseInfo {
 	private STATE_CASE state;
 	private String customId;
 	private String[] indexValues;
+	private String customerId;
 
-	public PCaseInfo(UUID id, String uri, String canonicalName, STATE_CASE state, String customId, String[] indexValues) {
+	public PCaseInfo(UUID id, String uri, String canonicalName, STATE_CASE state, String customId, String customerId, String[] indexValues) {
 		this.id = id;
 		this.uri = uri;
 		this.canonicalName = canonicalName;
 		this.state = state;
 		this.customId = customId;
+		this.customerId = customerId;
 		this.indexValues = indexValues;
 	}
 
 	public PCaseInfo(PCase caze) {
-		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState(), caze.getCustomId(), null);
+		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState(), caze.getCustomId(), caze.getCustomerId(), null);
 	}
 
 	public UUID getId() {
@@ -44,6 +46,10 @@ public class PCaseInfo {
 
 	public String getCustomId() {
 		return customId;
+	}
+	
+	public String getCustomerId() {
+		return customerId;
 	}
 	
 	public String getIndexValue(int index) {

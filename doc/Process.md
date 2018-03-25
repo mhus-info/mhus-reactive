@@ -20,6 +20,10 @@ Default Busines Proces Machine schema:
 
 bpm://user:password@process name:version;options/pool name#startpoint name?key=value&...
 
+Options can be:
+* customId=
+* customerId=
+
 This syntax is used to start a new process.
 
 BPM Message schema:

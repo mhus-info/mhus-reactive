@@ -10,6 +10,7 @@
 	  <field name="closed_code" type="int"/>
 	  <field name="name" type="string" size="700" />
 	  <field name="custom" type="string" size="700" />
+	  <field name="customer" type="string" size="700" />
 	  <field name="index0" type="string" size="300" />
 	  <field name="index1" type="string" size="300" />
 	  <field name="index2" type="string" size="300" />
@@ -35,6 +36,7 @@
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
 	  <field name="custom" type="string" size="700" />
+	  <field name="customer" type="string" size="700" />
 	  <field name="uri" type="string" size="700" />
 	  <field name="index0" type="string" size="300" />
 	  <field name="index1" type="string" size="300" />

@@ -67,6 +67,10 @@ public class PCase implements Externalizable {
 		return (String)options.getOrDefault(EngineConst.OPTION_CUSTOM_ID, "");
 	}
 
+	public String getCustomerId() {
+		return (String)options.getOrDefault(EngineConst.OPTION_CUSTOMER_ID, "");
+	}
+	
 	public String getUri() {
 		return uri;
 	}

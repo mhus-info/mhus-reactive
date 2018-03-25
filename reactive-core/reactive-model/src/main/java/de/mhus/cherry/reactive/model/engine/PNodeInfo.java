@@ -16,8 +16,20 @@ public class PNodeInfo {
 	private String customId;
 	private String uri;
 	private String[] indexValues;
+	private String customerId;
 
-	public PNodeInfo(UUID id, UUID caseId, String canonicalName, String assigned, STATE_NODE state, TYPE_NODE type, String uri, String customId, String[] indexValues) {
+	public PNodeInfo(
+			UUID id, 
+			UUID caseId, 
+			String canonicalName, 
+			String assigned, 
+			STATE_NODE state, 
+			TYPE_NODE type, 
+			String uri, 
+			String customId, 
+			String customerId, 
+			String[] indexValues
+		) {
 		this.id = id;
 		this.caseId = caseId;
 		this.canonicalName = canonicalName;
@@ -26,11 +38,12 @@ public class PNodeInfo {
 		this.type = type;
 		this.uri = uri;
 		this.customId = customId;
+		this.customerId = customerId;
 		this.indexValues = indexValues;
 	}
 
 	public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
-		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType(), cazeInfo.getCustomId(), cazeInfo.getUri(), null);
+		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType(), cazeInfo.getCustomId(), cazeInfo.getCustomerId(),cazeInfo.getUri(), null);
 	}
 
 	public UUID getId() {
@@ -68,6 +81,10 @@ public class PNodeInfo {
 
 	public String getCustomId() {
 		return customId;
+	}
+	
+	public String getCustomerId() {
+		return customerId;
 	}
 	
 	public String getIndexValue(int index) {

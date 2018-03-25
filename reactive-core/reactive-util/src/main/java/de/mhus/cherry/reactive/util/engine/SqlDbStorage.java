@@ -40,8 +40,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_" + INDEX_COLUMNS;
-	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_" + INDEX_COLUMNS;
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_" + INDEX_COLUMNS;
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_" + INDEX_COLUMNS;
 	private DbPool pool;
 	private String prefix;
 	
@@ -90,6 +90,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (!exists) {
 				prop.put("created", 		new Date());
 				prop.put("custom", 			M.trunc(caze.getCustomId(), 700));
+				prop.put("customer", 			M.trunc(caze.getCustomerId(), 700));
 				prop.put("name", 			caze.getCanonicalName());
 				prop.put("uri", 			M.trunc(caze.getUri(), 700));
 			}
@@ -136,6 +137,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "closed_message_,"
 						+ "name_,"
 						+ "custom_,"
+						+ "customer_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -157,6 +159,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$closedMessage$,"
 						+ "$name$,"
 						+ "$custom$,"
+						+ "$customer$,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -254,6 +257,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				prop.put("case",		flow.getCaseId());
 				prop.put("created", 	new Date());
 				prop.put("custom", 		M.trunc(caze.getCustomId(), 700));
+				prop.put("customer", 		M.trunc(caze.getCustomerId(), 700));
 				prop.put("uri", 		M.trunc(caze.getUri(), 700));
 			}
 			
@@ -314,6 +318,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "message_,"
 						+ "uri_,"
 						+ "custom_,"
+						+ "customer_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -339,6 +344,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$message$,"
 						+ "$uri$,"
 						+ "$custom$,"
+						+ "$customer$,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -538,15 +544,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (search.uri != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				prop.put("uri", search.uri);
-				sql.append("uri_ like $uri$ ");
+				addFilter("uri", search.uri, prop, sql);
 			}
 
 			if (search.name != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				prop.put("name", search.name);
-				sql.append("name_=$name$ ");
+				addFilter("name", search.name, prop, sql);
+			}
+
+			if (search.custom != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("custom", search.custom,prop,sql);
+			}
+			
+			if (search.customer != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("customer", search.customer,prop,sql);
 			}
 
 			if (search.caseId != null) {
@@ -562,10 +578,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 						whereAdded = true;
 						prop.setString("index" + i, search.index[i]);
-						if (search.index[i].startsWith("%") || search.index[i].endsWith("%"))
-							sql.append("index"+i+"_ like $index"+i+"$ ");
-						else
-							sql.append("index"+i+"_=$index"+i+"$ ");
+						addFilter("index" + i, search.index[i], prop, sql);
 					}
 				}
 			}
@@ -596,27 +609,33 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (search.uri != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				prop.put("uri", search.uri);
-				sql.append("uri_ like $uri$ ");
+				addFilter("uri", search.uri,prop,sql);
 			}
 			
 			if (search.name != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				prop.put("name", search.name);
-				sql.append("name_=$name$ ");
+				addFilter("name", search.name,prop,sql);
 			}
-
+			
+			if (search.custom != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("custom", search.custom,prop,sql);
+			}
+			
+			if (search.customer != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("customer", search.customer,prop,sql);
+			}
+			
 			if (search.index != null) {
 				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {
 						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 						whereAdded = true;
-						prop.setString("index" + i, search.index[i]);
-						if (search.index[i].startsWith("%") || search.index[i].endsWith("%"))
-							sql.append("index"+i+"_ like $index"+i+"$ ");
-						else
-							sql.append("index"+i+"_=$index"+i+"$ ");
+						addFilter("index"+i, search.index[i],prop,sql);
 					}
 				}
 			}
@@ -629,6 +648,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			throw new IOException(e);
 		}
 	}	
+
+	private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
+		prop.put(name, value);
+		
+		if (value.startsWith("%") || value.endsWith("%"))
+			sql.append(name + "_ like $"+name+"$ ");
+		else
+			sql.append(name + "_=$"+name+"$ ");
+	}
 
 	@Override
 	public PEngine loadEngine() throws IOException, NotFoundException {
@@ -805,6 +833,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				toNodeType(res.getInt("type_")),
 				res.getString("uri_"),
 				res.getString("custom_"),
+				res.getString("customer_"),
 				new String[] {
 						res.getString("index0_"),
 						res.getString("index1_"),
@@ -828,6 +857,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("name_"),
 				toCaseState(res.getInt("state_")),
 				res.getString("custom_"),
+				res.getString("customer_"),
 				new String[] {
 						res.getString("index0_"),
 						res.getString("index1_"),

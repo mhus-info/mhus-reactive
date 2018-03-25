@@ -58,6 +58,7 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
@@ -610,7 +611,7 @@ public class Engine extends MLog implements EEngine {
 			}
 		}
 	}
-
+	
 	public PCase getCase(UUID caseId) throws NotFoundException, IOException {
 		synchronized (caseCache) {
 			PCase caze = caseCache.get(caseId);
@@ -672,11 +673,21 @@ public class Engine extends MLog implements EEngine {
 		if (pool == null)
 			throw new NotFoundException("pool not found in process",uri);
 		
+		// remember options
+		String[] uriParams = uri.getParams();
+		MProperties options = null;
+		if (uriParams != null && uriParams.length > 0) {
+			options = MProperties.explodeToMProperties(uriParams);
+		} else {
+			options = new MProperties();
+		}
+
 		// update uri
 		MutableUri u = new MutableUri(uri.toString());
 		u.setLocation(process.getCanonicalName() + ":" + process.getVersion() );
 		u.setPath(pool.getCanonicalName());
 		u.setQuery(null);
+		u.setParams(null);
 		MUri originalUri = uri;
 		uri = u;
 		
@@ -699,15 +710,7 @@ public class Engine extends MLog implements EEngine {
 		
 		if (startPoints.size() == 0)
 			throw new NotFoundException("no start point found",uri);
-		
-		String[] uriParams = uri.getParams();
-		MProperties options = null;
-		if (uriParams != null && uriParams.length > 0) {
-			options = MProperties.explodeToMProperties(uriParams);
-		} else {
-			options = new MProperties();
-		}
-		
+				
 		String createdBy = config.aaa.getCurrentUserId();
 		
 		// everything fine ... start creating

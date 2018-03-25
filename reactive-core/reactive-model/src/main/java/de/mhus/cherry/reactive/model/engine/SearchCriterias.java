@@ -10,6 +10,8 @@ import de.mhus.lib.core.MString;
 public class SearchCriterias {
 
 	public String name;
+	public String custom;
+	public String customer;
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {
@@ -28,6 +30,12 @@ public class SearchCriterias {
 				break;
 			case "uri":
 				uri = v;
+				break;
+			case "custom":
+				custom = v;
+				break;
+			case "customer":
+				customer = v;
 				break;
 			case "name":
 				name = v;

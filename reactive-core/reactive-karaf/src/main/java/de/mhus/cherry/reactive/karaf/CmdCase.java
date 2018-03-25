@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.karaf;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TreeMap;
@@ -12,13 +13,16 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
+import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
@@ -28,7 +32,9 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.console.ConsoleTable;
+import de.mhus.lib.errors.NotFoundException;
 
 @Command(scope = "reactive", name = "pcase", description = "Case modifiations")
 @Service
@@ -79,18 +85,19 @@ public class CmdCase extends MLog implements Action {
 			api.getEngine().migrateCase(caze.getId(), parameters[1], parameters[2]);
 		} else
 		if (cmd.equals("view")) {
-			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
-			System.out.println("Uri      : " + caze.getUri());
-			System.out.println("CustomId : " + caze.getCustomId());
-			System.out.println("Name     : " + caze.getName());
-			System.out.println("Id       : " + caze.getId());
-			System.out.println("State    : " + caze.getState());
-			System.out.println("CName    : " + caze.getCanonicalName());
-			System.out.println("CreatedBy: " + caze.getCreatedBy());
-			System.out.println("Created  : " + MDate.toIso8601(new Date(caze.getCreationDate())));
-			System.out.println("Scheduled: " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
-			System.out.println("Close    : " + caze.getClosedCode() + " " + caze.getClosedMessage());
-			System.out.println("Options  : " + caze.getOptions());
+			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			System.out.println("Uri       : " + caze.getUri());
+			System.out.println("CustomId  : " + caze.getCustomId());
+			System.out.println("CustomerId: " + caze.getCustomerId());
+			System.out.println("Name      : " + caze.getName());
+			System.out.println("Id        : " + caze.getId());
+			System.out.println("State     : " + caze.getState());
+			System.out.println("CName     : " + caze.getCanonicalName());
+			System.out.println("CreatedBy : " + caze.getCreatedBy());
+			System.out.println("Created   : " + MDate.toIso8601(new Date(caze.getCreationDate())));
+			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
+			System.out.println("Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
+			System.out.println("Options   : " + caze.getOptions());
 			
 			if (parameters.length > 1) {
 				String user = parameters[1];
