@@ -5,6 +5,7 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
@@ -25,15 +26,14 @@ public class CmdProcessStart extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		if (!uri.startsWith("reactive:") ) {
-			if (!uri.startsWith("//"))
-				uri = "//" + uri;
-			uri = "reactive:" + uri;
+		if (uri.startsWith(EngineConst.SCHEME_REACTIVE + ":") ) {
+			MProperties properties = MProperties.explodeToMProperties(parameters);
+			
+			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+			api.getEngine().start(uri, properties);
+		} else {
+			System.out.println("Unknown schema: " + uri);
 		}
-		MProperties properties = MProperties.explodeToMProperties(parameters);
-
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
-		api.getEngine().start(uri, properties);
 		return null;
 	}
 
