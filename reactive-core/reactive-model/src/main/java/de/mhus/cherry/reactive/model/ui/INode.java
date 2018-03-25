@@ -16,6 +16,8 @@ public interface INode {
 
 	String getCustomId();
 
+	String getCustomerId();
+
 	String getIndexValue(int index);
 
 	String getIndexDisplayName(int index);

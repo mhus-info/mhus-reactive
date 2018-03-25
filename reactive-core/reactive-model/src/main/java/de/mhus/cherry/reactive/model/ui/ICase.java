@@ -16,6 +16,8 @@ public interface ICase {
 	
 	String getCustomId();
 
+	String getCustomerId();
+	
 	STATE_CASE getState();
 
 	UUID getId();
