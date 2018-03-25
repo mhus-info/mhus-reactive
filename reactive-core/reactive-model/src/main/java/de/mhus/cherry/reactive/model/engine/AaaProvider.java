@@ -8,4 +8,6 @@ public interface AaaProvider {
 
 	boolean hasGroupAccess(String user, String group);
 
+	boolean validatePassword(String user, String pass);
+
 }

@@ -19,4 +19,9 @@ public class SimpleAaaProvider implements AaaProvider {
 		return true;
 	}
 
+	@Override
+	public boolean validatePassword(String user, String pass) {
+		return true;
+	}
+
 }

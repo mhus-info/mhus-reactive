@@ -62,6 +62,7 @@ import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
+import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.UsageException;
@@ -640,8 +641,18 @@ public class Engine extends MLog implements EEngine {
 	public Object execute(String uri) throws Exception {
 		MUri u = MUri.toUri(uri);
 		switch (u.getScheme()) {
-		case "bpm":
+		case "bpm": {
+			String user = u.getUsername();
+			if (user != null) {
+				String pass = u.getPassword();
+				if (!config.aaa.validatePassword(user, pass))
+					throw new AccessDeniedException("login failed",user,uri);
+			}
+			if (!hasInitiateAccess(u, user))
+				throw new AccessDeniedException("user is not initiator",user,uri);
+			
 			return start(uri);
+		}
 		case "bmpm": {
 			UUID caseId = null;
 			String l = u.getLocation();
@@ -674,9 +685,7 @@ public class Engine extends MLog implements EEngine {
 			String l = u.getLocation();
 			if (!MValidator.isUUID(l)) throw new MException("misspelled case id",l);
 			UUID caseId = UUID.fromString(l);
-			MProperties parameters = new MProperties();
-			Map<String, String> p = u.getQuery();
-			if (p != null) parameters.putAll(p);
+			// check start point
 			PCase caze = getCase(caseId);
 			if (caze == null) 
 				throw new MException("case not found",caseId);
@@ -684,9 +693,21 @@ public class Engine extends MLog implements EEngine {
 				throw new MException("case suspended",caseId);
 			if (caze.getState() == STATE_CASE.CLOSED)
 				throw new MException("case closed",caseId);
-				
+			// check access
+			String user = u.getUsername();
+			if (user != null) {
+				String pass = u.getPassword();
+				if (!config.aaa.validatePassword(user, pass))
+					throw new AccessDeniedException("login failed",user,uri);
+			}
+			if (!hasInitiateAccess(u, user))
+				throw new AccessDeniedException("user is not initiator",user,uri);
+			// parameters
+			MProperties parameters = new MProperties();
+			Map<String, String> p = u.getQuery();
+			if (p != null) parameters.putAll(p);
+			// context and start
 			EngineContext context = createContext(caze);
-			
 			EElement start = context.getEPool().getElement(u.getFragment());
 			if (start == null)
 				throw new MException("start point not found",u.getFragment());
@@ -1574,7 +1595,9 @@ public class Engine extends MLog implements EEngine {
 		MUri muri = MUri.toUri(uri);
 		try {
 			EProcess process = getProcess(muri);
+			if (process == null) return false;
 			EPool pool = getPool(process, muri);
+			if (pool == null) return false;
 			EngineContext context = new EngineContext(this);
 			context.setUri(uri);
 			context.setEProcess(process);
@@ -1613,7 +1636,9 @@ public class Engine extends MLog implements EEngine {
 		MUri muri = MUri.toUri(uri);
 		try {
 			EProcess process = getProcess(muri);
+			if (process == null) return false;
 			EPool pool = getPool(process, muri);
+			if (pool == null) return false;
 			EngineContext context = new EngineContext(this);
 			context.setUri(uri);
 			context.setEProcess(process);
@@ -1638,6 +1663,33 @@ public class Engine extends MLog implements EEngine {
 
 	}
 
+	public boolean hasInitiateAccess(MUri uri, String user) {
+		try {
+
+			EProcess process = getProcess(uri);
+			if (process == null) return false;
+			EPool pool = getPool(process, uri);
+			if (pool == null) return false;
+			EngineContext context = new EngineContext(this);
+			context.setUri(uri.toString());
+			context.setEProcess(process);
+			context.setEPool(pool);
+			Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorInitiator();
+			for (Class<? extends AActor> actorClass : actorClasss) {
+				AActor actor = actorClass.newInstance();
+				((ContextRecipient)actor).setContext(context);
+				boolean hasAccess = actor.hasAccess(user);
+				if (hasAccess) return true;
+			}
+			return false;
+
+		} catch (Throwable t) {
+			log().e(uri,user,t);
+			return false;
+		}
+	
+	}
+	
 	public boolean hasExecuteAccess(UUID nodeId, String user) {
 		
 		try {
@@ -1648,7 +1700,9 @@ public class Engine extends MLog implements EEngine {
 			
 			MUri muri = MUri.toUri(uri);
 			EProcess process = getProcess(muri);
+			if (process == null) return false;
 			EPool pool = getPool(process, muri);
+			if (pool == null) return false;
 			EngineContext context = new EngineContext(this, node);
 			context.setUri(uri);
 			context.setEProcess(process);

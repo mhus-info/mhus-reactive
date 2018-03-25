@@ -406,6 +406,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 						return aaaProvider.getCurrentUserId();
 					return "osgi";
 				}
+
+				@Override
+				public boolean validatePassword(String user, String pass) {
+					if (aaaAdminMode) return true;
+					if (aaaProvider != null) 
+						return aaaProvider.validatePassword(user, pass);
+					return false;
+				}
 			};
 			// parameters
 			config.parameters = new HashMap<>();
