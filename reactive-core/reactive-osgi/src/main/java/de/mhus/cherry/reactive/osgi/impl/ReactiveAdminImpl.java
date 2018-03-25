@@ -307,12 +307,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		if (executionSuspended ) return 0;
 		Engine e = engine;
 		if (e == null) return 0;
-		int cnt = e.execute();
+		int cnt = e.processNodes();
 		e = engine;
 		if (e == null) return 0;
 		if (System.currentTimeMillis() > nextCleanup) {
 			nextCleanup = System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS / 2;
-			e.cleanup();
+			e.cleanupCases();
 		}
 		return cnt;
 	}

@@ -37,6 +37,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			+ " start                   - start engine\n"
 			+ " stop                    - stop and destroy engine\n"
 			+ " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
+			+ " execute <uri>           - executes the uri\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -49,6 +50,9 @@ public class CmdProcessEngine extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("execute")) {
+			System.out.println(api.getEngine().execute(parameters[0]));
+		} else
 		if (cmd.equals("cleanup")) {
 			IEngineAdmin uiApi = MApi.lookup(IEngineAdmin.class);
 			uiApi.cleanupCache();
@@ -102,11 +106,11 @@ public class CmdProcessEngine extends MLog implements Action {
 			System.out.println(api.addProcess(parameters, true));
 		} else
 		if (cmd.equals("cleanup")) {
-			api.getEngine().cleanup();
+			api.getEngine().cleanupCases();
 			System.out.println("OK");
 		} else
 		if (cmd.equals("execute")) {
-			api.getEngine().execute();
+			api.getEngine().processNodes();
 			System.out.println("OK");
 		} else
 		if (cmd.equals("parameters")) {

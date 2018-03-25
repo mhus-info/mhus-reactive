@@ -108,11 +108,11 @@ public class Engine extends MLog implements EEngine {
 // ---
 	
 	public void step() throws IOException, NotFoundException {
-		execute();
-		cleanup();
+		processNodes();
+		cleanupCases();
 	}
 	
-	public int execute() throws IOException, NotFoundException {
+	public int processNodes() throws IOException, NotFoundException {
 		
 		int doneCnt = 0;
 		
@@ -215,7 +215,7 @@ public class Engine extends MLog implements EEngine {
 		return false;
 	}
 
-	public void cleanup() throws IOException, NotFoundException {
+	public void cleanupCases() throws IOException, NotFoundException {
 				
 		// scan for closeable cases and runtimes
 		fireEvent.doStep("cleanup");
@@ -636,7 +636,69 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 // ---
-		
+	
+	public Object execute(String uri) throws Exception {
+		MUri u = MUri.toUri(uri);
+		switch (u.getScheme()) {
+		case "bpm":
+			return start(uri);
+		case "bmpm": {
+			UUID caseId = null;
+			String l = u.getLocation();
+			if (MValidator.isUUID(l)) caseId = UUID.fromString(l);
+			String m = u.getPath();
+			MProperties parameters = new MProperties();
+			Map<String, String> p = u.getQuery();
+			if (p != null) parameters.putAll(p);
+			fireMessage(caseId, m, parameters);
+			return null;
+		}
+		case "bpms": {
+			String signal = u.getPath();
+			MProperties parameters = new MProperties();
+			Map<String, String> p = u.getQuery();
+			if (p != null) parameters.putAll(p);
+			return fireSignal(signal, parameters);
+		}
+		case "bpme": {
+			String l = u.getLocation();
+			if (!MValidator.isUUID(l)) throw new MException("misspelled node id",l);
+			UUID nodeId = UUID.fromString(l);
+			MProperties parameters = new MProperties();
+			Map<String, String> p = u.getQuery();
+			if (p != null) parameters.putAll(p);
+			fireExternal(nodeId, parameters);
+			return null;
+		}
+		case "bpmx": {
+			String l = u.getLocation();
+			if (!MValidator.isUUID(l)) throw new MException("misspelled case id",l);
+			UUID caseId = UUID.fromString(l);
+			MProperties parameters = new MProperties();
+			Map<String, String> p = u.getQuery();
+			if (p != null) parameters.putAll(p);
+			PCase caze = getCase(caseId);
+			if (caze == null) 
+				throw new MException("case not found",caseId);
+			if (caze.getState() == STATE_CASE.SUSPENDED)
+				throw new MException("case suspended",caseId);
+			if (caze.getState() == STATE_CASE.CLOSED)
+				throw new MException("case closed",caseId);
+				
+			EngineContext context = createContext(caze);
+			
+			EElement start = context.getEPool().getElement(u.getFragment());
+			if (start == null)
+				throw new MException("start point not found",u.getFragment());
+			
+			return createStartPoint(context, start);
+		}
+		// case "bpmq": // not implemented
+		default:
+			throw new MException("scheme unknown",u.getScheme());
+		}
+	}
+	
 	public UUID start(String uri) throws Exception {
 		MUri u = MUri.toUri(uri);
 		Map<String, String> q = u.getQuery();
@@ -831,7 +893,7 @@ public class Engine extends MLog implements EEngine {
 		return process;
 	}
 
-	public void createStartPoint(EngineContext context, EElement start) throws Exception {
+	public UUID createStartPoint(EngineContext context, EElement start) throws Exception {
 		
 		// some checks
 		if (!start.is(AStartPoint.class))
@@ -903,6 +965,7 @@ public class Engine extends MLog implements EEngine {
 		synchronized (context.getLock()) {
 			doNodeLifecycle(context, flow);
 		}
+		return flow.getId();
 	}
 	
 	public PNode createActivity(EngineContext context, PNode previous, EElement start) throws Exception {
