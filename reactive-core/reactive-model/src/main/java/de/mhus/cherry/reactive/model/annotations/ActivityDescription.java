@@ -13,8 +13,11 @@ public @interface ActivityDescription {
 	public Output[] outputs() default {};
 	public Trigger[] triggers() default {};
 	public Class<? extends ASwimlane<?>> lane() default DefaultSwimlane.class;
+	
 	String description() default "";
 	String displayName() default "";
+	String[] indexDisplayNames() default {};
+	
 	String caption() default "";
 	public Class<? extends RuntimeNode> runtime() default RuntimeNode.class;
 	public String name() default "";

@@ -26,6 +26,11 @@ public class UiProcess implements IProcess {
 			if (pd != null) { // paranoia
 				properties.setString(pUri + "#displayName", pd.displayName().length() == 0 ? pool.getName() : pd.displayName());
 				properties.setString(pUri + "#description", pd.description());
+				String[] index = pd.indexDisplayNames();
+				for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
+					if (index[i] != null)
+						properties.setString(pUri + "#index" + i, index[i]);
+				}
 			}
 			
 			for (String eleName : pool.getElementNames()) {
@@ -36,7 +41,11 @@ public class UiProcess implements IProcess {
 				
 				properties.setString(eUri + "#displayName", desc.displayName().length() == 0 ? ele.getName() : desc.displayName());
 				properties.setString(eUri + "#description", desc.description());
-				
+				String[] index = desc.indexDisplayNames();
+				for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
+					if (index[i] != null)
+						properties.setString(eUri + "#index" + i, index[i]);
+				}
 			}
 		}
 	}
@@ -63,6 +72,16 @@ public class UiProcess implements IProcess {
 
 	public MProperties getProperties() {
 		return properties;
+	}
+
+	@Override
+	public String getIndexDisplayName(int index, String uri, String canonicalName) {
+		Locale locale = engine.getLocale();
+		if (locale != null) {
+			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index+"?" + locale.getLanguage(), null);
+			if (out != null) return out;
+		}
+		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index, "Index" + index);
 	}
 	
 }

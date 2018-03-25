@@ -27,7 +27,7 @@ public class S1Pool2 extends RPool<S1Pool2> {
 	}
 
 	@Override
-	public String[] createIndexValues() {
+	public String[] createIndexValues(boolean init) {
 		// TODO Auto-generated method stub
 		return null;
 	}

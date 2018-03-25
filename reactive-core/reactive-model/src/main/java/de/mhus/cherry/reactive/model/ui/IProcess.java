@@ -6,4 +6,6 @@ public interface IProcess {
 
 	String getDescription(String uri, String canonicalName);
 
+	String getIndexDisplayName(int index, String uri, String canonicalName);
+
 }

@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.examples.simple1;
 
+import java.util.Date;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
@@ -8,7 +9,8 @@ import de.mhus.lib.annotations.adb.DbPersistent;
 
 @PoolDescription(
 		displayName="Example Pool",
-		description="This pool is used to test the current development"
+		description="This pool is used to test the current development",
+		indexDisplayNames = {"Text 1","Text 2","Created"}
 		)
 public class S1Pool extends RPool<S1Pool> {
 
@@ -35,8 +37,9 @@ public class S1Pool extends RPool<S1Pool> {
 	}
 
 	@Override
-	public String[] createIndexValues() {
-		// TODO Auto-generated method stub
+	public String[] createIndexValues(boolean init) {
+		if (init)
+			return new String[] {text1,text2,new Date().toString()};
 		return null;
 	}
 		

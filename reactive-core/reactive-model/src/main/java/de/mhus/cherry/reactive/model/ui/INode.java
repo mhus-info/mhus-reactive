@@ -18,6 +18,8 @@ public interface INode {
 
 	String getIndexValue(int index);
 
+	String getIndexDisplayName(int index);
+
 	String getDisplayName();
 
 	String getDescription();

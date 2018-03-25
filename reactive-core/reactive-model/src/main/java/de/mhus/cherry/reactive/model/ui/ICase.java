@@ -12,6 +12,8 @@ public interface ICase {
 
 	String getIndexValue(int index);
 
+	String getIndexDisplayName(int index);
+	
 	String getCustomId();
 
 	STATE_CASE getState();

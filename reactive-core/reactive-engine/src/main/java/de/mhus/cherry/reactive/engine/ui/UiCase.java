@@ -77,4 +77,10 @@ public class UiCase extends MLog implements ICase {
 		return process.getDescription(info.getUri(), null);
 	}
 
+	@Override
+	public String getIndexDisplayName(int index) {
+		initProcess();
+		return process.getIndexDisplayName(index, info.getUri(), null);
+	}
+
 }

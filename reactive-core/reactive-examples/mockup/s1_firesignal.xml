@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?><config>
 <step nr="1">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -25,10 +25,10 @@
 </step>
 <step nr="2">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -55,10 +55,10 @@
 </step>
 <step nr="3">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -91,10 +91,10 @@
 </step>
 <step nr="4">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -127,10 +127,10 @@
 </step>
 <step nr="5">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -163,10 +163,10 @@
 </step>
 <step nr="6">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -199,10 +199,10 @@
 </step>
 <step nr="7">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="RUNNING" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>
@@ -241,10 +241,10 @@
 </step>
 <step nr="8">
 <cases>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="CLOSED" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="CLOSED" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
-<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="CLOSED" uri="reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
+<de.mhus.cherry.reactive.examples.simple1.S1Pool canonical="de.mhus.cherry.reactive.examples.simple1.S1Pool" name="S1Pool" scheduled="0" state="CLOSED" uri="bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool">
 <parameters text1="signal" text2=""/>
 </de.mhus.cherry.reactive.examples.simple1.S1Pool>
 </cases>

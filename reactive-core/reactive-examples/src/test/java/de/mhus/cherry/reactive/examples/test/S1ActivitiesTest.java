@@ -47,7 +47,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_parallel2.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel2";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel2";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -81,7 +81,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_parallel1.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel1";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=parallel1";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -115,7 +115,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggertimer.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=triggertimer";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=triggertimer";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -158,7 +158,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggermessage.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -201,7 +201,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_triggersignal.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=trigger";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -244,7 +244,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_second.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=second";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=second";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -278,7 +278,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_third.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=third";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=third";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -312,7 +312,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_error1.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=error1";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=error1";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -346,7 +346,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_fatal.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=fatal";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=fatal";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -380,7 +380,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_none.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=none";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=none";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -422,7 +422,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_startpoint.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool#de.mhus.cherry.reactive.examples.simple1.S1Start2";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool#de.mhus.cherry.reactive.examples.simple1.S1Start2";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -456,7 +456,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_fireexternal.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=external";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=external";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId = engine.start(uri);
@@ -501,7 +501,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firesignal.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=signal";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=signal";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);
@@ -549,7 +549,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_firemessage.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=message";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=message";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);
@@ -605,7 +605,7 @@ public class S1ActivitiesTest extends TestCase {
 			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_exclusivekirk.xml"));
 			mockup.setWarn(false);
 			mockup.setVerbose(false);
-			String uri = "reactive://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=exclusive&text2=kirk";
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=exclusive&text2=kirk";
 			System.out.println("URI: " + uri);
 			System.out.println("------------------------------------------------------------------------");
 			UUID caseId1 = engine.start(uri);

@@ -365,7 +365,7 @@ public class Engine extends MLog implements EEngine {
 					flow.getParameters().putAll(newParameters);
 					
 					if (activity instanceof IndexValuesProvider) {
-						flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues() );
+						flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(false) );
 					} else {
 						flow.setIndexValues(null);
 					}
@@ -411,6 +411,13 @@ public class Engine extends MLog implements EEngine {
 				aPool.closeCase();
 				Map<String, Object> newParameters = aPool.exportParamters();
 				caze.getParameters().putAll(newParameters);
+				
+				if (aPool instanceof IndexValuesProvider) {
+					caze.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(false) );
+				} else {
+					caze.setIndexValues(null);
+				}
+
 			} catch (Throwable t) {
 				log().e(caze,t);
 				fireEvent.error(caze,t);
@@ -593,7 +600,7 @@ public class Engine extends MLog implements EEngine {
 					storage.saveFlowNode(pNode);
 					nodeCache.put(pNode.getId(), pNode);
 				}
-				savePCase(context);
+				// savePCase(context);
 			}
 		} else {
 			pNode.setState(state);
@@ -756,6 +763,11 @@ public class Engine extends MLog implements EEngine {
 			}
 			
 			pCase.setState(STATE_CASE.RUNNING);
+			if (aPool instanceof IndexValuesProvider) {
+				pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(true) );
+			} else {
+				pCase.setIndexValues(null);
+			}
 			savePCase(pCase,aPool);
 		}
 		return pCase.getId();
@@ -768,6 +780,13 @@ public class Engine extends MLog implements EEngine {
 	public void savePCase(PCase pCase, APool<?> aPool) throws IOException {
 		Map<String, Object> newParameters = aPool.exportParamters();
 		pCase.getParameters().putAll(newParameters);
+		
+		if (aPool instanceof IndexValuesProvider) {
+			pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(false) );
+		} else {
+			pCase.setIndexValues(null);
+		}
+		
 		fireEvent.saveCase(pCase, aPool);
 		synchronized (getCaseLock(pCase)) {
 			synchronized (caseCache) {
@@ -939,6 +958,13 @@ public class Engine extends MLog implements EEngine {
 		try {
 			if (init) {
 				activity.initializeActivity();
+
+				if (activity instanceof IndexValuesProvider) {
+					flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(true) );
+				} else {
+					flow.setIndexValues(null);
+				}
+
 			} else {
 				flow.setLastRunDate(System.currentTimeMillis());
 				activity.doExecuteActivity();

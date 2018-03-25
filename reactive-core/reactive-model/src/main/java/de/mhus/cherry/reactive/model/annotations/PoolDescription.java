@@ -12,7 +12,8 @@ public @interface PoolDescription {
 	String name() default "";
 	String description() default "";
 	String displayName() default "";
-	
+	String[] indexDisplayNames() default {};
+
 
 	Class<? extends AActor> actorDefault() default EverybodyActor.class;
 	Class<? extends AActor>[] actorInitiator() default EverybodyActor.class;

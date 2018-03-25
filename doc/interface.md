@@ -37,4 +37,9 @@ Display name: Beispiel-Pool
 
 will print the new lables for german users.
 
+== Display Names
+
+ActivityDescription.displayName - Name of the activity
+ActivityDescription.description - Description of the activity
+ActivityDescription.indexDisplayNames[0..9] - Names of the indexes (if defined)
 

@@ -72,5 +72,10 @@ public class UiNode extends MLog implements INode {
 		return process.getDescription(info.getUri(), info.getCanonicalName());
 	}
 
-	
+	@Override
+	public String getIndexDisplayName(int index) {
+		initProcess();
+		return process.getIndexDisplayName(index, info.getUri(), info.getCanonicalName());
+	}
+
 }

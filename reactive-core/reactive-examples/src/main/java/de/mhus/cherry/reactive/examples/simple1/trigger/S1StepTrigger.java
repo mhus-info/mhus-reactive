@@ -33,7 +33,7 @@ public class S1StepTrigger extends RHumanTask<S1Pool> {
 	}
 
 	@Override
-	public String[] createIndexValues() {
+	public String[] createIndexValues(boolean init) {
 		return null;
 	}
 

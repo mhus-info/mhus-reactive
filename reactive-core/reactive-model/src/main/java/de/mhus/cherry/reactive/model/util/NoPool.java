@@ -29,7 +29,7 @@ public class NoPool implements APool<NoPool> {
 	}
 
 	@Override
-	public String[] createIndexValues() {
+	public String[] createIndexValues(boolean init) {
 		return null;
 	}
 
