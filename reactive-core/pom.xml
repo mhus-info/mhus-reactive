@@ -225,6 +225,7 @@
 		<module>reactive-examples</module>
 		<module>reactive-osgi</module>
 		<module>reactive-karaf</module>
+		<module>reactive-dev</module>
 	</modules>
 
 </project>

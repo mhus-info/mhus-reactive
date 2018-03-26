@@ -200,7 +200,10 @@ public class Engine extends MLog implements EEngine {
 		result.close();
 				
 		fireEvent.doStep("execute finished");
-	
+
+		// sleep
+		MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+		
 		return doneCnt;
 	}
 	
