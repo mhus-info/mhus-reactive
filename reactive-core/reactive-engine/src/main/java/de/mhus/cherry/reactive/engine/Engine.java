@@ -647,49 +647,53 @@ public class Engine extends MLog implements EEngine {
 	
 	public Object execute(String uri) throws Exception {
 		MUri u = MUri.toUri(uri);
-		switch (u.getScheme()) {
+		return execute(u);
+	}
+	
+	public Object execute(MUri uri) throws Exception {
+		switch (uri.getScheme()) {
 		case "bpm": {
-			String user = u.getUsername();
+			String user = uri.getUsername();
 			if (user != null) {
-				String pass = u.getPassword();
+				String pass = uri.getPassword();
 				if (!config.aaa.validatePassword(user, pass))
 					throw new AccessDeniedException("login failed",user,uri);
 			}
-			if (!hasInitiateAccess(u, user))
+			if (!hasInitiateAccess(uri, user))
 				throw new AccessDeniedException("user is not initiator",user,uri);
 			
-			return start(uri);
+			return start(uri, null);
 		}
 		case "bmpm": {
 			UUID caseId = null;
-			String l = u.getLocation();
+			String l = uri.getLocation();
 			if (MValidator.isUUID(l)) caseId = UUID.fromString(l);
-			String m = u.getPath();
+			String m = uri.getPath();
 			MProperties parameters = new MProperties();
-			Map<String, String> p = u.getQuery();
+			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
 			fireMessage(caseId, m, parameters);
 			return null;
 		}
 		case "bpms": {
-			String signal = u.getPath();
+			String signal = uri.getPath();
 			MProperties parameters = new MProperties();
-			Map<String, String> p = u.getQuery();
+			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
 			return fireSignal(signal, parameters);
 		}
 		case "bpme": {
-			String l = u.getLocation();
+			String l = uri.getLocation();
 			if (!MValidator.isUUID(l)) throw new MException("misspelled node id",l);
 			UUID nodeId = UUID.fromString(l);
 			MProperties parameters = new MProperties();
-			Map<String, String> p = u.getQuery();
+			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
 			fireExternal(nodeId, parameters);
 			return null;
 		}
 		case "bpmx": {
-			String l = u.getLocation();
+			String l = uri.getLocation();
 			if (!MValidator.isUUID(l)) throw new MException("misspelled case id",l);
 			UUID caseId = UUID.fromString(l);
 			// check start point
@@ -701,29 +705,29 @@ public class Engine extends MLog implements EEngine {
 			if (caze.getState() == STATE_CASE.CLOSED)
 				throw new MException("case closed",caseId);
 			// check access
-			String user = u.getUsername();
+			String user = uri.getUsername();
 			if (user != null) {
-				String pass = u.getPassword();
+				String pass = uri.getPassword();
 				if (!config.aaa.validatePassword(user, pass))
 					throw new AccessDeniedException("login failed",user,uri);
 			}
-			if (!hasInitiateAccess(u, user))
+			if (!hasInitiateAccess(uri, user))
 				throw new AccessDeniedException("user is not initiator",user,uri);
 			// parameters
 			MProperties parameters = new MProperties();
-			Map<String, String> p = u.getQuery();
+			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
 			// context and start
 			EngineContext context = createContext(caze);
-			EElement start = context.getEPool().getElement(u.getFragment());
+			EElement start = context.getEPool().getElement(uri.getFragment());
 			if (start == null)
-				throw new MException("start point not found",u.getFragment());
+				throw new MException("start point not found",uri.getFragment());
 			
 			return createStartPoint(context, start);
 		}
-		// case "bpmq": // not implemented
+		// case "bpmq": // not implemented use executeQuery()
 		default:
-			throw new MException("scheme unknown",u.getScheme());
+			throw new MException("scheme unknown",uri.getScheme());
 		}
 	}
 	

@@ -201,7 +201,7 @@ public class CmdNode extends MLog implements Action {
 					locale = Locale.forLanguageTag(parameters[2]);
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
-				INode inode = engine.getNode(node.getId());
+				INode inode = engine.getNode(node.getId().toString());
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());

@@ -17,12 +17,14 @@ public interface IEngine {
 
 	IProcess getProcess(String uri) throws MException;
 
-	ICase getCase(UUID id) throws Exception;
+	ICase getCase(String id) throws Exception;
 
-	INode getNode(UUID id) throws Exception;
+	INode getNode(String id) throws Exception;
 
 	Locale getLocale();
 
 	String getUser();
+
+	Object execute(String uri) throws Exception;
 	
 }

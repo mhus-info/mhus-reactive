@@ -19,6 +19,16 @@ install -s mvn:de.mhus.cherry.reactive/reactive-dev/$version
 
 install -s mvn:de.mhus.cherry.reactive/reactive-examples/$version
 
+Rest:
+
+install -s mvn:de.mhus.osgi/mhu-sop-api/1.3.2-SNAPSHOT
+install -s mvn:de.mhus.osgi/mhu-sop-core/1.3.2-SNAPSHOT
+install -s mvn:de.mhus.osgi/mhu-sop-rest/1.3.2-SNAPSHOT
+
+install -s mvn:de.mhus.cherry.reactive/reactive-sop-rest/$version
+
+
+
 pls -a
 
 

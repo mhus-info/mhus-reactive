@@ -76,6 +76,31 @@ public class EngineUtil {
 		
 		return null;
 	}
+	
+	public static PCaseInfo getCaseInfo(Engine engine, String id) throws Exception {
+		if (MValidator.isUUID(id))
+			return engine.getCaseInfo(UUID.fromString(id));
+		SearchCriterias c = new SearchCriterias();
+		c.custom = id;
+		Result<PCaseInfo> res = engine.storageSearchCases(c);
+		for (PCaseInfo info : res) {
+			if (info.getState() != STATE_CASE.CLOSED && info.getState() != STATE_CASE.SUSPENDED) {
+				res.close();
+				return info;
+			}
+		}
+		res.close();
+		
+		res = engine.storageSearchCases(c);
+		for (PCaseInfo info : res) {
+			res.close();
+			return info;
+		}
+		res.close();
+		
+		return null;
+	}
+
 
 	public static PNode getFlowNode(Engine engine, String id) throws NotFoundException, IOException {
 		if (MValidator.isUUID(id))
@@ -104,6 +129,39 @@ public class EngineUtil {
 		for (PNodeInfo info : res) {
 			res.close();
 			return engine.getFlowNode(info.getId());
+		}
+		res.close();
+		
+		return null;
+	}
+
+	public static PNodeInfo getFlowNodeInfo(Engine engine, String id) throws Exception {
+		if (MValidator.isUUID(id))
+			return engine.getFlowNodeInfo(UUID.fromString(id));
+		SearchCriterias c = new SearchCriterias();
+		c.custom = id;
+		Result<PNodeInfo> res = engine.storageSearchFlowNodes(c);
+		for (PNodeInfo info : res) {
+			if (info.getState() != STATE_NODE.CLOSED && info.getState() != STATE_NODE.SUSPENDED && info.getState() != STATE_NODE.WAITING && info.getType() != TYPE_NODE.RUNTIME) {
+				res.close();
+				return info;
+			}
+		}
+		res.close();
+
+		res = engine.storageSearchFlowNodes(c);
+		for (PNodeInfo info : res) {
+			if (info.getState() != STATE_NODE.SUSPENDED && info.getType() != TYPE_NODE.RUNTIME) {
+				res.close();
+				return info;
+			}
+		}
+		res.close();
+
+		res = engine.storageSearchFlowNodes(c);
+		for (PNodeInfo info : res) {
+			res.close();
+			return info;
 		}
 		res.close();
 		

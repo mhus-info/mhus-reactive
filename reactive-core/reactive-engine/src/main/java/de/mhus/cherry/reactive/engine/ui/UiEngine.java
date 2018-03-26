@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.util.EngineUtil;
+import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
@@ -17,6 +19,7 @@ import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
+import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
@@ -149,13 +152,19 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public ICase getCase(UUID id) throws Exception {
-		return new UiCase(this, engine.storageGetCaseInfo(id));
+	public ICase getCase(String id) throws Exception {
+		PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
+		if (!engine.hasReadAccess(info.getUri(), user))
+			return null;
+		return new UiCase(this, info);
 	}
 	
 	@Override
-	public INode getNode(UUID id) throws Exception {
-		return new UiNode(this, engine.storageGetFlowNodeInfo(id));
+	public INode getNode(String id) throws Exception {
+		PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+		if (!engine.hasReadAccess(info.getUri(), user))
+			return null;
+		return new UiNode(this, info);
 	}
 
 	@Override
@@ -174,6 +183,13 @@ public class UiEngine extends MLog implements IEngine {
 
 	public void setDefaultProcessProperties(MProperties defaultProcessProperties) {
 		this.defaultProcessProperties = defaultProcessProperties;
+	}
+
+	@Override
+	public Object execute(String uri) throws Exception {
+		MutableUri u = (MutableUri) MUri.toUri(uri);
+		u.setUsername(user);
+		return engine.execute(u);
 	}
 	
 }

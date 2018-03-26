@@ -10,7 +10,8 @@ import de.mhus.lib.annotations.adb.DbPersistent;
 @PoolDescription(
 		displayName="Example Pool",
 		description="This pool is used to test the current development",
-		indexDisplayNames = {"Text 1","Text 2","Created"}
+		indexDisplayNames = {"Text 1","Text 2","Created"},
+		actorRead=S1ActorManager.class
 		)
 public class S1Pool extends RPool<S1Pool> {
 

@@ -26,7 +26,7 @@ public class NodeItem {
 
 	@Column(order=3,title="Name", editable=false)
 	public STATE_NODE getNodeSate() {
-		return node.getNodeSate();
+		return node.getNodeState();
 	}
 
 	@Column(order=14,title="Id", editable=false,elapsed=false)

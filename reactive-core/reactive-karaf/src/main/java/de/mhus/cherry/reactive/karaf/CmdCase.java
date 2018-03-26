@@ -1,10 +1,9 @@
 package de.mhus.cherry.reactive.karaf;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;
@@ -13,7 +12,6 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -22,7 +20,6 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
-import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
@@ -32,9 +29,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MTimeInterval;
-import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.console.ConsoleTable;
-import de.mhus.lib.errors.NotFoundException;
 
 @Command(scope = "reactive", name = "pcase", description = "Case modifiations")
 @Service
@@ -106,7 +101,7 @@ public class CmdCase extends MLog implements Action {
 					locale = Locale.forLanguageTag(parameters[2]);
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
-				ICase icase = engine.getCase(caze.getId());
+				ICase icase = engine.getCase(caze.getId().toString());
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());

@@ -3,6 +3,7 @@ package de.mhus.cherry.reactive.engine.ui;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
@@ -32,7 +33,7 @@ public class UiNode extends MLog implements INode {
 	}
 
 	@Override
-	public STATE_NODE getNodeSate() {
+	public STATE_NODE getNodeState() {
 		return info.getState();
 	}
 
@@ -81,6 +82,16 @@ public class UiNode extends MLog implements INode {
 	@Override
 	public String getCustomerId() {
 		return info.getCustomerId();
+	}
+
+	@Override
+	public TYPE_NODE getType() {
+		return info.getType();
+	}
+
+	@Override
+	public UUID getCaseId() {
+		return info.getCaseId();
 	}
 
 }

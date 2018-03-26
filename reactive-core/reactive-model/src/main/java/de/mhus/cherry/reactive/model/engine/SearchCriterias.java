@@ -1,11 +1,13 @@
 package de.mhus.cherry.reactive.model.engine;
 
+import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 
 public class SearchCriterias {
@@ -34,10 +36,13 @@ public class SearchCriterias {
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {
+		this(parameters == null? new MProperties() : MProperties.explodeToMProperties(parameters));
+	}
+	
+	public SearchCriterias(MProperties parameters) {
 		if (parameters == null) return;
-		for (String param : parameters) {
-			String k = MString.beforeIndex(param, '=');
-			String v = MString.afterIndex(param, '=');
+		for (String k : parameters.keySet()) {
+			String v = parameters.getString(k,null);
 			switch (k) {
 			case "state":
 				try {
@@ -129,6 +134,7 @@ public class SearchCriterias {
 				if (index == null) index = new String[] {null,null,null,null,null,null,null,null,null,null};
 				index[0] = v;
 				break;
+			default:
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
+import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
@@ -21,7 +22,7 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 import de.mhus.osgi.sop.api.rest.RestUtil;
 
 @Component(provide=RestNodeService.class)
-public class BpmCaseNode extends AbstractObjectListNode<XCase> {
+public class BpmNodeNode extends AbstractObjectListNode<XNode> {
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -30,11 +31,11 @@ public class BpmCaseNode extends AbstractObjectListNode<XCase> {
 
 	@Override
 	public String getNodeId() {
-		return "bpmcase";
+		return "bpmnode";
 	}
 
 	@Override
-	protected List<XCase> getObjectList(CallContext callContext) throws MException {
+	protected List<XNode> getObjectList(CallContext callContext) throws MException {
 
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
@@ -43,11 +44,11 @@ public class BpmCaseNode extends AbstractObjectListNode<XCase> {
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
 		int page = M.c(callContext.getParameter("_page"), 0);
 		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
-		LinkedList<XCase> out = new LinkedList<>();
+		LinkedList<XNode> out = new LinkedList<>();
 		try {
-			List<ICase> res = engine.searchCases(criterias, page, size);
-			for (ICase item : res) 
-				out.add(new XCase(engine, item, false));
+			List<INode> res = engine.searchNodes(criterias, page, size);
+			for (INode item : res) 
+				out.add(new XNode(engine, item, false));
 		} catch (IOException e) {
 			throw new MException(e);
 		}
@@ -56,19 +57,19 @@ public class BpmCaseNode extends AbstractObjectListNode<XCase> {
 	}
 
 	@Override
-	public Class<XCase> getManagedClass() {
-		return XCase.class;
+	public Class<XNode> getManagedClass() {
+		return XNode.class;
 	}
 
 	@Override
-	protected XCase getObjectForId(CallContext context, String id) throws Exception {
+	protected XNode getObjectForId(CallContext context, String id) throws Exception {
 		
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext acontext = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 
-		ICase item = engine.getCase(id);
-		return new XCase(engine, item, true);
+		INode item = engine.getNode(id);
+		return new XNode(engine, item, true);
 	}
 
 }
