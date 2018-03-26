@@ -414,6 +414,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 						return aaaProvider.validatePassword(user, pass);
 					return aaaDefaultAccess;
 				}
+
+				@Override
+				public boolean isUserActive(String user) {
+					if (aaaAdminMode) return true;
+					if (aaaProvider != null) 
+						return aaaProvider.isUserActive(user);
+					return aaaDefaultAccess;
+				}
 			};
 			// parameters
 			config.parameters = new HashMap<>();

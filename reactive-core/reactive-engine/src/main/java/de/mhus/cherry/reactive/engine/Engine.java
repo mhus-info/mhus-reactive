@@ -1591,7 +1591,7 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	public boolean hasReadAccess(String uri, String user) {
-				
+		if (!config.aaa.isUserActive(user)) return false;
 		MUri muri = MUri.toUri(uri);
 		try {
 			EProcess process = getProcess(muri);
@@ -1632,6 +1632,7 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	public boolean hasWriteAccess(String uri, String user) {
+		if (!config.aaa.isUserActive(user)) return false;
 		
 		MUri muri = MUri.toUri(uri);
 		try {
@@ -1664,6 +1665,7 @@ public class Engine extends MLog implements EEngine {
 	}
 
 	public boolean hasInitiateAccess(MUri uri, String user) {
+		if (!config.aaa.isUserActive(user)) return false;
 		try {
 
 			EProcess process = getProcess(uri);
@@ -1691,6 +1693,7 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 	public boolean hasExecuteAccess(UUID nodeId, String user) {
+		if (!config.aaa.isUserActive(user)) return false;
 		
 		try {
 			// find actor

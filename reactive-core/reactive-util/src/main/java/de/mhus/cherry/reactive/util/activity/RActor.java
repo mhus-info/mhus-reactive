@@ -21,8 +21,8 @@ public class RActor implements AActor, ContextRecipient {
 
 	@Override
 	public boolean hasAccess(String user) {
-		if (user == null) return false;
 		AaaProvider aaa = context.getAaaProvider();
+		if (user == null || !aaa.isUserActive(user)) return false;
 		if (aaa.hasAdminAccess(user)) return true;
 		ActorDescription desc = this.getClass().getAnnotation(ActorDescription.class);
 		if (desc != null) {

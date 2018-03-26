@@ -10,4 +10,6 @@ public interface AaaProvider {
 
 	boolean validatePassword(String user, String pass);
 
+	boolean isUserActive(String user);
+
 }

@@ -24,4 +24,9 @@ public class SimpleAaaProvider implements AaaProvider {
 		return true;
 	}
 
+	@Override
+	public boolean isUserActive(String user) {
+		return true;
+	}
+
 }
