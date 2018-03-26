@@ -170,9 +170,12 @@ public class Engine extends MLog implements EEngine {
 				threads.removeIf(e -> e.isFinished());
 				MThread.sleep(200);
 			}
+			
+			// sleep
+			MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+
 		} else {
 			for (PNodeInfo nodeId : result) {
-				doneCnt++;
 				synchronized (executing) {
 					if (executing.contains(nodeId)) continue;
 				}
@@ -183,10 +186,14 @@ public class Engine extends MLog implements EEngine {
 						synchronized (executing) {
 							executing.add(nodeId.getId());
 						}
+						doneCnt++;
 						doFlowNode(node);
 						synchronized (executing) {
 							executing.remove(nodeId);
 						}
+						// sleep
+						MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+
 					} else
 					if (caze.getState() == STATE_CASE.CLOSED) {
 						// stop node also
@@ -200,9 +207,6 @@ public class Engine extends MLog implements EEngine {
 		result.close();
 				
 		fireEvent.doStep("execute finished");
-
-		// sleep
-		MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
 		
 		return doneCnt;
 	}

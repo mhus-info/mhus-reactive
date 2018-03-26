@@ -38,7 +38,7 @@ public class CmdStress extends MLog implements Action {
 			System.out.println(">>> " + cnt + ": " + uri);
 			console.cleanup();
 			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
-			api.getEngine().start(uris[pos]);
+			api.getEngine().start(uri);
 			pos = (pos+1) % uris.length;
 			Thread.sleep(interval * 1000);
 			cnt++;
