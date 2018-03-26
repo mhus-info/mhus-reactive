@@ -11,6 +11,9 @@
 	  <field name="name" type="string" size="700" />
 	  <field name="custom" type="string" size="700" />
 	  <field name="customer" type="string" size="700" />
+	  <field name="process" type="string" size="300" />
+	  <field name="version" type="string" size="100" />
+	  <field name="pool" type="string" size="300" />
 	  <field name="index0" type="string" size="300" />
 	  <field name="index1" type="string" size="300" />
 	  <field name="index2" type="string" size="300" />
@@ -38,6 +41,9 @@
 	  <field name="custom" type="string" size="700" />
 	  <field name="customer" type="string" size="700" />
 	  <field name="uri" type="string" size="700" />
+	  <field name="process" type="string" size="300" />
+	  <field name="version" type="string" size="100" />
+	  <field name="pool" type="string" size="300" />
 	  <field name="index0" type="string" size="300" />
 	  <field name="index1" type="string" size="300" />
 	  <field name="index2" type="string" size="300" />

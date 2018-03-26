@@ -27,8 +27,10 @@ import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.config.XmlConfigFile;
+import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.sql.DbConnection;
@@ -40,8 +42,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_" + INDEX_COLUMNS;
-	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_" + INDEX_COLUMNS;
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_" + INDEX_COLUMNS;
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_" + INDEX_COLUMNS;
 	private DbPool pool;
 	private String prefix;
 	
@@ -93,6 +95,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				prop.put("customer", 			M.trunc(caze.getCustomerId(), 700));
 				prop.put("name", 			caze.getCanonicalName());
 				prop.put("uri", 			M.trunc(caze.getUri(), 700));
+				MUri u = MUri.toUri(caze.getUri());
+				prop.put("process", MString.beforeIndex(u.getLocation(), ':'));
+				prop.put("version", MString.afterIndex(u.getLocation(),':'));
+				prop.put("pool", u.getPath());
 			}
 			
 			if (exists) {
@@ -138,6 +144,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "name_,"
 						+ "custom_,"
 						+ "customer_,"
+						+ "process_,"
+						+ "version_,"
+						+ "pool_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -160,6 +169,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$name$,"
 						+ "$custom$,"
 						+ "$customer$,"
+						+ "$process$,"
+						+ "$version$,"
+						+ "$pool$,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -259,6 +271,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				prop.put("custom", 		M.trunc(caze.getCustomId(), 700));
 				prop.put("customer", 		M.trunc(caze.getCustomerId(), 700));
 				prop.put("uri", 		M.trunc(caze.getUri(), 700));
+				MUri u = MUri.toUri(caze.getUri());
+				prop.put("process", MString.beforeIndex(u.getLocation(), ':'));
+				prop.put("version", MString.afterIndex(u.getLocation(),':'));
+				prop.put("pool", u.getPath());
 			}
 			
 			if (flow.getAssignedUser() != null)
@@ -319,6 +335,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "uri_,"
 						+ "custom_,"
 						+ "customer_,"
+						+ "process_,"
+						+ "version_,"
+						+ "pool_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -345,6 +364,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$uri$,"
 						+ "$custom$,"
 						+ "$customer$,"
+						+ "$process$,"
+						+ "$version$,"
+						+ "$pool$,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -541,6 +563,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				sql.append("state_=$state$ ");
 			}
 
+			if (search.type != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("type", search.type);
+				sql.append("type_=$type$ ");
+			}
+			
 			if (search.uri != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
@@ -564,6 +593,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				whereAdded = true;
 				addFilter("customer", search.customer,prop,sql);
 			}
+			
+			if (search.process != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("process", search.process,prop,sql);
+			}
+			
+			if (search.version != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("version", search.version,prop,sql);
+			}
+			
+			if (search.pool != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("pool", search.pool,prop,sql);
+			}
 
 			if (search.caseId != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
@@ -581,6 +628,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						addFilter("index" + i, search.index[i], prop, sql);
 					}
 				}
+			}
+			
+			// at last order
+			if (search.order != null) {
+				sql.append("ORDER BY ").append(search.order.name().toLowerCase()).append("_ ");
+				if (!search.orderAscending)
+					sql.append("DESC ");
 			}
 			
 			DbConnection con = pool.getConnection();
@@ -630,6 +684,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				addFilter("customer", search.customer,prop,sql);
 			}
 			
+			if (search.process != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("process", search.process,prop,sql);
+			}
+			
+			if (search.version != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("version", search.version,prop,sql);
+			}
+			
+			if (search.pool != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("pool", search.pool,prop,sql);
+			}
+
 			if (search.index != null) {
 				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {
@@ -640,6 +712,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				}
 			}
 			
+			// at last order
+			if (search.order != null) {
+				sql.append("ORDER BY ").append(search.order.name().toLowerCase()).append("_ ");
+				if (!search.orderAscending)
+					sql.append("DESC ");
+			}
+
 			DbConnection con = pool.getConnection();
 			DbStatement sta = con.createStatement(sql.toString());
 			DbResult res = sta.executeQuery(prop);

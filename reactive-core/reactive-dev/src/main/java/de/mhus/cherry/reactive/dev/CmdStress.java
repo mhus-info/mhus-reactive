@@ -23,7 +23,7 @@ public class CmdStress extends MLog implements Action {
 	private int interval = 5;
 
 	@Option(name="-c", aliases="--cnt", description="Start counter for $cnt$",required=false)
-	private int cnt = 0;
+	private int cnt = 10000;
 	
 	@Override
 	public Object execute() throws Exception {

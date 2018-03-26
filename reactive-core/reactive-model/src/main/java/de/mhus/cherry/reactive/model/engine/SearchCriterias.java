@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MString;
 
@@ -12,6 +13,24 @@ public class SearchCriterias {
 	public String name;
 	public String custom;
 	public String customer;
+	
+	public String process;
+	public String version;
+	public String pool;
+
+	public boolean unassigned;
+	public String assigned;
+	public STATE_NODE nodeState;
+	public String[] index;
+	public STATE_CASE caseState;
+	public String uri;
+	public UUID caseId;
+	public TYPE_NODE type;
+
+	public enum ORDER {CUSTOM,CUSTOMER,NAME,PROCESS,VERSION,POOL,STATE,TYPE,INDEX0,INDEX1,INDEX2,INDEX3,INDEX4,INDEX5,INDEX6,INDEX7,INDEX8,INDEX9};
+	public ORDER order;
+	public boolean orderAscending = true;
+	
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {
@@ -28,8 +47,26 @@ public class SearchCriterias {
 					nodeState = STATE_NODE.valueOf(v.toUpperCase());
 				} catch (Throwable t) {}
 				break;
+			case "type":
+				type = TYPE_NODE.valueOf(v.toUpperCase());
+				break;
+			case "order":
+				order = ORDER.valueOf(v.toUpperCase());
+				break;
+			case "ascending":
+				orderAscending = M.c(v, true);
+				break;
 			case "uri":
 				uri = v;
+				break;
+			case "process":
+				process = v;
+				break;
+			case "version":
+				version = v;
+				break;
+			case "pool":
+				pool = v;
 				break;
 			case "custom":
 				custom = v;
@@ -96,12 +133,4 @@ public class SearchCriterias {
 		}
 	}
 	
-	public boolean unassigned;
-	public String assigned;
-	public STATE_NODE nodeState;
-	public String[] index;
-	public STATE_CASE caseState;
-	public String uri;
-	public UUID caseId;
-
 }
