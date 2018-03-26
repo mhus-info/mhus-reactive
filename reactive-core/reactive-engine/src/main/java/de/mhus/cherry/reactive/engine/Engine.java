@@ -1781,7 +1781,8 @@ public class Engine extends MLog implements EEngine {
 							PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
 							nextNode.setMessage(parameters);
 							saveFlowNode(context, nextNode, null);
-							closeFlowNode(context, node, STATE_NODE.CLOSED);
+							if (trigger.abord())
+								closeFlowNode(context, node, STATE_NODE.CLOSED);
 							res.close();
 							return;
 						}
@@ -1833,7 +1834,8 @@ public class Engine extends MLog implements EEngine {
 									PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
 									nextNode.setMessage(parameters);
 									saveFlowNode(context, nextNode, null);
-									closeFlowNode(context, node, STATE_NODE.CLOSED);
+									if (trigger.abord())
+										closeFlowNode(context, node, STATE_NODE.CLOSED);
 									cnt++;
 									continue;
 								}
@@ -1885,7 +1887,8 @@ public class Engine extends MLog implements EEngine {
 						// found one ... start new, close current
 						PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
 						saveFlowNode(context, nextNode, null);
-						closeFlowNode(context, node, STATE_NODE.CLOSED);
+						if (trigger.abord())
+							closeFlowNode(context, node, STATE_NODE.CLOSED);
 						return;
 					}
 					cnt++;

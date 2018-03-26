@@ -412,7 +412,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 					if (aaaAdminMode) return true;
 					if (aaaProvider != null) 
 						return aaaProvider.validatePassword(user, pass);
-					return false;
+					return aaaDefaultAccess;
 				}
 			};
 			// parameters
