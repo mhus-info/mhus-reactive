@@ -48,3 +48,15 @@ pstress -i 1 \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
 
+
+
+
+== GUI
+
+feature:install mhu-osgi-vaadin
+
+install -s mvn:de.mhus.ports/vaadin-refresher/1.3.2-SNAPSHOT
+install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/$version
+install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-theme/$version
+install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-core/$version
+
