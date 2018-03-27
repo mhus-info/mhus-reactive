@@ -422,6 +422,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 						return aaaProvider.isUserActive(user);
 					return aaaDefaultAccess;
 				}
+
+				@Override
+				public boolean hasUserGeneralActorAccess(String uri, String canonicalName, String user) {
+					//TODO check customized access
+					if (aaaProvider != null) 
+						return aaaProvider.hasUserGeneralActorAccess(uri, canonicalName, user);
+					return false;
+				}
 			};
 			// parameters
 			config.parameters = new HashMap<>();

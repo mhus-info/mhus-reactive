@@ -12,4 +12,6 @@ public interface AaaProvider {
 
 	boolean isUserActive(String user);
 
+	boolean hasUserGeneralActorAccess(String uri, String canonicalName, String user);
+
 }

@@ -29,4 +29,9 @@ public class SimpleAaaProvider implements AaaProvider {
 		return true;
 	}
 
+	@Override
+	public boolean hasUserGeneralActorAccess(String uri, String canonicalName, String user) {
+		return true;
+	}
+
 }

@@ -22,15 +22,21 @@ public class RActor implements AActor, ContextRecipient {
 	@Override
 	public boolean hasAccess(String user) {
 		AaaProvider aaa = context.getAaaProvider();
-		if (user == null || !aaa.isUserActive(user)) return false;
-		if (aaa.hasAdminAccess(user)) return true;
+		if (user == null || !aaa.isUserActive(user)) 
+			return false;
+		if (aaa.hasAdminAccess(user)) 
+			return true;
+		if (aaa.hasUserGeneralActorAccess(context.getUri(), getClass().getCanonicalName(), user))
+			return true;
 		ActorDescription desc = this.getClass().getAnnotation(ActorDescription.class);
 		if (desc != null) {
 			for (String name : desc.users()) {
-				if (user.equals(name)) return true;
+				if (user.equals(name)) 
+					return true;
 			}
 			for (String name : desc.groups()) {
-				if (aaa.hasGroupAccess(user,name)) return true;
+				if (aaa.hasGroupAccess(user,name)) 
+					return true;
 			}
 		}
 		return false;
