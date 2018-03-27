@@ -614,6 +614,20 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				addFilter("version", search.version,prop,sql);
 			}
 			
+			if (search.priority != Integer.MAX_VALUE) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("priority", search.priority);
+				sql.append("priority_=$priority$ ");
+			}
+
+			if (search.score != Integer.MIN_VALUE) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("score", search.score);
+				sql.append("score_ >= $score$ ");
+			}
+
 			if (search.pool != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
@@ -703,7 +717,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				whereAdded = true;
 				addFilter("version", search.version,prop,sql);
 			}
-			
+
+			if (search.priority != Integer.MAX_VALUE) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("priority", search.priority);
+				sql.append("priority_=$priority$ ");
+			}
+
+			if (search.score != Integer.MIN_VALUE) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				prop.put("score", search.score);
+				sql.append("score_ >= $score$ ");
+			}
+
 			if (search.pool != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
