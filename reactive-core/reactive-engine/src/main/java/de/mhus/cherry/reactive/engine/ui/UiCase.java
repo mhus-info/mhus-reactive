@@ -61,4 +61,28 @@ public class UiCase extends MLog implements ICase {
 		return properties;
 	}
 
+	@Override
+	@Public
+	public long getCreated() {
+		return info.getCreated();
+	}
+
+	@Override
+	@Public
+	public long getModified() {
+		return info.getModified();
+	}
+
+	@Override
+	@Public
+	public int getPriority() {
+		return info.getPriority();
+	}
+
+	@Override
+	@Public
+	public int getScore() {
+		return info.getScore();
+	}
+
 }

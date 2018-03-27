@@ -17,6 +17,10 @@ public class PNodeInfo {
 	private String uri;
 	private String[] indexValues;
 	private String customerId;
+	private long created;
+	private long modified;
+	private int priority;
+	private int score;
 
 	public PNodeInfo(
 			UUID id, 
@@ -28,6 +32,10 @@ public class PNodeInfo {
 			String uri, 
 			String customId, 
 			String customerId, 
+			long created,
+			long modified,
+			int priority,
+			int score,
 			String[] indexValues
 		) {
 		this.id = id;
@@ -40,6 +48,10 @@ public class PNodeInfo {
 		this.customId = customId;
 		this.customerId = customerId;
 		this.indexValues = indexValues;
+		this.created = created;
+		this.modified = modified;
+		this.priority = priority;
+		this.score = score;
 	}
 
 	public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
@@ -52,7 +64,11 @@ public class PNodeInfo {
 				node.getType(),
 				cazeInfo.getUri(), 
 				cazeInfo.getCustomId(), 
-				cazeInfo.getCustomerId(), 
+				cazeInfo.getCustomerId(),
+				0,
+				0,
+				0,
+				0,
 				null);
 	}
 
@@ -100,6 +116,22 @@ public class PNodeInfo {
 	public String getIndexValue(int index) {
 		if (indexValues == null || index < 0 || index >= indexValues.length) return null;
 		return indexValues[index];
+	}
+
+	public long getCreated() {
+		return created;
+	}
+
+	public long getModified() {
+		return modified;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public int getScore() {
+		return score;
 	}
 
 

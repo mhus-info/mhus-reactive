@@ -113,5 +113,13 @@ public interface StorageProvider {
 	PCaseInfo loadCaseInfo(UUID caseId) throws IOException;
 
 	Result<PCaseInfo> searchCases(SearchCriterias criterias) throws IOException;
+
+	boolean setNodePriority(UUID nodeId, int priority) throws IOException;
+
+	boolean setNodeScope(UUID nodeId, int scope) throws IOException;
+
+	boolean setCasePriority(UUID caseId, int priority) throws IOException;
+
+	boolean setCaseScope(UUID caseId, int scope) throws IOException;
 	
 }

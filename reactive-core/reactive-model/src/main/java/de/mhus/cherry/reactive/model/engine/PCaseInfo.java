@@ -13,8 +13,23 @@ public class PCaseInfo {
 	private String customId;
 	private String[] indexValues;
 	private String customerId;
+	private long created;
+	private long modified;
+	private int priority;
+	private int score;
 
-	public PCaseInfo(UUID id, String uri, String canonicalName, STATE_CASE state, String customId, String customerId, String[] indexValues) {
+	public PCaseInfo(
+			UUID id, 
+			String uri, 
+			String canonicalName, 
+			STATE_CASE state, 
+			String customId, 
+			String customerId, 
+			long created,
+			long modified,
+			int priority,
+			int score,
+			String[] indexValues) {
 		this.id = id;
 		this.uri = uri;
 		this.canonicalName = canonicalName;
@@ -22,10 +37,25 @@ public class PCaseInfo {
 		this.customId = customId;
 		this.customerId = customerId;
 		this.indexValues = indexValues;
+		this.created = created;
+		this.modified = modified;
+		this.priority = priority;
+		this.score = score;
 	}
 
 	public PCaseInfo(PCase caze) {
-		this(caze.getId(),caze.getUri(),caze.getCanonicalName(),caze.getState(), caze.getCustomId(), caze.getCustomerId(), null);
+		this(
+				caze.getId(),
+				caze.getUri(),
+				caze.getCanonicalName(),
+				caze.getState(), 
+				caze.getCustomId(), 
+				caze.getCustomerId(), 
+				0,
+				0,
+				0,
+				0,
+				null);
 	}
 
 	public UUID getId() {
@@ -57,4 +87,20 @@ public class PCaseInfo {
 		return indexValues[index];
 	}
 	
+	public long getCreated() {
+		return created;
+	}
+
+	public long getModified() {
+		return modified;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
 }

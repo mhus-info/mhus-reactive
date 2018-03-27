@@ -74,4 +74,28 @@ public class UiNode extends MLog implements INode {
 		return properties;
 	}
 
+	@Override
+	@Public
+	public long getCreated() {
+		return info.getCreated();
+	}
+
+	@Override
+	@Public
+	public long getModified() {
+		return info.getModified();
+	}
+
+	@Override
+	@Public
+	public int getPriority() {
+		return info.getPriority();
+	}
+
+	@Override
+	@Public
+	public int getScore() {
+		return info.getScore();
+	}
+
 }

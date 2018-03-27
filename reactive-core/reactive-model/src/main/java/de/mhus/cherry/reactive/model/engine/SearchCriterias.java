@@ -27,9 +27,12 @@ public class SearchCriterias {
 	public UUID caseId;
 	public TYPE_NODE type;
 
-	public enum ORDER {CUSTOM,CUSTOMER,NAME,PROCESS,VERSION,POOL,STATE,TYPE,INDEX0,INDEX1,INDEX2,INDEX3,INDEX4,INDEX5,INDEX6,INDEX7,INDEX8,INDEX9};
+	public enum ORDER {CUSTOM,CUSTOMER,NAME,PROCESS,VERSION,POOL,STATE,TYPE,INDEX0,INDEX1,INDEX2,INDEX3,INDEX4,INDEX5,INDEX6,INDEX7,INDEX8,INDEX9,CREATED,MODIFIED,PRIORITY,SCORE};
 	public ORDER order;
 	public boolean orderAscending = true;
+	
+	public int priority = Integer.MAX_VALUE;
+	public int score = Integer.MIN_VALUE;
 	
 	public SearchCriterias() {}
 	
@@ -52,6 +55,12 @@ public class SearchCriterias {
 				break;
 			case "type":
 				type = TYPE_NODE.valueOf(v.toUpperCase());
+				break;
+			case "priority":
+				priority = M.c(v, priority);
+				break;
+			case "score":
+				score = M.c(v, score);
 				break;
 			case "order":
 				order = ORDER.valueOf(v.toUpperCase());

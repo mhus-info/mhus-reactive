@@ -21,4 +21,12 @@ public interface ICase {
 
 	Map<String,String> getProperties();
 
+	long getCreated();
+
+	long getModified();
+
+	int getPriority();
+
+	int getScore();
+
 }

@@ -42,8 +42,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_" + INDEX_COLUMNS;
-	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_" + INDEX_COLUMNS;
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_" + INDEX_COLUMNS;
+	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_" + INDEX_COLUMNS;
 	private DbPool pool;
 	private String prefix;
 	
@@ -147,6 +147,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "process_,"
 						+ "version_,"
 						+ "pool_,"
+						+ "priority_,"
+						+ "score_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -172,6 +174,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$process$,"
 						+ "$version$,"
 						+ "$pool$,"
+						+ "100,"
+						+ "0,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -338,6 +342,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "process_,"
 						+ "version_,"
 						+ "pool_,"
+						+ "priority_,"
+						+ "score_,"
 						+ "index0_,"
 						+ "index1_,"
 						+ "index2_,"
@@ -367,6 +373,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$process$,"
 						+ "$version$,"
 						+ "$pool$,"
+						+ "100,"
+						+ "0,"
 						+ "$index0$,"
 						+ "$index1$,"
 						+ "$index2$,"
@@ -913,6 +921,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("uri_"),
 				res.getString("custom_"),
 				res.getString("customer_"),
+				res.getLong("created_"),
+				res.getLong("modified_"),
+				res.getInt("priority_"),
+				res.getInt("score_"),
 				new String[] {
 						res.getString("index0_"),
 						res.getString("index1_"),
@@ -937,6 +949,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				toCaseState(res.getInt("state_")),
 				res.getString("custom_"),
 				res.getString("customer_"),
+				res.getLong("created_"),
+				res.getLong("modified_"),
+				res.getInt("priority_"),
+				res.getInt("score_"),
 				new String[] {
 						res.getString("index0_"),
 						res.getString("index1_"),
@@ -1042,6 +1058,78 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
+	}
+
+	@Override
+	public boolean setNodePriority(UUID nodeId, int priority) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", nodeId);
+			prop.put("value", priority);
+			sta = con.createStatement("UPDATE " + prefix + "_node_ SET priority_=$value$ WHERE id_=$id$");
+			int res = sta.executeUpdate(prop);
+			con.close();
+			return res == 1;
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
+	}
+
+	@Override
+	public boolean setNodeScope(UUID nodeId, int scope) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", nodeId);
+			prop.put("value", scope);
+			sta = con.createStatement("UPDATE " + prefix + "_node_ SET scope_=$value$ WHERE id_=$id$");
+			int res = sta.executeUpdate(prop);
+			con.close();
+			return res == 1;
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
+	}
+
+	@Override
+	public boolean setCasePriority(UUID caseId, int priority) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", caseId);
+			prop.put("value", priority);
+			sta = con.createStatement("UPDATE " + prefix + "_case_ SET priority_=$value$ WHERE id_=$id$");
+			int res = sta.executeUpdate(prop);
+			con.close();
+			return res == 1;
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
+	}
+
+	@Override
+	public boolean setCaseScope(UUID caseId, int scope) throws IOException {
+		try {
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			DbStatement sta = null;
+			prop.put("id", caseId);
+			prop.put("value", scope);
+			sta = con.createStatement("UPDATE " + prefix + "_case_ SET scope_=$value$ WHERE id_=$id$");
+			int res = sta.executeUpdate(prop);
+			con.close();
+			return res == 1;
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
 	}
 
 }
