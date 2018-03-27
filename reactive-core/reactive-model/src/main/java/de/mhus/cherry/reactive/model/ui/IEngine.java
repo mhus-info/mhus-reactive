@@ -10,9 +10,9 @@ import de.mhus.lib.errors.NotFoundException;
 
 public interface IEngine {
 
-	List<INode> searchNodes(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException;
+	List<INode> searchNodes(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException;
 	
-	List<ICase> searchCases(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException;
+	List<ICase> searchCases(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException;
 
 	IProcess getProcess(String uri) throws MException;
 

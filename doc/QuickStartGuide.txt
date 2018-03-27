@@ -31,6 +31,7 @@ install -s mvn:de.mhus.cherry.reactive/reactive-sop-rest/$version
 
 pls -a
 
+pdeploy -a de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1
 
 pstart 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=1234;customerId=alf?text1=second'
 pstart 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=1234;customerId=alf?text1=third'
@@ -40,7 +41,7 @@ pstart 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.c
 
 Super Stress:
 
-pstress -i 0 \
+pstress -i 1 \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \

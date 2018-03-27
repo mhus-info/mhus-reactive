@@ -38,11 +38,13 @@ public class BpmNodeNode extends AbstractObjectListNode<INode> {
 		AaaContext context = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 
+		String propertyNames = callContext.getParameter("_names");
+
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
 		int page = M.c(callContext.getParameter("_page"), 0);
 		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
 		try {
-			return engine.searchNodes(criterias, page, size);
+			return engine.searchNodes(criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
 		} catch (IOException e) {
 			throw new MException(e);
 		}
@@ -60,9 +62,9 @@ public class BpmNodeNode extends AbstractObjectListNode<INode> {
 		AaaContext acontext = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 
-		String properties = context.getParameter("_properties");
+		String propertyNames = context.getParameter("_names");
 
-		return engine.getNode(id, properties == null ? null : properties.split(","));
+		return engine.getNode(id, propertyNames == null ? null : propertyNames.split(","));
 	}
 
 }

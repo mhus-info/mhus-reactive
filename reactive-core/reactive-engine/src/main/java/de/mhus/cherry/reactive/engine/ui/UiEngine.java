@@ -49,7 +49,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 	
 	@Override
-	public List<INode> searchNodes(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException {
+	public List<INode> searchNodes(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException {
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -57,7 +57,54 @@ public class UiEngine extends MLog implements IEngine {
 			if (user.equals(info.getAssigned()) || hasReadAccess(info.getUri())) {
 				try {
 					if (cnt >= first) {
-						out.add(new UiNode(info, null));
+						
+						Map<String,String> properties = new TreeMap<>();
+						if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+							for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
+								if (info.getIndexValue(i) != null)
+									properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
+						} else
+						if (propertyNames != null) {
+							for (String name : propertyNames) {
+								if (name == null) continue;
+								if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
+									// use switch instead of for loop to improve performance
+									switch (name) {
+									case "pnode.index0":
+										properties.put("pnode.index0", info.getIndexValue(0));
+										break;
+									case "pnode.index1":
+										properties.put("pnode.index1", info.getIndexValue(1));
+										break;
+									case "pnode.index2":
+										properties.put("pnode.index2", info.getIndexValue(2));
+										break;
+									case "pnode.index3":
+										properties.put("pnode.index3", info.getIndexValue(3));
+										break;
+									case "pnode.index4":
+										properties.put("pnode.index4", info.getIndexValue(4));
+										break;
+									case "pnode.index5":
+										properties.put("pnode.index5", info.getIndexValue(5));
+										break;
+									case "pnode.index6":
+										properties.put("pnode.index6", info.getIndexValue(6));
+										break;
+									case "pnode.index7":
+										properties.put("pnode.index7", info.getIndexValue(7));
+										break;
+									case "pnode.index8":
+										properties.put("pnode.index8", info.getIndexValue(8));
+										break;
+									case "pnode.index9":
+										properties.put("pnode.index9", info.getIndexValue(9));
+										break;
+									}
+								}
+							}
+						}
+						out.add(new UiNode(info, properties));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -70,7 +117,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public List<ICase> searchCases(SearchCriterias criterias, int page, int size) throws NotFoundException, IOException {
+	public List<ICase> searchCases(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException {
 		LinkedList<ICase> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -78,7 +125,55 @@ public class UiEngine extends MLog implements IEngine {
 			if (hasReadAccess(info.getUri())) {
 				try {
 					if (cnt >= first) {
-						out.add(new UiCase(info, null));
+						
+						Map<String,String> properties = new TreeMap<>();
+						if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+							for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
+								if (info.getIndexValue(i) != null)
+									properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
+						} else
+						if (propertyNames != null) {
+							for (String name : propertyNames) {
+								if (name == null) continue;
+								if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
+									// use switch instead of for loop to improve performance
+									switch (name) {
+									case "pnode.index0":
+										properties.put("pnode.index0", info.getIndexValue(0));
+										break;
+									case "pnode.index1":
+										properties.put("pnode.index1", info.getIndexValue(1));
+										break;
+									case "pnode.index2":
+										properties.put("pnode.index2", info.getIndexValue(2));
+										break;
+									case "pnode.index3":
+										properties.put("pnode.index3", info.getIndexValue(3));
+										break;
+									case "pnode.index4":
+										properties.put("pnode.index4", info.getIndexValue(4));
+										break;
+									case "pnode.index5":
+										properties.put("pnode.index5", info.getIndexValue(5));
+										break;
+									case "pnode.index6":
+										properties.put("pnode.index6", info.getIndexValue(6));
+										break;
+									case "pnode.index7":
+										properties.put("pnode.index7", info.getIndexValue(7));
+										break;
+									case "pnode.index8":
+										properties.put("pnode.index8", info.getIndexValue(8));
+										break;
+									case "pnode.index9":
+										properties.put("pnode.index9", info.getIndexValue(9));
+										break;
+									}
+								}
+							}
+						}
+
+						out.add(new UiCase(info, properties));
 					}
 					cnt++;
 				} catch (Exception e) {
