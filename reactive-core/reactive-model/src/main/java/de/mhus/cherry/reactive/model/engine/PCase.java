@@ -25,6 +25,7 @@ public class PCase implements Externalizable {
 	private String canonicalName;
 	private int closedCode = 0;
 	private String closedMessage;
+	private UUID closeActivity;
 	// will not be stored
 	private String[] indexValues;
 
@@ -43,10 +44,11 @@ public class PCase implements Externalizable {
 		this.parameters = new HashMap<>(clone.getParameters());
 		this.closedCode = clone.getClosedCode();
 		this.closedMessage = clone.getClosedMessage();
+		this.closeActivity = clone.getCloseActivity();
 	}
 	
 	public PCase(UUID id, Map<String,Object> options, String uri, String name, String canonicalName, long creationDate, String createdBy, STATE_CASE state,
-	        long scheduled, Map<String, Object> parameters) {
+	        long scheduled, UUID closeActivity, Map<String, Object> parameters) {
 		this.id = id;
 		this.options = new HashMap<>(options);
 		this.uri = uri;
@@ -56,6 +58,7 @@ public class PCase implements Externalizable {
 		this.createdBy = createdBy;
 		this.state = state;
 		this.scheduled = scheduled;
+		this.closeActivity = closeActivity;
 		this.parameters = new HashMap<>(parameters);
 	}
 
@@ -122,6 +125,7 @@ public class PCase implements Externalizable {
 		
 		out.writeInt(closedCode);
 		out.writeObject(closedMessage);
+		out.writeObject(closeActivity);
 		out.flush();
 	}
 
@@ -146,6 +150,7 @@ public class PCase implements Externalizable {
 		
 		closedCode = in.readInt();
 		closedMessage = (String) in.readObject();
+		closeActivity = (UUID) in.readObject();
 		
 	}
 
@@ -189,5 +194,10 @@ public class PCase implements Externalizable {
 	public String[] getIndexValues() {
 		return indexValues;
 	}
+	
+	public UUID getCloseActivity() {
+		return closeActivity;
+	}
+
 
 }

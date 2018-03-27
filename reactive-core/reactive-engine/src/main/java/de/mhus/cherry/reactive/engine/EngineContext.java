@@ -252,11 +252,6 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 	}
 
 	@Override
-	public void doCloseActivity(RuntimeNode runtimeNode, UUID nodeId) throws MException, IOException {
-		engine.doCloseActivity(runtimeNode, nodeId);
-	}
-
-	@Override
 	public Object getLock() {
 		if (pNode != null)
 			return engine.getCaseLock(pNode.getCaseId());

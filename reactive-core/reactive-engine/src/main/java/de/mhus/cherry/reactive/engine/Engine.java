@@ -37,6 +37,7 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
@@ -404,13 +405,14 @@ public class Engine extends MLog implements EEngine {
 	
 	public void closeCase(PCase caze, boolean hard, int code, String msg) throws IOException {
 		fireEvent.closeCase(caze,hard);
+		EngineContext context = null;
 		if (!hard) {
 			try {
 				MUri uri = MUri.toUri(caze.getUri());
 				EProcess process = getProcess(uri);
 				EPool pool = getPool(process, uri);
 				
-				EngineContext context = new EngineContext(this);
+				context = new EngineContext(this);
 				context.setUri(uri.toString());
 				context.setEProcess(process);
 				context.setEPool(pool);
@@ -437,6 +439,17 @@ public class Engine extends MLog implements EEngine {
 			synchronized (caseCache) {
 				storage.saveCase(caze);
 				caseCache.put(caze.getId(), caze);
+			}
+		}
+		
+		if (!hard && caze.getCloseActivity() != null) {
+			UUID closeId = caze.getCloseActivity();
+			if (closeId != null) {
+				try {
+					doCloseActivity(context, closeId);
+				} catch (Throwable t) {
+					log().e(closeId,t);
+				}
 			}
 		}
 	}
@@ -466,6 +479,14 @@ public class Engine extends MLog implements EEngine {
 		pNode.setState(STATE_NODE.CLOSED);
 		saveRuntime(pNode, aNode);
 
+		UUID closeId = aNode.getCloseActivity();
+		if (closeId != null) {
+			try {
+				doCloseActivity(context, closeId);
+			} catch (Throwable t) {
+				log().e(closeId,t);
+			}
+		}
 	}
 
 	private void doFlowNode(PNode pNode) {
@@ -668,7 +689,7 @@ public class Engine extends MLog implements EEngine {
 					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
 			
-			return start(uri, null);
+			return start(uri, null, null);
 		}
 		case "bmpm": {
 			// check access
@@ -778,15 +799,15 @@ public class Engine extends MLog implements EEngine {
 		MProperties properties = new MProperties();
 		if (q != null)
 			properties.putAll(q);
-		return start(u, properties);
+		return start(u, null, properties);
 	}
 	
 	public UUID start(String uri, IProperties properties) throws Exception {
 		MUri u = MUri.toUri(uri);
-		return start(u, properties);
+		return start(u, null, properties);
 	}
 	
-	public UUID start(MUri uri, IProperties properties) throws Exception {
+	public UUID start(MUri uri, UUID closeActivity, IProperties properties) throws Exception {
 		if (!EngineConst.SCHEME_REACTIVE.equals(uri.getScheme()))
 			throw new UsageException("unknown uri scheme",uri,"should be",EngineConst.SCHEME_REACTIVE);
 		
@@ -868,6 +889,7 @@ public class Engine extends MLog implements EEngine {
 				createdBy,
 				STATE_CASE.NEW, 
 				0,
+				closeActivity,
 				properties
 			);
 		context.setPCase(pCase);
@@ -1615,13 +1637,13 @@ public class Engine extends MLog implements EEngine {
 		return context;
 	}
 
-	public void doCloseActivity(RuntimeNode runtimeNode, UUID nodeId) throws IOException, MException {
+	public void doCloseActivity(ProcessContext<?> closedContext, UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (getCaseLock(caze)) {
 			EngineContext context = createContext(caze, node);
 			AElement<?> aNode = context.getANode();
-			((CloseActivity)aNode).doClose(context,runtimeNode);
+			((CloseActivity)aNode).doClose(closedContext);
 			savePCase(context);
 		}
 	}

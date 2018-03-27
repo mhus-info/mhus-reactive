@@ -45,6 +45,7 @@ public class Step {
 					null,
 					STATE_CASE.valueOf(nc.getString("state")),
 					nc.getLong("scheduled", 0),
+					null,
 					p
 					);
 			cases.add(caze);

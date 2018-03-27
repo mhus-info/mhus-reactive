@@ -5,6 +5,6 @@ import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 
 public interface CloseActivity {
 
-	void doClose(ProcessContext<?> context, RuntimeNode runtimeNode);
+	void doClose(ProcessContext<?> closingContext);
 
 }

@@ -949,8 +949,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				res.getString("uri_"),
 				res.getString("custom_"),
 				res.getString("customer_"),
-				res.getLong("created_"),
-				res.getLong("modified_"),
+				res.getTimestamp("created_").getTime(),
+				res.getTimestamp("modified_").getTime(),
 				res.getInt("priority_"),
 				res.getInt("score_"),
 				new String[] {
@@ -977,8 +977,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				toCaseState(res.getInt("state_")),
 				res.getString("custom_"),
 				res.getString("customer_"),
-				res.getLong("created_"),
-				res.getLong("modified_"),
+				res.getTimestamp("created_").getTime(),
+				res.getTimestamp("modified_").getTime(),
 				res.getInt("priority_"),
 				res.getInt("score_"),
 				new String[] {

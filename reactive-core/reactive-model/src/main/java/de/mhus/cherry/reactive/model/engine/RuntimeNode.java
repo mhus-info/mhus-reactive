@@ -104,13 +104,6 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 	}
 
 	public void close() {
-		Object closeId = parameters.get(CLOSE_ACTIVITY);
-		if (closeId == null) return;
-		try {
-			context.doCloseActivity(this, UUID.fromString(String.valueOf(closeId)));
-		} catch (Throwable t) {
-			log().e(closeId,t);
-		}
 	}
 
 	@Override
@@ -126,6 +119,12 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 			cnt++;
 		}
 		return out;
+	}
+
+	public UUID getCloseActivity() {
+		 Object closeId = parameters.get(CLOSE_ACTIVITY);
+		 if (closeId == null) return null;
+		 return UUID.fromString(String.valueOf(closeId));
 	}
 	
 }
