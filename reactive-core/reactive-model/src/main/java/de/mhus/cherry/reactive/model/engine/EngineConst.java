@@ -19,5 +19,7 @@ public class EngineConst {
 	public static final String UI_PNODE_PREFIX = "pnode.";
 	public static final String UI_CASE_PREFIX = "case.";
 	public static final String UI_NODE_PREFIX = "node.";
+	public static final int MAX_CREATE_ACTIVITY = 1000;
+	public static final int ERROR_CODE_MAX_CREATE_ACTIVITY = -1000;
 
 }

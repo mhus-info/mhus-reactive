@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
 
@@ -39,7 +40,12 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 	}
 
 	private void addFlowConnect(UUID previousId, UUID id) {
+		parameters.put("connectCount", M.c(parameters.get("connectCount"), 0) + 1);
 		addMessage(EngineMessage.CONNECT_PREFIX + previousId + "," + id);
+	}
+	
+	public int getConnectCount() {
+		return M.c(parameters.get("connectCount"), 0);
 	}
 
 	private void addStartCreated(PNode flow) {

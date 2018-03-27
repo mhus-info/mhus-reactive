@@ -505,13 +505,17 @@ public class Engine extends MLog implements EEngine {
 					if (trigger == null) {
 						// set to error
 						log().e("Unknown trigger",pNode,nextScheduled.getKey());
-						context.getARuntime().doErrorMsg(pNode, "Unknown trigger",nextScheduled.getKey());
 						fireEvent.error("Unknown trigger",pNode,nextScheduled.getKey());
 						closeFlowNode(context, pNode, STATE_NODE.STOPPED);
 						return;
 					}
 					Class<? extends AActivity<?>> next = trigger.activity();
 					EElement eNext = context.getEPool().getElement(next.getCanonicalName());
+					if (context.getARuntime().getConnectCount() > EngineConst.MAX_CREATE_ACTIVITY) {
+						fireEvent.error("max activities reached",caze);
+						closeCase(caze, true, EngineConst.ERROR_CODE_MAX_CREATE_ACTIVITY, "max activities reached");
+						return;
+					}
 					createActivity(context, pNode, eNext);
 					// close this
 					closeFlowNode(context, pNode, STATE_NODE.CLOSED);
