@@ -903,7 +903,7 @@ public class Engine extends MLog implements EEngine {
 			((ContextRecipient)aPool).setContext(context);
 		aPool.initializeCase(properties);
 		pCase.getParameters().clear(); // cleanup before first save, will remove parameters from external input
-		savePCase(pCase, aPool);
+		savePCase(pCase, aPool, true);
 		synchronized (getCaseLock(pCase)) {
 			// create start point flow nodes
 			Throwable isError = null;
@@ -923,26 +923,21 @@ public class Engine extends MLog implements EEngine {
 			}
 			
 			pCase.setState(STATE_CASE.RUNNING);
-			if (aPool instanceof IndexValuesProvider) {
-				pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(true) );
-			} else {
-				pCase.setIndexValues(null);
-			}
-			savePCase(pCase,aPool);
+			savePCase(pCase,aPool, false);
 		}
 		return pCase.getId();
 	}
 
 	public void savePCase(EngineContext context) throws IOException {
-		savePCase(context.getPCase(), context.getPool());
+		savePCase(context.getPCase(), context.getPool(), false);
 	}
 	
-	public void savePCase(PCase pCase, APool<?> aPool) throws IOException {
+	public void savePCase(PCase pCase, APool<?> aPool, boolean init) throws IOException {
 		Map<String, Object> newParameters = aPool.exportParamters();
 		pCase.getParameters().putAll(newParameters);
 		
 		if (aPool instanceof IndexValuesProvider) {
-			pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(false) );
+			pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(init) );
 		} else {
 			pCase.setIndexValues(null);
 		}
