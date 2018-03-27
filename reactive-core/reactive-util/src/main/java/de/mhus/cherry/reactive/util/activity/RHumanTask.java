@@ -10,10 +10,12 @@ import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoParser;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.definition.FmElement;
 
 public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> implements AHumanTask<P> {
 
@@ -29,29 +31,49 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 		
 		DefRoot form = createForm().build().getRoot();
 		
-		for (Entry<String, Object> item : form) {
-			
-		}
-		
-		
 		P pool = getContext().getPool();
 		PojoModel modelTask = createFormPojoModel(getClass());
 		PojoModel modelPool = createFormPojoModel(pool.getClass());
-		
 		MProperties out = new MProperties();
-		for (PojoAttribute<?> attr : modelTask)
-			try {
-				out.put(attr.getName(), attr.get(this));
-			} catch (Throwable t) {
-				log().w(this,attr,t);
+
+		// return only in the form defined values
+		for (IDefDefinition item : form.definitions()) {
+			if (item instanceof FmElement) {
+				FmElement ele = (FmElement)item;
+				String name = ele.getName();
+				if (modelTask.hasAttribute(name)) {
+					PojoAttribute<?> attr = modelTask.getAttribute(name);
+					try {
+						out.put(attr.getName(), attr.get(this));
+					} catch (Throwable t) {
+						log().w(this,attr,t);
+					}
+				} else
+				if (modelPool.hasAttribute(name)) {
+					PojoAttribute<?> attr = modelPool.getAttribute(name);
+					try {
+						out.put(attr.getName(), attr.get(this));
+					} catch (Throwable t) {
+						log().w(this,attr,t);
+					}
+				}
 			}
-		for (PojoAttribute<?> attr : modelPool)
-			try {
-				if (!out.isProperty(attr.getName()))
-					out.put(attr.getName(), attr.get(pool));
-			} catch (Throwable t) {
-				log().w(this,attr,t);
-			}
+		}
+		
+// this returns all				
+//		for (PojoAttribute<?> attr : modelTask)
+//			try {
+//				out.put(attr.getName(), attr.get(this));
+//			} catch (Throwable t) {
+//				log().w(this,attr,t);
+//			}
+//		for (PojoAttribute<?> attr : modelPool)
+//			try {
+//				if (!out.isProperty(attr.getName()))
+//					out.put(attr.getName(), attr.get(pool));
+//			} catch (Throwable t) {
+//				log().w(this,attr,t);
+//			}
 		return out;
 	}
 	
