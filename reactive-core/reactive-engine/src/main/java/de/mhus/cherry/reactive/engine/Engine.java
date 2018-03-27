@@ -657,22 +657,36 @@ public class Engine extends MLog implements EEngine {
 	public Object execute(MUri uri) throws Exception {
 		switch (uri.getScheme()) {
 		case "bpm": {
+			// check access
 			String user = uri.getUsername();
 			if (user != null) {
 				String pass = uri.getPassword();
 				if (!config.aaa.validatePassword(user, pass))
 					throw new AccessDeniedException("login failed",user,uri);
+
+				if (!hasInitiateAccess(uri, user))
+					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
-			if (!hasInitiateAccess(uri, user))
-				throw new AccessDeniedException("user is not initiator",user,uri);
 			
 			return start(uri, null);
 		}
 		case "bmpm": {
+			// check access
+			String user = uri.getUsername();
+			if (user != null) {
+				String pass = uri.getPassword();
+				if (!config.aaa.validatePassword(user, pass))
+					throw new AccessDeniedException("login failed",user,uri);
+
+				if (!hasInitiateAccess(uri, user))
+					throw new AccessDeniedException("user is not initiator",user,uri);
+			}
+			
 			UUID caseId = null;
 			String l = uri.getLocation();
 			if (MValidator.isUUID(l)) caseId = UUID.fromString(l);
 			String m = uri.getPath();
+			
 			MProperties parameters = new MProperties();
 			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
@@ -680,6 +694,17 @@ public class Engine extends MLog implements EEngine {
 			return null;
 		}
 		case "bpms": {
+			// check access
+			String user = uri.getUsername();
+			if (user != null) {
+				String pass = uri.getPassword();
+				if (!config.aaa.validatePassword(user, pass))
+					throw new AccessDeniedException("login failed",user,uri);
+
+				if (!hasInitiateAccess(uri, user))
+					throw new AccessDeniedException("user is not initiator",user,uri);
+			}
+
 			String signal = uri.getPath();
 			MProperties parameters = new MProperties();
 			Map<String, String> p = uri.getQuery();
@@ -690,6 +715,17 @@ public class Engine extends MLog implements EEngine {
 			String l = uri.getLocation();
 			if (!MValidator.isUUID(l)) throw new MException("misspelled node id",l);
 			UUID nodeId = UUID.fromString(l);
+
+			String user = uri.getUsername();
+			if (user != null) {
+				String pass = uri.getPassword();
+				if (!config.aaa.validatePassword(user, pass))
+					throw new AccessDeniedException("login failed",user,uri);
+				
+				if (!hasExecuteAccess(nodeId, user))
+					throw new AccessDeniedException("user can't execute",user,uri);
+			}
+			
 			MProperties parameters = new MProperties();
 			Map<String, String> p = uri.getQuery();
 			if (p != null) parameters.putAll(p);
@@ -714,9 +750,10 @@ public class Engine extends MLog implements EEngine {
 				String pass = uri.getPassword();
 				if (!config.aaa.validatePassword(user, pass))
 					throw new AccessDeniedException("login failed",user,uri);
+				
+				if (!hasInitiateAccess(uri, user))
+					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
-			if (!hasInitiateAccess(uri, user))
-				throw new AccessDeniedException("user is not initiator",user,uri);
 			// parameters
 			MProperties parameters = new MProperties();
 			Map<String, String> p = uri.getQuery();
