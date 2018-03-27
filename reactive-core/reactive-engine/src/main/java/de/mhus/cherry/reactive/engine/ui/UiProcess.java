@@ -120,6 +120,8 @@ public class UiProcess implements IProcess {
 
 	@Override
 	public String getPropertyName(String uri, String canonicalName, String property) {
+		if (property.startsWith(EngineConst.UI_CASE_PREFIX))
+			canonicalName = null;
 		Locale locale = engine.getLocale();
 		if (locale != null) {
 			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#"+property+"?" + locale.getLanguage(), null);
