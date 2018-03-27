@@ -1,10 +1,8 @@
 package de.mhus.cherry.reactive.engine.ui;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;

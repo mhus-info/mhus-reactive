@@ -6,11 +6,8 @@ import java.util.UUID;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.ui.ICase;
-import de.mhus.cherry.reactive.model.ui.IEngine;
-import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.errors.MException;
 
 public class UiCase extends MLog implements ICase {
 

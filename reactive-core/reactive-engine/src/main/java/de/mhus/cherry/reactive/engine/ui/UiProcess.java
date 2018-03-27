@@ -2,8 +2,6 @@ package de.mhus.cherry.reactive.engine.ui;
 
 import java.util.Locale;
 
-import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;

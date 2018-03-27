@@ -1,6 +1,5 @@
 package de.mhus.cherry.reactive.model.engine;
 
-import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -8,7 +7,6 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.MString;
 
 public class SearchCriterias {
 

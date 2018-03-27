@@ -8,12 +8,9 @@ import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
-import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
-import de.mhus.lib.core.pojo.PojoModelFactory;
-import de.mhus.lib.core.pojo.PojoParser;
 
 public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>, ContextRecipient {
 

@@ -1,12 +1,10 @@
 package de.mhus.cherry.reactive.sop.rest;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 import aQute.bnd.annotation.component.Component;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
-import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
@@ -19,7 +17,6 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 import de.mhus.osgi.sop.api.rest.AbstractObjectListNode;
 import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
-import de.mhus.osgi.sop.api.rest.RestUtil;
 
 @Component(provide=RestNodeService.class)
 public class BpmNodeNode extends AbstractObjectListNode<INode> {
