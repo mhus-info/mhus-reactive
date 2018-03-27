@@ -79,7 +79,7 @@ public class EngineUtil {
 	
 	public static PCaseInfo getCaseInfo(Engine engine, String id) throws Exception {
 		if (MValidator.isUUID(id))
-			return engine.getCaseInfo(UUID.fromString(id));
+			return engine.storageGetCaseInfo(UUID.fromString(id));
 		SearchCriterias c = new SearchCriterias();
 		c.custom = id;
 		Result<PCaseInfo> res = engine.storageSearchCases(c);
@@ -137,7 +137,7 @@ public class EngineUtil {
 
 	public static PNodeInfo getFlowNodeInfo(Engine engine, String id) throws Exception {
 		if (MValidator.isUUID(id))
-			return engine.getFlowNodeInfo(UUID.fromString(id));
+			return engine.storageGetFlowNodeInfo(UUID.fromString(id));
 		SearchCriterias c = new SearchCriterias();
 		c.custom = id;
 		Result<PNodeInfo> res = engine.storageSearchFlowNodes(c);

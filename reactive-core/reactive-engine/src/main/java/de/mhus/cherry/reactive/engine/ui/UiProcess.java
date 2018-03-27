@@ -2,14 +2,20 @@ package de.mhus.cherry.reactive.engine.ui;
 
 import java.util.Locale;
 
+import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.ui.IProcess;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.pojo.PojoAttribute;
+import de.mhus.lib.core.pojo.PojoModel;
 
 public class UiProcess implements IProcess {
 
@@ -29,9 +35,23 @@ public class UiProcess implements IProcess {
 				String[] index = pd.indexDisplayNames();
 				for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
 					if (index[i] != null)
-						properties.setString(pUri + "#index" + i, index[i]);
+						properties.setString(pUri + "#pnode.index" + i, index[i]);
+				}
+				PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
+				for( PojoAttribute<?> attr : pojoModel) {
+					String name = attr.getName();
+					PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+					if (desc != null) {
+						if (desc.displayName().length() != 0)
+							name = desc.displayName();
+						else
+						if (desc.name().length() != 0)
+							name = desc.name();
+					}
+					properties.setString(pUri + "#case." + attr.getName(), name);
 				}
 			}
+				
 			
 			for (String eleName : pool.getElementNames()) {
 				EElement ele = pool.getElement(eleName);
@@ -44,8 +64,22 @@ public class UiProcess implements IProcess {
 				String[] index = desc.indexDisplayNames();
 				for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
 					if (index[i] != null)
-						properties.setString(eUri + "#index" + i, index[i]);
+						properties.setString(eUri + "#pnode.index" + i, index[i]);
 				}
+				PojoModel pojoModel = ActivityUtil.createPojoModel(ele.getElementClass());
+				for( PojoAttribute<?> attr : pojoModel) {
+					String name = attr.getName();
+					PropertyDescription pdesc = attr.getAnnotation(PropertyDescription.class);
+					if (pdesc != null) {
+						if (pdesc.displayName().length() != 0)
+							name = pdesc.displayName();
+						else
+						if (pdesc.name().length() != 0)
+							name = pdesc.name();
+					}
+					properties.setString(pUri + "#node." + attr.getName(), name);
+				}
+				
 			}
 		}
 	}
@@ -74,14 +108,24 @@ public class UiProcess implements IProcess {
 		return properties;
 	}
 
+//	@Override
+//	public String getIndexDisplayName(int index, String uri, String canonicalName) {
+//		Locale locale = engine.getLocale();
+//		if (locale != null) {
+//			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index+"?" + locale.getLanguage(), null);
+//			if (out != null) return out;
+//		}
+//		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index, "Index" + index);
+//	}
+
 	@Override
-	public String getIndexDisplayName(int index, String uri, String canonicalName) {
+	public String getPropertyName(String uri, String canonicalName, String property) {
 		Locale locale = engine.getLocale();
 		if (locale != null) {
-			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index+"?" + locale.getLanguage(), null);
+			String out = properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#"+property+"?" + locale.getLanguage(), null);
 			if (out != null) return out;
 		}
-		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#index"+index, "Index" + index);
+		return properties.getString(uri + (canonicalName == null ? "" : "/" + canonicalName) + "#"+property, property);
 	}
 	
 }

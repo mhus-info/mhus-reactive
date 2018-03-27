@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 
@@ -43,7 +44,7 @@ public abstract class REvent<P extends RPool<?>> extends RAbstractEvent<P> {
 	@Override
 	public synchronized PojoModel getPojoModel() {
 		if (pojoModel == null)
-			pojoModel = getContext().getPool().createPojoModel(this.getClass());
+			pojoModel = ActivityUtil.createPojoModel(this.getClass());
 		return pojoModel;
 	}
 

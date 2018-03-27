@@ -23,9 +23,11 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
+import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
@@ -76,8 +78,10 @@ public class CmdUi extends MLog implements Action {
 			List<ICase> res = api.searchCases(criterias, page, size);
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
-			for (ICase info : res)
-				table.addRowValues(info.getId(),info.getCustomId(),info.getDisplayName(),info.getState(),info.getUri());
+			for (ICase info : res) {
+				ICaseDescription desc = api.getCaseDescription(info);
+				table.addRowValues(info.getId(),info.getCustomId(),desc.getDisplayName(),info.getState(),info.getUri());
+			}
 			table.print(System.out);
 		} else
 		if (cmd.equals("nodes")) {
@@ -85,23 +89,35 @@ public class CmdUi extends MLog implements Action {
 			List<INode> res = api.searchNodes(criterias, page, size);
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
-			for (INode info : res)
-				table.addRowValues(info.getId(),info.getCustomId(),info.getDisplayName(),info.getNodeState(),info.getUri());
+			for (INode info : res) {
+				INodeDescription desc = api.getNodeDescription(info);
+				table.addRowValues(info.getId(),info.getCustomId(),desc.getDisplayName(),info.getNodeState(),info.getUri());
+			}
 			table.print(System.out);
 		} else
 		if (cmd.equals("case")) {
-			ICase info = api.getCase(parameters[0]);
+			ICase info = api.getCase(parameters[0], parameters.length > 1 ? parameters : null);
+			ICaseDescription desc = api.getCaseDescription(info);
 			System.out.println("Id         : " + info.getId());
 			System.out.println("Uri        : " + info.getUri());
-			System.out.println("Name       : " + info.getDisplayName());
-			System.out.println("Description: " + info.getDescription());
+			System.out.println("Name       : " + desc.getDisplayName());
+			System.out.println("Description: " + desc.getDescription());
+			for (Entry<String, String> entry : info.getProperties().entrySet()) {
+				String name = desc.getPropertyName(entry.getKey());
+				System.out.println(name + "=" + entry.getValue());
+			}
 		} else
 		if (cmd.equals("node")) {
-			INode info = api.getNode(parameters[0]);
+			INode info = api.getNode(parameters[0], parameters.length > 1 ? parameters : null);
+			INodeDescription desc = api.getNodeDescription(info);
 			System.out.println("Id         : " + info.getId());
 			System.out.println("Uri        : " + info.getUri());
-			System.out.println("Name       : " + info.getDisplayName());
-			System.out.println("Description: " + info.getDescription());
+			System.out.println("Name       : " + desc.getDisplayName());
+			System.out.println("Description: " + desc.getDescription());
+			for (Entry<String, String> entry : info.getProperties().entrySet()) {
+				String name = desc.getPropertyName(entry.getKey());
+				System.out.println(name + "=" + entry.getValue());
+			}
 		} else {
 			System.out.println("Unknown command");
 		}

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.util.activity.RPool;
 import de.mhus.lib.annotations.adb.DbPersistent;
 
@@ -15,9 +16,9 @@ import de.mhus.lib.annotations.adb.DbPersistent;
 		)
 public class S1Pool extends RPool<S1Pool> {
 
-	@DbPersistent
+	@PropertyDescription(displayName="Switch Text")
 	private String text1 = "Moin";
-	@DbPersistent
+	@PropertyDescription
 	private String text2 = "";
 
 	public String getText1() {

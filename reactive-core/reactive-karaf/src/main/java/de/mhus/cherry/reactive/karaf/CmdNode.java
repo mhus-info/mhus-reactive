@@ -25,6 +25,7 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
@@ -201,13 +202,18 @@ public class CmdNode extends MLog implements Action {
 					locale = Locale.forLanguageTag(parameters[2]);
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
-				INode inode = engine.getNode(node.getId().toString());
+				INode inode = engine.getNode(node.getId().toString(), new String[]{"*"});
+				INodeDescription idesc = engine.getNodeDescription(inode);
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());
-				System.out.println("Display name: " + inode.getDisplayName());
-				System.out.println("Description : " + inode.getDescription());
+				System.out.println("Display name: " + idesc.getDisplayName());
+				System.out.println("Description : " + idesc.getDescription());
 				System.out.println();
+				for (Entry<String, String> entry : inode.getProperties().entrySet()) {
+					String name = idesc.getPropertyName(entry.getKey());
+					System.out.println(name + "=" + entry.getValue());
+				}
 				if (all)
 					for (Entry<String, Object> entry : new TreeMap<String,Object>(((UiProcess)engine.getProcess(inode.getUri())).getProperties()).entrySet())
 						System.out.println(entry.getKey() + "=" + entry.getValue());

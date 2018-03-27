@@ -17,9 +17,21 @@ public interface IEngine {
 
 	IProcess getProcess(String uri) throws MException;
 
-	ICase getCase(String id) throws Exception;
+	ICase getCase(String id, String[] propertyNames) throws Exception;
 
-	INode getNode(String id) throws Exception;
+	INode getNode(String id, String[] propertyNames) throws Exception;
+
+	default ICaseDescription getCaseDescription(ICase caze) throws Exception {
+		return getCaseDescription(caze.getUri());
+	}
+
+	default INodeDescription getNodeDescription(INode node) throws Exception {
+		return getNodeDescritpion(node.getUri(), node.getCanonicalName());
+	}
+
+	ICaseDescription getCaseDescription(String uri) throws Exception;
+
+	INodeDescription getNodeDescritpion(String uri, String name) throws Exception;
 
 	Locale getLocale();
 

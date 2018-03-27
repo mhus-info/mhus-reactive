@@ -22,6 +22,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
+import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
@@ -101,12 +102,17 @@ public class CmdCase extends MLog implements Action {
 					locale = Locale.forLanguageTag(parameters[2]);
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
-				ICase icase = engine.getCase(caze.getId().toString());
+				ICase icase = engine.getCase(caze.getId().toString(), new String[]{"*"});
+				ICaseDescription idesc = engine.getCaseDescription(icase);
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());
-				System.out.println("Display name: " + icase.getDisplayName());
-				System.out.println("Description : " + icase.getDescription());
+				System.out.println("Display name: " + idesc.getDisplayName());
+				System.out.println("Description : " + idesc.getDescription());
+				for (Entry<String, String> entry : icase.getProperties().entrySet()) {
+					String name = idesc.getPropertyName(entry.getKey());
+					System.out.println(name + "=" + entry.getValue());
+				}
 				if (all)
 					for (Entry<String, Object> entry : new TreeMap<String,Object>(((UiProcess)engine.getProcess(icase.getUri())).getProperties()).entrySet())
 						System.out.println(entry.getKey() + "=" + entry.getValue());

@@ -21,7 +21,7 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 import de.mhus.osgi.sop.api.rest.RestUtil;
 
 @Component(provide=RestNodeService.class)
-public class BpmCaseNode extends AbstractObjectListNode<XCase> {
+public class BpmCaseNode extends AbstractObjectListNode<ICase> {
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -34,7 +34,7 @@ public class BpmCaseNode extends AbstractObjectListNode<XCase> {
 	}
 
 	@Override
-	protected List<XCase> getObjectList(CallContext callContext) throws MException {
+	protected List<ICase> getObjectList(CallContext callContext) throws MException {
 
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
@@ -43,32 +43,29 @@ public class BpmCaseNode extends AbstractObjectListNode<XCase> {
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
 		int page = M.c(callContext.getParameter("_page"), 0);
 		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
-		LinkedList<XCase> out = new LinkedList<>();
 		try {
-			List<ICase> res = engine.searchCases(criterias, page, size);
-			for (ICase item : res) 
-				out.add(new XCase(engine, item, false));
+			return engine.searchCases(criterias, page, size);
 		} catch (IOException e) {
 			throw new MException(e);
 		}
-		
-		return out;
 	}
 
 	@Override
-	public Class<XCase> getManagedClass() {
-		return XCase.class;
+	public Class<ICase> getManagedClass() {
+		return ICase.class;
 	}
 
 	@Override
-	protected XCase getObjectForId(CallContext context, String id) throws Exception {
+	protected ICase getObjectForId(CallContext context, String id) throws Exception {
 		
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext acontext = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
-
-		ICase item = engine.getCase(id);
-		return new XCase(engine, item, true);
+		
+		String parameters = context.getParameter("_parameters");
+		
+		return engine.getCase(id, parameters == null ? null : parameters.split(","));
+		
 	}
 
 }

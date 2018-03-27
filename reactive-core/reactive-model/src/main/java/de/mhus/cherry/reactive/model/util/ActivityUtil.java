@@ -6,10 +6,14 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import de.mhus.lib.annotations.adb.DbPersistent;
+import de.mhus.lib.core.pojo.PojoModel;
+import de.mhus.lib.core.pojo.PojoParser;
 
 public class ActivityUtil {
 
@@ -86,5 +90,10 @@ public class ActivityUtil {
 		
 		return (Class<? extends AActivity<?>>[]) out.toArray(new Class<?>[out.size()]);
 	}
-		
+
+	@SuppressWarnings("unchecked")
+	public static PojoModel createPojoModel(Class<?> clazz) {
+		return new PojoParser().parse(clazz, "_", new Class[] { PropertyDescription.class }).filter(true,false,true,true,true).getModel();
+	}
+	
 }

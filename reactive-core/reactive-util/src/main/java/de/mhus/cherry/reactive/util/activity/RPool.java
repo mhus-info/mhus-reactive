@@ -7,6 +7,7 @@ import java.util.Map;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
@@ -14,7 +15,7 @@ import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoModelFactory;
 import de.mhus.lib.core.pojo.PojoParser;
 
-public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>, PojoModelFactory, ContextRecipient {
+public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>, ContextRecipient {
 
 	private PojoModel pojoModel;
 	protected ProcessContext<?> context;
@@ -70,16 +71,10 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 
 	public synchronized PojoModel getPojoModel() {
 		if (pojoModel == null)
-			pojoModel = createPojoModel(this.getClass());
+			pojoModel = ActivityUtil.createPojoModel(this.getClass());
 		return pojoModel;
 	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public PojoModel createPojoModel(Class<?> clazz) {
-		return new PojoParser().parse(clazz, "_", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
-	}
-	
+		
 	@Override
 	public void setContext(ProcessContext<?> context) {
 		this.context = context;

@@ -43,7 +43,17 @@ public class PNodeInfo {
 	}
 
 	public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
-		this(node.getId(), node.getCaseId(),node.getCanonicalName(),node.getAssignedUser(),node.getState(),node.getType(), cazeInfo.getCustomId(), cazeInfo.getCustomerId(),cazeInfo.getUri(), null);
+		this(
+				node.getId(), 
+				node.getCaseId(),
+				node.getCanonicalName(),
+				node.getAssignedUser(),
+				node.getState(),
+				node.getType(),
+				cazeInfo.getUri(), 
+				cazeInfo.getCustomId(), 
+				cazeInfo.getCustomerId(), 
+				null);
 	}
 
 	public UUID getId() {

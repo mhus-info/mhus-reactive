@@ -22,7 +22,7 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 import de.mhus.osgi.sop.api.rest.RestUtil;
 
 @Component(provide=RestNodeService.class)
-public class BpmNodeNode extends AbstractObjectListNode<XNode> {
+public class BpmNodeNode extends AbstractObjectListNode<INode> {
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -35,7 +35,7 @@ public class BpmNodeNode extends AbstractObjectListNode<XNode> {
 	}
 
 	@Override
-	protected List<XNode> getObjectList(CallContext callContext) throws MException {
+	protected List<INode> getObjectList(CallContext callContext) throws MException {
 
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
@@ -44,32 +44,28 @@ public class BpmNodeNode extends AbstractObjectListNode<XNode> {
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
 		int page = M.c(callContext.getParameter("_page"), 0);
 		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
-		LinkedList<XNode> out = new LinkedList<>();
 		try {
-			List<INode> res = engine.searchNodes(criterias, page, size);
-			for (INode item : res) 
-				out.add(new XNode(engine, item, false));
+			return engine.searchNodes(criterias, page, size);
 		} catch (IOException e) {
 			throw new MException(e);
 		}
-		
-		return out;
 	}
 
 	@Override
-	public Class<XNode> getManagedClass() {
-		return XNode.class;
+	public Class<INode> getManagedClass() {
+		return INode.class;
 	}
 
 	@Override
-	protected XNode getObjectForId(CallContext context, String id) throws Exception {
+	protected INode getObjectForId(CallContext context, String id) throws Exception {
 		
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext acontext = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 
-		INode item = engine.getNode(id);
-		return new XNode(engine, item, true);
+		String properties = context.getParameter("_properties");
+
+		return engine.getNode(id, properties == null ? null : properties.split(","));
 	}
 
 }

@@ -1,97 +1,79 @@
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
 
+import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
-import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.ui.IProcess;
+import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.errors.MException;
 
 public class UiNode extends MLog implements INode {
 
-	private IEngine ui;
 	private PNodeInfo info;
-	private IProcess process;
+	private Map<String, String> properties;
 
-	public UiNode(IEngine ui, PNodeInfo info) {
-		this.ui = ui;
+	public UiNode(PNodeInfo info, Map<String, String> properties) {
 		this.info =info;
+		this.properties = properties;
 	}
 
 	@Override
+	@Public
 	public String getUri() {
 		return info.getUri();
 	}
 
 	@Override
-	public String getNodeCanonicalName() {
+	@Public
+	public String getCanonicalName() {
 		return info.getCanonicalName();
 	}
 
 	@Override
+	@Public
 	public STATE_NODE getNodeState() {
 		return info.getState();
 	}
 
 	@Override
+	@Public
 	public UUID getId() {
 		return info.getId();
 	}
 
 	@Override
+	@Public
 	public String getCustomId() {
 		return info.getCustomId();
 	}
 
 	@Override
-	public String getIndexValue(int index) {
-		return info.getIndexValue(index);
-	}
-
-	private synchronized void initProcess() {
-		if (process != null) return;
-		try {
-			process = ui.getProcess(info.getUri());
-		} catch (MException e) {
-			log().d(info.getUri(),e);
-		}
-	}
-
-	@Override
-	public String getDisplayName() {
-		initProcess();
-		return process.getDisplayName(info.getUri(), info.getCanonicalName());
-	}
-
-	@Override
-	public String getDescription() {
-		initProcess();
-		return process.getDescription(info.getUri(), info.getCanonicalName());
-	}
-
-	@Override
-	public String getIndexDisplayName(int index) {
-		initProcess();
-		return process.getIndexDisplayName(index, info.getUri(), info.getCanonicalName());
-	}
-
-	@Override
+	@Public
 	public String getCustomerId() {
 		return info.getCustomerId();
 	}
 
 	@Override
+	@Public
 	public TYPE_NODE getType() {
 		return info.getType();
 	}
 
 	@Override
+	@Public
 	public UUID getCaseId() {
 		return info.getCaseId();
+	}
+
+	@Override
+	@Public
+	public Map<String, String> getProperties() {
+		return properties;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.util.activity.RPool;
 import de.mhus.cherry.reactive.util.activity.RTask;
 import de.mhus.lib.core.pojo.PojoAttribute;
@@ -47,7 +48,7 @@ public abstract class RServiceTaskInternal<P extends RPool<?>> extends RTask<P> 
 	@Override
 	public synchronized PojoModel getPojoModel() {
 		if (pojoModel == null)
-			pojoModel = getContext().getPool().createPojoModel(this.getClass());
+			pojoModel = ActivityUtil.createPojoModel(this.getClass());
 		return pojoModel;
 	}
 	

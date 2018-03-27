@@ -7,6 +7,7 @@ import java.util.Map;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
@@ -70,7 +71,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
 
 	public synchronized PojoModel getPojoModel() {
 		if (pojoModel == null)
-			pojoModel = getContext().getPool().createPojoModel(this.getClass());
+			pojoModel = ActivityUtil.createPojoModel(this.getClass());
 		return pojoModel;
 	}
 

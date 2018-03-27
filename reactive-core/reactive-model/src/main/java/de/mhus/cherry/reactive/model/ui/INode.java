@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.model.ui;
 
+import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -9,7 +10,7 @@ public interface INode {
 
 	String getUri();
 
-	String getNodeCanonicalName();
+	String getCanonicalName();
 
 	STATE_NODE getNodeState();
 
@@ -19,16 +20,10 @@ public interface INode {
 
 	String getCustomerId();
 
-	String getIndexValue(int index);
-
-	String getIndexDisplayName(int index);
-
-	String getDisplayName();
-
-	String getDescription();
-
 	TYPE_NODE getType();
 
 	UUID getCaseId();
 
+	Map<String,String> getProperties();
+	
 }

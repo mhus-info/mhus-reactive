@@ -16,5 +16,8 @@ public class EngineConst {
 	public static final int DEFAULT_TRY_COUNT = 1;
 	public static final long END_OF_DAYS = Long.MAX_VALUE;
 	public static final int MAX_INDEX_VALUES = 10;
+	public static final String UI_PNODE_PREFIX = "pnode.";
+	public static final String UI_CASE_PREFIX = "case.";
+	public static final String UI_NODE_PREFIX = "node.";
 
 }

@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.model.ui;
 
+import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -8,12 +9,8 @@ public interface ICase {
 
 	String getUri();
 
-	String getCaseCanonicalName();
+	String getCanonicalName();
 
-	String getIndexValue(int index);
-
-	String getIndexDisplayName(int index);
-	
 	String getCustomId();
 
 	String getCustomerId();
@@ -22,9 +19,6 @@ public interface ICase {
 
 	UUID getId();
 
-	String getDisplayName();
-
-	String getDescription();
-
+	Map<String,String> getProperties();
 
 }
