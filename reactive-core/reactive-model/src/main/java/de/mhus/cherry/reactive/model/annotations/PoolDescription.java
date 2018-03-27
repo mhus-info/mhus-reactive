@@ -20,4 +20,6 @@ public @interface PoolDescription {
 	Class<? extends AActor>[] actorRead() default {};
 	Class<? extends AActor>[] actorWrite() default {};
 
+	ExternalSource[] external() default {};
+	
 }

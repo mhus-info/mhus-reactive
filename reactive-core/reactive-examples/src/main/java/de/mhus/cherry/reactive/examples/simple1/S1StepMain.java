@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.examples.simple1;
 
+import java.util.Date;
+
 import de.mhus.cherry.reactive.examples.simple1.events.S1EventExternal;
 import de.mhus.cherry.reactive.examples.simple1.events.S1EventMessage;
 import de.mhus.cherry.reactive.examples.simple1.events.S1EventSignal;
@@ -13,7 +15,9 @@ import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.errors.TaskException;
+import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.cherry.reactive.util.activity.RServiceTask;
+import de.mhus.lib.core.MDate;
 
 @ActivityDescription(
 		displayName="Main Cross Road",
@@ -35,9 +39,14 @@ import de.mhus.cherry.reactive.util.activity.RServiceTask;
 		triggers = {
 				@Trigger(type=TYPE.DEFAULT_ERROR,activity=S1TheEnd.class),
 				@Trigger(type=TYPE.ERROR,activity=S1TheEnd.class, name="error1")
+		},
+		indexDisplayNames = {
+				"Name",
+				"Executed",
+				"Date"
 		}
 		)
-public class S1StepMain extends RServiceTask<S1Pool> {
+public class S1StepMain extends RServiceTask<S1Pool> implements IndexValuesProvider {
 
 	@SuppressWarnings("unused")
 	private String localText;
@@ -59,6 +68,11 @@ public class S1StepMain extends RServiceTask<S1Pool> {
 		default:
 			return getPool().getText1();
 		}
+	}
+
+	@Override
+	public String[] createIndexValues(boolean init) {
+		return new String[] {"Main", getPool().getText1(), MDate.toFileFormat(new Date())};
 	}
 
 }
