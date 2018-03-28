@@ -104,7 +104,7 @@ public class UiEngine extends MLog implements IEngine {
 								}
 							}
 						}
-						out.add(new UiNode(info, properties));
+						out.add(new UiNode(engine,this, info, properties));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -396,7 +396,7 @@ public class UiEngine extends MLog implements IEngine {
 			}
 		}
 		
-		return new UiNode(info, properties);
+		return new UiNode(engine ,this, info, properties);
 	}
 
 	@Override

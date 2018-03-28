@@ -94,5 +94,10 @@ public class ActivityUtil {
 	public static PojoModel createPojoModel(Class<?> clazz) {
 		return new PojoParser().parse(clazz, "_", new Class[] { PropertyDescription.class }).filter(true,false,true,true,true).getModel();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public static PojoModel createFormPojoModel(Class<?> clazz) {
+		return new PojoParser().parse(clazz, "_", new Class[] { PropertyDescription.class }).filter(true,false,true,true,true).getModel();
+	}
+
 }

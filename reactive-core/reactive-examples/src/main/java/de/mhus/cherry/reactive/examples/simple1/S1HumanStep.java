@@ -24,17 +24,12 @@ public class S1HumanStep extends RHumanTask<S1Pool> {
 	public HumanForm createForm() {
 		return new HumanForm().add(
 			new FmText(M.n(S1Pool::getText1), "Text1", ""),
-			new FmText(M.n(S1Pool::getText1), "Text1", "",new FmColumns(2))
-		).add(
-			new FmText(M.n(S1Pool::getText1), "Text1", ""),
-			new FmText(M.n(S1Pool::getText1), "Text1", ""),
-			new FmText(M.n(S1Pool::getText1), "Text1", "")
+			new FmText(M.n(S1Pool::getText2), "Text2", "")
 		);
 	}
 
 	@Override
 	public String[] createIndexValues(boolean init) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

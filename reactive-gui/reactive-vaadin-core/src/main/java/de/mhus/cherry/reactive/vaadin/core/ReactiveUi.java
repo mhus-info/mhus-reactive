@@ -46,6 +46,7 @@ import de.mhus.osgi.sop.api.aaa.AccessApi;
 @Widgetset("de.mhus.cherry.reactive.gui.theme.ReactiveWidgetset")
 public class ReactiveUi extends UI implements ReactiveUiApi {
 	
+	// https://ccsearch.creativecommons.org/image/detail/pugDQPO07WYrRd52PHD68Q==
 	// "cross process=loves" by Vivianna_love is licensed under CC BY 2.0
 	
 	private static final long serialVersionUID = 1L;

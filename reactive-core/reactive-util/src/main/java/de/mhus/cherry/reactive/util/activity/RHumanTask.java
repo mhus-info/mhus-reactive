@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
@@ -32,15 +33,15 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 		DefRoot form = createForm().build().getRoot();
 		
 		P pool = getContext().getPool();
-		PojoModel modelTask = createFormPojoModel(getClass());
-		PojoModel modelPool = createFormPojoModel(pool.getClass());
+		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
+		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
 		MProperties out = new MProperties();
 
 		// return only in the form defined values
 		for (IDefDefinition item : form.definitions()) {
 			if (item instanceof FmElement) {
 				FmElement ele = (FmElement)item;
-				String name = ele.getName();
+				String name = ele.getProperty("name");
 				if (modelTask.hasAttribute(name)) {
 					PojoAttribute<?> attr = modelTask.getAttribute(name);
 					try {
@@ -77,32 +78,54 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 		return out;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public PojoModel createFormPojoModel(Class<?> clazz) {
-		return new PojoParser().parse(clazz, "_", new Class[] { DbPersistent.class }).filter(true,false,true,true,true).getModel();
-	}
-
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void doSubmit(IProperties values) {
 		P pool = getContext().getPool();
-		PojoModel modelTask = createFormPojoModel(getClass());
-		PojoModel modelPool = createFormPojoModel(pool.getClass());
-		for (Entry<String, Object> entry : values.entrySet()) {
-			PojoAttribute attr = modelTask.getAttribute(entry.getKey());
-			Object target = this;
-			if (attr == null) {
-				attr = modelPool.getAttribute(entry.getKey());
-				target = pool;
-			}
-			if (attr != null) {
-				try {
-					attr.set(target, entry.getValue());
-				} catch (Throwable t) {
-					log().w(this,attr,t);
+		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
+		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
+		
+		DefRoot form = createForm().build().getRoot();
+
+		for (IDefDefinition item : form.definitions()) {
+			if (item instanceof FmElement) {
+				FmElement ele = (FmElement)item;
+				String name = ele.getProperty("name");
+				if (modelTask.hasAttribute(name)) {
+					PojoAttribute<?> attr = modelTask.getAttribute(name);
+					try {
+						
+						out.put(attr.getName(), attr.get(this));
+					} catch (Throwable t) {
+						log().w(this,attr,t);
+					}
+				} else
+				if (modelPool.hasAttribute(name)) {
+					PojoAttribute<?> attr = modelPool.getAttribute(name);
+					try {
+						out.put(attr.getName(), attr.get(this));
+					} catch (Throwable t) {
+						log().w(this,attr,t);
+					}
 				}
 			}
 		}
+		
+//		for (Entry<String, Object> entry : values.entrySet()) {
+//			PojoAttribute attr = modelTask.getAttribute(entry.getKey());
+//			Object target = this;
+//			if (attr == null) {
+//				attr = modelPool.getAttribute(entry.getKey());
+//				target = pool;
+//			}
+//			if (attr != null) {
+//				try {
+//					attr.set(target, entry.getValue());
+//				} catch (Throwable t) {
+//					log().w(this,attr,t);
+//				}
+//			}
+//		}
 	}
 	
 }

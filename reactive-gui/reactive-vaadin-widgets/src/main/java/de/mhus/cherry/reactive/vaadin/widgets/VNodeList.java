@@ -1,0 +1,170 @@
+package de.mhus.cherry.reactive.vaadin.widgets;
+
+import java.util.Comparator;
+import java.util.List;
+
+import com.vaadin.event.Action;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Table.TableDragMode;
+
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.logging.Log;
+import de.mhus.lib.core.util.MNls;
+import de.mhus.lib.core.util.MNlsFactory;
+import de.mhus.lib.vaadin.ExpandingTable;
+import de.mhus.lib.vaadin.MhuTable;
+import de.mhus.lib.vaadin.ExpandingTable.RenderListener;
+import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
+
+public class VNodeList extends MhuTable {
+
+	private Log log = Log.getLog(VNodeList.class);
+	private static final long serialVersionUID = 1L;
+	private String sortByDefault = "duedate";
+	private boolean sortAscDefault = true;
+	MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
+	private SearchCriterias criterias;
+	private String[] properties;
+	
+	private int lastExtend;
+	private int page;
+	private IEngine engine;
+	private int size = 100;
+
+	public VNodeList() {
+	}
+	
+	public void configure(IEngine engine, SearchCriterias criterias, String[] properties) {
+		this.engine = engine;
+		this.criterias = criterias;
+		this.properties = properties;
+	
+		
+		data = getItems(0);
+        setSizeFull();
+        addStyleName("borderless");
+        setSelectable(true);
+        setTableEditable(false);
+        setColumnCollapsingAllowed(true);
+        setColumnReorderingAllowed(true);
+        setSortContainerPropertyId(sortByDefault);
+        setSortAscending(sortAscDefault);
+        if (data != null) {
+        	data.removeAllContainerFilters();
+        	setContainerDataSource(data);
+        	MNls nls = new MNlsFactory().create(this);
+        	data.configureTableByAnnotations(this, null, nls);
+        }
+        sortTable();
+        
+        addItemClickListener(new ItemClickListener() {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void itemClick(ItemClickEvent event) {
+				if (event.isDoubleClick()) {
+					NodeItem selected = (NodeItem)event.getItemId();
+					if (selected != null && selected.getState() == STATE_NODE.WAITING && selected.getType() == TYPE_NODE.HUMAN) {
+						doOpenHumanForm(selected);
+					}
+//					Notification.show("DoubleClick: " + ((NodeItem)event.getItemId()).getName());
+				}
+			}
+		});
+        
+        addActionHandler(new Action.Handler() {
+			private static final long serialVersionUID = 1L;
+			@Override
+            public Action[] getActions(final Object target, final Object sender) {
+				if (target != null) {
+				}
+				return new Action[0];
+			}
+            @Override
+            public void handleAction(final Action action, final Object sender,
+                    final Object target) {
+            	
+            }
+        });
+        
+        setDragMode(TableDragMode.NONE);
+        setMultiSelect(false);
+        renderEventHandler().register(new RenderListener() {
+			@Override
+			public void onRender(ExpandingTable mhuTable, int first, int last) {
+				doExtendTable(mhuTable, first, last);
+			}
+		});
+
+        setImmediate(true);
+		
+	}
+
+	protected void doOpenHumanForm(NodeItem selected) {
+		
+	}
+
+	private NodeContainer getItems(int page) {
+		NodeContainer out = new NodeContainer();
+		try {
+			List<INode> list = engine.searchNodes(criterias, page, size , properties);
+			for (INode item : list)
+				out.addItem(new NodeItem(item));
+		} catch (Exception e) {
+			log.w(e);
+			Notification.show("Organisationen konnten nicht abgefragt werden", Type.WARNING_MESSAGE);
+		}
+		
+		return out;
+	}
+	
+	private void sortTable() {
+		sort(new Object[] { getSortContainerPropertyId() }, new boolean[] { isSortAscending() });
+	}
+
+	protected void doExtendTable(ExpandingTable mhuTable, int first, int last) {
+		int size = mhuTable.getItemIds().size() - 1;
+		if (lastExtend < last && last == size) {
+			lastExtend = last;
+			doRefresh(++page);
+		}
+	}
+
+	protected void doRefresh(int page_) {
+		
+		
+		NodeContainer updatedData = getItems(page_);
+		if (updatedData != null) {
+			if (data == null)
+				data = updatedData;
+			
+			data.mergeAll(updatedData.getItemIds(), page_ == 0 ? true : false, new Comparator<NodeItem>() {
+				@Override
+				public int compare(NodeItem o1, NodeItem o2) {
+					return MSystem.equals(o1, o2) ? 0 : 1;
+				}
+			});
+		}
+		else {
+			Notification.show("Daten konnten nicht abgefragt werden",Notification.Type.WARNING_MESSAGE);
+			if (data == null)
+				data = new NodeContainer();
+			return;
+		}
+//		sortTable();
+		if (page_ == 0) {
+			lastExtend = 0;
+			page = 0;
+			setCurrentPageFirstItemIndex(0);
+			Notification.show("Liste aktualisiert",Notification.Type.TRAY_NOTIFICATION);
+		}
+	}
+
+}
