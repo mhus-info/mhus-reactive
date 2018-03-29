@@ -4,14 +4,19 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.annotations.vaadin.Column;
+import de.mhus.lib.errors.MException;
 
 public class NodeItem {
 
 	private INode node;
+	private IEngine engine;
 
-	public NodeItem(INode node) {
+	public NodeItem(IEngine engine, INode node) {
+		this.engine = engine;
 		this.node = node;
 	}
 
@@ -21,12 +26,12 @@ public class NodeItem {
 	}
 		
 	@Column(order=2,title="CName", editable=false)
-	public String getNodeCanonicalName() {
+	public String getName() {
 		return node.getCanonicalName();
 	}
 
 	@Column(order=3,title="CutsomId", editable=false)
-	public String getCustomId() {
+	public String getCustom() {
 		return node.getCustomId();
 	}
 
@@ -103,6 +108,15 @@ public class NodeItem {
 	@Column(order=18,title="Assigned User", editable=false)
 	public String getAssigned() {
 		return node.getAssigned();
+	}
+
+	@Column(order=19,title="Name", editable=false)
+	public String getDisplayName() {
+		try {
+			return engine.getProcess(node.getUri()).getDisplayName(node.getUri(), node.getCanonicalName());
+		} catch (MException e) {
+			return "?";
+		}
 	}
 
 	/*	

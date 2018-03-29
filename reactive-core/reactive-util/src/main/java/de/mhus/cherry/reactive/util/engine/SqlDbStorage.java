@@ -678,7 +678,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (search.caseState != null) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				prop.put("state", search.nodeState);
+				prop.put("state", search.caseState);
 				sql.append("state_=$state$ ");
 			}
 			

@@ -10,14 +10,11 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Table.TableDragMode;
 
-import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
-import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias.ORDER;
+import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
-import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.core.util.MNls;
@@ -26,17 +23,14 @@ import de.mhus.lib.vaadin.ExpandingTable;
 import de.mhus.lib.vaadin.MhuTable;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
-public class VNodeList extends MhuTable {
+public class VCaseList extends MhuTable {
 
-	private Log log = Log.getLog(VNodeList.class);
+	private Log log = Log.getLog(VCaseList.class);
 	private static final long serialVersionUID = 1L;
-	protected static final Action ACTION_ASSIGN = new Action("Assign");
-	protected static final Action ACTION_UNASSIGN = new Action("Unassign");
-	protected static final Action ACTION_EXECUTE = new Action("Do it");
 	protected static final Action ACTION_REFRESH = new Action("Refresh");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
-	MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
+	MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
 	private SearchCriterias criterias;
 	private String[] properties;
 	
@@ -45,7 +39,7 @@ public class VNodeList extends MhuTable {
 	private IEngine engine;
 	private int size = 100;
 
-	public VNodeList() {
+	public VCaseList() {
 	}
 	
 	public void configure(IEngine engine, SearchCriterias criterias, String[] properties) {
@@ -76,10 +70,7 @@ public class VNodeList extends MhuTable {
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				if (event.isDoubleClick()) {
-					NodeItem selected = (NodeItem)event.getItemId();
-					if (selected != null && selected.getState() == STATE_NODE.WAITING && selected.getType() == TYPE_NODE.HUMAN) {
-						doOpenHumanForm(selected);
-					}
+					CaseItem selected = (CaseItem)event.getItemId();
 //					Notification.show("DoubleClick: " + ((NodeItem)event.getItemId()).getName());
 				}
 			}
@@ -95,15 +86,7 @@ public class VNodeList extends MhuTable {
 					target = targets.iterator().next();
 				
 				if (target != null) {
-					NodeItem node = (NodeItem)target;
-					if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.HUMAN) {
-						if (node.getAssigned() == null) {
-							list.add(ACTION_ASSIGN);
-						} else {
-							list.add(ACTION_UNASSIGN);
-						}
-						list.add(ACTION_EXECUTE);
-					}
+//					CaseItem caze = (CaseItem)target;
 					list.add(ACTION_REFRESH);
 				}
 				return list.toArray(new Action[list.size()]);
@@ -112,19 +95,8 @@ public class VNodeList extends MhuTable {
             public void handleAction(final Action action, final Object sender,
                     final Object target) {
             	try {
-					INode node = engine.getNode(((NodeItem)target).getId().toString(),null);
+//					INode node = engine.getNode(((NodeItem)target).getId().toString(),null);
 					
-	            	if (action == ACTION_UNASSIGN) {
-	            		node.doUnassign();
-	            		doReload();
-	            	} else
-	            	if (action == ACTION_ASSIGN) {
-	            		node.doAssign();
-	            		doReload();
-	            	} else
-	            	if (action == ACTION_EXECUTE) {
-	            		doOpenHumanForm((NodeItem)target);
-	            	} else
 	            	if (action == ACTION_REFRESH) {
 	            		doReload();
 	            	}
@@ -158,22 +130,18 @@ public class VNodeList extends MhuTable {
 		doRefresh(0);
 	}
 
-	protected void doOpenHumanForm(NodeItem selected) {
-		
-	}
-
-	private NodeContainer getItems(int page) {
+	private CaseContainer getItems(int page) {
 		
 		try {
 			criterias.order = ORDER.valueOf(String.valueOf(getSortContainerPropertyId()).toUpperCase());
 			criterias.orderAscending = isSortAscending();
 		} catch (Throwable t) {}
 		
-		NodeContainer out = new NodeContainer();
+		CaseContainer out = new CaseContainer();
 		try {
-			List<INode> list = engine.searchNodes(criterias, page, size , properties);
-			for (INode item : list)
-				out.addItem(new NodeItem(engine,item));
+			List<ICase> list = engine.searchCases(criterias, page, size , properties);
+			for (ICase item : list)
+				out.addItem(new CaseItem(engine,item));
 		} catch (Exception e) {
 			log.w(e);
 			Notification.show("Liste konnten nicht abgefragt werden", Type.WARNING_MESSAGE);
@@ -197,14 +165,14 @@ public class VNodeList extends MhuTable {
 	protected void doRefresh(int page_) {
 		
 		
-		NodeContainer updatedData = getItems(page_);
+		CaseContainer updatedData = getItems(page_);
 		if (updatedData != null) {
 			if (data == null)
 				data = updatedData;
 			
-			data.mergeAll(updatedData.getItemIds(), page_ == 0 ? true : false, new Comparator<NodeItem>() {
+			data.mergeAll(updatedData.getItemIds(), page_ == 0 ? true : false, new Comparator<CaseItem>() {
 				@Override
-				public int compare(NodeItem o1, NodeItem o2) {
+				public int compare(CaseItem o1, CaseItem o2) {
 					return MSystem.equals(o1, o2) ? 0 : 1;
 				}
 			});
@@ -212,7 +180,7 @@ public class VNodeList extends MhuTable {
 		else {
 			Notification.show("Daten konnten nicht abgefragt werden",Notification.Type.WARNING_MESSAGE);
 			if (data == null)
-				data = new NodeContainer();
+				data = new CaseContainer();
 			return;
 		}
 //		sortTable();

@@ -13,6 +13,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
+import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
@@ -20,6 +21,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
+import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
 import de.mhus.cherry.reactive.vaadin.widgets.VHumanForm;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
 import de.mhus.lib.core.MApi;
@@ -42,6 +44,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 	private static final String I_ASSIGNED = "Assigned";
 	private static final String DEFAULT_MENU_SELECTION = I_UNASSIGNED;
 	private static final String I_ALL_NODES = "All nodes";
+	private static final String I_ACTIVE_CASES = "Active cases";
+	private static final String I_ALL_CASES = "All cases";
 	private BpmSpaceService service;
 	private IEngine engine;
 	private HorizontalLayout page;
@@ -76,7 +80,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 				String[] properties = new String[] {"*"};
 				Component cached = contentCache.get(selection);
 				if (cached == null) {
-					cached = getListView(criterias, properties);
+					cached = getNodeListView(criterias, properties);
 					if (cached == null) return null;
 					contentCache.put(selection, cached);
 				} else
@@ -96,7 +100,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 				String[] properties = new String[] {"*"};
 				Component cached = contentCache.get(selection);
 				if (cached == null) {
-					cached = getListView(criterias, properties);
+					cached = getNodeListView(criterias, properties);
 					if (cached == null) return null;
 					contentCache.put(selection, cached);
 				} else
@@ -109,7 +113,18 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			 case I_ALL_NODES: {
 				SearchCriterias criterias = new SearchCriterias();
 				String[] properties = new String[] {"*"};
-				setContent(getListView(criterias, properties));
+				setContent(getNodeListView(criterias, properties));
+			 } break;
+			 case I_ALL_CASES: {
+				SearchCriterias criterias = new SearchCriterias();
+				String[] properties = new String[] {"*"};
+				setContent(getCaseListView(criterias, properties));
+			 } break;
+			 case I_ACTIVE_CASES: {
+				SearchCriterias criterias = new SearchCriterias();
+				criterias.caseState = STATE_CASE.RUNNING;
+				String[] properties = new String[] {"*"};
+				setContent(getCaseListView(criterias, properties));
 			 } break;
 			}
 			
@@ -186,12 +201,24 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		
 		tree.addItem(I_UNASSIGNED);
 		tree.setParent(I_UNASSIGNED, I_DEFAULT);
-		
+		tree.setChildrenAllowed(I_UNASSIGNED, false);
+
 		tree.addItem(I_ASSIGNED);
 		tree.setParent(I_ASSIGNED, I_DEFAULT);
-		
+		tree.setChildrenAllowed(I_ASSIGNED, false);
+
 		tree.addItem(I_ALL_NODES);
 		tree.setParent(I_ALL_NODES, I_DEFAULT);
+		tree.setChildrenAllowed(I_ALL_NODES, false);
+
+		tree.addItem(I_ACTIVE_CASES);
+		tree.setParent(I_ACTIVE_CASES, I_DEFAULT);
+		tree.setChildrenAllowed(I_ACTIVE_CASES, false);
+
+		tree.addItem(I_ALL_CASES);
+		tree.setParent(I_ALL_CASES, I_DEFAULT);
+		tree.setChildrenAllowed(I_ALL_CASES, false);
+		
 		
 		// end
 		
@@ -218,10 +245,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		return menu;
 	}
 
-	private Component getListView(SearchCriterias criterias, String[] properties) {
+	private Component getNodeListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
-		VNodeList nodeList = new VNodeList() {
+		VNodeList list = new VNodeList() {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected void doOpenHumanForm(NodeItem selected) {
@@ -233,13 +260,24 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 				}
 			}
 		};
-		nodeList.configure(engine, criterias, properties);
-        addComponent(nodeList);
-        setExpandRatio(nodeList, 1);
+		list.configure(engine, criterias, properties);
+        addComponent(list);
+        setExpandRatio(list, 1);
         
-        return nodeList;
+        return list;
 	}
 
+	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
+		initEngine();
+		if (engine == null) return null;
+		VCaseList list = new VCaseList();
+		list.configure(engine, criterias, properties);
+        addComponent(list);
+        setExpandRatio(list, 1);
+        
+        return list;
+	}
+	
 	private void initEngine() {
 		AccessApi aaa = MApi.lookup(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
