@@ -18,6 +18,7 @@ import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 
 public class UiNode extends MLog implements INode {
@@ -151,6 +152,25 @@ public class UiNode extends MLog implements INode {
 		} catch (Throwable t) {
 			log().e(t);
 		}
+	}
+
+	@Override
+	public String getAssigned() {
+		return info.getAssigned();
+	}
+
+	@Override
+	public void doUnassign() throws IOException, MException {
+		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
+			throw new AccessDeniedException();
+		engine.unassignHumanTask(info.getId());
+	}
+
+	@Override
+	public void doAssign() throws IOException, MException {
+		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
+			throw new AccessDeniedException();
+		engine.unassignHumanTask(info.getId());
 	}
 
 }

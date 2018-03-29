@@ -554,14 +554,14 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (search.unassigned) {
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
-				sql.append("assigned is null ");
+				sql.append("assigned_ is null ");
 			} else
 			if (search.assigned != null)
 			{
 				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
 				whereAdded = true;
 				prop.setString("user", search.assigned);
-				sql.append("assigned=$user$ ");
+				sql.append("assigned_=$user$ ");
 			}
 			
 			if (search.nodeState != null) {

@@ -11,6 +11,7 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.util.HumanForm;
 import de.mhus.cherry.reactive.util.activity.RHumanTask;
+import de.mhus.lib.errors.MException;
 
 @ActivityDescription(
 		outputs=@Output(activity=S1TheEnd.class),
@@ -22,11 +23,6 @@ import de.mhus.cherry.reactive.util.activity.RHumanTask;
 public class S1StepTriggerTimer extends RHumanTask<S1Pool> {
 
 	@Override
-	public String doExecute() {
-		return null;
-	}
-
-	@Override
 	public HumanForm createForm() {
 		return null;
 	}
@@ -34,6 +30,12 @@ public class S1StepTriggerTimer extends RHumanTask<S1Pool> {
 	@Override
 	public String[] createIndexValues(boolean init) {
 		return null;
+	}
+
+	@Override
+	protected void doSubmit() throws MException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

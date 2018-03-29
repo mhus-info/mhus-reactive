@@ -1,12 +1,11 @@
 package de.mhus.cherry.reactive.util.activity;
 
-import java.util.Map.Entry;
-
 import de.mhus.cherry.reactive.model.activity.AHumanTask;
+import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
-import de.mhus.lib.annotations.adb.DbPersistent;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
@@ -14,7 +13,6 @@ import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
-import de.mhus.lib.core.pojo.PojoParser;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.definition.FmElement;
 
@@ -24,6 +22,11 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 	public void initializeActivity() throws Exception {
 		getContext().getPNode().setState(STATE_NODE.WAITING);
 		getContext().getPNode().setType(TYPE_NODE.HUMAN);
+	}
+
+	@Override
+	public String doExecute() {
+		return null;
 	}
 
 	@Override
@@ -42,45 +45,51 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 			if (item instanceof FmElement) {
 				FmElement ele = (FmElement)item;
 				String name = ele.getProperty("name");
-				if (modelTask.hasAttribute(name)) {
-					PojoAttribute<?> attr = modelTask.getAttribute(name);
-					try {
-						out.put(attr.getName(), attr.get(this));
-					} catch (Throwable t) {
-						log().w(this,attr,t);
-					}
-				} else
-				if (modelPool.hasAttribute(name)) {
-					PojoAttribute<?> attr = modelPool.getAttribute(name);
-					try {
-						out.put(attr.getName(), attr.get(this));
-					} catch (Throwable t) {
-						log().w(this,attr,t);
+				String namePrefix = name + ".";
+				// first pool
+				for (PojoAttribute<?> attr : modelPool) {
+					String aName = attr.getName();
+					if (aName.equals(name) || aName.startsWith(namePrefix)) {
+						try {
+							out.put(attr.getName(), attr.get(pool));
+							if (aName.equals(name)) {
+								PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+								if (!desc.writable()) {
+									out.put(name + ".editable", false);
+								}
+							}
+						} catch (Throwable t) {
+							log().w(this,attr,t);
+						}
 					}
 				}
+				//overwrite with task
+				for (PojoAttribute<?> attr : modelTask) {
+					String aName = attr.getName();
+					if (aName.equals(name) || aName.startsWith(namePrefix)) {
+						try {
+							out.put(attr.getName(), attr.get(this));
+							if (aName.equals(name)) {
+								PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+								if (!desc.writable()) {
+									out.put(name + ".editable", false);
+								}
+							}
+						} catch (Throwable t) {
+							log().w(this,attr,t);
+						}
+					}
+				}
+
 			}
 		}
 		
-// this returns all				
-//		for (PojoAttribute<?> attr : modelTask)
-//			try {
-//				out.put(attr.getName(), attr.get(this));
-//			} catch (Throwable t) {
-//				log().w(this,attr,t);
-//			}
-//		for (PojoAttribute<?> attr : modelPool)
-//			try {
-//				if (!out.isProperty(attr.getName()))
-//					out.put(attr.getName(), attr.get(pool));
-//			} catch (Throwable t) {
-//				log().w(this,attr,t);
-//			}
 		return out;
 	}
 	
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void doSubmit(IProperties values) {
+	@SuppressWarnings({ "unchecked"})
+	public void doSubmit(IProperties values) throws MException {
 		P pool = getContext().getPool();
 		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
 		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
@@ -91,41 +100,38 @@ public abstract class RHumanTask<P extends RPool<?>> extends RAbstractTask<P> im
 			if (item instanceof FmElement) {
 				FmElement ele = (FmElement)item;
 				String name = ele.getProperty("name");
-				if (modelTask.hasAttribute(name)) {
-					PojoAttribute<?> attr = modelTask.getAttribute(name);
-					try {
-						
-						out.put(attr.getName(), attr.get(this));
-					} catch (Throwable t) {
-						log().w(this,attr,t);
-					}
-				} else
-				if (modelPool.hasAttribute(name)) {
-					PojoAttribute<?> attr = modelPool.getAttribute(name);
-					try {
-						out.put(attr.getName(), attr.get(this));
-					} catch (Throwable t) {
-						log().w(this,attr,t);
+				Object value = values.get(name);
+				if (value != null) {
+					if (modelTask.hasAttribute(name)) {
+						PojoAttribute<Object> attr = modelTask.getAttribute(name);
+						PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+						if (desc.writable()) {
+							try {
+								attr.set(this, value);
+							} catch (Throwable t) {
+								log().w(this,attr,t);
+							}
+						}
+					} else
+					if (modelPool.hasAttribute(name)) {
+						PojoAttribute<Object> attr = modelPool.getAttribute(name);
+						PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+						if (desc.writable()) {
+							try {
+								attr.set(pool, value);
+							} catch (Throwable t) {
+								log().w(this,attr,t);
+							}
+						}
 					}
 				}
 			}
 		}
 		
-//		for (Entry<String, Object> entry : values.entrySet()) {
-//			PojoAttribute attr = modelTask.getAttribute(entry.getKey());
-//			Object target = this;
-//			if (attr == null) {
-//				attr = modelPool.getAttribute(entry.getKey());
-//				target = pool;
-//			}
-//			if (attr != null) {
-//				try {
-//					attr.set(target, entry.getValue());
-//				} catch (Throwable t) {
-//					log().w(this,attr,t);
-//				}
-//			}
-//		}
+		doSubmit();
+		
 	}
+
+	protected abstract void doSubmit() throws MException;
 	
 }

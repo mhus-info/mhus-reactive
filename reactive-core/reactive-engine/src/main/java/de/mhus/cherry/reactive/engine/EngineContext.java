@@ -145,17 +145,18 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 	}
 
 	@Override
-	public synchronized AElement<?> getANode() {
+	public synchronized AActivity<?> getANode() {
 		if (aNode == null) {
 			try {
 				aNode = engine.createActivityObject(getENode());
 				if (aNode instanceof ContextRecipient)
 					((ContextRecipient)aNode).setContext(this);
+				((AActivity<?>)aNode).importParameters(getPNode().getParameters());
 			} catch (InstantiationException | IllegalAccessException e) {
 				log().w(e);
 			}
 		}
-		return aNode;
+		return (AActivity<?>) aNode;
 	}
 
 	void setANode(AElement<?> aNode) {

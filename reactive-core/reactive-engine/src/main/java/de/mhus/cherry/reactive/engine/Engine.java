@@ -1111,6 +1111,8 @@ public class Engine extends MLog implements EEngine {
 			fireEvent.executeStart(runtime,flow,start,activity);
 		if (activity instanceof ContextRecipient)
 			((ContextRecipient)activity).setContext(context);
+		activity.importParameters(flow.getParameters());
+		
 		try {
 			if (init) {
 				activity.initializeActivity();
@@ -1763,6 +1765,7 @@ public class Engine extends MLog implements EEngine {
 	
 	public boolean hasExecuteAccess(UUID nodeId, String user) {
 		if (!config.aaa.isUserActive(user)) return false;
+		if (config.aaa.hasAdminAccess(user)) return true;
 		
 		try {
 			// find actor

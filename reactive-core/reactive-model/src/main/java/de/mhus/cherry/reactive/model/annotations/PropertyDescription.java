@@ -9,5 +9,6 @@ public @interface PropertyDescription {
 	String name() default "";
 	String description() default "";
 	String displayName() default "";
+	boolean writable() default true;
 
 }

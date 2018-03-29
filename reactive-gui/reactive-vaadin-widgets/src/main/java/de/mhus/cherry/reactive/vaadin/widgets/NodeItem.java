@@ -100,6 +100,11 @@ public class NodeItem {
 		return node.getCustomerId();
 	}
 
+	@Column(order=18,title="Assigned User", editable=false)
+	public String getAssigned() {
+		return node.getAssigned();
+	}
+
 	/*	
 	@Column(order=2,title="URI", editable=false,elapsed=false)
 	public String getUri() {

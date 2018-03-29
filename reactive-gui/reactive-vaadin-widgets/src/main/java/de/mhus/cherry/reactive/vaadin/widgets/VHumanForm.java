@@ -1,7 +1,5 @@
 package de.mhus.cherry.reactive.vaadin.widgets;
 
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -13,12 +11,11 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.form.MForm;
 import de.mhus.lib.form.PropertiesDataSource;
-import de.mhus.lib.vaadin.ManagedListEntity;
 import de.mhus.lib.vaadin.form.VaadinForm;
-import de.mhus.lib.vaadin.form.VaadinPojoForm;
 
 public class VHumanForm extends VerticalLayout {
 
+	private static final long serialVersionUID = 1L;
 	private INode node;
 	private Button bCancel;
 	private PropertiesDataSource dataSource;

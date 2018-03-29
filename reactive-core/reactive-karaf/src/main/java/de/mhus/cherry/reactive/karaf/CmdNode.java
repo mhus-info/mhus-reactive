@@ -189,7 +189,12 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());
 
+			System.out.println();
+			for (Entry<String, Object> entry : node.getParameters().entrySet())
+				System.out.println("  " + entry.getKey() + "=" + entry.getValue());
+
 			if (node.getType() == TYPE_NODE.HUMAN) {
+				System.out.println();
 				AElement<?> aNode = api.getEngine().getANode(node.getId());
 				System.out.println("Form:\n" + ((AHumanTask<?>)aNode).createForm().build());
 				System.out.println("\nValues:\n" + ((AHumanTask<?>)aNode).getFormValues());
@@ -220,9 +225,6 @@ public class CmdNode extends MLog implements Action {
 			}
 
 			
-			System.out.println();
-			for (Entry<String, Object> entry : node.getParameters().entrySet())
-				System.out.println(entry.getKey() + "=" + entry.getValue());
 		} else
 		if (cmd.equals("cancel")) {
 			for (String id : parameters) {

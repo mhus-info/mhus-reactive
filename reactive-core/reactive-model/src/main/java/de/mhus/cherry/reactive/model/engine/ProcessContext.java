@@ -18,7 +18,7 @@ public interface ProcessContext<P extends APool<?>> {
 	EPool getEPool();
 	PNode getPNode();
 	EElement getENode();
-	AElement<?> getANode();
+	AActivity<?> getANode();
 	String getUri();
 	EProcess getEProcess();
 	PNode getPRuntime();

@@ -1,6 +1,8 @@
 package de.mhus.cherry.reactive.vaadin.widgets;
 
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.vaadin.event.Action;
@@ -21,13 +23,16 @@ import de.mhus.lib.core.util.MNls;
 import de.mhus.lib.core.util.MNlsFactory;
 import de.mhus.lib.vaadin.ExpandingTable;
 import de.mhus.lib.vaadin.MhuTable;
-import de.mhus.lib.vaadin.ExpandingTable.RenderListener;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
 public class VNodeList extends MhuTable {
 
 	private Log log = Log.getLog(VNodeList.class);
 	private static final long serialVersionUID = 1L;
+	protected static final Action ACTION_ASSIGN = new Action("Assign");
+	protected static final Action ACTION_UNASSIGN = new Action("Unassign");
+	protected static final Action ACTION_EXECUTE = new Action("Do it");
+	protected static final Action ACTION_REFRESH = new Action("Refresh");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
 	MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
@@ -82,15 +87,49 @@ public class VNodeList extends MhuTable {
         addActionHandler(new Action.Handler() {
 			private static final long serialVersionUID = 1L;
 			@Override
-            public Action[] getActions(final Object target, final Object sender) {
+            public Action[] getActions(Object target, final Object sender) {
+				LinkedList<Action> list = new LinkedList<>();
+				Collection<?> targets = getSelectedValues();
+				if (targets != null && targets.size() > 0)
+					target = targets.iterator().next();
+				
 				if (target != null) {
+					NodeItem node = (NodeItem)target;
+					if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.HUMAN) {
+						if (node.getAssigned() == null) {
+							list.add(ACTION_ASSIGN);
+						} else {
+							list.add(ACTION_UNASSIGN);
+						}
+						list.add(ACTION_EXECUTE);
+						list.add(ACTION_REFRESH);
+					}
 				}
-				return new Action[0];
+				return list.toArray(new Action[list.size()]);
 			}
             @Override
             public void handleAction(final Action action, final Object sender,
                     final Object target) {
-            	
+            	try {
+					INode node = engine.getNode(((NodeItem)target).getId().toString(),null);
+					
+	            	if (action == ACTION_UNASSIGN) {
+	            		node.doUnassign();
+	            		doReload();
+	            	} else
+	            	if (action == ACTION_ASSIGN) {
+	            		node.doAssign();
+	            		doReload();
+	            	} else
+	            	if (action == ACTION_EXECUTE) {
+	            		doOpenHumanForm((NodeItem)target);
+	            	} else
+	            	if (action == ACTION_REFRESH) {
+	            		doReload();
+	            	}
+				} catch (Throwable t) {
+					log.e(t);
+				}
             }
         });
         
@@ -107,6 +146,11 @@ public class VNodeList extends MhuTable {
 		
 	}
 
+	public void doReload() {
+		data.removeAllItems();
+		doRefresh(0);
+	}
+
 	protected void doOpenHumanForm(NodeItem selected) {
 		
 	}
@@ -119,7 +163,7 @@ public class VNodeList extends MhuTable {
 				out.addItem(new NodeItem(item));
 		} catch (Exception e) {
 			log.w(e);
-			Notification.show("Organisationen konnten nicht abgefragt werden", Type.WARNING_MESSAGE);
+			Notification.show("Liste konnten nicht abgefragt werden", Type.WARNING_MESSAGE);
 		}
 		
 		return out;

@@ -43,5 +43,11 @@ public interface INode {
 	IProperties getHumanFormValues() throws MException;
 
 	void submitHumanTask(IProperties values) throws IOException, MException;
+
+	String getAssigned();
+
+	void doUnassign() throws IOException, MException;
+
+	void doAssign() throws IOException, MException;
 	
 }

@@ -11,7 +11,7 @@ public interface AHumanTask<P extends APool<?>> extends ATask<P>, IndexValuesPro
 	
 	IProperties getFormValues() throws MException;
 	
-	void doSubmit(IProperties values);
+	void doSubmit(IProperties values) throws MException;
 
 	
 }
