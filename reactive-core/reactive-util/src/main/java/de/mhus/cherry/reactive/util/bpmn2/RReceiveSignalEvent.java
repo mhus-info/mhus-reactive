@@ -29,33 +29,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.model.util;
+package de.mhus.cherry.reactive.util.bpmn2;
 
-import de.mhus.lib.core.definition.DefComponent;
-import de.mhus.lib.core.definition.DefRoot;
-import de.mhus.lib.errors.MException;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.util.activity.REvent;
 
-public class HumanForm {
-	
-	DefRoot root = new DefRoot();
-	
-	public HumanForm add(DefComponent ... components) {
-		root.addDefinition(components);
-		return this;
-	}
-	
+public abstract class RReceiveSignalEvent<P extends RPool<?>> extends REvent<P>{
+
 	@Override
-	public String toString() {
-		return root.toString();
+	public void initializeActivity() throws Exception {
+		getContext().getPNode().setState(STATE_NODE.WAITING);
+		getContext().getPNode().setType(TYPE_NODE.SIGNAL);
+		getContext().getPNode().setSignalEvent(ActivityUtil.getEvent(this));
 	}
 
-	public HumanForm build() throws MException {
-		root.build();
-		return this;
-	}
-	
-	public DefRoot getRoot() {
-		return root;
-	}
-	
 }

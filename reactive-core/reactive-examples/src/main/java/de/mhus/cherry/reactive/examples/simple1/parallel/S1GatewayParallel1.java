@@ -34,7 +34,7 @@ package de.mhus.cherry.reactive.examples.simple1.parallel;
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RParallelGateway;
+import de.mhus.cherry.reactive.util.bpmn2.RParallelGateway;
 
 @ActivityDescription(
 		outputs={

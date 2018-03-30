@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 

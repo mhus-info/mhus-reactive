@@ -37,7 +37,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.util.HumanForm;
+import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.errors.MException;
 
@@ -69,11 +69,11 @@ public interface INode {
 
 	int getScore();
 
-	HumanForm getHumanForm();
+	UserForm getUserForm();
 
-	IProperties getHumanFormValues() throws MException;
+	IProperties getUserFormValues() throws MException;
 
-	void submitHumanTask(IProperties values) throws IOException, MException;
+	void submitUserTask(IProperties values) throws IOException, MException;
 
 	String getAssigned();
 

@@ -39,6 +39,7 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;

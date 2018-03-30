@@ -45,7 +45,7 @@ import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.AElement;
-import de.mhus.cherry.reactive.model.activity.AHumanTask;
+import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
@@ -2017,44 +2017,44 @@ public class Engine extends MLog implements EEngine {
 		}
 	}
 
-	public void assignHumanTask(UUID nodeId, String user) throws IOException, MException {
+	public void assignUserTask(UUID nodeId, String user) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
-			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() != null) throw new MException("node is already assigned",nodeId,node.getAssignedUser());
 			node.setAssignedUser(user);
 			storage.saveFlowNode(node);
 		}
 	}
 
-	public void unassignHumanTask(UUID nodeId) throws IOException, MException {
+	public void unassignUserTask(UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
-			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
 			node.setAssignedUser(null);
 			storage.saveFlowNode(node);
 		}
 	}
 	
-	public void submitHumanTask(UUID nodeId, IProperties values) throws IOException, MException {
+	public void submitUserTask(UUID nodeId, IProperties values) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
 		synchronized (caze) {
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
-			if (node.getType() != TYPE_NODE.HUMAN) throw new MException("node is not a human task",nodeId);
+			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
 		
 			EngineContext context = createContext(caze, node);
 			AElement<?> aNode = context.getANode();
-			if (!(aNode instanceof AHumanTask<?>))
-				throw new MException("node activity is not AHumanTask",nodeId,aNode.getClass().getCanonicalName());
+			if (!(aNode instanceof AUserTask<?>))
+				throw new MException("node activity is not AUserTask",nodeId,aNode.getClass().getCanonicalName());
 			
-			((AHumanTask<?>)aNode).doSubmit(values);
+			((AUserTask<?>)aNode).doSubmit(values);
 			
 			node.setState(STATE_NODE.RUNNING);
 			node.setScheduledNow();

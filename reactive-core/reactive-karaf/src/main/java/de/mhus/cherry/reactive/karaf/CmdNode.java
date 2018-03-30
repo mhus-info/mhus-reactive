@@ -46,7 +46,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.activity.AElement;
-import de.mhus.cherry.reactive.model.activity.AHumanTask;
+import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -103,15 +103,15 @@ public class CmdNode extends MLog implements Action {
 				String v = MString.afterIndex(parts, '=');
 				p.put(k, v);
 			}
-			api.getEngine().submitHumanTask(UUID.fromString(parameters[0]), p);
+			api.getEngine().submitUserTask(UUID.fromString(parameters[0]), p);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("unassign")) {
-			api.getEngine().unassignHumanTask(UUID.fromString(parameters[0]));
+			api.getEngine().unassignUserTask(UUID.fromString(parameters[0]));
 			System.out.println("OK");
 		} else
 		if (cmd.equals("assign")) {
-			api.getEngine().assignHumanTask(UUID.fromString(parameters[0]), parameters[1]);
+			api.getEngine().assignUserTask(UUID.fromString(parameters[0]), parameters[1]);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("resave")) {
@@ -224,11 +224,11 @@ public class CmdNode extends MLog implements Action {
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
 				System.out.println("  " + entry.getKey() + "=" + entry.getValue());
 
-			if (node.getType() == TYPE_NODE.HUMAN) {
+			if (node.getType() == TYPE_NODE.USER) {
 				System.out.println();
 				AElement<?> aNode = api.getEngine().getANode(node.getId());
-				System.out.println("Form:\n" + ((AHumanTask<?>)aNode).createForm().build());
-				System.out.println("\nValues:\n" + ((AHumanTask<?>)aNode).getFormValues());
+				System.out.println("Form:\n" + ((AUserTask<?>)aNode).createForm().build());
+				System.out.println("\nValues:\n" + ((AUserTask<?>)aNode).getFormValues());
 			}
 			
 			if (parameters.length > 1) {

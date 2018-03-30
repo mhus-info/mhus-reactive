@@ -29,26 +29,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.util.activity;
+package de.mhus.cherry.reactive.util.bpmn2;
 
-import de.mhus.cherry.reactive.model.activity.AActor;
-import de.mhus.cherry.reactive.model.activity.APool;
-import de.mhus.cherry.reactive.model.activity.ASwimlane;
-import de.mhus.cherry.reactive.model.engine.ContextRecipient;
-import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import de.mhus.cherry.reactive.model.activity.AEndPoint;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.util.activity.RActivity;
 
-public class RSwimlane<P extends APool<?>> implements ASwimlane<P>, ContextRecipient {
-
-	private Class<? extends AActor> actor;
+public class REndPoint<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 
 	@Override
-	public void setContext(ProcessContext<?> context) {
-		actor = (Class<? extends AActor>) context.getEPool().getPoolDescription().actorDefault();
-	}
-
-	@Override
-	public Class<? extends AActor> getActor() {
-		return actor;
+	public void doExecuteActivity() throws Exception {
+		// only if the last one with this runtime
+//		getContext().getPRuntime().setState(STATE.CLOSED);
+//		getContext().saveRuntime();
+		getContext().getPNode().setState(STATE_NODE.CLOSED);
 	}
 
 }

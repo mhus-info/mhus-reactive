@@ -108,8 +108,8 @@ public class VNodeList extends MhuTable {
 			public void itemClick(ItemClickEvent event) {
 				if (event.isDoubleClick()) {
 					NodeItem selected = (NodeItem)event.getItemId();
-					if (selected != null && selected.getState() == STATE_NODE.WAITING && selected.getType() == TYPE_NODE.HUMAN) {
-						doOpenHumanForm(selected);
+					if (selected != null && selected.getState() == STATE_NODE.WAITING && selected.getType() == TYPE_NODE.USER) {
+						doOpenUserForm(selected);
 					}
 //					Notification.show("DoubleClick: " + ((NodeItem)event.getItemId()).getName());
 				}
@@ -127,7 +127,7 @@ public class VNodeList extends MhuTable {
 				
 				if (target != null) {
 					NodeItem node = (NodeItem)target;
-					if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.HUMAN) {
+					if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.USER) {
 						if (node.getAssigned() == null) {
 							list.add(ACTION_ASSIGN);
 						} else {
@@ -154,7 +154,7 @@ public class VNodeList extends MhuTable {
 	            		doReload();
 	            	} else
 	            	if (action == ACTION_EXECUTE) {
-	            		doOpenHumanForm((NodeItem)target);
+	            		doOpenUserForm((NodeItem)target);
 	            	} else
 	            	if (action == ACTION_REFRESH) {
 	            		doReload();
@@ -189,7 +189,7 @@ public class VNodeList extends MhuTable {
 		doRefresh(0);
 	}
 
-	protected void doOpenHumanForm(NodeItem selected) {
+	protected void doOpenUserForm(NodeItem selected) {
 		
 	}
 

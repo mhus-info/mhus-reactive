@@ -29,19 +29,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.util.activity;
+package de.mhus.cherry.reactive.util.bpmn2;
 
-import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
-import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.model.activity.AActor;
+import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.activity.ASwimlane;
+import de.mhus.cherry.reactive.model.engine.ContextRecipient;
+import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
-public abstract class RSignalEvent<P extends RPool<?>> extends REvent<P>{
+public class RSwimlane<P extends APool<?>> implements ASwimlane<P>, ContextRecipient {
+
+	private Class<? extends AActor> actor;
 
 	@Override
-	public void initializeActivity() throws Exception {
-		getContext().getPNode().setState(STATE_NODE.WAITING);
-		getContext().getPNode().setType(TYPE_NODE.SIGNAL);
-		getContext().getPNode().setSignalEvent(ActivityUtil.getEvent(this));
+	public void setContext(ProcessContext<?> context) {
+		actor = (Class<? extends AActor>) context.getEPool().getPoolDescription().actorDefault();
+	}
+
+	@Override
+	public Class<? extends AActor> getActor() {
+		return actor;
 	}
 
 }

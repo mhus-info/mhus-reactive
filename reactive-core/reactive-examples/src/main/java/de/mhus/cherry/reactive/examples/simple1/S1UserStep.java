@@ -36,8 +36,8 @@ import java.util.LinkedList;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
-import de.mhus.cherry.reactive.model.util.HumanForm;
-import de.mhus.cherry.reactive.util.activity.RHumanTask;
+import de.mhus.cherry.reactive.model.util.UserForm;
+import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.M;
 import de.mhus.lib.errors.MException;
@@ -51,7 +51,7 @@ import de.mhus.lib.form.definition.FmText;
 		outputs = @Output(activity=S1TheEnd.class), 
 		lane = S1Lane1.class
 		)
-public class S1HumanStep extends RHumanTask<S1Pool> {
+public class S1UserStep extends RUserTask<S1Pool> {
 
 	@PropertyDescription
 	private String text3 = "text3";
@@ -65,11 +65,11 @@ public class S1HumanStep extends RHumanTask<S1Pool> {
 	};
 	@SuppressWarnings("unchecked")
 	@Override
-	public HumanForm createForm() {
-		return new HumanForm().add(
+	public UserForm createForm() {
+		return new UserForm().add(
 			new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
 			new FmText(M.n(S1Pool::getText2), "Text2", ""),
-			new FmText(M.n(S1HumanStep::getText3), "Text3", ""),
+			new FmText(M.n(S1UserStep::getText3), "Text3", ""),
 			new FmCombobox("option", "Option", "Sample Option with options")
 		);
 	}

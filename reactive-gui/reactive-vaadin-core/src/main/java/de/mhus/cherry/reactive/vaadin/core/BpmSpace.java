@@ -53,7 +53,7 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
-import de.mhus.cherry.reactive.vaadin.widgets.VHumanForm;
+import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
@@ -107,7 +107,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 				SearchCriterias criterias = new SearchCriterias();
 				criterias.unassigned = true;
 				criterias.nodeState = STATE_NODE.WAITING;
-				criterias.type = TYPE_NODE.HUMAN;
+				criterias.type = TYPE_NODE.USER;
 				String[] properties = new String[] {"*"};
 				Component cached = contentCache.get(selection);
 				if (cached == null) {
@@ -127,7 +127,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 				SearchCriterias criterias = new SearchCriterias();
 				criterias.assigned = engine.getUser();
 				criterias.nodeState = STATE_NODE.WAITING;
-				criterias.type = TYPE_NODE.HUMAN;
+				criterias.type = TYPE_NODE.USER;
 				String[] properties = new String[] {"*"};
 				Component cached = contentCache.get(selection);
 				if (cached == null) {
@@ -283,9 +283,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		VNodeList list = new VNodeList() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			protected void doOpenHumanForm(NodeItem selected) {
+			protected void doOpenUserForm(NodeItem selected) {
 				try {
-					showHumanForm(selected);
+					showUserForm(selected);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -320,10 +320,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 						context.getLocale());
 	}
 
-	protected void showHumanForm(NodeItem selected) throws Exception {
+	protected void showUserForm(NodeItem selected) throws Exception {
 
 		INode node = engine.getNode(selected.getId().toString(), null);
-		VHumanForm form = new VHumanForm(node) {
+		VUserForm form = new VUserForm(node) {
 			@Override
 			protected void onFormCancel() {
 				System.out.println("Cancel");
@@ -333,7 +333,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			protected void onFormSubmit(INode node, MProperties properties) {
 				System.out.println("Submit");
 				try {
-					node.submitHumanTask(properties);
+					node.submitUserTask(properties);
 					showNodeList();
 				} catch (IOException | MException e) {
 					// TODO Auto-generated catch block

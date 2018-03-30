@@ -40,8 +40,8 @@ import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
-import de.mhus.cherry.reactive.model.util.HumanForm;
-import de.mhus.cherry.reactive.util.activity.RHumanTask;
+import de.mhus.cherry.reactive.model.util.UserForm;
+import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.errors.MException;
 
 @ActivityDescription(
@@ -52,10 +52,10 @@ import de.mhus.lib.errors.MException;
 		}
 		)
 @ActorAssign(S1ActorSpecialist.class)
-public class S1StepTrigger extends RHumanTask<S1Pool> {
+public class S1StepTrigger extends RUserTask<S1Pool> {
 
 	@Override
-	public HumanForm createForm() {
+	public UserForm createForm() {
 		return null;
 	}
 

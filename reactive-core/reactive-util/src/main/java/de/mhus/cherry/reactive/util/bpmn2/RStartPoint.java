@@ -29,20 +29,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.model.activity;
+package de.mhus.cherry.reactive.util.bpmn2;
 
-import de.mhus.cherry.reactive.model.util.HumanForm;
-import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
-import de.mhus.lib.core.IProperties;
-import de.mhus.lib.errors.MException;
+import de.mhus.cherry.reactive.model.activity.AStartPoint;
+import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.util.activity.RActivity;
 
-public interface AHumanTask<P extends APool<?>> extends ATask<P>, IndexValuesProvider {
+public class RStartPoint<P extends RPool<?>> extends RActivity<P> implements AStartPoint<P> {
 
-	HumanForm createForm();
-	
-	IProperties getFormValues() throws MException;
-	
-	void doSubmit(IProperties values) throws MException;
+	@Override
+	public void doExecuteActivity() throws Exception {
+		EElement eNode = getContext().getENode();
+		for (Output output : eNode.getActivityDescription().outputs()) {
+			try {
+				getContext().createActivity(output.activity());
+			} catch (Throwable t) {
+				log().w(output,t);
+			}
+		}
+		getContext().getPNode().setState(STATE_NODE.CLOSED);
+	}
 
 	
 }

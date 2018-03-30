@@ -35,11 +35,11 @@ import de.mhus.cherry.reactive.examples.simple1.S1Pool;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RJoinGateway;
+import de.mhus.cherry.reactive.util.bpmn2.RParallelGateway;
 
 @ActivityDescription(
 		outputs=@Output(activity=S1TheEnd.class)
 		)
-public class S1GatewayJoin extends RJoinGateway<S1Pool>{
+public class S1GatewayJoin extends RParallelGateway<S1Pool>{
 
 }

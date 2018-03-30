@@ -33,6 +33,7 @@ package de.mhus.cherry.reactive.util.activity;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.util.bpmn2.RPool;
 
 public abstract class RExternalEvent<P extends RPool<?>> extends REvent<P>{
 

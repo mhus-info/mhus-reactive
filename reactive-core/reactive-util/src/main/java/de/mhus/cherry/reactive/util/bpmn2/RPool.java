@@ -29,7 +29,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.util.activity;
+package de.mhus.cherry.reactive.util.bpmn2;
 
 import java.io.IOException;
 import java.util.HashMap;

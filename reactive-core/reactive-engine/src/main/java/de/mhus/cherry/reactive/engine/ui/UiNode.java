@@ -38,14 +38,14 @@ import java.util.UUID;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.model.activity.AElement;
-import de.mhus.cherry.reactive.model.activity.AHumanTask;
+import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.util.HumanForm;
+import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
@@ -146,29 +146,29 @@ public class UiNode extends MLog implements INode {
 	}
 
 	@Override
-	public HumanForm getHumanForm() {
+	public UserForm getUserForm() {
 		// TODO check assign
 		try {
-			engine.assignHumanTask(info.getId(), ui.getUser());
+			engine.assignUserTask(info.getId(), ui.getUser());
 		} catch (IOException | MException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		initANode();
-		return ((AHumanTask<?>)aNode).createForm();
+		return ((AUserTask<?>)aNode).createForm();
 	}
 
 	@Override
-	public IProperties getHumanFormValues() throws MException {
+	public IProperties getUserFormValues() throws MException {
 		// TODO check assign
 		initANode();
-		return ((AHumanTask<?>)aNode).getFormValues();
+		return ((AUserTask<?>)aNode).getFormValues();
 	}
 	
 	@Override
-	public void submitHumanTask(IProperties values) throws IOException, MException {
+	public void submitUserTask(IProperties values) throws IOException, MException {
 		// TODO check assign
-		engine.submitHumanTask(info.getId(), values);
+		engine.submitUserTask(info.getId(), values);
 	}
 	
 	
@@ -194,14 +194,14 @@ public class UiNode extends MLog implements INode {
 	public void doUnassign() throws IOException, MException {
 		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
 			throw new AccessDeniedException();
-		engine.unassignHumanTask(info.getId());
+		engine.unassignUserTask(info.getId());
 	}
 
 	@Override
 	public void doAssign() throws IOException, MException {
 		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
 			throw new AccessDeniedException();
-		engine.unassignHumanTask(info.getId());
+		engine.unassignUserTask(info.getId());
 	}
 
 }

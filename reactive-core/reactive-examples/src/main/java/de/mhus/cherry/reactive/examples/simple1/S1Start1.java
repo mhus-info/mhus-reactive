@@ -33,7 +33,7 @@ package de.mhus.cherry.reactive.examples.simple1;
 
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RStartPoint;
+import de.mhus.cherry.reactive.util.bpmn2.RStartPoint;
 
 @ActivityDescription(
 		outputs=@Output(activity=S1StepMain.class),

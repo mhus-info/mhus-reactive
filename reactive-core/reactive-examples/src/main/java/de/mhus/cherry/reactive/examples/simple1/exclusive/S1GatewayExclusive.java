@@ -37,7 +37,7 @@ import de.mhus.cherry.reactive.examples.simple1.S1Terminate3;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RExclusiveGateway;
+import de.mhus.cherry.reactive.util.bpmn2.RExclusiveGateway;
 
 @ActivityDescription(
 		outputs={

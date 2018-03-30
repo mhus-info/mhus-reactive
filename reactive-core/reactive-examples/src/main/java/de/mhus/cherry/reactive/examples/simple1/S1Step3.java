@@ -34,7 +34,7 @@ package de.mhus.cherry.reactive.examples.simple1;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.activity.RServiceTask;
+import de.mhus.cherry.reactive.util.bpmn2.RServiceTask;
 
 @ActivityDescription(
 		outputs=@Output(name=S1Step3.END,activity=S1TheEnd.class),

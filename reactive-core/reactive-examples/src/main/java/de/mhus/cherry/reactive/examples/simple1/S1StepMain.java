@@ -47,7 +47,7 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.errors.TaskException;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
-import de.mhus.cherry.reactive.util.activity.RServiceTask;
+import de.mhus.cherry.reactive.util.bpmn2.RServiceTask;
 import de.mhus.lib.core.MDate;
 
 @ActivityDescription(
@@ -56,7 +56,7 @@ import de.mhus.lib.core.MDate;
 		outputs = {
 				@Output(name="step2",activity=S1Step2.class),
 				@Output(name="step3",activity=S1Step3.class),
-				@Output(name="human",activity=S1HumanStep.class),
+				@Output(name="user",activity=S1UserStep.class),
 				@Output(name="external",activity=S1EventExternal.class),
 				@Output(name="message",activity=S1EventMessage.class),
 				@Output(name="signal",activity=S1EventSignal.class),
@@ -87,9 +87,9 @@ public class S1StepMain extends RServiceTask<S1Pool> implements IndexValuesProvi
 		
 		switch( getPool().getText1() ) {
 		case "error1":
-			throw new TaskException("Mist", "error1");
+			throw new TaskException("F** Exception", "error1");
 		case "fatal":
-			throw new Exception("Mist");
+			throw new Exception("F** Excption");
 		case "second":
 			return "step2";
 		case "third":

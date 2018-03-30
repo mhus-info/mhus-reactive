@@ -29,19 +29,20 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.util.activity;
+package de.mhus.cherry.reactive.util.bpmn2;
 
-import de.mhus.cherry.reactive.model.activity.AEndPoint;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.util.activity.REvent;
 
-public abstract class RTerminate<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
+public abstract class RReceiveMessageEvent<P extends RPool<?>> extends REvent<P>{
 
 	@Override
-	public void doExecuteActivity() throws Exception {
-		getContext().getPCase().close(getExitCode(), getExitMessage());
+	public void initializeActivity() throws Exception {
+		getContext().getPNode().setState(STATE_NODE.WAITING);
+		getContext().getPNode().setType(TYPE_NODE.MESSAGE);
+		getContext().getPNode().setMessageEvent(ActivityUtil.getEvent(this));
 	}
-
-	protected abstract int getExitCode();
-
-	protected abstract String getExitMessage();
 
 }

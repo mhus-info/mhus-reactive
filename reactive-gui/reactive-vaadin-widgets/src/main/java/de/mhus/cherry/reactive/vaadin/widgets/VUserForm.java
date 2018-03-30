@@ -37,21 +37,21 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.util.HumanForm;
+import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.form.MForm;
 import de.mhus.lib.form.PropertiesDataSource;
 import de.mhus.lib.vaadin.form.VaadinForm;
 
-public class VHumanForm extends VerticalLayout {
+public class VUserForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 	private INode node;
 	private Button bCancel;
 	private PropertiesDataSource dataSource;
 
-	public VHumanForm(INode node) {
+	public VUserForm(INode node) {
 		this.node = node;
 		VaadinForm form = createForm();
 		addComponent(form);
@@ -94,10 +94,10 @@ public class VHumanForm extends VerticalLayout {
 
 	protected VaadinForm createForm() {
 		try {
-			HumanForm hForm = node.getHumanForm();
+			UserForm hForm = node.getUserForm();
 			DefRoot form = hForm.getRoot();
 			dataSource = new PropertiesDataSource();
-			dataSource.setProperties(new MProperties( node.getHumanFormValues()));
+			dataSource.setProperties(new MProperties( node.getUserFormValues()));
 			
 			VaadinForm vform = new VaadinForm();
 			vform.setShowInformation(true);

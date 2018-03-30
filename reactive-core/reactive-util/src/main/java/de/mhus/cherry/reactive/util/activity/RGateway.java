@@ -35,6 +35,7 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AGateway;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.util.bpmn2.RPool;
 
 public abstract class RGateway<P extends RPool<?>> extends RActivity<P> implements AGateway<P> {
 
