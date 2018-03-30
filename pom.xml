@@ -308,14 +308,15 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<header>LICENSE.txt</header>
+					<header>LICENSE_HEADER</header>
 					<properties>
 						<owner>Mike Hummel</owner>
 						<email>mh@mhus.de</email>
 					</properties>
 					<excludes>
 						<exclude>readme.txt</exclude>
-						<exclude>LICENSE.txt</exclude>
+						<exclude>LICENSE</exclude>
+						<exclude>LICENSE_HEADER</exclude>
 						<exclude>src/test/resources/**</exclude>
 						<exclude>src/main/resources/**</exclude>
 						<exclude>docs/**</exclude>
