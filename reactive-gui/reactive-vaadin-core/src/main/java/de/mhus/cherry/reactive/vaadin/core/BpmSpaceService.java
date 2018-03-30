@@ -1,4 +1,4 @@
-package de.mhus.cherry.reactive.vaadin.core.space;
+package de.mhus.cherry.reactive.vaadin.core;
 
 import java.util.Locale;
 
