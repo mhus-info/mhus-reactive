@@ -34,12 +34,8 @@ package de.mhus.cherry.reactive.vaadin.widgets;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
-import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
-import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
-import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.annotations.vaadin.Column;
 import de.mhus.lib.errors.MException;
 

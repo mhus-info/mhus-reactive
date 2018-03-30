@@ -32,7 +32,6 @@
 package de.mhus.cherry.reactive.util.bpmn2;
 
 import de.mhus.cherry.reactive.model.activity.AUserTask;
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;

@@ -32,13 +32,10 @@
 package de.mhus.cherry.reactive.model.engine;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
-import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
-import de.mhus.lib.errors.MException;
 
 public interface ProcessContext<P extends APool<?>> {
 

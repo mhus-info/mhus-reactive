@@ -101,6 +101,7 @@ public class VCaseList extends MhuTable {
 			@Override
 			public void itemClick(ItemClickEvent event) {
 				if (event.isDoubleClick()) {
+					@SuppressWarnings("unused")
 					CaseItem selected = (CaseItem)event.getItemId();
 //					Notification.show("DoubleClick: " + ((NodeItem)event.getItemId()).getName());
 				}

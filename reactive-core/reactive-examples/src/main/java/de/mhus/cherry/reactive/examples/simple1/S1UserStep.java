@@ -31,8 +31,6 @@
  */
 package de.mhus.cherry.reactive.examples.simple1;
 
-import java.util.LinkedList;
-
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -43,7 +41,6 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.Item;
 import de.mhus.lib.form.definition.FmCombobox;
-import de.mhus.lib.form.definition.FmOptions;
 import de.mhus.lib.form.definition.FmReadOnly;
 import de.mhus.lib.form.definition.FmText;
 

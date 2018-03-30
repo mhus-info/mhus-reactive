@@ -33,7 +33,6 @@ package de.mhus.cherry.reactive.vaadin.core;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.vaadin.data.Property.ValueChangeEvent;
@@ -53,15 +52,14 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
-import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
+import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
-import de.mhus.lib.vaadin.desktop.GuiSubSpace;
 import de.mhus.lib.vaadin.desktop.Navigable;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
@@ -77,11 +75,13 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 	private static final String I_ALL_NODES = "All nodes";
 	private static final String I_ACTIVE_CASES = "Active cases";
 	private static final String I_ALL_CASES = "All cases";
+	@SuppressWarnings("unused")
 	private BpmSpaceService service;
 	private IEngine engine;
 	private HorizontalLayout page;
 
 	private String currentSelection;
+	@SuppressWarnings("unused")
 	private Component currentView;
 	private Map<String, Component> contentCache;
 	private String currentFilter;
@@ -324,6 +324,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
 		INode node = engine.getNode(selected.getId().toString(), null);
 		VUserForm form = new VUserForm(node) {
+			private static final long serialVersionUID = 1L;
 			@Override
 			protected void onFormCancel() {
 				System.out.println("Cancel");

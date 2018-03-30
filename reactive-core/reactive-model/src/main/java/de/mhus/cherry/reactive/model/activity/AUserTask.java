@@ -31,8 +31,8 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
+import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.errors.MException;
 
