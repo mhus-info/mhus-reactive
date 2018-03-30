@@ -154,6 +154,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 	}
 
 	private void setContent(Component content) {
+		if (content == null) return;
 		try {
 			Component oldContent = page.getComponent(1);
 			if (oldContent != content) {
