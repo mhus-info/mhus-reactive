@@ -1,0 +1,86 @@
+/**
+ * Copyright 2018 Mike Hummel
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * This file is part of cherry-reactive.
+ *
+ *     cherry-reactive is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     cherry-reactive is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.mhus.cherry.reactive.util.activity;
+
+import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AServiceTask;
+import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.errors.EngineException;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.cherry.reactive.util.activity.RTask;
+import de.mhus.cherry.reactive.util.bpmn2.RPool;
+/**
+ * This task is used if you need to know the id of the next created activity in
+ * execution time. If you use this, the next activity will already be created
+ * and maybe executed. The main scenario to use this is to execute a ExternalEvent
+ * as next task and grab the id before.
+ * 
+ * You can not deny execution of the next node e.g. be error.
+ * 
+ * @author mikehummel
+ *
+ * @param <P>
+ */
+public abstract class RServicePostNextTask<P extends RPool<?>> extends RTask<P> implements AServiceTask<P> {
+
+	@Override
+	public void doExecuteActivity() throws Exception {
+		String nextName = doExecute();
+		if (nextName == null) 
+			nextName = DEFAULT_OUTPUT;
+		if (!nextName.equals(RETRY)) {
+			Class<? extends AActivity<?>> next = ActivityUtil.getOutputByName(this, nextName);
+			if (next == null)
+				throw new EngineException("Output Activity not found: " + nextName + " in " + getClass().getCanonicalName());
+			PNode nextPNode = getContext().createActivity(next);
+			
+			doExecute(nextPNode);
+			
+			getContext().getPNode().setState(STATE_NODE.CLOSED);
+		}
+	}
+
+	@Override
+	public String doExecute() throws Exception {
+		return null;
+	}
+
+	/**
+	 * Executed after the next activity is created.
+	 * 
+	 * @param nextPNode
+	 * @throws Exception
+	 */
+	public abstract void doExecute(PNode nextPNode)  throws Exception;
+
+}

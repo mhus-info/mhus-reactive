@@ -31,15 +31,15 @@
  */
 package de.mhus.cherry.reactive.model.util;
 
-import de.mhus.lib.core.definition.DefComponent;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.errors.MException;
 
 public class UserForm {
 	
 	DefRoot root = new DefRoot();
 	
-	public UserForm add(DefComponent ... components) {
+	public UserForm add(IDefDefinition ... components) {
 		root.addDefinition(components);
 		return this;
 	}

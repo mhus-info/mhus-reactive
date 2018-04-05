@@ -100,7 +100,7 @@ public class VUserForm extends VerticalLayout {
 			dataSource.setProperties(new MProperties( node.getUserFormValues()));
 			
 			VaadinForm vform = new VaadinForm();
-			vform.setShowInformation(true);
+//			vform.setShowInformation(true);
 			MForm mform = new MForm(form);
 			mform.setDataSource(dataSource);
 			vform.setForm(mform);

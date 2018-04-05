@@ -29,8 +29,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with cherry-reactive.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.mhus.cherry.reactive.examples.simple1;
+package de.mhus.cherry.reactive.examples.simple1.forms;
 
+import de.mhus.cherry.reactive.examples.simple1.S1Pool;
+import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -46,10 +48,10 @@ import de.mhus.lib.form.definition.FmReadOnly;
 import de.mhus.lib.form.definition.FmText;
 
 @ActivityDescription(
-		outputs = @Output(activity=S1TheEnd.class), 
-		lane = S1Lane1.class
+		displayName = "Complex User Form 01",
+		outputs = @Output(activity=S1TheEnd.class)
 		)
-public class S1UserStep extends RUserTask<S1Pool> {
+public class S1UserForm01 extends RUserTask<S1Pool> {
 
 	@PropertyDescription
 	private String text3 = "text3";
@@ -68,7 +70,7 @@ public class S1UserStep extends RUserTask<S1Pool> {
 			new DefAttribute("showInformation", true),
 			new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
 			new FmText(M.n(S1Pool::getText2), "Text2", ""),
-			new FmText(M.n(S1UserStep::getText3), "Text3", ""),
+			new FmText(M.n(S1UserForm01::getText3), "Text3", ""),
 			new FmCombobox("option", "Option", "Sample Option with options")
 		);
 	}
