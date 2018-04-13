@@ -36,5 +36,14 @@ public class EngineConst {
 	public static final String UI_NODE_PREFIX = "node.";
 	public static final int MAX_CREATE_ACTIVITY = 1000;
 	public static final int ERROR_CODE_MAX_CREATE_ACTIVITY = -1000;
+	public static final String ENGINE_PROGRESS_TIMEOUT = "engine.progress.timeout";
+
+	public static final String MILESTONE_START = "NEW";
+	public static final String MILESTONE_PROGRESS = "PROGRESS";
+	public static final String MILESTONE_FINISHED = "FINISHED";
+	/**
+	 * Set this parameter to wait for milestone PROGRESS after start of case.
+	 */
+	public static final String PARAM_PROGRESS = "progress"; 
 
 }

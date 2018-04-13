@@ -68,6 +68,7 @@ import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
+import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
@@ -81,6 +82,7 @@ import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
 
 public class Engine extends MLog implements EEngine {
@@ -703,8 +705,30 @@ public class Engine extends MLog implements EEngine {
 				if (!hasInitiateAccess(uri, user))
 					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
+			UUID id = (UUID)start(uri, null, null);
 			
-			return start(uri, null, null);
+			String[] uriParams = uri.getParams();
+			if (uriParams != null && uriParams.length > 0) {
+				MProperties options = MProperties.explodeToMProperties(uriParams);
+				if (options.getBoolean( EngineConst.PARAM_PROGRESS, false)) {
+					long waitTime = 500;
+					long start = System.currentTimeMillis();
+					long timeout = MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_PROGRESS_TIMEOUT), MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5);
+					while (true) {
+						PCase caze = getCase(id);
+						if (	caze.getState() == STATE_CASE.CLOSED || 
+								caze.getState() == STATE_CASE.SUSPENDED || 
+								EngineConst.MILESTONE_PROGRESS.equals(caze.getMilestone())) {
+							break;
+						}
+						if (MTimeInterval.isTimeOut(start, timeout)) throw new TimeoutRuntimeException("wait for progress timeout",id);
+						Thread.sleep(waitTime);
+						if (waitTime < 4000)
+							waitTime+=500;
+					}
+				}
+			}
+			return id;
 		}
 		case "bmpm": {
 			// check access
@@ -906,7 +930,7 @@ public class Engine extends MLog implements EEngine {
 				0,
 				closeActivity,
 				properties,
-				PCase.MILESTONE_START
+				EngineConst.MILESTONE_START
 			);
 		context.setPCase(pCase);
 		

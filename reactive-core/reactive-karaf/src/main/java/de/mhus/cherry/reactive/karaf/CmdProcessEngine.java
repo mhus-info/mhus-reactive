@@ -43,7 +43,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			+ " uninstall <name>        - uninstall process\n"
 			+ " install [<path>*]       - install process, give pathes to jar files or 'classes' folders\n"
 			+ " cleanup                 - execute engine cleanup\n"
-			+ " execute                 - execute engine next step\n"
+			+ " step                    - execute engine next step\n"
 			+ " save                    - save engine configuration\n"
 			+ " load                    - load engine configuration\n"
 			+ " state                   - print current engine state\n"
@@ -52,7 +52,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			+ " start                   - start engine\n"
 			+ " stop                    - stop and destroy engine\n"
 			+ " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
-			+ " execute <uri>           - executes the uri\n"
+			+ " execute <uri>           - executes the uri, e.g. bpm://process/pool to start a case\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -124,7 +124,7 @@ public class CmdProcessEngine extends MLog implements Action {
 			api.getEngine().cleanupCases();
 			System.out.println("OK");
 		} else
-		if (cmd.equals("execute")) {
+		if (cmd.equals("step")) {
 			api.getEngine().processNodes();
 			System.out.println("OK");
 		} else

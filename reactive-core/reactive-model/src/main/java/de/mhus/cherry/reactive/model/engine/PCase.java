@@ -27,8 +27,6 @@ import java.util.UUID;
 public class PCase implements Externalizable {
 	
 	public enum STATE_CASE {NEW, RUNNING, SUSPENDED, CLOSED}
-
-	public static final String MILESTONE_START = "NEW";
 	
 	protected UUID id;
 	protected String uri;
