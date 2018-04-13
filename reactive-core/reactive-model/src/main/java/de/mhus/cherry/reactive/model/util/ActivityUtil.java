@@ -19,6 +19,7 @@ import java.util.LinkedList;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
+import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -26,11 +27,17 @@ import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.logging.Log;
+import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoParser;
 
 public class ActivityUtil {
 
+	private static Log log = Log.getLog(ActivityUtil.class);
+	
 	public static Class<? extends AActivity<?>> getOutputByName(AActivity<?> element, String name) {
 		return getOutputByName(element.getClass(), name);
 	}
@@ -113,6 +120,40 @@ public class ActivityUtil {
 	@SuppressWarnings("unchecked")
 	public static PojoModel createFormPojoModel(Class<?> clazz) {
 		return new PojoParser().parse(clazz, "_", new Class[] { PropertyDescription.class }).filter(true,false,true,true,true).getModel();
+	}
+	
+	/**
+	 * Inspect pool and activity to get the values of the fields into the
+	 * returned properties object. The activity fields have higher priority.
+	 * 
+	 * @param pool The pool or null
+	 * @param activity The activity or null
+	 * @return The values
+	 */
+	public static IProperties prepareProperties(APool<?> pool, AActivity<?> activity) {
+		MProperties out = new MProperties();
+		if (activity != null) {
+			PojoModel model = createPojoModel(activity.getClass());
+			for (PojoAttribute<?> attr : model) {
+				try {
+					out.put(attr.getName(), attr.get(activity));
+				} catch (Throwable t) {
+					log.t(attr,t);
+				}
+			}
+		}
+		if (pool != null) {
+			PojoModel model = createPojoModel(pool.getClass());
+			for (PojoAttribute<?> attr : model) {
+				if (!out.containsKey(attr.getName()))
+					try {
+						out.put(attr.getName(), attr.get(pool));
+					} catch (Throwable t) {
+						log.t(attr,t);
+					}
+			}
+		}
+		return out;
 	}
 
 }

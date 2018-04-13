@@ -20,9 +20,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reactive-core</artifactId>
+	<artifactId>cr-examples</artifactId>
 	<packaging>pom</packaging>
-	<name>Cherry Business Process Model Core</name>
+	<name>Cherry Business Process Model Examples</name>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>cherry-reactive</artifactId>
@@ -31,13 +31,7 @@
 
 
 	<modules>
-		<module>reactive-model</module>
-		<module>reactive-util</module>
-		<module>reactive-engine</module>
-		<module>reactive-test</module>
-		<module>reactive-osgi</module>
-		<module>reactive-karaf</module>
-		<module>reactive-dev</module>
+		<module>cr-example-register-user</module>
 	</modules>
 
 </project>

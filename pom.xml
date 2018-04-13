@@ -150,6 +150,7 @@
 		<module>reactive-core</module>
 		<module>reactive-sop</module>
 		<module>reactive-gui</module>
+		<module>cr-examples</module>
 	</modules>
 
 	<distributionManagement>
