@@ -32,6 +32,7 @@ public class PCaseInfo {
 	private long modified;
 	private int priority;
 	private int score;
+	private String milestone;
 
 	public PCaseInfo(
 			UUID id, 
@@ -44,7 +45,9 @@ public class PCaseInfo {
 			long modified,
 			int priority,
 			int score,
-			String[] indexValues) {
+			String[] indexValues,
+			String milestone
+			) {
 		this.id = id;
 		this.uri = uri;
 		this.canonicalName = canonicalName;
@@ -56,6 +59,7 @@ public class PCaseInfo {
 		this.modified = modified;
 		this.priority = priority;
 		this.score = score;
+		this.milestone = milestone;
 	}
 
 	public PCaseInfo(PCase caze) {
@@ -70,7 +74,9 @@ public class PCaseInfo {
 				0,
 				0,
 				0,
-				null);
+				null,
+				caze.getMilestone()
+				);
 	}
 
 	public UUID getId() {
@@ -116,6 +122,10 @@ public class PCaseInfo {
 
 	public int getScore() {
 		return score;
+	}
+
+	public String getMilestone() {
+		return milestone;
 	}
 
 }

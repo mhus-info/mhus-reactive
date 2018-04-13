@@ -26,7 +26,9 @@ import java.util.UUID;
 
 public class PCase implements Externalizable {
 	
-	public enum STATE_CASE {NEW, RUNNING, SUSPENDED, CLOSED};
+	public enum STATE_CASE {NEW, RUNNING, SUSPENDED, CLOSED}
+
+	public static final String MILESTONE_START = "NEW";
 	
 	protected UUID id;
 	protected String uri;
@@ -43,6 +45,7 @@ public class PCase implements Externalizable {
 	private UUID closeActivity;
 	// will not be stored
 	private String[] indexValues;
+	private String milestone;
 
 	public PCase() {}
 
@@ -60,10 +63,11 @@ public class PCase implements Externalizable {
 		this.closedCode = clone.getClosedCode();
 		this.closedMessage = clone.getClosedMessage();
 		this.closeActivity = clone.getCloseActivity();
+		this.milestone = clone.getMilestone();
 	}
 	
 	public PCase(UUID id, Map<String,Object> options, String uri, String name, String canonicalName, long creationDate, String createdBy, STATE_CASE state,
-	        long scheduled, UUID closeActivity, Map<String, Object> parameters) {
+	        long scheduled, UUID closeActivity, Map<String, Object> parameters, String milestone) {
 		this.id = id;
 		this.options = new HashMap<>(options);
 		this.uri = uri;
@@ -75,6 +79,7 @@ public class PCase implements Externalizable {
 		this.scheduled = scheduled;
 		this.closeActivity = closeActivity;
 		this.parameters = new HashMap<>(parameters);
+		this.milestone = milestone;
 	}
 
 	public UUID getId() {
@@ -141,6 +146,8 @@ public class PCase implements Externalizable {
 		out.writeInt(closedCode);
 		out.writeObject(closedMessage);
 		out.writeObject(closeActivity);
+		out.writeObject(milestone);
+		
 		out.flush();
 	}
 
@@ -166,6 +173,7 @@ public class PCase implements Externalizable {
 		closedCode = in.readInt();
 		closedMessage = (String) in.readObject();
 		closeActivity = (UUID) in.readObject();
+		milestone = (String) in.readObject();
 		
 	}
 
@@ -214,5 +222,12 @@ public class PCase implements Externalizable {
 		return closeActivity;
 	}
 
+	public String getMilestone() {
+		return milestone;
+	}
+
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
+	}
 
 }

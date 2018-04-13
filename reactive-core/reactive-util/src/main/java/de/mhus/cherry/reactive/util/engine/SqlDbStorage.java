@@ -57,7 +57,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
 	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
-	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_" + INDEX_COLUMNS;
+	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_,milestone_," + INDEX_COLUMNS;
 	private static final String NODE_COLUMNS = "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_" + INDEX_COLUMNS;
 	private DbPool pool;
 	private String prefix;
@@ -103,6 +103,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			prop.put("state", 			caze.getState());
 			prop.put("closedCode", 		caze.getClosedCode());
 			prop.put("closedMessage", 	M.trunc(caze.getClosedMessage() == null ? "" : caze.getClosedMessage(), 400) );
+			prop.put("milestone",       M.trunc(caze.getMilestone(), 200));
 			
 			if (!exists) {
 				prop.put("created", 		new Date());
@@ -121,6 +122,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "content_=$content$,"
 						+ "modified_=$modified$,"
 						+ "state_=$state$,"
+						+ "milestone_=$milestone$,"
 						+ "closed_code_=$closedCode$,"
 						+ "closed_message_=$closedMessage$";
 
@@ -153,6 +155,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "created_,"
 						+ "modified_,"
 						+ "state_,"
+						+ "milestone_,"
 						+ "uri_,"
 						+ "closed_code_,"
 						+ "closed_message_,"
@@ -180,6 +183,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						+ "$created$,"
 						+ "$modified$,"
 						+ "$state$,"
+						+ "$milestone$,"
 						+ "$uri$,"
 						+ "$closedCode$,"
 						+ "$closedMessage$,"
@@ -1007,7 +1011,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 						res.getString("index7_"),
 						res.getString("index8_"),
 						res.getString("index9_")
-					}
+					},
+				res.getString("milestone_")
 				);
 		return out;
 	}

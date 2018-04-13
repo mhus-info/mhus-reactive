@@ -905,7 +905,8 @@ public class Engine extends MLog implements EEngine {
 				STATE_CASE.NEW, 
 				0,
 				closeActivity,
-				properties
+				properties,
+				PCase.MILESTONE_START
 			);
 		context.setPCase(pCase);
 		

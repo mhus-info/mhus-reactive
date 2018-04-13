@@ -3,7 +3,7 @@
 
 Download karaf 4.0.10 from karaf.apache.org start it and install the engine:
 
-version=1.3.3
+version=1.3.4
 feature:repo-add activemq 5.12.1
 feature:repo-add cxf 3.1.5
 feature:repo-add mvn:de.mhus.osgi/mhu-karaf-feature/$version/xml/features
@@ -17,7 +17,7 @@ install -s mvn:de.mhus.cherry.reactive/reactive-karaf/$version
 
 install -s mvn:de.mhus.cherry.reactive/reactive-dev/$version
 
-install -s mvn:de.mhus.cherry.reactive/reactive-examples/$version
+install -s mvn:de.mhus.cherry.reactive/reactive-test/$version
 
 Rest:
 
@@ -55,7 +55,7 @@ pstress -i 1 \
 
 feature:install mhu-osgi-vaadin
 
-install -s mvn:de.mhus.ports/vaadin-refresher/1.3.2-SNAPSHOT
+install -s mvn:de.mhus.ports/vaadin-refresher/1.3.4
 install -s mvn:de.mhus.osgi/mhu-sop-vaadin-theme/1.3.2-SNAPSHOT
 install -s mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/1.3.2-SNAPSHOT
 

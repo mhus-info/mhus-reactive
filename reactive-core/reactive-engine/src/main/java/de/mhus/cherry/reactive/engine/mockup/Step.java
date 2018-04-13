@@ -61,7 +61,8 @@ public class Step {
 					STATE_CASE.valueOf(nc.getString("state")),
 					nc.getLong("scheduled", 0),
 					null,
-					p
+					p,
+					nc.getString("milestone")
 					);
 			cases.add(caze);
 		}
@@ -115,6 +116,7 @@ public class Step {
 			nc.setString("state", caze.getState().name());
 			nc.setString("name", caze.getName());
 			nc.setString("canonical", caze.getCanonicalName());
+			nc.setString("milestone", caze.getMilestone());
 			nc.setString("uri", caze.getUri());
 			nc.setLong("scheduled", caze.getScheduled());
 			WritableResourceNode<IConfig> np = nc.createConfig("parameters");

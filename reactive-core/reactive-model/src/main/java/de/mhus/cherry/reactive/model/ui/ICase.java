@@ -44,4 +44,6 @@ public interface ICase {
 
 	int getScore();
 
+	String getMilestone();
+	
 }

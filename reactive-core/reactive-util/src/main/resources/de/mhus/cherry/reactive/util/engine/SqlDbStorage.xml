@@ -4,6 +4,7 @@
 	  <field name="content" type="blob" />
 	  <field name="uri" type="string" size="700" />
 	  <field name="state" type="int" />
+	  <field name="milestone" type="string" size="200" />
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
 	  <field name="closed_message" type="string" size="400" />

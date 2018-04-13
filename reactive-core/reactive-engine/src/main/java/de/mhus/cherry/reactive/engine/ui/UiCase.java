@@ -100,4 +100,9 @@ public class UiCase extends MLog implements ICase {
 		return info.getScore();
 	}
 
+	@Override
+	public String getMilestone() {
+		return info.getMilestone();
+	}
+
 }
