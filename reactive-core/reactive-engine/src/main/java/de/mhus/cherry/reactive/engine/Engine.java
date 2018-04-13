@@ -710,20 +710,22 @@ public class Engine extends MLog implements EEngine {
 			if (uriParams != null && uriParams.length > 0) {
 				MProperties options = MProperties.explodeToMProperties(uriParams);
 				if (options.getBoolean( EngineConst.PARAM_PROGRESS, false)) {
-					long waitTime = 500;
+					long waitTime = 300;
 					long start = System.currentTimeMillis();
 					long timeout = MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_PROGRESS_TIMEOUT), MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5);
 					while (true) {
 						PCase caze = getCase(id);
-						if (	caze.getState() == STATE_CASE.CLOSED || 
-								caze.getState() == STATE_CASE.SUSPENDED || 
+						if (
 								EngineConst.MILESTONE_PROGRESS.equals(caze.getMilestone())) {
 							break;
 						}
-						if (MTimeInterval.isTimeOut(start, timeout)) throw new TimeoutRuntimeException("wait for progress timeout",id);
+						if (	caze.getState() == STATE_CASE.CLOSED || 
+								caze.getState() == STATE_CASE.SUSPENDED
+							)
+							throw new MException("Progress not reached before close",id);
+						if (MTimeInterval.isTimeOut(start, timeout)) 
+							throw new TimeoutRuntimeException("Wait for progress timeout",id);
 						Thread.sleep(waitTime);
-						if (waitTime < 4000)
-							waitTime+=500;
 					}
 				}
 			}
