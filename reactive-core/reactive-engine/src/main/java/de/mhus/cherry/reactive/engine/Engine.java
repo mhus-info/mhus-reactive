@@ -68,7 +68,6 @@ import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
-import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
