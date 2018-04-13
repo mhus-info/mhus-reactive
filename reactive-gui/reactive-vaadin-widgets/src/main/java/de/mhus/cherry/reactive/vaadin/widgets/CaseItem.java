@@ -122,6 +122,11 @@ public class CaseItem {
 		}
 	}
 
+	@Column(order=18,title="Milestone", editable=false)
+	public String getMilestone() {
+		return caze.getMilestone();
+	}
+
 	@Override
 	public boolean equals(Object in) {
 		if (in == null || !(in instanceof CaseItem)) return false;

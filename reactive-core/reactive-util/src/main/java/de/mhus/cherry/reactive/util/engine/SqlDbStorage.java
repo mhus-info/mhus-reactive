@@ -757,6 +757,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				addFilter("pool", search.pool,prop,sql);
 			}
 
+			if (search.milestone != null) {
+				if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
+				whereAdded = true;
+				addFilter("milestone", search.milestone,prop,sql);
+			}
+
 			if (search.index != null) {
 				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {

@@ -42,13 +42,15 @@ public class SearchCriterias {
 	public UUID caseId;
 	public TYPE_NODE type;
 
-	public enum ORDER {CUSTOM,CUSTOMER,NAME,PROCESS,VERSION,POOL,STATE,TYPE,INDEX0,INDEX1,INDEX2,INDEX3,INDEX4,INDEX5,INDEX6,INDEX7,INDEX8,INDEX9,CREATED,MODIFIED,PRIORITY,SCORE};
+	public enum ORDER {CUSTOM,CUSTOMER,NAME,PROCESS,VERSION,POOL,STATE,TYPE,INDEX0,INDEX1,INDEX2,INDEX3,INDEX4,INDEX5,INDEX6,INDEX7,INDEX8,INDEX9,CREATED,MODIFIED,PRIORITY,SCORE,MILESTONE};
 	public ORDER order;
 	public boolean orderAscending = true;
 	
 	public int priority = Integer.MAX_VALUE;
 	public int score = Integer.MIN_VALUE;
-	
+
+	public String milestone;
+
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {
@@ -155,6 +157,9 @@ public class SearchCriterias {
 			case "index9":
 				if (index == null) index = new String[] {null,null,null,null,null,null,null,null,null,null};
 				index[0] = v;
+				break;
+			case "milestone":
+				milestone = v;
 				break;
 			default:
 			}
