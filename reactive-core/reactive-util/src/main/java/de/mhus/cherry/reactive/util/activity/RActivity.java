@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
@@ -60,6 +61,8 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
 	public Map<String, Object> exportParamters() {
 		HashMap<String,Object> out = new HashMap<>();
 		for( PojoAttribute<?> attr : getPojoModel()) {
+			PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+			if (!desc.persistent()) continue;
 			try {
 				Object value = attr.get(this);
 				if (value != null)
@@ -75,6 +78,8 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void importParameters(Map<String, Object> parameters) {
 		for(PojoAttribute attr : getPojoModel()) {
+			PropertyDescription desc = (PropertyDescription) attr.getAnnotation(PropertyDescription.class);
+			if (!desc.persistent()) continue;
 			try {
 				Object value = parameters.get(attr.getName());
 				if (value != null)

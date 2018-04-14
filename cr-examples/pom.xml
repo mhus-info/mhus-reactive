@@ -31,7 +31,7 @@
 
 
 	<modules>
-		<module>cr-example-register-user</module>
+		<module>cr-example-user-management</module>
 	</modules>
 
 </project>

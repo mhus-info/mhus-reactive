@@ -39,7 +39,7 @@ public class S1UserStep extends RUserTask<S1Pool> {
 	private String text3 = "text3";
 	@PropertyDescription
 	private String option = "1";
-//	@PropertyDescription(writable=false)
+	@PropertyDescription(persistent=false)
 	@Public(name="option.items")
 	private Item[] optionOptions = new Item[] {
 			new Item("1","One"),

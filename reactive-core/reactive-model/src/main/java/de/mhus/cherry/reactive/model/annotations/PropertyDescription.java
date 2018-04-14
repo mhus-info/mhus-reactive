@@ -24,6 +24,15 @@ public @interface PropertyDescription {
 	String name() default "";
 	String description() default "";
 	String displayName() default "";
+	/**
+	 * Set writable by forms.
+	 * @return true
+	 */
 	boolean writable() default true;
+	/**
+	 * False if value is not stored by default.
+	 * @return true
+	 */
+	boolean persistent() default true;
 
 }
