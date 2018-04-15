@@ -21,16 +21,19 @@ import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.lib.annotations.vaadin.Column;
+import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MException;
 
 public class CaseItem {
 
 	private ICase caze;
 	private IEngine engine;
+	private MUri uri;
 
 	public CaseItem(IEngine engine, ICase caze) {
 		this.engine = engine;
 		this.caze = caze;
+		uri = MUri.toUri(caze.getUri());
 	}
 
 	@Column(order=1,title="id", editable=false,elapsed=false)
@@ -125,6 +128,16 @@ public class CaseItem {
 	@Column(order=18,title="Milestone", editable=false)
 	public String getMilestone() {
 		return caze.getMilestone();
+	}
+
+	@Column(order=19,title="Process", editable=false)
+	public String getProcess() {
+		return uri.getLocation();
+	}
+
+	@Column(order=20,title="Pool", editable=false)
+	public String getPool() {
+		return uri.getPath();
 	}
 
 	@Override

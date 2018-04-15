@@ -28,6 +28,7 @@ import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
+import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
@@ -447,6 +448,13 @@ public class UiEngine extends MLog implements IEngine {
 	@Override
 	public INodeDescription getNodeDescritpion(String uri, String name) throws Exception {
 		return new UiNodeDescription(this, uri, name);
+	}
+
+	@Override
+	public void doArchive(UUID caseId) throws Exception {
+		PCaseInfo caze = engine.getCaseInfo(caseId);
+		if (caze.getState() != STATE_CASE.CLOSED) throw new MException("wrong case state",caseId);
+		engine.archiveCase(caseId);
 	}
 	
 }

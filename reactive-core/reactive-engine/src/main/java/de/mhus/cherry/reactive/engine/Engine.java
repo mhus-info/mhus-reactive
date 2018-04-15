@@ -159,16 +159,20 @@ public class Engine extends MLog implements EEngine {
 		if (parallel) {
 			int maxThreads = MCast.toint(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_MAX_THREADS), 10);
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
-			for (PNodeInfo nodeId : result) {
+			for (PNodeInfo nodeInfo : result) {
 				synchronized (executing) {
-					if (executing.contains(nodeId)) continue;
+					if (executing.contains(nodeInfo.getId())) continue;
 				}
-				PNode node = getFlowNode(nodeId.getId());
+				PNode node = getFlowNode(nodeInfo.getId());
 				PCase caze = getCase(node.getCaseId());
 				if (isProcessActive(caze)) {
 					if (caze.getState() == STATE_CASE.RUNNING) {
 						doneCnt++;
 						FlowNodeExecutor executor = new FlowNodeExecutor(node);
+						threads.add(executor);
+						synchronized (executing) {
+							executing.add(node.getId());
+						}
 						Thread thread = new Thread(executor);
 						executor.thread = thread;
 						thread.start();
@@ -313,9 +317,6 @@ public class Engine extends MLog implements EEngine {
 
 		@Override
 		public void run() {
-			synchronized (executing) {
-				executing.add(node.getId());
-			}
 			start = System.currentTimeMillis();
 			try {
 				doFlowNode(node);
@@ -1125,7 +1126,7 @@ public class Engine extends MLog implements EEngine {
 				runtimeId,
 				EngineConst.TRY_COUNT
 			);
-		flow.setScheduledNow();
+		//flow.setScheduledNow();
 		fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);
 		context = new EngineContext(context, flow);
 		
@@ -1980,7 +1981,7 @@ public class Engine extends MLog implements EEngine {
 					// to late ... 
 					return;
 				}
-				Entry<String, Long> entry = node.getNextTriggerScheduled();
+				Entry<String, Long> entry = node.getNextScheduled();
 				if (entry == null) {
 					// There is no need to be scheduled ....
 					node.setScheduled(EngineConst.END_OF_DAYS);
@@ -1989,7 +1990,18 @@ public class Engine extends MLog implements EEngine {
 					return;
 				}
 				String triggerName = entry.getKey();
-				if (triggerName.equals("")) return; // for secure
+				if (triggerName.equals("")) {
+					// for secure
+					node.setScheduled(-1);
+					saveFlowNode(node);
+					return;
+				}
+				if (entry.getValue() > System.currentTimeMillis()) {
+					// not reached ...
+					node.setScheduled(entry.getValue());
+					saveFlowNode(node);
+					return;
+				}
 				// find trigger
 				PCase caze = getCase(node.getCaseId());
 				EngineContext context = createContext(caze, node);

@@ -18,6 +18,7 @@ package de.mhus.cherry.reactive.model.ui;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.lib.errors.MException;
@@ -52,5 +53,7 @@ public interface IEngine {
 	String getUser();
 
 	Object execute(String uri) throws Exception;
+
+	void doArchive(UUID caseId) throws Exception;
 	
 }

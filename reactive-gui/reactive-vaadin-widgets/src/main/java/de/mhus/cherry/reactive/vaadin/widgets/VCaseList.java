@@ -27,6 +27,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias.ORDER;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
@@ -43,6 +44,7 @@ public class VCaseList extends MhuTable {
 	private Log log = Log.getLog(VCaseList.class);
 	private static final long serialVersionUID = 1L;
 	protected static final Action ACTION_REFRESH = new Action("Refresh");
+	protected static final Action ACTION_ARCHIVE = new Action("Archive");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
 	MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
@@ -102,8 +104,10 @@ public class VCaseList extends MhuTable {
 					target = targets.iterator().next();
 				
 				if (target != null) {
-//					CaseItem caze = (CaseItem)target;
+					CaseItem caze = (CaseItem)target;
 					list.add(ACTION_REFRESH);
+					if (caze.getState() == STATE_CASE.CLOSED)
+						list.add(ACTION_ARCHIVE);
 				}
 				return list.toArray(new Action[list.size()]);
 			}
@@ -115,6 +119,10 @@ public class VCaseList extends MhuTable {
 					
 	            	if (action == ACTION_REFRESH) {
 	            		doReload();
+	            	}
+	            	if (action == ACTION_ARCHIVE) {
+						CaseItem caze = (CaseItem)target;
+	            		doArchive(caze);
 	            	}
 				} catch (Throwable t) {
 					log.e(t);
@@ -139,6 +147,17 @@ public class VCaseList extends MhuTable {
 		});
         setImmediate(true);
 		
+	}
+
+	protected void doArchive(CaseItem caze) {
+		// TODO
+		try {
+			engine.doArchive(caze.getId());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		doReload();
 	}
 
 	public void doReload() {

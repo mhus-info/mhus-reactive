@@ -36,9 +36,11 @@ import java.util.Map;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
+import de.mhus.cr.examples.users.ReadActor;
 
 @PoolDescription(
-		displayName="Register User"
+		displayName="Register User",
+		actorRead=ReadActor.class
 		)
 public class RegisterUser extends RPool<RegisterUser> {
 

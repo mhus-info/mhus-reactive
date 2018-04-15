@@ -45,6 +45,7 @@ public class SendConfirmMail extends RServicePostNextTask<RegisterUser> {
 	public void doExecute(PNode next) throws Exception {
 
 		log().i("Send Confirm Mail External " + next.getId());
+		log().i("Execute External Signal: bpme://" + next.getId());
 		
 	}
 
