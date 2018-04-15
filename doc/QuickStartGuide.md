@@ -68,4 +68,10 @@ version=1.0.0-SNAPSHOT
 install -s mvn:de.mhus.cherry.reactive/cr-example-user-management/$version
 pdeploy -a de.mhus.cr.examples.users.AccountProcess:0.0.1
 
+pengine execute bpm://de.mhus.cr.examples.users.AccountProcess:0.0.1/de.mhus.cr.examples.users.register.RegisterUser
 
+pengine execute bpme://node id
+
+
+
+ 
