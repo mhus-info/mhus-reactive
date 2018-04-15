@@ -62,16 +62,6 @@ install -s mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/1.3.2-SNAPSHOT
 install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/$version
 install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-core/$version
 
-== Examples
-
-version=1.0.0-SNAPSHOT
-install -s mvn:de.mhus.cherry.reactive/cr-example-user-management/$version
-pdeploy -a de.mhus.cr.examples.users.AccountProcess:0.0.1
-
-pengine execute bpm://de.mhus.cr.examples.users.AccountProcess:0.0.1/de.mhus.cr.examples.users.register.RegisterUser
-
-pengine execute bpme://node id
-
 
 
  

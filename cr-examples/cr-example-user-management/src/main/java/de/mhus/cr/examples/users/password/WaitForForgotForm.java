@@ -19,17 +19,17 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
-import de.mhus.cherry.reactive.util.bpmn2.RServiceTask;
+import de.mhus.cherry.reactive.util.activity.RExternalEvent;
 
 @ActivityDescription(
 		outputs=@Output(activity=End.class),
 		triggers = @Trigger(type=TYPE.TIMER,event="24h",activity=SendAbordMail.class)
 		)
-public class WaitForForgotForm extends RServiceTask<ForgotPassword> {
+public class WaitForForgotForm extends RExternalEvent<ForgotPassword> {
 
 	@Override
-	public String doExecute() {
-		return null;
+	public void doExecute() throws Exception {
+		
 	}
 
 }
