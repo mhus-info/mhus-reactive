@@ -36,24 +36,28 @@ public class CaseItem {
 		uri = MUri.toUri(caze.getUri());
 	}
 
-	@Column(order=1,title="id", editable=false,elapsed=false)
-	public UUID getId() {
-		return caze.getId();
-	}
-		
-	@Column(order=2,title="CName", editable=false)
-	public String getName() {
-		return caze.getCanonicalName();
+	@Column(order=1,title="Name", editable=false)
+	public String getDisplayName() {
+		try {
+			return engine.getProcess(caze.getUri()).getDisplayName(caze.getUri(), null);
+		} catch (MException e) {
+			return "?";
+		}
 	}
 
-	@Column(order=3,title="CutsomId", editable=false)
+	@Column(order=2,title="CutsomId", editable=false)
 	public String getCustom() {
 		return caze.getCustomId();
 	}
 
-	@Column(order=4,title="URI", editable=false, elapsed=false)
-	public String getUri() {
-		return caze.getUri();
+	@Column(order=3,title="Milestone", editable=false)
+	public String getMilestone() {
+		return caze.getMilestone();
+	}
+
+	@Column(order=4,title="CName", editable=false, elapsed=false)
+	public String getName() {
+		return caze.getCanonicalName();
 	}
 	
 	@Column(order=5,title="Index 1", editable=false)
@@ -71,12 +75,12 @@ public class CaseItem {
 		return caze.getProperties().get("pnode.index2");
 	}
 
-	@Column(order=8,title="Index 4", editable=false, elapsed=false)
+	@Column(order=8,title="Index 4", editable=false)
 	public String getIndex3() {
 		return caze.getProperties().get("pnode.index3");
 	}
 
-	@Column(order=9,title="Index 5", editable=false, elapsed=false)
+	@Column(order=9,title="Index 5", editable=false)
 	public String getIndex4() {
 		return caze.getProperties().get("pnode.index4");
 	}
@@ -111,33 +115,29 @@ public class CaseItem {
 		return caze.getState();
 	}
 	
-	@Column(order=16,title="Customer", editable=false)
+	@Column(order=16,title="URI", editable=false, elapsed=false)
+	public String getUri() {
+		return caze.getUri();
+	}
+
+	@Column(order=17,title="Customer", editable=false)
 	public String getCustomer() {
 		return caze.getCustomerId();
 	}
 
-	@Column(order=17,title="Name", editable=false)
-	public String getDisplayName() {
-		try {
-			return engine.getProcess(caze.getUri()).getDisplayName(caze.getUri(), null);
-		} catch (MException e) {
-			return "?";
-		}
-	}
-
-	@Column(order=18,title="Milestone", editable=false)
-	public String getMilestone() {
-		return caze.getMilestone();
-	}
-
-	@Column(order=19,title="Process", editable=false)
+	@Column(order=18,title="Process", editable=false, elapsed=false)
 	public String getProcess() {
 		return uri.getLocation();
 	}
 
-	@Column(order=20,title="Pool", editable=false)
+	@Column(order=19,title="Pool", editable=false, elapsed=false)
 	public String getPool() {
 		return uri.getPath();
+	}
+
+	@Column(order=20,title="id", editable=false,elapsed=false)
+	public UUID getId() {
+		return caze.getId();
 	}
 
 	@Override
