@@ -1,0 +1,7 @@
+<user>
+  <password plain="123" />
+  <information name="Admin" />
+  <groups>
+    <group name="ADMINISTRATOR"/>
+  </groups>
+</user>

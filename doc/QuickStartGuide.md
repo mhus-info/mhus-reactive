@@ -1,6 +1,29 @@
 
 == Fast Start ....
 
+
+
+version=1.0.0-SNAPSHOT
+feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/$version/xml/features
+
+feature:install cherry-reactive-dev cherry-reactive-all
+
+
+
+
+
+
+
+OLD: 
+
+- admin.txt
+- bpm.txt
+- mhuslib config in etc
+- api-* in deploy
+- Testumgebung mhu lib
+- Prodktiv mit mysql: datasource in deploy
+
+
 Download karaf 4.0.10 from karaf.apache.org start it and install the engine:
 
 version=1.3.4
