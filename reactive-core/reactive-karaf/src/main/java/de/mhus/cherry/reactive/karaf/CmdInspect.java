@@ -49,7 +49,7 @@ public class CmdInspect extends MLog implements Action {
 			+ " pools <process>\n"
 			+ " validate <pool uri>\n"
 			+ " elements <pool uri>\n"
-			+ " dump <process>\n"
+			+ " dump <process + /pool + #node>\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -89,7 +89,26 @@ public class CmdInspect extends MLog implements Action {
 		case "dump": {
 			EProcess process = findProcess(parameters[0]);
 			ProcessTrace trace = new ProcessTrace(process);
-			trace.dump(System.out);
+			EPool pool = null;
+			EElement element = null;
+			
+			MUri uri = MUri.toUri(parameters[0]);
+			if (uri.getScheme() != null) {
+				if (uri.getPath() != null) {
+					pool = process.getPool(uri.getPath());
+					if (uri.getFragment() != null) {
+						element = pool.getElement(uri.getFragment());
+					}
+				}
+			}
+			
+			if (element != null)
+				trace.dump(System.out, pool, element);
+			else
+			if (pool != null)
+				trace.dump(System.out, pool);
+			else
+				trace.dump(System.out);
 		} break;
 		case "elements": {
 			MUri uri = MUri.toUri(parameters[0]);

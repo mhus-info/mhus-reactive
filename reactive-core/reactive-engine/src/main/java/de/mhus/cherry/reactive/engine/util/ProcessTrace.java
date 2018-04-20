@@ -36,7 +36,9 @@ public class ProcessTrace {
 	private EProcess process;
 	private int width = 40;
 	private boolean ansi;
-
+	HashSet<String> done = null;
+	HashSet<String> needed = null;
+	
 	public ProcessTrace(EProcess process) {
 		this.process = process;
 		this.ansi = Console.get().isAnsi();
@@ -44,48 +46,60 @@ public class ProcessTrace {
 		
 	public void dump(PrintStream out) {
 		for (String poolName : process.getPoolNames()) {
-			HashSet<String> done = new HashSet<>();
-			HashSet<String> needed = new HashSet<>();
 			EPool pool = process.getPool(poolName);
-			out.println(MString.rep('=', width ));
-			out.println("Pool: " + pool.getCanonicalName());
-			for (EElement startPoint : pool.getStartPoints()) {
-				done.add(startPoint.getCanonicalName());
-				needed.add(startPoint.getCanonicalName());
-				while (needed.size() > 0) {
-					String current = needed.iterator().next();
-					needed.remove(current);
-					EElement cur = pool.getElement(current);
-					
-					out.println("--------------------------------------------------------");
-					printElement(out,cur);
-					out.println("");
-					printElementInfo(out, cur, done, needed);
+			dump(out, pool);
+		}
+	}
+	
+	public void dump(PrintStream out, EPool pool, EElement cur) {
+		
+		if (done == null) done = new HashSet<>();
+		if (needed == null) needed = new HashSet<>();
+		
+		printElement(out,cur);
+		out.println("");
+		printElementInfo(out, cur, done, needed);
 
-					List<EElement> outputs = pool.getOutputElements(cur);
-					while (true) {
-						if (outputs.size() == 0) break;
-						out.println("                       ||");
-						out.println("                       \\/");
-						EElement n = null;
-						EElement f = null;
-						for (EElement o : outputs) {
-							out.print("  ");
-							printElement(out,o);
-							if (n == null && !done.contains(o.getCanonicalName())) 
-								n = o;
-							else
-							if (!done.contains(o.getCanonicalName()))
-								needed.add(o.getCanonicalName());
-							if (f == null) f = o;
-							done.add(o.getCanonicalName());
-						}
-						out.println();
-						printElementInfo(out, f, done, needed);
-						if (n == null) break;
-						outputs = pool.getOutputElements(n);
-					}
-				}
+		List<EElement> outputs = pool.getOutputElements(cur);
+		while (true) {
+			if (outputs.size() == 0) break;
+			out.println("                       ||");
+			out.println("                       \\/");
+			EElement n = null;
+			EElement f = null;
+			for (EElement o : outputs) {
+				out.print("  ");
+				printElement(out,o);
+				if (o != null && n == null && !done.contains(o.getCanonicalName())) 
+					n = o;
+				else
+				if (!done.contains(o.getCanonicalName()))
+					needed.add(o.getCanonicalName());
+				if (f == null) f = o;
+				done.add(o.getCanonicalName());
+			}
+			out.println();
+			printElementInfo(out, f, done, needed);
+			if (n == null) break;
+			outputs = pool.getOutputElements(n);
+		}
+	}
+	
+	public void dump(PrintStream out, EPool pool) {
+		done = new HashSet<>();
+		needed = new HashSet<>();
+		out.println(MString.rep('=', width ));
+		out.println("Pool: " + pool.getCanonicalName());
+		for (EElement startPoint : pool.getStartPoints()) {
+			done.add(startPoint.getCanonicalName());
+			needed.add(startPoint.getCanonicalName());
+			while (needed.size() > 0) {
+				String current = needed.iterator().next();
+				needed.remove(current);
+				EElement cur = pool.getElement(current);
+				
+				out.println("--------------------------------------------------------");
+				dump(out, pool, cur);
 			}
 		}
 	}
