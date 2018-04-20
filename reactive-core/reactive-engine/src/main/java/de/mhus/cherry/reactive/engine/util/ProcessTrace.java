@@ -40,13 +40,8 @@ public class ProcessTrace {
 	public ProcessTrace(EProcess process) {
 		this.process = process;
 		this.ansi = Console.get().isAnsi();
-		trace();
 	}
 		
-	private void trace() {
-		// TODO create model
-	}
-
 	public void dump(PrintStream out) {
 		for (String poolName : process.getPoolNames()) {
 			HashSet<String> done = new HashSet<>();

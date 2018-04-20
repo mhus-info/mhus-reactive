@@ -60,13 +60,13 @@ public class EngineUtil {
 		}
 	}
 
-	public static String getProcessCanonicalName(AProcess process) {
-		ProcessDescription desc = process.getClass().getAnnotation(ProcessDescription.class);
-		if (desc == null) return null;
-		String name = desc.name();
-		if (MString.isEmpty(name)) name = process.getClass().getCanonicalName();
-		return name + ":" + desc.version();
-	}
+//	public static String getProcessCanonicalName(AProcess process) {
+//		ProcessDescription desc = process.getClass().getAnnotation(ProcessDescription.class);
+//		if (desc == null) return null;
+//		String name = desc.name();
+//		if (MString.isEmpty(name)) name = process.getClass().getCanonicalName();
+//		return name + ":" + desc.version();
+//	}
 
 	public static PCase getCase(Engine engine, String id) throws NotFoundException, IOException {
 		if (MValidator.isUUID(id))

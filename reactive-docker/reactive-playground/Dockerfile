@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends jq curl vim les
     && mkdir -p /opt/karaf/data /opt/karaf/data/log \
     && mkdir -p /opt/karaf/sop/aaa/account /opt/karaf/sop/aaa/trust /opt/karaf/sop/aaa/groupmapping \
     && mkdir -p /root/.m2/repository \
-    && sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg 
+    && sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
+    && rm -rf /var/lib/apt/lists/*
 
 # copy maven repo stuff
 COPY repository /root/.m2/repository/

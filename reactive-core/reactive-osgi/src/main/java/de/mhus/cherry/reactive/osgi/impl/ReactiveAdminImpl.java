@@ -165,6 +165,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	@Override
 	public List<Finding> deploy(String name, boolean addVersion, boolean activate) throws MException {
 		startEngine();
+		log().i("deploy",name);
 		// get process
 		ProcessInfo info = null;
 		synchronized (availableProcesses) {
@@ -244,6 +245,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		if (info.deployedName == null)
 			throw new MException("Process is not deployed",name);
 		((DefaultProcessProvider)config.processProvider).removeProcess(info.deployedName);
+		info.deployedName = null;
 	}
 	
 	private class ProcessInfo {
@@ -276,19 +278,22 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			@Override
 			public AProcess addingService(ServiceReference<AProcess> reference) {
 				AProcess process = context.getService(reference);
-				addProcess(reference.getBundle().getSymbolicName() + ":" + process.getClass().getSimpleName(), new OsgiProcessLoader(process));
+				OsgiProcessLoader loader = new OsgiProcessLoader(process);
+				addProcess(reference.getBundle().getSymbolicName() + ":" + process.getClass().getSimpleName(), loader);
 				return null;
 			}
 
 			@Override
 			public void modifiedService(ServiceReference<AProcess> reference, AProcess service) {
-				removeProcess(EngineUtil.getProcessCanonicalName(service));
-				addProcess(reference.getBundle().getSymbolicName() + ":" + service.getClass().getSimpleName(), new OsgiProcessLoader(service));
+				OsgiProcessLoader loader = new OsgiProcessLoader(service);
+				removeProcess(loader.getProcessCanonicalName());
+				addProcess(reference.getBundle().getSymbolicName() + ":" + service.getClass().getSimpleName(), loader);
 			}
 
 			@Override
 			public void removedService(ServiceReference<AProcess> reference, AProcess service) {
-				removeProcess(EngineUtil.getProcessCanonicalName(service));
+				OsgiProcessLoader loader = new OsgiProcessLoader(service);
+				removeProcess(loader.getProcessCanonicalName());
 			}
 		});
 		processTracker.open(true);
@@ -539,6 +544,15 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	@Override
 	public void setExecutionSuspended(boolean suspend) {
 		executionSuspended = suspend;
+	}
+
+	@Override
+	public ProcessLoader getProcessLoader(String name) throws NotFoundException {
+		synchronized (availableProcesses) {
+			ProcessInfo info = availableProcesses.get(name);
+			if (info == null) throw new NotFoundException("process unknown",name);
+			return info.loader;
+		}
 	}
 	
 	

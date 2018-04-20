@@ -86,5 +86,6 @@ install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/$version
 install -s mvn:de.mhus.cherry.reactive/reactive-vaadin-core/$version
 
 
+install -s mvn:de.mhus.cherry.reactive/cr-example-user-management/$version
 
  
