@@ -10,9 +10,7 @@ import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.engine.util.ProcessTrace;
-import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.ACondition;
-import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.AEvent;
 import de.mhus.cherry.reactive.model.activity.AExclusiveGateway;
@@ -61,8 +59,6 @@ public class CmdInspect extends MLog implements Action {
 
 	@Override
 	public Object execute() throws Exception {
-
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
 		switch (cmd) {
 		case "pools": {
