@@ -19,12 +19,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reactive-vaadin-core</artifactId>
+	<artifactId>reactive-dev</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
-		<artifactId>reactive-gui</artifactId>
-		<version>1.0.0</version>
+		<artifactId>reactive-core</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -39,7 +39,7 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.vaadin.core*;version=${project.version}
+							de.mhus.cherry.reactive.dev.*;version=${project.version}
 						</Export-Package>
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
@@ -47,14 +47,60 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>de.mhus.ports.karaf.tooling</groupId>
+				<artifactId>karaf-services-maven-plugin</artifactId>
+				<configuration>
+					<artifactInclude>.*mhu.*</artifactInclude>
+				</configuration>
+			</plugin>
+			
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>de.mhus.ports.karaf.tooling</groupId>
+					<artifactId>karaf-services-maven-plugin</artifactId>
+					<version>${karaf.tool.version}</version>
+					<executions>
+						<execution>
+							<id>service-metadata-generate</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>service-metadata-generate</goal>
+							</goals>
+							<configuration>
+								<artifactInclude>.*mhu.*</artifactInclude>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>		
 	</build>
 
 	<dependencies>
 		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-core</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-persistence</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
+       	<dependency>
+			<groupId>de.mhus.osgi</groupId>
+			<artifactId>mhu-osgi-services</artifactId>
+			<version>${osgitools.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
+			<version>${osgi.version}</version>
 		</dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -74,49 +120,18 @@
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
-			<artifactId>reactive-vaadin-widgets</artifactId>
+			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
-			<version>${mhulib.version}</version>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-util</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-        	<groupId>de.mhus.lib</groupId>
-        	<artifactId>mhu-lib-vaadin</artifactId>
-        	<version>${mhulib.version}</version>
-        	<type>bundle</type>
-        	<scope>provided</scope>
-        </dependency>
-        
-    	<dependency>
-    		<groupId>com.vaadin</groupId>
-    		<artifactId>vaadin-server</artifactId>
-    		<version>${vaadin.version}</version>
-    	</dependency>
-    	<dependency>
-    		<groupId>com.vaadin</groupId>
-    		<artifactId>vaadin-shared</artifactId>
-    		<version>${vaadin.version}</version>
-    	</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${servlet.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>de.mhus.ports</groupId>
-			<artifactId>vaadin-refresher</artifactId>
-			<version>${ports.vaadin.version}</version>
-        </dependency>
-		
-		<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-sop-api</artifactId>
-			<version>${mhusop.version}</version>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-osgi</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 	</dependencies>

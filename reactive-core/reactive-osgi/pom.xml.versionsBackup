@@ -19,12 +19,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reactive-karaf</artifactId>
+	<artifactId>reactive-osgi</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -39,14 +39,22 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.karaf.*;version=${project.version}
+							de.mhus.cherry.reactive.osgi.*;version=${project.version},
+							de.mhus.cherry.reactive.model.*;version=${project.version},
+							de.mhus.cherry.reactive.engine.*;version=${project.version},
+							de.mhus.cherry.reactive.util.*;version=${project.version}
 						</Export-Package>
+						<!-- 
+						<Private-Package>de.mhus.cherry.reactive.osgi.impl.*</Private-Package>
+						 -->
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
-						<Service-Component>*</Service-Component>
+						<Service-Component>de.mhus.cherry.reactive.osgi.*</Service-Component>
+						<Embed-Dependency>reactive-model,reactive-engine,reactive-util</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>de.mhus.ports.karaf.tooling</groupId>
 				<artifactId>karaf-services-maven-plugin</artifactId>
@@ -54,8 +62,22 @@
 					<artifactInclude>.*mhu.*</artifactInclude>
 				</configuration>
 			</plugin>
-			
+
+	      <plugin>
+	        <artifactId>maven-clean-plugin</artifactId>
+	        <version>2.5</version>
+	        <executions>
+	          <execution>
+	            <id>default-clean</id>
+	            <phase>initialize</phase>
+	            <goals>
+	              <goal>clean</goal>
+	            </goals>
+	          </execution>
+	        </executions>
+	      </plugin>
 		</plugins>
+		
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -75,11 +97,48 @@
 						</execution>
 					</executions>
 				</plugin>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-clean-plugin
+										</artifactId>
+										<versionRange>
+											[2.5,)
+										</versionRange>
+										<goals>
+											<goal>clean</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
 			</plugins>
-		</pluginManagement>		
+		</pluginManagement>	
+				
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>de.mhus.lib</groupId>
+			<artifactId>mhu-lib-annotations</artifactId>
+			<version>${mhulib.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
 			<artifactId>mhu-lib-core</artifactId>
@@ -90,12 +149,6 @@
 			<artifactId>mhu-lib-persistence</artifactId>
 			<version>${mhulib.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-osgi-services</artifactId>
-			<version>${osgitools.version}</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
@@ -125,11 +178,6 @@
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
-			<artifactId>reactive-osgi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		

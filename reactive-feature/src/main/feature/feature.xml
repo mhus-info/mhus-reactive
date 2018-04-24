@@ -96,7 +96,7 @@
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-j2ee/${mhulib.version}</bundle>
 		
-		<bundle>mvn:de.mhus.ports/vaadin-shared-deps/${ports.version}</bundle>
+		<bundle>mvn:de.mhus.ports/vaadin-shared-deps/${ports.vaadin.version}</bundle>
 		<bundle>mvn:com.vaadin/vaadin-shared/${vaadin.version}</bundle>
 		<bundle>mvn:com.vaadin/vaadin-themes/${vaadin.version}</bundle>
 		
@@ -107,7 +107,7 @@
 		<bundle>mvn:com.vaadin/vaadin-server/${vaadin.version}</bundle>
 		<bundle>mvn:com.vaadin/vaadin-client-compiled/${vaadin.version}</bundle>
 
-		<bundle>mvn:de.mhus.ports/vaadin-refresher/${ports.version}</bundle>
+		<bundle>mvn:de.mhus.ports/vaadin-refresher/${ports.vaadin.version}</bundle>
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${osgitools.version}</bundle>
