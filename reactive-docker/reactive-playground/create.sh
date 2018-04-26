@@ -21,7 +21,7 @@ for f in $(cd  ~/.m2/repository;find . -type d -name \*SNAPSHOT\*)
 do 
   echo Import $f
   mkdir -p repository/$f
-  cp -r ~/.m2/repository/$f repository/$f
+  cp -r ~/.m2/repository/$f/* repository/$f
 done
 
 if [ "$1" = "clean" ]; then
