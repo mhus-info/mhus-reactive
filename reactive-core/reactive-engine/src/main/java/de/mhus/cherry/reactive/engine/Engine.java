@@ -919,9 +919,17 @@ public class Engine extends MLog implements EEngine {
 		context.setEProcess(process);
 		context.setEPool(pool);
 		
+		// ID could be defined in the options, must be a uuid and unique
+		UUID id = null;
+		Object uuid = options.get("uuid");
+		if (uuid != null) 
+			id = UUID.fromString(uuid.toString());
+		else
+			id = UUID.randomUUID();
+		
 		// create the PCase
 		PCase pCase = new PCase(
-				UUID.randomUUID(), 
+				id,
 				options, 
 				uri.toString(), 
 				pool.getName(),
