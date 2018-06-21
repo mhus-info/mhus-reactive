@@ -18,6 +18,7 @@ package de.mhus.cherry.reactive.vaadin.core;
 import java.util.Locale;
 
 import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.MenuBar.MenuItem;
 
 import aQute.bnd.annotation.component.Component;
 import de.mhus.lib.vaadin.desktop.GuiSpace;
@@ -45,6 +46,11 @@ public class BpmSpaceService extends GuiSpace {
 	@Override
 	public HelpContext createHelpContext(Locale locale) {
 		return null;
+	}
+
+	@Override
+	public void createMenu(AbstractComponent space, MenuItem[] menu) {
+		((BpmSpace)space).createMenu(menu);
 	}
 
 }

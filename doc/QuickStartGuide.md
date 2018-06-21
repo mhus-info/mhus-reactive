@@ -3,7 +3,7 @@
 
 
 
-version=1.0.0-SNAPSHOT
+version=1.0.1-SNAPSHOT
 feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/$version/xml/features
 
 feature:install cherry-reactive-dev cherry-reactive-all

@@ -922,9 +922,16 @@ public class Engine extends MLog implements EEngine {
 		// ID could be defined in the options, must be a uuid and unique
 		UUID id = null;
 		Object uuid = options.get("uuid");
-		if (uuid != null) 
+		if (uuid != null) {
 			id = UUID.fromString(uuid.toString());
-		else
+			// check if exists
+			try {
+				if (storage.loadCase(id) != null)
+					throw new MException("case already exists with uuid",id);
+			} catch (NotFoundException e) {
+				// everything is fine
+			}
+		} else
 			id = UUID.randomUUID();
 		
 		// create the PCase
@@ -1800,7 +1807,8 @@ public class Engine extends MLog implements EEngine {
 			Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorInitiator();
 			for (Class<? extends AActor> actorClass : actorClasss) {
 				AActor actor = actorClass.newInstance();
-				((ContextRecipient)actor).setContext(context);
+				if (actor instanceof ContextRecipient)
+					((ContextRecipient)actor).setContext(context);
 				boolean hasAccess = actor.hasAccess(user);
 				if (hasAccess) return true;
 			}

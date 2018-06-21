@@ -26,6 +26,7 @@ import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 
 public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextRecipient {
@@ -88,7 +89,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		} else {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 2; i < args.length; i++)
-				MSystem.serialize(sb, args[i], null);
+				MString.serialize(sb, args[i], null);
 			addFlowMessage(	flow, name, sb.toString());
 		}
 	}

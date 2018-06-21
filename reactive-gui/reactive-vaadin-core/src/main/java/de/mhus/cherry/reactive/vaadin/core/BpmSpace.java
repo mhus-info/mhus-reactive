@@ -24,6 +24,9 @@ import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
@@ -330,8 +333,11 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		setContent(form);
 	}
 
-	protected void showNodeList() {
-		navigateTo(currentSelection, currentFilter);
+	public void showNodeList() {
+		if (currentSelection != null)
+			navigateTo(currentSelection, currentFilter);
+		else
+			setContent(new Label(""));
 	}
 
 	@Override
@@ -339,6 +345,34 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		contentCache = null;
 		page.detach();
 		page = null;
+	}
+
+	public void createMenu(MenuItem[] menu) {
+		menu[0].setEnabled(true);
+		menu[0].setText("Engine");
+		menu[0].setVisible(true);
+		
+		menu[0].addItem("Execute ...", new MenuBar.Command() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void menuSelected(MenuItem selectedItem) {
+				doExecute(null);
+			}
+			
+		});
+		
+	}
+
+	protected void doExecute(String uri) {
+		ExecuteProcessForm form = new ExecuteProcessForm(this,uri);
+		setContent(form);
+	}
+
+	public IEngine getEngine() {
+		if (engine == null)
+			initEngine();
+		return engine;
 	}
 	
 }

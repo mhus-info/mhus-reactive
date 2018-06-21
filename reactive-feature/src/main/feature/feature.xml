@@ -39,7 +39,6 @@
 		<bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.5</bundle>
 		<bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.5</bundle>
 		<bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/1.3.2/$Bundle-SymbolicName=commons-io&Bundle-Version=1.3.2&Export-Package=org.apache.commons.io;version="1.3.2",!*]]></bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-mail/${osgitools.version}</bundle>
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhulib.version}</bundle>
@@ -110,8 +109,8 @@
 		<bundle>mvn:de.mhus.ports/vaadin-refresher/${ports.vaadin.version}</bundle>
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhulib.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${osgitools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-vaadinbridge/${osgitools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${osgiservlets.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-karaf-vaadinbridge/${osgiservlets.version}</bundle>
 
 		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-theme/${mhusop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/${mhusop.version}</bundle>
