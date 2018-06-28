@@ -76,7 +76,7 @@ public class CmdUi extends MLog implements Action {
 		
 		if (cmd.equals("cases")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
-			List<ICase> res = api.searchCases(criterias, page, size, null);
+			List<ICase> res = api.searchCases(criterias, page, size);
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
 			for (ICase info : res) {
@@ -87,7 +87,7 @@ public class CmdUi extends MLog implements Action {
 		} else
 		if (cmd.equals("nodes")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
-			List<INode> res = api.searchNodes(criterias, page, size, null);
+			List<INode> res = api.searchNodes(criterias, page, size);
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
 			for (INode info : res) {

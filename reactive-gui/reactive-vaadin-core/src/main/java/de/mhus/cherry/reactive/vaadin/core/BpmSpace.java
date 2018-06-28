@@ -363,7 +363,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
 	protected void showUserForm(NodeItem selected) throws Exception {
 
-		INode node = engine.getNode(selected.getId().toString(), null);
+		INode node = engine.getNode(selected.getId().toString());
 		VUserForm form = new VUserForm(node) {
 			private static final long serialVersionUID = 1L;
 			@Override
