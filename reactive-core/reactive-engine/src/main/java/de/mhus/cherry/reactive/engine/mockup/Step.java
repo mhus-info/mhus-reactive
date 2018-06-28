@@ -92,7 +92,8 @@ public class Step {
 					p,
 					nc.getString("assigned"),
 					UUID.randomUUID(),
-					nc.getInt("tryCount", 0)
+					nc.getInt("tryCount", 0),
+					nc.getString("actor", null)
 					);
 			
 			nodes.add(node);
@@ -135,6 +136,7 @@ public class Step {
 			nn.setString("name", node.getName());
 			nn.setString("canonical", node.getCanonicalName());
 			nn.setInt("tryCount", node.getTryCount());
+			nn.setString("actor", node.getActor());
 
 			WritableResourceNode<IConfig> np = nn.createConfig("parameters");
 			for (Entry<String, Object> entry : node.getParameters().entrySet())

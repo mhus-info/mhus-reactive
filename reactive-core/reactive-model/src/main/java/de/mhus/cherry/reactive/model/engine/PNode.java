@@ -82,13 +82,14 @@ public class PNode implements Externalizable {
 	private Map<String, Object> message;
 	// will not be stored
 	private String[] indexValues;
+	private String actor;
 		
 	public PNode() {}
 	
 	public PNode(UUID id, UUID caseId, String name, String canonicalName, long creationDate, long lastRunDate, STATE_NODE state,
 	        STATE_NODE suspendedState, HashMap<String, Long> schedulers, HashMap<String, String> signalTriggers,
 	        HashMap<String, String> messageTriggers, boolean stopAfterExecute, TYPE_NODE type, String exitMessage, Map<String, Object> parameters,
-	        String assignedUser, UUID runtimeNode, int tryCount) {
+	        String assignedUser, UUID runtimeNode, int tryCount, String actor) {
 		super();
 		this.id = id;
 		this.caseId = caseId;
@@ -109,6 +110,7 @@ public class PNode implements Externalizable {
 		this.assignedUser = assignedUser;
 		this.runtimeNode = runtimeNode;
 		this.tryCount = tryCount;
+		this.actor = actor;
 	}
 
 
@@ -135,6 +137,7 @@ public class PNode implements Externalizable {
 		this.tryCount = clone.getTryCount();
 		if (clone.getMessage() != null)
 			this.message = new HashMap<>(clone.getMessage());
+		this.actor = clone.getActor();
 	}
 	
 	public UUID getCaseId() {
@@ -392,6 +395,7 @@ public class PNode implements Externalizable {
 		out.writeObject(runtimeNode);
 		out.writeInt(tryCount);
 		out.writeObject(message);
+		out.writeObject(actor);
 		
 		out.flush();
 	}
@@ -424,6 +428,7 @@ public class PNode implements Externalizable {
 		runtimeNode = (UUID) in.readObject();
 		tryCount = in.readInt();
 		message = (Map<String, Object>) in.readObject();
+		actor = (String)in.readObject();
 		
 	}
 
@@ -437,6 +442,10 @@ public class PNode implements Externalizable {
 	
 	public String[] getIndexValues() {
 		return indexValues;
+	}
+
+	public String getActor() {
+		return actor == null? "" : actor;
 	}
 	
 }

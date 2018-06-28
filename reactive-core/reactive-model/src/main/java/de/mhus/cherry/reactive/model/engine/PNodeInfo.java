@@ -36,6 +36,7 @@ public class PNodeInfo {
 	private long modified;
 	private int priority;
 	private int score;
+	private String actor;
 
 	public PNodeInfo(
 			UUID id, 
@@ -51,6 +52,7 @@ public class PNodeInfo {
 			long modified,
 			int priority,
 			int score,
+			String actor,
 			String[] indexValues
 		) {
 		this.id = id;
@@ -67,6 +69,7 @@ public class PNodeInfo {
 		this.modified = modified;
 		this.priority = priority;
 		this.score = score;
+		this.actor = actor;
 	}
 
 	public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
@@ -84,6 +87,7 @@ public class PNodeInfo {
 				0,
 				0,
 				0,
+				node.getActor(),
 				null);
 	}
 
@@ -149,5 +153,8 @@ public class PNodeInfo {
 		return score;
 	}
 
+	public String getActor() {
+		return actor;
+	}
 
 }

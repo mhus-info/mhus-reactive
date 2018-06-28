@@ -65,4 +65,6 @@ public interface INode {
 
 	void doAssign() throws IOException, MException;
 	
+	String getActor();
+	
 }

@@ -51,6 +51,8 @@ public class SearchCriterias {
 
 	public String milestone;
 
+	public String[] actors;
+	
 	public SearchCriterias() {}
 	
 	public SearchCriterias(String[] parameters) {

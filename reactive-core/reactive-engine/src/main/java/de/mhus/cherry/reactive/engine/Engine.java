@@ -1060,6 +1060,8 @@ public class Engine extends MLog implements EEngine {
 		UUID caseId = context.getPCase().getId();
 		fireEvent.createStartPoint(context.getPCase(),start);
 		
+		Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
+		
 		// create runtime
 		PNode runtime = new PNode(
 				UUID.randomUUID(), 
@@ -1079,7 +1081,8 @@ public class Engine extends MLog implements EEngine {
 				new HashMap<>(),
 				null,
 				null,
-				0
+				0,
+				null
 				);
 		fireEvent.createRuntime(context.getPCase(),start,runtime);
 		synchronized (nodeCache) {
@@ -1108,7 +1111,8 @@ public class Engine extends MLog implements EEngine {
 				null, 
 				null, 
 				runtimeId,
-				EngineConst.TRY_COUNT
+				EngineConst.TRY_COUNT,
+				actor == null ? null : actor.getName()
 			);
 		flow.setScheduledNow();
 		fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(),start);
@@ -1124,6 +1128,8 @@ public class Engine extends MLog implements EEngine {
 		UUID caseId = context.getPCase().getId();
 		UUID runtimeId = previous.getRuntimeId();
 		
+		Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
+
 		// create flow node
 		PNode flow = new PNode(
 				UUID.randomUUID(), 
@@ -1143,7 +1149,8 @@ public class Engine extends MLog implements EEngine {
 				null, 
 				null, 
 				runtimeId,
-				EngineConst.TRY_COUNT
+				EngineConst.TRY_COUNT,
+				actor == null ? null : actor.getName()
 			);
 		//flow.setScheduledNow();
 		fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);

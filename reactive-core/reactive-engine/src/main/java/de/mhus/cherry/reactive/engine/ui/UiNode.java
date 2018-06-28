@@ -188,4 +188,9 @@ public class UiNode extends MLog implements INode {
 		engine.unassignUserTask(info.getId());
 	}
 
+	@Override
+	public String getActor() {
+		return info.getActor();
+	}
+
 }
