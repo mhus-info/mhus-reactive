@@ -161,6 +161,11 @@ public class NodeItem {
 		return uri.getPath();
 	}
 
+	@Column(order=24,title="Actor", editable=false, elapsed=false)
+	public String getActor() {
+		return node.getActor();
+	}
+	
 	@Override
 	public boolean equals(Object in) {
 		if (in == null || !(in instanceof NodeItem)) return false;

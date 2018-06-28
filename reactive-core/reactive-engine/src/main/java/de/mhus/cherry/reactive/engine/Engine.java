@@ -687,7 +687,7 @@ public class Engine extends MLog implements EEngine {
 	
 // ---
 	
-	public Object execute(String uri) throws Exception {
+	public Object doExecute(String uri) throws Exception {
 		MUri u = MUri.toUri(uri);
 		return execute(u);
 	}
@@ -696,7 +696,20 @@ public class Engine extends MLog implements EEngine {
 		return execute(uri, null);
 	}
 	
-	public Object execute(MUri uri, IProperties properties) throws Exception {
+	/**
+	 * Execute the URI command. 
+	 * bpm:// - start case
+	 * bpmm:// - send message
+	 * bpms:// - send signal
+	 * bpme:// - send external
+	 * bpmx:// - execute additional start point
+	 * 
+	 * @param uri
+	 * @param parameters if null the parameters are taken from uri query
+	 * @return The result of the action, e.g. UUID for new case.
+	 * @throws Exception
+	 */
+	public Object execute(MUri uri, IProperties parameters) throws Exception {
 		switch (uri.getScheme()) {
 		case "bpm": {
 			// check access
@@ -709,7 +722,7 @@ public class Engine extends MLog implements EEngine {
 				if (!hasInitiateAccess(uri, user))
 					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
-			UUID id = (UUID)start(uri, null, properties);
+			UUID id = (UUID)start(uri, null, parameters);
 			
 			String[] uriParams = uri.getParams();
 			if (uriParams != null && uriParams.length > 0) {
@@ -752,10 +765,12 @@ public class Engine extends MLog implements EEngine {
 			String l = uri.getLocation();
 			if (MValidator.isUUID(l)) caseId = UUID.fromString(l);
 			String m = uri.getPath();
-			
-			MProperties parameters = new MProperties();
-			Map<String, String> p = uri.getQuery();
-			if (p != null) parameters.putAll(p);
+
+			if (parameters == null) {
+				parameters = new MProperties();
+				Map<String, String> p = uri.getQuery();
+				if (p != null) parameters.putAll(p);
+			}
 			fireMessage(caseId, m, parameters);
 			return null;
 		}
@@ -772,9 +787,11 @@ public class Engine extends MLog implements EEngine {
 			}
 
 			String signal = uri.getPath();
-			MProperties parameters = new MProperties();
-			Map<String, String> p = uri.getQuery();
-			if (p != null) parameters.putAll(p);
+			if (parameters == null) {
+				parameters = new MProperties();
+				Map<String, String> p = uri.getQuery();
+				if (p != null) parameters.putAll(p);
+			}
 			return fireSignal(signal, parameters);
 		}
 		case "bpme": {
@@ -792,9 +809,11 @@ public class Engine extends MLog implements EEngine {
 					throw new AccessDeniedException("user can't execute",user,uri);
 			}
 			
-			MProperties parameters = new MProperties();
-			Map<String, String> p = uri.getQuery();
-			if (p != null) parameters.putAll(p);
+			if (parameters == null) {
+				parameters = new MProperties();
+				Map<String, String> p = uri.getQuery();
+				if (p != null) parameters.putAll(p);
+			}
 			fireExternal(nodeId, parameters);
 			return null;
 		}
@@ -821,9 +840,11 @@ public class Engine extends MLog implements EEngine {
 					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
 			// parameters
-			MProperties parameters = new MProperties();
-			Map<String, String> p = uri.getQuery();
-			if (p != null) parameters.putAll(p);
+			if (parameters == null) {
+				parameters = new MProperties();
+				Map<String, String> p = uri.getQuery();
+				if (p != null) parameters.putAll(p);
+			}
 			// context and start
 			EngineContext context = createContext(caze);
 			EElement start = context.getEPool().getElement(uri.getFragment());
@@ -1756,7 +1777,8 @@ public class Engine extends MLog implements EEngine {
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
 				for (Class<? extends AActor> actorClass : actorClasss) {
 					AActor actor = actorClass.newInstance();
-					((ContextRecipient)actor).setContext(context);
+					if (actor instanceof ContextRecipient)
+						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
 					if (hasAccess) return true;
 				}

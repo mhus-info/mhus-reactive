@@ -66,7 +66,7 @@ public class CmdProcessEngine extends MLog implements Action {
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
 		if (cmd.equals("execute")) {
-			System.out.println(api.getEngine().execute(parameters[0]));
+			System.out.println(api.getEngine().doExecute(parameters[0]));
 		} else
 		if (cmd.equals("cleanup")) {
 			IEngineAdmin uiApi = MApi.lookup(IEngineAdmin.class);

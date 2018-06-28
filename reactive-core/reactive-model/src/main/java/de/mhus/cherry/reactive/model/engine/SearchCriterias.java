@@ -22,6 +22,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MSystem;
 
 public class SearchCriterias {
 
@@ -60,6 +61,10 @@ public class SearchCriterias {
 	}
 	
 	public SearchCriterias(MProperties parameters) {
+		parse(parameters);
+	}
+	
+	public void parse(MProperties parameters) {
 		if (parameters == null) return;
 		for (String k : parameters.keySet()) {
 			String v = parameters.getString(k,null);
@@ -166,6 +171,32 @@ public class SearchCriterias {
 			default:
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return MSystem.toString(this, 
+				"name",name,
+				"custom",custom,
+				"customer",customer,
+				"process",process,
+				"version",version,
+				"pool",pool,
+				"unassigned",unassigned,
+				"assigned",assigned,
+				"nodeState",nodeState,
+				"index",index,
+				"caseState",caseState,
+				"uri",uri,
+				"caseId",caseId,
+				"type",type,
+				"order",order,
+				"orderAscending",orderAscending,
+				"priority",priority,
+				"score",score,
+				"milestone",milestone,
+				"actors",actors
+				);
 	}
 	
 }

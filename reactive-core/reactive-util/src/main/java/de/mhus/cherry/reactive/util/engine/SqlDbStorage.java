@@ -431,7 +431,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			if (res.next()) {
 				InputStream in = res.getBinaryStream("content_");
 				node = new PNode();
-				node.readExternal(new ObjectInputStream(in));
+				try {
+					node.readExternal(new ObjectInputStream(in));
+				} catch (java.io.EOFException eofe) {
+					log().w(node,eofe); // most because of extended parameters
+				}
 			}
 			res.close();
 			con.close();
@@ -665,17 +669,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			}
 
 			if (search.index != null) {
+				boolean first = true;
 				for (int i = 0; i < MAX_INDEX_VALUES; i++) {
 					if (search.index.length > i && search.index[i] != null) {
-						if (whereAdded) sql.append("AND "); else sql.append("WHERE ");
-						whereAdded = true;
+						if (first) {
+							if (whereAdded) sql.append("AND ("); else sql.append("WHERE (");
+							whereAdded = true;
+						} else {
+							sql.append("OR ");
+						}
 						prop.setString("index" + i, search.index[i]);
 						addFilter("index" + i, search.index[i], prop, sql);
+						first = false;
 					}
 				}
+				if (!first)
+					sql.append(")");
 			}
 			
-			if (search.actors != null) {
+			if (search.actors != null && search.actors.length > 0) {
 				if (whereAdded) sql.append("AND ("); else sql.append("WHERE (");
 				whereAdded = true;
 				boolean first = true;
@@ -810,7 +822,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
 		prop.put(name, value);
 		
-		if (value.startsWith("%") || value.endsWith("%"))
+		if (value.startsWith("*") || value.endsWith("*")) 
 			sql.append(name + "_ like $"+name+"$ ");
 		else
 			sql.append(name + "_=$"+name+"$ ");

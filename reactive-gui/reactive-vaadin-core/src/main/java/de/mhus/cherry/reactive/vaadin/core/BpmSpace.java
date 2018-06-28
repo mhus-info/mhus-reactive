@@ -21,12 +21,15 @@ import java.util.Map;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.event.FieldEvents;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
@@ -264,9 +267,12 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		return menu;
 	}
 
+	@SuppressWarnings("deprecation")
 	private Component getNodeListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
+		
+
 		VNodeList list = new VNodeList() {
 			private static final long serialVersionUID = 1L;
 			@Override
@@ -280,21 +286,69 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			}
 		};
 		list.configure(engine, criterias, properties);
-        addComponent(list);
-        setExpandRatio(list, 1);
+
+		VerticalLayout l = new VerticalLayout();
+		TextField searchText = new TextField();
+		searchText.setWidth("100%");
+		searchText.addListener(new FieldEvents.TextChangeListener() {
+			
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void textChange(TextChangeEvent event) {
+				
+				SearchCriterias c = criterias;
+				MProperties s = MProperties.explodeToMProperties(event.getText().split(" "),':');
+				c.parse(s);
+				// System.out.println("Search: " + c);
+				list.setSearchCriterias(c);
+			}
+		});
+		l.addComponent(searchText);
+		l.setExpandRatio(searchText, 0);
+				
+		l.addComponent(list);
+		l.setExpandRatio(list, 1);
+		
+        addComponent(l);
+        setExpandRatio(l, 1);
         
-        return list;
+        return l;
 	}
 
+	@SuppressWarnings("deprecation")
 	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
 		VCaseList list = new VCaseList();
+		
+		VerticalLayout l = new VerticalLayout();
+		TextField searchText = new TextField();
+		searchText.setWidth("100%");
+		searchText.addListener(new FieldEvents.TextChangeListener() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void textChange(TextChangeEvent event) {
+				
+				SearchCriterias c = criterias;
+				MProperties s = MProperties.explodeToMProperties(event.getText().split(" "),':');
+				c.parse(s);
+				// System.out.println("Search: " + c);
+				list.setSearchCriterias(c);
+			}
+		});
+		l.addComponent(searchText);
+		l.setExpandRatio(searchText, 0);
+				
+		l.addComponent(list);
+		l.setExpandRatio(list, 1);
+		
 		list.configure(engine, criterias, properties);
-        addComponent(list);
-        setExpandRatio(list, 1);
+        addComponent(l);
+        setExpandRatio(l, 1);
         
-        return list;
+        return l;
 	}
 	
 	private void initEngine() {

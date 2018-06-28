@@ -126,7 +126,7 @@ public class VNodeList extends MhuTable {
             public void handleAction(final Action action, final Object sender,
                     final Object target) {
             	try {
-					INode node = engine.getNode(((NodeItem)target).getId().toString(),null);
+					INode node = engine.getNode(((NodeItem)target).getId().toString());
 					
 	            	if (action == ACTION_UNASSIGN) {
 	            		node.doUnassign();
@@ -175,7 +175,11 @@ public class VNodeList extends MhuTable {
 	protected void doOpenUserForm(NodeItem selected) {
 		
 	}
-
+	
+	public SearchCriterias getSearchCriterias() {
+		return criterias;
+	}
+	
 	private NodeContainer getItems(int page) {
 		
 		try {
@@ -236,6 +240,12 @@ public class VNodeList extends MhuTable {
 			setCurrentPageFirstItemIndex(0);
 			Notification.show("Liste aktualisiert",Notification.Type.TRAY_NOTIFICATION);
 		}
+	}
+
+	public void setSearchCriterias(SearchCriterias c) {
+		if (c != null)
+			criterias = c;
+		doReload();
 	}
 
 }

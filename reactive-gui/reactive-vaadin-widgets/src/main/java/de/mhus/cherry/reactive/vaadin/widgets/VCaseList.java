@@ -227,4 +227,10 @@ public class VCaseList extends MhuTable {
 		}
 	}
 
+	public void setSearchCriterias(SearchCriterias c) {
+		if (c != null)
+			criterias = c;
+		doReload();
+	}
+
 }
