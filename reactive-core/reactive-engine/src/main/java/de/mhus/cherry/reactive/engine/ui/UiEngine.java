@@ -437,7 +437,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public Object execute(String uri) throws Exception {
+	public Object doExecute(String uri) throws Exception {
 		if (engine == null) throw new WrongStateEception();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);
@@ -445,7 +445,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public Object execute(String uri, IProperties properties) throws Exception {
+	public Object doExecute(String uri, IProperties properties) throws Exception {
 		if (engine == null) throw new WrongStateEception();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);

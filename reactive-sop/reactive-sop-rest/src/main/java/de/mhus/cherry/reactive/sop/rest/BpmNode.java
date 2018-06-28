@@ -70,7 +70,7 @@ public class BpmNode extends AbstractObjectListNode<Object> {
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 		
 		String uri = callContext.getParameter("uri");
-		String res = String.valueOf(engine.execute(uri));
+		String res = String.valueOf(engine.doExecute(uri));
 		
 		result.createObjectNode().put("result", res);
 	}

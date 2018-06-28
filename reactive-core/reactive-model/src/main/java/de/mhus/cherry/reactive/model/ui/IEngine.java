@@ -53,9 +53,9 @@ public interface IEngine {
 
 	String getUser();
 
-	Object execute(String uri) throws Exception;
+	Object doExecute(String uri) throws Exception;
 
-	Object execute(String uri, IProperties properties) throws Exception;
+	Object doExecute(String uri, IProperties properties) throws Exception;
 	
 	void doArchive(UUID caseId) throws Exception;
 	

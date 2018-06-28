@@ -50,7 +50,7 @@ public class ExecuteProcessForm extends VerticalLayout {
 					String u = cmd.getValue();
 					u = u.replace("\n", "");
 					u = u.replace("\r", "");
-					Object ret = space.getEngine().execute(u);
+					Object ret = space.getEngine().doExecute(u);
 					Notification.show("Started: " + ret, Notification.TYPE_TRAY_NOTIFICATION);
 				} catch (Exception e) {
 					e.printStackTrace();
