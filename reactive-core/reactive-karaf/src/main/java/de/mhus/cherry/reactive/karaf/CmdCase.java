@@ -59,6 +59,7 @@ public class CmdCase extends MLog implements Action {
 			+ " resume <id>      - resume case\n"
 			+ " suspend <id>     - suspend case\n"
 			+ " archive <id>     - archive case\n"
+			+ " cancel <id>      - cancel hard\n"
 			+ " locked           - print locked cases"
 			+ "", multiValued=false)
     String cmd;
@@ -192,6 +193,12 @@ public class CmdCase extends MLog implements Action {
 					System.out.println("Archive: " + id);
 					api.getEngine().archiveCase(UUID.fromString(id));
 				}
+			}
+		} else
+		if (cmd.equals("cancel")) {
+			for (String id : parameters) {
+				System.out.println("Cancel: " + id);
+				api.getEngine().closeCase(UUID.fromString(id), true, -1, "cancelled by cmd");
 			}
 		} else {
 			System.out.println("Unknown command");
