@@ -23,6 +23,8 @@ bpm://user:password@process name:version;options/pool name#startpoint name?key=v
 Options can be:
 * customId=
 * customerId=
+* progress=true - if starting with Engine.execute() this option will wait until the process reaches milestone progress, alternatively reach timeout or end of progress
+* uuid= - set the uuid of the case to create, this is helpful if the case is bound to another object with uuid.
 
 This syntax is used to start a new process.
 

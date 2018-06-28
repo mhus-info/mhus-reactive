@@ -693,6 +693,10 @@ public class Engine extends MLog implements EEngine {
 	}
 	
 	public Object execute(MUri uri) throws Exception {
+		return execute(uri, null);
+	}
+	
+	public Object execute(MUri uri, IProperties properties) throws Exception {
 		switch (uri.getScheme()) {
 		case "bpm": {
 			// check access
@@ -705,7 +709,7 @@ public class Engine extends MLog implements EEngine {
 				if (!hasInitiateAccess(uri, user))
 					throw new AccessDeniedException("user is not initiator",user,uri);
 			}
-			UUID id = (UUID)start(uri, null, null);
+			UUID id = (UUID)start(uri, null, properties);
 			
 			String[] uriParams = uri.getParams();
 			if (uriParams != null && uriParams.length > 0) {
@@ -1735,7 +1739,8 @@ public class Engine extends MLog implements EEngine {
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorRead();
 				for (Class<? extends AActor> actorClass : actorClasss) {
 					AActor actor = actorClass.newInstance();
-					((ContextRecipient)actor).setContext(context);
+					if (actor instanceof ContextRecipient)
+						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
 					if (hasAccess) return true;
 				}
@@ -1777,7 +1782,8 @@ public class Engine extends MLog implements EEngine {
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
 				for (Class<? extends AActor> actorClass : actorClasss) {
 					AActor actor = actorClass.newInstance();
-					((ContextRecipient)actor).setContext(context);
+					if (actor instanceof ContextRecipient)
+						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
 					if (hasAccess) return true;
 				}
@@ -1846,7 +1852,8 @@ public class Engine extends MLog implements EEngine {
 			
 			// create actor and let check access
 			AActor actor = actorClass.newInstance();
-			((ContextRecipient)actor).setContext(context);
+			if (actor instanceof ContextRecipient)
+				((ContextRecipient)actor).setContext(context);
 			boolean hasAccess = actor.hasAccess(user);
 			
 			return hasAccess;

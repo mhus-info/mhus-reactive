@@ -21,20 +21,21 @@ import java.util.Locale;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
 public interface IEngine {
 
-	List<INode> searchNodes(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException;
+	List<INode> searchNodes(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException;
 	
-	List<ICase> searchCases(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException;
+	List<ICase> searchCases(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException;
 
 	IProcess getProcess(String uri) throws MException;
 
-	ICase getCase(String id, String[] propertyNames) throws Exception;
+	ICase getCase(String id, String ... propertyNames) throws Exception;
 
-	INode getNode(String id, String[] propertyNames) throws Exception;
+	INode getNode(String id, String ... propertyNames) throws Exception;
 
 	default ICaseDescription getCaseDescription(ICase caze) throws Exception {
 		return getCaseDescription(caze.getUri());
@@ -54,6 +55,16 @@ public interface IEngine {
 
 	Object execute(String uri) throws Exception;
 
+	Object execute(String uri, IProperties properties) throws Exception;
+	
 	void doArchive(UUID caseId) throws Exception;
 	
+	/**
+	 * Will close this UI engine instance. Not the central engine. For some
+	 * implementations this will be helpful to release resources.
+	 * 
+	 */
+	void close();
+
+	boolean isClosed();
 }

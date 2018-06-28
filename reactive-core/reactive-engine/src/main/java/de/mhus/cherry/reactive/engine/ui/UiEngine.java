@@ -39,6 +39,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.ui.IProcess;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
@@ -46,6 +47,7 @@ import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.errors.WrongStateEception;
 
 public class UiEngine extends MLog implements IEngine {
 
@@ -65,7 +67,8 @@ public class UiEngine extends MLog implements IEngine {
 	}
 	
 	@Override
-	public List<INode> searchNodes(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException {
+	public List<INode> searchNodes(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException {
+		if (engine == null) throw new WrongStateEception();
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -75,12 +78,11 @@ public class UiEngine extends MLog implements IEngine {
 					if (cnt >= first) {
 						
 						Map<String,String> properties = new TreeMap<>();
-						if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+						if (propertyNames == null || propertyNames.length == 1 && "*".equals(propertyNames[0])) {
 							for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 								if (info.getIndexValue(i) != null)
 									properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
-						} else
-						if (propertyNames != null) {
+						} else {
 							for (String name : propertyNames) {
 								if (name == null) continue;
 								if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
@@ -133,7 +135,8 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public List<ICase> searchCases(SearchCriterias criterias, int page, int size, String[] propertyNames) throws NotFoundException, IOException {
+	public List<ICase> searchCases(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException {
+		if (engine == null) throw new WrongStateEception();
 		LinkedList<ICase> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -143,12 +146,11 @@ public class UiEngine extends MLog implements IEngine {
 					if (cnt >= first) {
 						
 						Map<String,String> properties = new TreeMap<>();
-						if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+						if (propertyNames == null || propertyNames.length == 1 && "*".equals(propertyNames[0])) {
 							for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 								if (info.getIndexValue(i) != null)
 									properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
-						} else
-						if (propertyNames != null) {
+						} else {
 							for (String name : propertyNames) {
 								if (name == null) continue;
 								if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
@@ -264,13 +266,15 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public IProcess getProcess(String uri) throws MException {
+		if (engine == null) throw new WrongStateEception();
 		UiProcess out = new UiProcess(this, engine.getProcess(MUri.toUri(uri)));
 		out.getProperties().putAll(defaultProcessProperties);
 		return out;
 	}
 
 	@Override
-	public ICase getCase(String id, String[] propertyNames) throws Exception {
+	public ICase getCase(String id, String ... propertyNames) throws Exception {
+		if (engine == null) throw new WrongStateEception();
 		PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
 		if (!engine.hasReadAccess(info.getUri(), user))
 			return null;
@@ -278,15 +282,14 @@ public class UiEngine extends MLog implements IEngine {
 		// load properties
 		Map<String,String> properties = new TreeMap<>();
 		PCase caze = null;
-		if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+		if (propertyNames == null || propertyNames.length == 1 && "*".equals(propertyNames[0])) {
 			for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 				if (info.getIndexValue(i) != null)
 					properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
 			caze = engine.getCase(info.getId());
 			for (Entry<String, Object> entry : caze.getParameters().entrySet())
 				properties.put(EngineConst.UI_CASE_PREFIX + entry.getKey(), String.valueOf(entry.getValue()));
-		} else
-		if (propertyNames != null) {
+		} else {
 			for (String name : propertyNames) {
 				if (name == null) continue;
 				if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
@@ -337,7 +340,8 @@ public class UiEngine extends MLog implements IEngine {
 	}
 	
 	@Override
-	public INode getNode(String id, String[] propertyNames) throws Exception {
+	public INode getNode(String id, String ... propertyNames) throws Exception {
+		if (engine == null) throw new WrongStateEception();
 		PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
 		if (!engine.hasReadAccess(info.getUri(), user))
 			return null;
@@ -346,7 +350,7 @@ public class UiEngine extends MLog implements IEngine {
 		Map<String,String> properties = new TreeMap<>();
 		PCase caze = null;
 		PNode node = null;
-		if (propertyNames != null && propertyNames.length == 1 && "*".equals(propertyNames[0])) {
+		if (propertyNames == null || propertyNames.length == 1 && "*".equals(propertyNames[0])) {
 			for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 				if (info.getIndexValue(i) != null)
 					properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
@@ -356,8 +360,7 @@ public class UiEngine extends MLog implements IEngine {
 			node = engine.getFlowNode(info.getId());
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
 				properties.put(EngineConst.UI_NODE_PREFIX + entry.getKey(), String.valueOf(entry.getValue()));
-		} else
-		if (propertyNames != null) {
+		} else {
 			for (String name : propertyNames) {
 				if (name == null) continue;
 				if (name.startsWith(EngineConst.UI_PNODE_PREFIX)) {
@@ -435,9 +438,18 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public Object execute(String uri) throws Exception {
+		if (engine == null) throw new WrongStateEception();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);
 		return engine.execute(u);
+	}
+
+	@Override
+	public Object execute(String uri, IProperties properties) throws Exception {
+		if (engine == null) throw new WrongStateEception();
+		MutableUri u = (MutableUri) MUri.toUri(uri);
+		u.setUsername(user);
+		return engine.execute(u, properties);
 	}
 
 	@Override
@@ -452,9 +464,20 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public void doArchive(UUID caseId) throws Exception {
+		if (engine == null) throw new WrongStateEception();
 		PCaseInfo caze = engine.getCaseInfo(caseId);
 		if (caze.getState() != STATE_CASE.CLOSED) throw new MException("wrong case state",caseId);
 		engine.archiveCase(caseId);
+	}
+
+	@Override
+	public void close() {
+		engine = null;
+	}
+	
+	@Override
+	public boolean isClosed() {
+		return engine == null;
 	}
 	
 }
