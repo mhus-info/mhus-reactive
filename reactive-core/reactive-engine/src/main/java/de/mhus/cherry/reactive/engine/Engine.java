@@ -634,6 +634,15 @@ public class Engine extends MLog implements EEngine {
 				log().e(e);
 				fireEvent.error(pNode,start,e);
 			}
+		} else {
+			// set node in error
+			pNode.setState(STATE_NODE.FAILED);
+			pNode.setExitMessage(t.toString());
+			try {
+				saveFlowNode(pNode);
+			} catch (NotFoundException | IOException e) {
+				log().e(pNode,e);
+			}
 		}
 		
 	}

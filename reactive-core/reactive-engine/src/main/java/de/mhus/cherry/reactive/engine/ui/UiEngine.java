@@ -472,7 +472,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public void close() {
-		engine = null;
+		// engine = null;
 	}
 	
 	@Override

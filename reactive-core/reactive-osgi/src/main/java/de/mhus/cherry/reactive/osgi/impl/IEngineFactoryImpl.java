@@ -48,7 +48,7 @@ public class IEngineFactoryImpl implements IEngineFactory, IEngineAdmin {
 		if (locale == null) locale = Locale.getDefault();
 		synchronized (cache) {
 			IEngine engine = cache.get(user + "#" + locale.getLanguage());
-			if (engine != null) return engine;
+			if (engine != null && !engine.isClosed()) return engine;
 			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 			engine = new UiEngine(api.getEngine(), user, locale);
 			((UiEngine)engine).setDefaultProcessProperties(defaultProcessProperties);
