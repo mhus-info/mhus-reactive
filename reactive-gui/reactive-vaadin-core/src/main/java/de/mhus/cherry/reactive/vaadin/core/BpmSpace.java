@@ -21,15 +21,12 @@ import java.util.Map;
 
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
-import com.vaadin.event.FieldEvents;
-import com.vaadin.event.FieldEvents.TextChangeEvent;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 
@@ -44,11 +41,13 @@ import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
 import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.vaadin.SearchField;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
@@ -267,7 +266,6 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		return menu;
 	}
 
-	@SuppressWarnings("deprecation")
 	private Component getNodeListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
@@ -288,22 +286,24 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		list.configure(engine, criterias, properties);
 
 		VerticalLayout l = new VerticalLayout();
-		TextField searchText = new TextField();
+		SearchField searchText = new SearchField(null);
+		searchText.addKnownFacetName("search");
+		for (String id : list.getColumnHeaders())
+			searchText.addKnownFacetName(id);
 		searchText.setWidth("100%");
-		searchText.addListener(new FieldEvents.TextChangeListener() {
-			
-			private static final long serialVersionUID = 1L;
+		searchText.setListener(new SearchField.Listener() {
 
 			@Override
-			public void textChange(TextChangeEvent event) {
-				
+			public void doFilter(SearchField searchField) {
 				SearchCriterias c = criterias;
-				MProperties s = MProperties.explodeToMProperties(event.getText().split(" "),':');
+				IProperties s = searchField.createFilterRequest().toProperties();
 				c.parse(s);
 				// System.out.println("Search: " + c);
 				list.setSearchCriterias(c);
 			}
+			
 		});
+
 		l.addComponent(searchText);
 		l.setExpandRatio(searchText, 0);
 				
@@ -313,31 +313,34 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         addComponent(l);
         setExpandRatio(l, 1);
         
+        l.setSizeFull();
         return l;
 	}
 
-	@SuppressWarnings("deprecation")
 	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
 		VCaseList list = new VCaseList();
 		
 		VerticalLayout l = new VerticalLayout();
-		TextField searchText = new TextField();
+		SearchField searchText = new SearchField(null);
+		searchText.addKnownFacetName("search");
+		for (String id : list.getColumnHeaders())
+				searchText.addKnownFacetName(id);
 		searchText.setWidth("100%");
-		searchText.addListener(new FieldEvents.TextChangeListener() {
-			private static final long serialVersionUID = 1L;
+		searchText.setListener(new SearchField.Listener() {
 
 			@Override
-			public void textChange(TextChangeEvent event) {
-				
+			public void doFilter(SearchField searchField) {
 				SearchCriterias c = criterias;
-				MProperties s = MProperties.explodeToMProperties(event.getText().split(" "),':');
+				IProperties s = searchField.createFilterRequest().toProperties();
 				c.parse(s);
 				// System.out.println("Search: " + c);
 				list.setSearchCriterias(c);
 			}
+			
 		});
+		
 		l.addComponent(searchText);
 		l.setExpandRatio(searchText, 0);
 				
@@ -348,6 +351,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         addComponent(l);
         setExpandRatio(l, 1);
         
+        l.setSizeFull();
         return l;
 	}
 	

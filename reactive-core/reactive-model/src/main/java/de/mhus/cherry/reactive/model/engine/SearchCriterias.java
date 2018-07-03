@@ -20,6 +20,7 @@ import java.util.UUID;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
@@ -64,7 +65,7 @@ public class SearchCriterias {
 		parse(parameters);
 	}
 	
-	public void parse(MProperties parameters) {
+	public void parse(IProperties parameters) {
 		if (parameters == null) return;
 		for (String k : parameters.keySet()) {
 			String v = parameters.getString(k,null);

@@ -104,6 +104,7 @@ public class CmdCase extends MLog implements Action {
 			System.out.println("Name      : " + caze.getName());
 			System.out.println("Id        : " + caze.getId());
 			System.out.println("State     : " + caze.getState());
+			System.out.println("Milestone : " + caze.getMilestone());
 			System.out.println("CName     : " + caze.getCanonicalName());
 			System.out.println("CreatedBy : " + caze.getCreatedBy());
 			System.out.println("Created   : " + MDate.toIso8601(new Date(caze.getCreationDate())));

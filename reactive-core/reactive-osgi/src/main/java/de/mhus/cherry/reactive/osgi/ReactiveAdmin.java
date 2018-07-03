@@ -60,4 +60,6 @@ public interface ReactiveAdmin {
 
 	ProcessLoader getProcessLoader(String name) throws NotFoundException;
 
+	long getProcessDeployTime(String name);
+
 }

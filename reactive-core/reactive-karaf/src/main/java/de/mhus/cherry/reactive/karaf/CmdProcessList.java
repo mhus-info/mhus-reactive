@@ -23,6 +23,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.lib.core.util.MUri;
@@ -42,19 +43,21 @@ public class CmdProcessList extends MLog implements Action {
 		
 		ConsoleTable table = new ConsoleTable();
 		table.fitToConsole();
-		table.setHeaderValues("Registered", "Deployed", "Status","Info");
+		table.setHeaderValues("Registered", "Deployed", "Status","Info","Deployed");
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		for (String name : api.getAvailableProcesses()) {
 			String deployName = api.getProcessDeployName(name);
 			if (all || deployName != null) {
 				String a = "undeployed";
+				String deployTime = "";
 				if (deployName != null) {
 					boolean enabled = api.getEnginePersistence().isProcessEnabled(deployName);
 					boolean active = api.getEnginePersistence().isProcessActive(deployName);
 					a = (enabled ? "enabled" : "") + (active ? " active" : "");
+					deployTime = MDate.toIso8601(api.getProcessDeployTime(deployName));
 				}
 				String info = api.getProcessInfo(name);
-				table.addRowValues(name, deployName, a, info);
+				table.addRowValues(name, deployName, a, info, deployTime);
 				if (pools && deployName != null) {
 					EProcess process = api.getEngine().getProcess(MUri.toUri("reactive://" + deployName));
 					if (process != null) {

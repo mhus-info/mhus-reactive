@@ -178,6 +178,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 		
 		info.deployedName = ((DefaultProcessProvider)config.processProvider).addProcess(info.loader);
+		info.time = System.currentTimeMillis();
 		
 		EProcess process = config.processProvider.getProcess(info.deployedName);
 		boolean foundError = false;
@@ -232,6 +233,15 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 	
 	@Override
+	public long getProcessDeployTime(String name) {
+		synchronized (availableProcesses) {
+			ProcessInfo info = availableProcesses.get(name);
+			if (info == null) return 0;
+			return info.time;
+		}
+	}
+	
+	@Override
 	public void undeploy(String name) throws MException {
 		startEngine();
 		//TODO stop cases before ?
@@ -252,6 +262,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		String info;
 		String deployedName;
 		String canonicalName;
+		long time = 0;
 		
 		public ProcessInfo(String info, String canonicalName, ProcessLoader loader) {
 			this.info = info;
