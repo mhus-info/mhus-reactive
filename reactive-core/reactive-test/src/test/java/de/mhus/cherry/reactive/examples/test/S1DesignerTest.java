@@ -38,5 +38,8 @@ public class S1DesignerTest extends TestCase {
 		// merge in existing
 		DesignerUtil.saveInto(model, new File("target/S1Pool-3.bpmn2"));
 		
+		// merge in existing
+		DesignerUtil.saveInto(model, new File("target/S1Pool-4.bpmn2"));
+		
 	}
 }

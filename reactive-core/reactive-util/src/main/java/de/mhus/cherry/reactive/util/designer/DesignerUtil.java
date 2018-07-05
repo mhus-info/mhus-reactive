@@ -48,6 +48,12 @@ public class DesignerUtil {
 	}
 
 	public static void saveInto(XmlModel model, File file) throws Exception {
+		
+		if (!file.exists()) {
+			createDocument(model, file);
+			return;
+		}
+		
 		Document doc = MXml.loadXml(file);
 		Element eProcess = MXml.getElementByPath(doc.getDocumentElement(), "bpmn2:process");
 		for (Element child : MXml.getLocalElementIterator(eProcess))

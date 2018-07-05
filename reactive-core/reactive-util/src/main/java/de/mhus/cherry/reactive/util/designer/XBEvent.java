@@ -39,7 +39,8 @@ public abstract class XBEvent {
 //	    </bpmn2:boundaryEvent>
 		Document doc = xml.getOwnerDocument();
 		Element eEvent = doc.createElement("bpmn2:boundaryEvent");
-		eEvent.setAttribute("id", elem.getId() + "-" + cnt);
+		id = elem.getId() + "-" + cnt;
+		eEvent.setAttribute("id", id);
 		eEvent.setAttribute("name", name);
 		eEvent.setAttribute("attachedToRef", elem.getId());
 		xml.appendChild(eEvent);
@@ -54,7 +55,7 @@ public abstract class XBEvent {
 		String xmlName = getXmlElementName();
 		if (xmlName != null) {
 			Element eType = doc.createElement(xmlName);
-			eType.setAttribute("id", elem.getId() + "-" + cnt + "-Definition");
+			eType.setAttribute("id", id + "-Definition");
 			eEvent.appendChild(eType);
 		}
 		
