@@ -1,12 +1,10 @@
 package de.mhus.cherry.reactive.util.designer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -19,6 +17,7 @@ import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.activity.ATask;
 import de.mhus.cherry.reactive.model.activity.AUserTask;
+import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.lib.core.MLog;
@@ -56,36 +55,65 @@ public class XmlModel extends MLog {
 						}
 					}
 				}
-			}
+			} else
 			if (eName.equals("bpmn2:userTask")) {
 				XElement entry = new XUserTask();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
-			}
+			} else
 			if (eName.equals("bpmn2:scriptTask")) {
 				XElement entry = new XScriptTask();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
-			}
+			} else
 			if (eName.equals("bpmn2:exclusiveGateway")) {
 				XElement entry = new XExclusiveGateway();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
-			}
+			} else
 			if (eName.equals("bpmn2:parallelGateway")) {
 				XElement entry = new XParallelGateway();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
-			}
+			} else
 			if (eName.equals("bpmn2:startEvent")) {
 				XElement entry = new XStartEvent();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
-			}
+			} else
 			if (eName.equals("bpmn2:endEvent")) {
 				XElement entry = new XEndEvent();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
+			} else
+			if (eName.equals("bpmn2:sequenceFlow")) {
+				// ignore
+				// <bpmn2:sequenceFlow id="SequenceFlow_8" sourceRef="ScriptTask_1" targetRef="ParallelGateway_1"/>
+			} else
+			if (eName.equals("bpmn2:boundaryEvent")) {
+				// ignore
+				// <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="Task_2">
+			} else {
+				log().i("Unknown element", eName);
+				XElement entry = new XUnknown();
+				entry.doUpdate(elem);
+				elements.put(elem.getAttribute("id"), entry);
+			}
+		}
+		
+		// boundary events
+		for (Element elem : MXml.getLocalElementIterator(xml)) {
+			String eName = elem.getNodeName();
+			if (eName.equals("bpmn2:boundaryEvent")) {
+				// <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="Task_2">
+				String ref = elem.getAttribute("attachedToRef");
+				XElement master = elements.get(ref);
+				if (master == null) {
+					log().w("master not found for boundary",eName, ref);
+				} else {
+					XBEvent boundary = createBoundary(elem);
+					master.addBoundary(boundary);
+				}
 			}
 		}
 		
@@ -93,7 +121,48 @@ public class XmlModel extends MLog {
 		elements.values().forEach(v -> v.connectLane(laneRefs));
 	}
 	
+	private XBEvent createBoundary(Element elem) {
+		// <bpmn2:boundaryEvent id="BoundaryEvent_2" name="" attachedToRef="Task_3">
+		Element eOutgoing = null;
+		Element eType = null;
+		for (Element child : MXml.getLocalElementIterator(elem)) {
+			String eName = child.getNodeName();
+			if (eName.equals("bpmn2:outgoing")) {
+				eOutgoing = child;
+			} else {
+				eType = child;
+			}
+		}
+		
+		String outgoingRef  = null;
+		if (eOutgoing != null)
+			outgoingRef = MXml.getValue(eOutgoing, false);
+		
+		XBEvent xb = null;
+		if (eType == null) 
+			xb = new XBUnknown();
+		else {
+			String type = eType.getNodeName();
+			if (type.equals("bpmn2:signalEventDefinition"))
+				xb = new XBSignalEvent();
+			else
+			if (type.equals("bpmn2:errorEventDefinition"))
+				xb = new XBErrorEvent();
+			else
+			if (type.equals("bpmn2:timerEventDefinition"))
+				xb = new XBTimerEvent();
+			else
+				xb = new XBUnknown();
+		}
+		xb.update(eType, outgoingRef, elem);
+		return xb;
+	}
+
 	public void merge(EPool pool) {
+		
+		poolId = pool.getCanonicalName();
+		poolName = pool.getName();
+		
 		// set unused
 		elements.values().forEach(v -> v.setUsed(false));
 		
@@ -193,6 +262,15 @@ public class XmlModel extends MLog {
 					flows.add(ref + "_" + elem.getId());
 				for (String ref : elem.getOutgoing())
 					flows.add(elem.getId() + "_" + ref);
+				
+				int cnt = 0;
+				for (XBEvent event : elem.getBoundaries()) {
+					event.createXml(xml, elem, elements, cnt);
+					cnt++;
+					if (event.getOutgoing() != null) {
+						flows.add(event.getId() + "_" + event.getOutgoing());
+					}
+				}
 			}
 		}
 		
@@ -224,7 +302,46 @@ public class XmlModel extends MLog {
 				System.out.println("    In : " + ref);
 			for (String ref : v.getOutgoing())
 				System.out.println("    Out: " + ref);
+			for (XBEvent event : v.getBoundaries())
+				System.out.println("    Event: " + event.getClass().getSimpleName() + " " + event.getOutgoing());
 		}
+	}
+	
+	public String getPoolId() {
+		return poolId;
+	}
+	
+	public String getPoolName() {
+		return poolName;
+	}
+
+	public static XBEvent createBoundary(XElement xElement, Trigger trigger, int cnt) {
+		XBEvent out = null;
+		switch (trigger.type()) {
+		case DEFAULT_ERROR:
+			out = new XBErrorEvent();
+			break;
+		case ERROR:
+			out = new XBErrorEvent();
+			break;
+		case MESSAGE:
+			out = new XBMessageEvent();
+			break;
+		case NOOP:
+			out = new XBUnknown();
+			break;
+		case SIGNAL:
+			out = new XBSignalEvent();
+			break;
+		case TIMER:
+			out = new XBTimerEvent();
+			break;
+		default:
+			out = new XBUnknown();
+			break;
+		}
+		out.update(xElement, trigger, cnt);
+		return out;
 	}
 	
 }

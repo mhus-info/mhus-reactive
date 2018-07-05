@@ -12,12 +12,13 @@ public class DesignerUtil {
 
 	
 	public static void createDocument(XmlModel model, File file) throws Exception {
-		Document doc = createDocument(model);
+		Document doc = createXmlDocument(model);
 		MXml.saveXml(doc.getDocumentElement(), file);
 	}
 	
-	public static Document createDocument(XmlModel model) throws Exception {
+	public static Document createXmlDocument(XmlModel model) throws Exception {
 		Document doc = MXml.createDocument();
+		// <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="_ZmpfgHPxEeiDG5oeS1KwtA" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.4.3.Final-v20180418-1358-B1">
 		Element root = doc.createElement("bpmn2:definitions");
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.setAttribute("xmlns:bpmn2", "http://www.omg.org/spec/BPMN/20100524/MODEL");
@@ -25,9 +26,9 @@ public class DesignerUtil {
 		root.setAttribute("xmlns:dc", "http://www.omg.org/spec/DD/20100524/DC");
 		root.setAttribute("xmlns:di", "http://www.omg.org/spec/DD/20100524/DI");
 		root.setAttribute("xmlns:xs", "http://www.w3.org/2001/XMLSchema");
-		root.setAttribute("id", UUID.randomUUID().toString().replace('-', 'x'));
 		root.setAttribute("exporter", "org.eclipse.bpmn2.modeler.core");
 		root.setAttribute("exporterVersion", "1.4.3.Final-v20180418-1358-B1");
+		root.setAttribute("id", UUID.randomUUID().toString().replace('-', 'x'));
 		doc.appendChild(root);
 		
 //		Element cItemDef = doc.createElement("bpmn2:itemDefinition");
@@ -35,12 +36,33 @@ public class DesignerUtil {
 //		cItemDef.setAttribute("isCollection", "false");
 //		cItemDef.setAttribute("structureRef", "xs:boolean");
 //		root.appendChild(cItemDef);
+
+		// <bpmn2:process id="Process_1" name="Process 1" isExecutable="false">
+		Element eProcess = doc.createElement("bpmn2:process");
+		root.appendChild(eProcess);
 		
-		Element cProcess = doc.createElement("bpmn2:process");
-		root.appendChild(cProcess);
-		model.createXml(cProcess);
+		// create rest of the model
+		model.createXml(eProcess);
 		
 		return doc;
 	}
+
+	public static void saveInto(XmlModel model, File file) throws Exception {
+		Document doc = MXml.loadXml(file);
+		Element eProcess = MXml.getElementByPath(doc.getDocumentElement(), "bpmn2:process");
+		for (Element child : MXml.getLocalElementIterator(eProcess))
+			eProcess.removeChild(child);
+		
+		model.createXml(eProcess);
+		MXml.saveXml(doc.getDocumentElement(), file);
+		
+	}
+	
+	public static void load(XmlModel model, File file) throws Exception {
+		Document doc = MXml.loadXml(file);
+		Element eProcess = MXml.getElementByPath(doc.getDocumentElement(), "bpmn2:process");
+		model.load(eProcess);
+	}
+	
 	
 }

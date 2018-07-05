@@ -26,6 +26,17 @@ public class S1DesignerTest extends TestCase {
 		
 		model.dump();
 		
-		DesignerUtil.createDocument(model, new File("target/S1Pool.bpmn2") );
+		DesignerUtil.createDocument(model, new File("target/S1Pool-1.bpmn2") );
+		DesignerUtil.createDocument(model, new File("target/S1Pool-3.bpmn2"));
+
+		// try loading again
+		model = new XmlModel();
+		DesignerUtil.load(model, new File("target/S1Pool-1.bpmn2"));
+		// save again
+		DesignerUtil.createDocument(model, new File("target/S1Pool-2.bpmn2"));
+		
+		// merge in existing
+		DesignerUtil.saveInto(model, new File("target/S1Pool-3.bpmn2"));
+		
 	}
 }

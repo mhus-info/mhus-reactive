@@ -11,8 +11,10 @@ import org.w3c.dom.Text;
 
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MXml;
 
 public abstract class XElement {
@@ -25,6 +27,7 @@ public abstract class XElement {
 	protected String name;
 	protected LinkedList<String> outgoing = new LinkedList<>();
 	protected LinkedList<String> incoming = new LinkedList<>();
+	protected LinkedList<XBEvent> boundaries = new LinkedList<>();
 	protected String laneId;
 	
 	void doUpdate(EElement element) {
@@ -41,7 +44,18 @@ public abstract class XElement {
 		if (desc != null) {
 			for (Output out : desc.outputs())
 				outgoing.add(out.activity().getCanonicalName());
+			
+			boundaries.clear();
+			int cnt = 0;
+			for (Trigger trigger : desc.triggers()) {
+				XBEvent boundary = XmlModel.createBoundary(this,trigger,cnt);
+				cnt++;
+				if (boundary != null)
+					addBoundary(boundary);
+			}
+			
 		}
+		
 	}
 	
 	void connectIncoming(TreeMap<String, XElement> elements) {
@@ -60,11 +74,23 @@ public abstract class XElement {
 		id = xml.getAttribute("id");
 		name = xml.getAttribute("name");
 		incoming.clear();
-		for (Element eIn : MXml.getLocalElementIterator(xml, "bpmn2:incoming"))
-			incoming.add(MXml.getValue(eIn, false));
+		for (Element eIn : MXml.getLocalElementIterator(xml, "bpmn2:incoming")) {
+			String ref = MXml.getValue(eIn, false);
+			if (ref.startsWith(XElement.SEQUENCE_FLOW)) {
+				ref = ref.substring(XElement.SEQUENCE_FLOW.length());
+				ref = MString.beforeIndex(ref, '_');
+			}
+			incoming.add(ref);
+		}
 		outgoing.clear();
-		for (Element eOut : MXml.getLocalElementIterator(xml, "bpmn2:outgoing"))
-			outgoing.add(MXml.getValue(eOut, false));
+		for (Element eOut : MXml.getLocalElementIterator(xml, "bpmn2:outgoing")) {
+			String ref = MXml.getValue(eOut, false);
+			if (ref.startsWith(XElement.SEQUENCE_FLOW)) {
+				ref = ref.substring(XElement.SEQUENCE_FLOW.length());
+				ref = MString.afterIndex(ref, '_');
+			}
+			outgoing.add(ref);
+		}
 	}
 
 	public boolean isUsed() {
@@ -124,6 +150,17 @@ public abstract class XElement {
 
 	public String[] getOutgoing() {
 		return outgoing.toArray(new String[outgoing.size()]);
+	}
+
+	public XBEvent[] getBoundaries() {
+		return boundaries.toArray(new XBEvent[boundaries.size()]);
+	}
+
+	public void addBoundary(XBEvent boundary) {
+		if (boundary == null) return;
+		boundaries.add(boundary);
+		if (boundary.getOutgoing() != null)
+			outgoing.add(boundary.getOutgoing());
 	}
 
 }

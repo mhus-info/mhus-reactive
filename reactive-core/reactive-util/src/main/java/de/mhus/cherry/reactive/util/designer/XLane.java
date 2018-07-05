@@ -26,6 +26,14 @@ public class XLane extends XElement {
 				lane.appendChild(ref);
 				Text text = doc.createTextNode(element.getId());
 				ref.appendChild(text);
+				
+				for (XBEvent event : element.getBoundaries()) {
+					ref = doc.createElement("bpmn2:flowNodeRef");
+					lane.appendChild(ref);
+					text = doc.createTextNode(event.getId());
+					ref.appendChild(text);
+				}
+				
 			}
 		}
 		
