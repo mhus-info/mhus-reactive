@@ -15,20 +15,29 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.model.engine.PCase;
+import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PEngine;
+import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pengine", description = "Engine modifiations")
 @Service
@@ -53,12 +62,15 @@ public class CmdProcessEngine extends MLog implements Action {
 			+ " stop                    - stop and destroy engine\n"
 			+ " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
 			+ " execute <uri>           - executes the uri, e.g. bpm://process/pool to start a case\n"
+			+ " health\n"
 			+ "", multiValued=false)
     String cmd;
 
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
 
+	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
+	private boolean full;
 	
 	@Override
 	public Object execute() throws Exception {
@@ -174,6 +186,56 @@ public class CmdProcessEngine extends MLog implements Action {
 					api.getEngine().archiveCase(UUID.fromString(id));
 				}
 			}
+		} else
+		if (cmd.equals("health")) {
+			int severe = 0;
+			{
+				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
+				
+				ConsoleTable table = new ConsoleTable(full);
+				table.setHeaderValues("Id","CustomId","Uri","State","Close");
+				for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
+					PCase caze = api.getEngine().getCase(info.getId());
+					table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+					severe++;
+				}
+				table.print(System.out);
+			}
+			{
+				SearchCriterias criterias = new SearchCriterias(parameters);
+				
+				ConsoleTable table = new ConsoleTable(full);
+				table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
+				for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
+					PNode node = api.getEngine().getFlowNode(info.getId());
+					String scheduled = "-";
+					Entry<String, Long> scheduledEntry = node.getNextScheduled();
+					if (scheduledEntry != null) {
+						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+						if (diff > 0)
+							scheduled = MTimeInterval.getIntervalAsString(diff);
+					}
+					table.addRowValues(
+							node.getId(),
+							info.getCustomId(), 
+							node.getName(),
+							node.getState(),
+							node.getType(), 
+							scheduled, 
+							node.getCaseId(),
+							node.getAssignedUser(),
+							info.getUri()
+							);
+				}
+				table.print(System.out);
+				severe++;
+			}
+			
+			if (severe == 0)
+				System.out.println("healthy");
+			else
+				System.out.println(severe + " in problems");
+			
 		} else {
 			System.out.println("Unknown command");
 		}

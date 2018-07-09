@@ -26,7 +26,7 @@ import java.util.UUID;
 
 public class PCase implements Externalizable {
 	
-	public enum STATE_CASE {NEW, RUNNING, SUSPENDED, CLOSED}
+	public enum STATE_CASE {NEW, RUNNING, SUSPENDED, CLOSED, SEVERE}
 	
 	protected UUID id;
 	protected String uri;

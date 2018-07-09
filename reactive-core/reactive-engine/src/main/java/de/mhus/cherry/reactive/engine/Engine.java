@@ -149,7 +149,18 @@ public class Engine extends MLog implements EEngine {
 			}
 		}
 		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now)) {
-			fireScheduledTrigger(nodeInfo);
+			PCase caze = getCase(nodeInfo.getCaseId());
+			if (caze.getState() == STATE_CASE.RUNNING)
+				fireScheduledTrigger(nodeInfo);
+			else
+			if (caze.getState() == STATE_CASE.CLOSED) {
+				// stop node also
+				log().d("auto stop waiting node",nodeInfo);
+				PNode node = getFlowNode(nodeInfo.getId());
+				node.setSuspendedState(node.getState());
+				node.setState(STATE_NODE.STOPPED);
+				storage.saveFlowNode(node);
+			}
 		}
 
 		// READY NODES
@@ -180,6 +191,7 @@ public class Engine extends MLog implements EEngine {
 					} else
 					if (caze.getState() == STATE_CASE.CLOSED) {
 						// stop node also
+						log().d("auto stop running node",nodeInfo);
 						node.setSuspendedState(node.getState());
 						node.setState(STATE_NODE.STOPPED);
 						storage.saveFlowNode(node);
@@ -1965,9 +1977,18 @@ public class Engine extends MLog implements EEngine {
 							return;
 						}
 					}
-				} catch(MException e) {
+				} catch(Throwable e) {
 					fireEvent.error(node,e);
 					log().e(node,e);
+					// should not happen, it's an internal engine problem
+					try {
+						PCase caze = getCase(node.getCaseId());
+						EngineContext context = createContext(caze, node);
+						closeFlowNode(context, node, STATE_NODE.SEVERE);
+					} catch (Throwable e2) {
+						log().e(nodeInfo,e2);
+						fireEvent.error(nodeInfo,e2);
+					}
 					continue;
 				}
 			}
@@ -1984,7 +2005,7 @@ public class Engine extends MLog implements EEngine {
 			try {
 				PNode node = getFlowNode(nodeInfo.getId());
 				synchronized (getCaseLock(node)) {
-					if (node.getState() == STATE_NODE.SUSPENDED) {
+					if (node.getState() == STATE_NODE.SUSPENDED) { // should not happen ... searching for WAITING nodes
 						log().w("signal for suspended node will not be delivered",node,signal);
 						continue;
 					} else 
@@ -2021,6 +2042,15 @@ public class Engine extends MLog implements EEngine {
 						} catch(MException e) {
 							fireEvent.error(node,e);
 							log().e(node,e);
+							// should not happen, it's an internal engine problem
+							try {
+								PCase caze = getCase(node.getCaseId());
+								EngineContext context = createContext(caze, node);
+								closeFlowNode(context, node, STATE_NODE.SEVERE);
+							} catch (Throwable e2) {
+								log().e(nodeInfo,e2);
+								fireEvent.error(nodeInfo,e2);
+							}
 							continue;
 						}
 					}
@@ -2028,6 +2058,16 @@ public class Engine extends MLog implements EEngine {
 				}
 			} catch (Throwable t) {
 				log().d(nodeInfo.getId(),t);
+				// should not happen, it's an internal engine problem
+				try {
+					PNode node = getFlowNode(nodeInfo.getId());
+					PCase caze = getCase(node.getCaseId());
+					EngineContext context = createContext(caze, node);
+					closeFlowNode(context, node, STATE_NODE.SEVERE);
+				} catch (Throwable e) {
+					log().e(nodeInfo,e);
+					fireEvent.error(nodeInfo,e);
+				}
 			}
 		}
 		return cnt;
@@ -2090,6 +2130,16 @@ public class Engine extends MLog implements EEngine {
 			}
 		} catch (Throwable t) {
 			log().e(nodeInfo.getId(),t);
+			// should not happen, it's an internal engine problem
+			try {
+				PNode node = getFlowNode(nodeInfo.getId());
+				PCase caze = getCase(node.getCaseId());
+				EngineContext context = createContext(caze, node);
+				closeFlowNode(context, node, STATE_NODE.SEVERE);
+			} catch (Throwable e) {
+				log().e(nodeInfo,e);
+				fireEvent.error(nodeInfo,e);
+			}
 		}
 	}
 

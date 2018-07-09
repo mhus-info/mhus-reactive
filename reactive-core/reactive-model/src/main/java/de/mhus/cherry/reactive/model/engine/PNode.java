@@ -38,7 +38,7 @@ public class PNode implements Externalizable {
 	// STOPPED: Some kind of SUSPENDED
 	// CLOSED: The task is done and can be archived with the case, needed for history
 	
-	public enum STATE_NODE {NEW, RUNNING,SCHEDULED,WAITING,FAILED,SUSPENDED,STOPPED,CLOSED,ZOMBIE};
+	public enum STATE_NODE {NEW, RUNNING,SCHEDULED,WAITING,FAILED,SUSPENDED,STOPPED,CLOSED,ZOMBIE,SEVERE};
 	public enum TYPE_NODE {NODE,USER,RUNTIME,MESSAGE,SIGNAL,EXTERN};
 	
 	// ident of this flow node
