@@ -202,7 +202,7 @@ public class CmdProcessEngine extends MLog implements Action {
 				table.print(System.out);
 			}
 			{
-				SearchCriterias criterias = new SearchCriterias(parameters);
+				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
 				
 				ConsoleTable table = new ConsoleTable(full);
 				table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
@@ -226,9 +226,9 @@ public class CmdProcessEngine extends MLog implements Action {
 							node.getAssignedUser(),
 							info.getUri()
 							);
+					severe++;
 				}
 				table.print(System.out);
-				severe++;
 			}
 			
 			if (severe == 0)
