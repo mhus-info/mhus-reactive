@@ -34,12 +34,37 @@ import de.mhus.lib.core.MString;
 public class DefaultProcessLoader extends MLog implements ProcessLoader {
 	
 	protected LinkedList<URL> classLoaderUrls = new LinkedList<>();
+	protected LinkedList<URL> searchLoaderUrls = new LinkedList<>();
 	protected LinkedList<Class<? extends AElement<?>>> elementClasses = new LinkedList<>();
 	protected URLClassLoader classLoader;
+	private String filter;
 
 	public DefaultProcessLoader(File[] dirs) {
-		for (File dir : dirs)
-			load(dir);
+		this(dirs, null, null);
+	}
+	
+	/**
+	 * Create a new Processor Loader loading from class path
+	 * 
+	 * @param dirs Class path elements
+	 * @param search Search in this class path elements for processes (or null for all)
+	 * @param filter Filter packages or null
+	 */
+	public DefaultProcessLoader(File[] dirs, File[] search, String filter) {
+		if (search == null) {
+			for (File dir : dirs) {
+				load(dir);
+				search(dir);
+			}
+		} else {
+			for (File dir : dirs)
+				load(dir);
+			for (File dir : search) {
+				load(dir);
+				search(dir);
+			}
+		}
+		this.filter = filter;
 		init();
 	}
 	
@@ -49,7 +74,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 
 		LinkedList<String> classNames = new LinkedList<>();
 		// load from jar files
-		for (URL url : classLoaderUrls) {
+		for (URL url : searchLoaderUrls) {
 			try {
 				File file = new File(url.getFile());
 				if (file.isDirectory() && file.getName().equals("classes")) {
@@ -62,7 +87,9 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 						String name = entry.getName();
 						if (name.endsWith(".class") && name.indexOf('$') < 0) {
 							if (name.startsWith("/")) name = name.substring(1);
-							classNames.add(MString.beforeLastIndex(name,'.').replace('/', '.'));
+							String canonicalName = MString.beforeLastIndex(name,'.').replace('/', '.'); 
+							if (filter == null || canonicalName.startsWith(filter))
+								classNames.add(canonicalName);
 						}
 					}
 					jar.close();
@@ -93,7 +120,9 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 			if (file.isFile() && file.getName().endsWith(".class")) {
 				String name = file.getAbsolutePath().substring(base.length());
 				if (name.startsWith("/")) name = name.substring(1);
-				classNames.add(MString.beforeLastIndex(name,'.').replace('/', '.'));
+				String canonicalName = MString.beforeLastIndex(name,'.').replace('/', '.'); 
+				if (filter == null || canonicalName.startsWith(filter))
+					classNames.add(canonicalName);
 			}
 		}
 	}
@@ -128,6 +157,36 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	protected void search(File dir) {
+		if (dir.isDirectory() && dir.getName().equals("classes")) {
+			try {
+				searchLoaderUrls.add( dir.toURL() );
+			} catch (MalformedURLException e) {
+				log().w(dir,e);
+			}
+		} else
+		if (dir.isDirectory()) {
+			for (File file : dir.listFiles()) {
+				if (file.isFile()) {
+					if (file.getName().endsWith(".jar"))
+						try {
+							searchLoaderUrls.add( file.toURL() );
+						} catch (MalformedURLException e) {
+							log().w(file,e);
+						}
+				}
+			}
+		} else
+		if (dir.isFile() && dir.getName().endsWith(".jar")) {
+			try {
+				searchLoaderUrls.add( dir.toURL() );
+			} catch (MalformedURLException e) {
+				log().w(dir,e);
+			}
+		}
+	}
+	
 	@Override
 	public List<Class<? extends AElement<?>>> getElements() {
 		return Collections.unmodifiableList(elementClasses);
