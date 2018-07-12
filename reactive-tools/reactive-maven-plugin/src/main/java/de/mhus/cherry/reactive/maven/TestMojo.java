@@ -18,7 +18,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import de.mhus.lib.core.MMaven;
+import de.mhus.lib.core.util.MMaven;
 
 @Mojo(name="test")
 public class TestMojo extends AbstractMojo {

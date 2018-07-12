@@ -12,7 +12,7 @@ import org.apache.maven.project.MavenProject;
 
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
-import de.mhus.lib.core.MMaven;
+import de.mhus.lib.core.util.MMaven;
 import de.mhus.lib.errors.MException;
 
 public abstract class AbstractReactiveMojo extends AbstractMojo {
