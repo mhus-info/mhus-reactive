@@ -47,7 +47,7 @@ public abstract class AbstractReactiveMojo extends AbstractMojo {
 	}
 
 	private File locateDependency(Dependency item) {
-		return MMaven.locateArtifact(item.getGroupId(), item.getArtifactId(), item.getVersion(), item.getType());
+		return MMaven.locateArtifact(MMaven.toArtifact(item.getGroupId(), item.getArtifactId(), item.getVersion(), item.getType()));
 	}
 
 }
