@@ -30,9 +30,9 @@ import de.mhus.cherry.reactive.util.bpmn2.RPool;
 		)
 public class S1Pool extends RPool<S1Pool> {
 
-	@PropertyDescription(displayName="Switch Text", writable = false )
+	@PropertyDescription(displayName="Switch Text", writable = false, initial = true )
 	private String text1 = "Moin";
-	@PropertyDescription
+	@PropertyDescription(initial = true)
 	private String text2 = "";
 
 	public String getText1() {

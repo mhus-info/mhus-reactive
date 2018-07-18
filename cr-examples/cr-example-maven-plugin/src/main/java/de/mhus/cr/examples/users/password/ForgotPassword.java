@@ -28,7 +28,7 @@ import de.mhus.cr.examples.users.ReadActor;
 		)
 public class ForgotPassword extends RPool<ForgotPassword> {
 
-	@PropertyDescription(displayName="EMail", writable = false )
+	@PropertyDescription(displayName="EMail", writable = false, initial=true )
 	private String email;
 	
 	@Override

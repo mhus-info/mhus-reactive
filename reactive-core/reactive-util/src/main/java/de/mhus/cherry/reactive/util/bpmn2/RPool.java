@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
@@ -52,9 +53,12 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	public void importParameters(Map<String, Object> parameters) {
 		for(PojoAttribute attr : getPojoModel()) {
 			try {
-				Object value = parameters.get(attr.getName());
-				if (value != null)
-					attr.set(this, value);
+				PropertyDescription desc = (PropertyDescription) attr.getAnnotation(PropertyDescription.class);
+				if (desc != null && desc.initial()) {
+					Object value = parameters.get(attr.getName());
+					if (value != null)
+						attr.set(this, value);
+				}
 			} catch (IOException e) {
 				log().d(attr,e);
 			}

@@ -34,5 +34,10 @@ public @interface PropertyDescription {
 	 * @return true
 	 */
 	boolean persistent() default true;
+	/**
+	 * Set true if the parameter can be set creating the case.
+	 * @return true
+	 */
+	boolean initial() default false;
 
 }

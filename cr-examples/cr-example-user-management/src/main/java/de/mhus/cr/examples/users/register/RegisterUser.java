@@ -28,10 +28,10 @@ import de.mhus.cr.examples.users.ReadActor;
 		)
 public class RegisterUser extends RPool<RegisterUser> {
 
-	@PropertyDescription(displayName="EMail", writable = false )
+	@PropertyDescription(displayName="EMail", writable = false, initial = true )
 	private String email;
 
-	@PropertyDescription(displayName="Name", writable = false )
+	@PropertyDescription(displayName="Name", writable = false, initial = true )
 	private String name;
 	
 	@Override
