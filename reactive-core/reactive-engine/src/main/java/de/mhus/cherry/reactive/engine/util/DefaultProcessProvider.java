@@ -440,9 +440,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			ActorAssign actorAssign = getElementClass().getAnnotation(ActorAssign.class);
 			if (actorAssign != null) return actorAssign.value();
 			Class<? extends ASwimlane<?>> lane = getSwimlane();
-			if (lane == null || lane == DefaultSwimlane.class) {
-				
-			}
+			if (lane == null) lane = DefaultSwimlane.class; // for secure
 			actorAssign = lane.getAnnotation(ActorAssign.class);
 			if (actorAssign != null) return actorAssign.value();
 			if (pool != null)
