@@ -46,8 +46,18 @@ public class RSubStart<P extends RPool<?>> extends RActivity<P> implements ASubP
 		runtime.setCloseActivity(getContext().getPNode().getId());
 		runtime.save();
 		
-		// set this node to wait
-		getContext().getPNode().setState(STATE_NODE.WAITING);
+		if (desc.waiting()) {
+			// set this node to wait
+			getContext().getPNode().setState(STATE_NODE.WAITING);
+		} else {
+			// next
+			String nextName = DEFAULT_OUTPUT;
+			Class<? extends AActivity<?>> next = ActivityUtil.getOutputByName(this, nextName);
+			if (next == null)
+				throw new EngineException("Output Activity not found: " + nextName + " in " + getClass().getCanonicalName());
+			getContext().createActivity(next);
+			getContext().getPNode().setState(STATE_NODE.CLOSED);
+		}
 		
 	}
 

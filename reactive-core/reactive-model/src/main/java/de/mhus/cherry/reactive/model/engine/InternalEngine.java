@@ -15,4 +15,6 @@ public interface InternalEngine {
 
 	Object execute(MUri uri, IProperties parameters) throws Exception;
 
+	void doNodeErrorHandling(PNode closeNode, String error) throws Exception;
+
 }

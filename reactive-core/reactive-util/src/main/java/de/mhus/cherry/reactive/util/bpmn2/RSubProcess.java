@@ -23,7 +23,7 @@ public abstract class RSubProcess<P extends RPool<?>> extends RActivity<P> imple
 	public void doExecuteActivity() throws Exception {
 		
 		// get and check data
-		SubDescription desc = getClass().getAnnotation(SubDescription.class);
+		SubDescription desc = getContext().getENode().getSubDescription();
 		if (desc == null) 
 			throw new EngineException("sub process without SubDescription definition");
 		
@@ -38,10 +38,19 @@ public abstract class RSubProcess<P extends RPool<?>> extends RActivity<P> imple
 		UUID id = (UUID) iEngine.execute(mUri, parameters);
 		if (id == null)
 			throw new EngineException("Can't execute sub process");
-		
-		// set this node to wait
-		getContext().getPNode().setState(STATE_NODE.WAITING);
 
+		if (desc.waiting()) {
+			// set this node to wait
+			getContext().getPNode().setState(STATE_NODE.WAITING);
+		} else {
+			// next
+			String nextName = DEFAULT_OUTPUT;
+			Class<? extends AActivity<?>> next = ActivityUtil.getOutputByName(this, nextName);
+			if (next == null)
+				throw new EngineException("Output Activity not found: " + nextName + " in " + getClass().getCanonicalName());
+			getContext().createActivity(next);
+			getContext().getPNode().setState(STATE_NODE.CLOSED);
+		}
 	}
 	
 	/**

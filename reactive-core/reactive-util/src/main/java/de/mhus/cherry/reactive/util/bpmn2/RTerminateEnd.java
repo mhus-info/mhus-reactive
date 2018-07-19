@@ -18,7 +18,7 @@ package de.mhus.cherry.reactive.util.bpmn2;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.util.activity.RActivity;
 
-public abstract class RTerminate<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
+public abstract class RTerminateEnd<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 
 	@Override
 	public void doExecuteActivity() throws Exception {

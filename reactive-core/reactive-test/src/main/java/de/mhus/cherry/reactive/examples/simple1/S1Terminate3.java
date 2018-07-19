@@ -16,10 +16,10 @@
 package de.mhus.cherry.reactive.examples.simple1;
 
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.util.bpmn2.RTerminate;
+import de.mhus.cherry.reactive.util.bpmn2.RTerminateEnd;
 
 @ActivityDescription(lane = S1Lane1.class, outputs = {})
-public class S1Terminate3 extends RTerminate<S1Pool> {
+public class S1Terminate3 extends RTerminateEnd<S1Pool> {
 
 	@Override
 	protected int getExitCode() {

@@ -13,22 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.examples.simple1;
+package de.mhus.cherry.reactive.model.activity;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.util.bpmn2.RTerminateEnd;
-
-@ActivityDescription(lane = S1Lane1.class, outputs = {})
-public class S1Terminate2 extends RTerminateEnd<S1Pool> {
-
-	@Override
-	protected int getExitCode() {
-		return 2;
-	}
-
-	@Override
-	protected String getExitMessage() {
-		return "end2";
-	}
+public interface AInclusiveGateway<P extends APool<?>> extends AGateway<P> {
 
 }

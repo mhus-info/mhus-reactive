@@ -28,4 +28,6 @@ public @interface SubDescription {
 
 	public String uri() default "";
 		
+	public boolean waiting() default true;
+	
 }
