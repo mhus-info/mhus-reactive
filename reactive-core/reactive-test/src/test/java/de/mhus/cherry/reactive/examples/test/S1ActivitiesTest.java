@@ -54,6 +54,44 @@ public class S1ActivitiesTest extends TestCase {
 	long sleep = 10;
 	private Console console;
 
+	public void testSubStart() throws Exception {
+		
+		createEnigne();
+
+		try { // exclusive kirk
+			EngineMockUp mockup = new EngineMockUp(config.storage, engine, new File("mockup/s1_substart.xml"));
+			mockup.setWarn(false);
+			mockup.setVerbose(false);
+			String uri = "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=substart&text2=kirk";
+			System.out.println("URI: " + uri);
+			System.out.println("------------------------------------------------------------------------");
+			UUID caseId1 = engine.start(uri);
+			
+			printStorage();
+			mockup.step();
+			
+			int i = 0;
+			for (i = 1; i <= 10; i++) {
+				step(i);
+				mockup.step();
+				
+				PCase caze1 = engine.getCase(caseId1);
+				if (caze1.getState() == STATE_CASE.CLOSED) {
+					assertEquals("spock", caze1.getParameters().get("text2"));
+					break;
+				}
+			}
+			assertTrue(i < 10);
+			mockup.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
+		
+		archiveEngine(engine, config);
+
+	}
+	
 	public void testParallel2() throws Exception {
 		
 		createEnigne();

@@ -48,8 +48,12 @@ public class S1Pool extends RPool<S1Pool> {
 		
 	}
 
-	public Object getText2() {
+	public String getText2() {
 		return text2;
+	}
+	
+	public void setText2(String in) {
+		text2 = in;
 	}
 
 	@Override

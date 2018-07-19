@@ -44,6 +44,7 @@ import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.EngineListener;
+import de.mhus.cherry.reactive.model.engine.InternalEngine;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -84,7 +85,7 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
 
-public class Engine extends MLog implements EEngine {
+public class Engine extends MLog implements EEngine, InternalEngine {
 
 	private StorageProvider storage;
 	private StorageProvider archive;
@@ -1252,6 +1253,7 @@ public class Engine extends MLog implements EEngine {
 				}
 			}
 		} catch (Throwable t) {
+			log().w(flow,t);
 			// remember
 			fireEvent.error(flow,t);
 			if (init)
@@ -1750,7 +1752,12 @@ public class Engine extends MLog implements EEngine {
 		synchronized (getCaseLock(caze)) {
 			EngineContext context = createContext(caze, node);
 			AElement<?> aNode = context.getANode();
-			((CloseActivity)aNode).doClose(closedContext);
+			try {
+				((CloseActivity)aNode).doClose(closedContext);
+			} catch (Exception e) {
+				doNodeErrorHandling(context, node, e);
+				log().e("doCloseActivity",nodeId,e);
+			}
 			savePCase(context);
 		}
 	}
@@ -2263,6 +2270,21 @@ public class Engine extends MLog implements EEngine {
 							out.add(entry.getKey());
 			return out;
 		}
+	}
+
+	/* 
+	 * Methods from InternalEngine
+	 */
+	
+	@Override
+	public RuntimeNode doExecuteStartPoint(ProcessContext<?> context, EElement eMyStartPoint) throws Exception {
+		EngineContext eContext = (EngineContext)context;
+		UUID flowId = createStartPoint(eContext, eMyStartPoint);
+		PNode pNode = getFlowNode(flowId);
+		PCase caze = getCase(pNode.getCaseId());
+		EngineContext newContext = createContext(caze, pNode);
+		RuntimeNode runtime = newContext.getARuntime();
+		return runtime;
 	}
 	
 }

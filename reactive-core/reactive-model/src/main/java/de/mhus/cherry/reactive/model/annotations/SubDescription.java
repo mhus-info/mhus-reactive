@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.model.util;
+package de.mhus.cherry.reactive.model.annotations;
 
-import de.mhus.cherry.reactive.model.engine.ProcessContext;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public interface CloseActivity {
+import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.activity.AStartPoint;
 
-	void doClose(ProcessContext<?> closingContext) throws Exception;
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SubDescription {
 
+	@SuppressWarnings("rawtypes")
+	public Class<? extends APool> pool() default APool.class;
+	@SuppressWarnings("rawtypes")
+	public Class<? extends AStartPoint> start() default AStartPoint.class;
+		
 }

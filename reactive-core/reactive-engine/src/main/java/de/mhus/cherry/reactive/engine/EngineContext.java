@@ -176,7 +176,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		this.aNode = aNode;
 	}
 
-	Engine getEngine() {
+	public Engine getEngine() {
 		return engine;
 	}
 
