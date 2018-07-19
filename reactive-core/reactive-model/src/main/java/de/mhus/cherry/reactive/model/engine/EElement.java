@@ -22,6 +22,7 @@ import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 
 public interface EElement {
@@ -52,5 +53,7 @@ public interface EElement {
 	HashMap<String, String> getMessageList();
 
 	Class<? extends AActor> getAssignedActor(EPool pool);
+
+	SubDescription getSubDescription();
 
 }

@@ -731,6 +731,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	 * @return The result of the action, e.g. UUID for new case.
 	 * @throws Exception
 	 */
+	@Override
 	public Object execute(MUri uri, IProperties parameters) throws Exception {
 		switch (uri.getScheme()) {
 		case "bpm": {
@@ -968,7 +969,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		
 		// ID could be defined in the options, must be a uuid and unique
 		UUID id = null;
-		Object uuid = options.get("uuid");
+		Object uuid = options.get(EngineConst.OPTION_UUID);
 		if (uuid != null) {
 			id = UUID.fromString(uuid.toString());
 			// check if exists
@@ -980,6 +981,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			}
 		} else
 			id = UUID.randomUUID();
+		
+		if (closeActivity == null && options.isProperty(EngineConst.OPTION_CLOSE_ACTIVITY)) {
+			closeActivity = UUID.fromString(options.getString(EngineConst.OPTION_CLOSE_ACTIVITY, null));
+		}
 		
 		// create the PCase
 		PCase pCase = new PCase(
@@ -1749,6 +1754,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	public void doCloseActivity(ProcessContext<?> closedContext, UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());
+		
+		if (node.getState() != STATE_NODE.WAITING && node.getState() != STATE_NODE.SCHEDULED) {
+			closedContext.getARuntime().doErrorMsg(node, "call back node is no more running");
+			return;
+		}
+		
+		if (caze.getState() != STATE_CASE.RUNNING) {
+			closedContext.getARuntime().doErrorMsg(node, "call back case is no more running");
+			return;
+		}
+		
 		synchronized (getCaseLock(caze)) {
 			EngineContext context = createContext(caze, node);
 			AElement<?> aNode = context.getANode();

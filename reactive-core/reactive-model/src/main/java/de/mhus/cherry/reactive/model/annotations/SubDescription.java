@@ -18,15 +18,14 @@ package de.mhus.cherry.reactive.model.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface SubDescription {
 
 	@SuppressWarnings("rawtypes")
-	public Class<? extends APool> pool() default APool.class;
-	@SuppressWarnings("rawtypes")
 	public Class<? extends AStartPoint> start() default AStartPoint.class;
+
+	public String uri() default "";
 		
 }

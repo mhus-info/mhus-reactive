@@ -44,6 +44,8 @@ public class EngineConst {
 	/**
 	 * Set this parameter to wait for milestone PROGRESS after start of case.
 	 */
-	public static final String PARAM_PROGRESS = "progress"; 
+	public static final String PARAM_PROGRESS = "progress";
+	public static final String OPTION_UUID = "uuid";
+	public static final String OPTION_CLOSE_ACTIVITY = "closeActivity"; 
 
 }

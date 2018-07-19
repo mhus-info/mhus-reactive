@@ -1,7 +1,7 @@
 package de.mhus.cherry.reactive.util.activity;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
-import de.mhus.cherry.reactive.model.activity.ATask;
+import de.mhus.cherry.reactive.model.activity.ASubProcess;
 import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.InternalEngine;
@@ -10,7 +10,6 @@ import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
-import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 
 /**
@@ -26,7 +25,7 @@ import de.mhus.cherry.reactive.util.bpmn2.RPool;
  *
  * @param <P>
  */
-public class RSubStart<P extends RPool<?>> extends RActivity<P> implements ATask<P>, CloseActivity {
+public class RSubStart<P extends RPool<?>> extends RActivity<P> implements ASubProcess<P> {
 
 	@Override
 	public void doExecuteActivity() throws Exception {

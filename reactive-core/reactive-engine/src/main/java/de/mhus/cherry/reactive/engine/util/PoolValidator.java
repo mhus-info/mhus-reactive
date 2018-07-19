@@ -23,13 +23,16 @@ import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
+import de.mhus.cherry.reactive.model.activity.ASubProcess;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
+import de.mhus.lib.core.MString;
 
 public class PoolValidator {
 
@@ -81,6 +84,17 @@ public class PoolValidator {
 	}
 	
 	private void validateActivity(String name, EElement elem) {
+		
+		// test sub process
+		if (elem.is(ASubProcess.class)) {
+			SubDescription sub = elem.getSubDescription();
+			if (sub == null)
+				findings.add(new Finding(LEVEL.ERROR, name, "sub process without SubDescription"));
+			else {
+				if (MString.isEmpty(sub.uri()) && sub.start().isInterface())
+					findings.add(new Finding(LEVEL.ERROR, name, "sub process with empty SubDescription"));
+			}
+		}
 		
 		// test outgoing
 		if (elem.is(AActivity.class) && !elem.is(AEndPoint.class)) {

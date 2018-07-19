@@ -32,6 +32,7 @@ import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
+import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.engine.EElement;
@@ -447,6 +448,11 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			if (pool != null)
 				return pool.getPoolDescription().actorDefault();
 			return NobodyActor.class;
+		}
+
+		@Override
+		public SubDescription getSubDescription() {
+			return element.getAnnotation(SubDescription.class);
 		}
 	}
 
