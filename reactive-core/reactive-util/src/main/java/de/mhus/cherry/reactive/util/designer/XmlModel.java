@@ -1,25 +1,41 @@
 package de.mhus.cherry.reactive.util.designer;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.AExclusiveGateway;
+import de.mhus.cherry.reactive.model.activity.AInclusiveGateway;
 import de.mhus.cherry.reactive.model.activity.AParallelGateway;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.activity.ATask;
 import de.mhus.cherry.reactive.model.activity.AUserTask;
+import de.mhus.cherry.reactive.model.annotations.PoolDescription;
+import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
+import de.mhus.cherry.reactive.model.engine.EProcess;
+import de.mhus.cherry.reactive.util.activity.RExternalEvent;
+import de.mhus.cherry.reactive.util.activity.RSubStart;
+import de.mhus.cherry.reactive.util.bpmn2.RReceiveMessageEvent;
+import de.mhus.cherry.reactive.util.bpmn2.RReceiveSignalEvent;
+import de.mhus.cherry.reactive.util.bpmn2.RSendExternalEvent;
+import de.mhus.cherry.reactive.util.bpmn2.RSendMessageEvent;
+import de.mhus.cherry.reactive.util.bpmn2.RSendSignalEvent;
+import de.mhus.cherry.reactive.util.bpmn2.RSubProcess;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MXml;
 import de.mhus.lib.errors.UsageException;
@@ -29,6 +45,8 @@ public class XmlModel extends MLog {
 	private TreeMap<String, XElement> elements = new TreeMap<>();
 	private String poolId;
 	private String poolName;
+	private EPool pool;
+	private EProcess process;
 	
 	public void load(Element xml) {
 		if (!xml.getNodeName().equals("bpmn2:process"))
@@ -66,6 +84,22 @@ public class XmlModel extends MLog {
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
 			} else
+			if (eName.equals("bpmn2:receiveTask")) {
+				XElement entry = new XReceiveTask();
+				entry.doUpdate(elem);
+				elements.put(elem.getAttribute("id"), entry);
+			} else
+			if (eName.equals("bpmn2:sendTask")) {
+				XElement entry = new XSendTask();
+				entry.doUpdate(elem);
+				elements.put(elem.getAttribute("id"), entry);
+			} else
+			if (eName.equals("bpmn2:task")) {
+				// TODO filter different task types
+				XElement entry = new XSubProcessTask();
+				entry.doUpdate(elem);
+				elements.put(elem.getAttribute("id"), entry);
+			} else
 			if (eName.equals("bpmn2:exclusiveGateway")) {
 				XElement entry = new XExclusiveGateway();
 				entry.doUpdate(elem);
@@ -73,6 +107,11 @@ public class XmlModel extends MLog {
 			} else
 			if (eName.equals("bpmn2:parallelGateway")) {
 				XElement entry = new XParallelGateway();
+				entry.doUpdate(elem);
+				elements.put(elem.getAttribute("id"), entry);
+			} else
+			if (eName.equals("bpmn2:inclusiveGateway")) {
+				XElement entry = new XInclusiveGateway();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);
 			} else
@@ -158,8 +197,10 @@ public class XmlModel extends MLog {
 		return xb;
 	}
 
-	public void merge(EPool pool) {
+	public void merge(EProcess process, EPool pool) {
 		
+		this.process = process;
+		this.pool = pool;
 		poolId = pool.getCanonicalName();
 		poolName = pool.getName();
 		
@@ -229,8 +270,27 @@ public class XmlModel extends MLog {
 			return XExclusiveGateway.class;
 		if (AParallelGateway.class.isAssignableFrom(clazz))
 			return XParallelGateway.class;
+		if (AInclusiveGateway.class.isAssignableFrom(clazz))
+			return XInclusiveGateway.class;
 		if (APool.class.isAssignableFrom(clazz))
 			return null; // ignore pool
+		if (RSubStart.class.isAssignableFrom(clazz))
+			return XSubProcessTask.class;
+		if (RSubProcess.class.isAssignableFrom(clazz))
+			return XSubProcessTask.class;
+		if (RExternalEvent.class.isAssignableFrom(clazz))
+			return XReceiveTask.class;
+		if (RReceiveMessageEvent.class.isAssignableFrom(clazz))
+			return XReceiveTask.class;
+		if (RReceiveSignalEvent.class.isAssignableFrom(clazz))
+			return XReceiveTask.class;
+		if (RSendMessageEvent.class.isAssignableFrom(clazz))
+			return XSendTask.class;
+		if (RSendSignalEvent.class.isAssignableFrom(clazz))
+			return XSendTask.class;
+		if (RSendExternalEvent.class.isAssignableFrom(clazz))
+			return XSendTask.class;
+		
 		log().w("Unknown",element.getCanonicalName(),element.getElementClass());
 		return XUnknown.class;
 	}
@@ -244,6 +304,19 @@ public class XmlModel extends MLog {
 		xml.setAttribute("id", poolId);
 		xml.setAttribute("name", poolName);
 		xml.setAttribute("isExecutable", "false");
+		
+		// documentation
+		/*
+<bpmn2:documentation id="Documentation_12"><![CDATA[Test Documentation]]></bpmn2:documentation>
+		 */
+		StringWriter out = new StringWriter();
+		PrintWriter documentation = new PrintWriter(out);
+		createProcessDocumentation(documentation);
+		Element eDoc = doc.createElement("bpmn2:documentation");
+		CDATASection eData = doc.createCDATASection(out.toString());
+		eDoc.appendChild(eData);
+		xml.appendChild(eDoc);
+
 		
 		// first node is the lane set
 		Element laneSet = doc.createElement("bpmn2:laneSet");
@@ -288,6 +361,28 @@ public class XmlModel extends MLog {
 			xml.appendChild(cFlow);
 		}
 		
+	}
+
+	protected void createProcessDocumentation(PrintWriter doc) {
+		doc.println("Id:" + poolId);
+		doc.println("Name:" + poolName);
+		if (process != null) {
+			ProcessDescription desc = process.getProcessDescription();
+			if (desc != null) {
+				doc.println("Version: " + desc.version());
+			}
+		}
+		if (pool != null) {
+			PoolDescription desc = pool.getPoolDescription();
+			if (desc != null) {
+				doc.println("Display Name: " + desc.displayName());
+				doc.println("Default Actor: " + desc.actorDefault());
+				doc.println("Initiator: " + Arrays.toString(desc.actorInitiator()));
+				doc.println("Read Actor: "+ Arrays.toString(desc.actorRead()));
+				doc.println("Write Actor: "+ Arrays.toString(desc.actorWrite()));
+				doc.println("Description: "+ desc.description());
+			}
+		}
 	}
 
 	public void dump() {

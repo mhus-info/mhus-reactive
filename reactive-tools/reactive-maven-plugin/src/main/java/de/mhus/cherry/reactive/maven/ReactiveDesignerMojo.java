@@ -40,7 +40,7 @@ public class ReactiveDesignerMojo extends AbstractReactiveMojo {
 					getLog().info("  --- " + file);
 					
 					XmlModel model = new XmlModel();
-					model.merge(pool);
+					model.merge(process, pool);
 					DesignerUtil.saveInto(model, file);
 					
 				}

@@ -22,7 +22,7 @@ public class S1DesignerTest extends TestCase {
 		XmlModel model = new XmlModel();
 		EProcess process = provider.getProcess("de.mhus.cherry.reactive.examples.simple1.S1Process", "0.0.1");
 		EPool pool = process.getPool("de.mhus.cherry.reactive.examples.simple1.S1Pool");
-		model.merge(pool);
+		model.merge(process, pool);
 		
 		model.dump();
 		

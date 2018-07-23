@@ -131,6 +131,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		cleanupCases();
 	}
 	
+	@SuppressWarnings("unlikely-arg-type")
 	public int processNodes() throws IOException, NotFoundException {
 		
 		int doneCnt = 0;

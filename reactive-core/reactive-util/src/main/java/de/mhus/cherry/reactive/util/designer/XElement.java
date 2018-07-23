@@ -1,10 +1,13 @@
 package de.mhus.cherry.reactive.util.designer;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -29,8 +32,10 @@ public abstract class XElement {
 	protected LinkedList<String> incoming = new LinkedList<>();
 	protected LinkedList<XBEvent> boundaries = new LinkedList<>();
 	protected String laneId;
+	private EElement element;
 	
 	void doUpdate(EElement element) {
+		this.element = element;
 		id = element.getCanonicalName();
 		name = element.getName();
 		if (element.getSwimlane() == null) {
@@ -120,6 +125,19 @@ public abstract class XElement {
 		eNode.setAttribute("name", name);
 		xml.appendChild(eNode);
 		
+		// documentation
+		/*
+<bpmn2:documentation id="Documentation_12"><![CDATA[Test Documentation
+Second line]]></bpmn2:documentation>
+		 */
+		StringWriter out = new StringWriter();
+		PrintWriter documentation = new PrintWriter(out);
+		createDocumentation(documentation);
+		Element eDoc = doc.createElement("bpmn2:documentation");
+		CDATASection eData = doc.createCDATASection(out.toString());
+		eDoc.appendChild(eData);
+		eNode.appendChild(eDoc);
+		
 		// incoming
 		for (String ref : incoming) {
 			Element eRef = doc.createElement("bpmn2:incoming");
@@ -136,6 +154,28 @@ public abstract class XElement {
 		}
 		
 		return eNode;
+	}
+
+	protected void createDocumentation(PrintWriter doc) {
+		if (element != null) {
+			doc.println("Id: " + id);
+			doc.println("Name: " + element.getName());
+			doc.println("Type: " + getType());
+			ActivityDescription desc = element.getActivityDescription();
+			if (desc != null) {
+				doc.println("Display Name: " + desc.displayName());
+				doc.println("Description: " + desc.description());
+			}
+		}
+	}
+
+	protected String getType() {
+		Class<?> clazz = element.getElementClass();
+		while (clazz != null && !clazz.getCanonicalName().startsWith("de.mhus.cherry.reactive."))
+			clazz = clazz.getSuperclass();
+		if (clazz != null)
+			return MString.afterLastIndex(clazz.getCanonicalName(), '.');
+		return MString.afterLastIndex(element.getCanonicalName(), '.');
 	}
 
 	protected abstract String getXmlElementName();

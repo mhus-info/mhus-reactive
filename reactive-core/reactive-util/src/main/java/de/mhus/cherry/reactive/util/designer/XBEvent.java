@@ -1,7 +1,10 @@
 package de.mhus.cherry.reactive.util.designer;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.TreeMap;
 
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -13,6 +16,7 @@ public abstract class XBEvent {
 	private String outgoing;
 	private String id;
 	private String name;
+	private Trigger trigger;
 
 	public void update(Element eType, String outgoingRef, Element elem) {
 		this.outgoing = outgoingRef;
@@ -45,6 +49,19 @@ public abstract class XBEvent {
 		eEvent.setAttribute("attachedToRef", elem.getId());
 		xml.appendChild(eEvent);
 		
+		// documentation
+		/*
+<bpmn2:documentation id="Documentation_12"><![CDATA[Test Documentation
+Second line]]></bpmn2:documentation>
+		 */
+		StringWriter out = new StringWriter();
+		PrintWriter documentation = new PrintWriter(out);
+		createDocumentation(documentation);
+		Element eDoc = doc.createElement("bpmn2:documentation");
+		CDATASection eData = doc.createCDATASection(out.toString());
+		eDoc.appendChild(eData);
+		eEvent.appendChild(eDoc);
+
 		if (outgoing != null) {
 			Element eOut = doc.createElement("bpmn2:outgoing");
 			Text text = doc.createTextNode(XElement.SEQUENCE_FLOW + getId() + "_" + outgoing);
@@ -61,12 +78,23 @@ public abstract class XBEvent {
 		
 	}
 
+	protected void createDocumentation(PrintWriter doc) {
+		doc.println("Id: " + id);
+		if (trigger != null) {
+			doc.println("Type: " + trigger.type());
+			doc.println("Event: " + trigger.event());
+			doc.println("Abord: " + trigger.abord());
+		}
+		doc.println("Activity: " + outgoing);
+	}
+
 	protected abstract String getXmlElementName();
 
 	public void update(XElement xElement, Trigger trigger, int cnt) {
 		id = xElement.getId() + "-" + cnt;
 		name = trigger.name();
 		outgoing = trigger.activity().getCanonicalName();
+		this.trigger = trigger;
 	}
 
 }
