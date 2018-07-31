@@ -15,14 +15,21 @@
  */
 package de.mhus.cherry.reactive.model.errors;
 
+/**
+ * Throw this exception to trigger a specified trigger.
+ * 
+ * @author mikehummel
+ *
+ */
 public class TaskException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	private String trigger;
+	public static final String DEFAULT_ERROR = "";
 
-	public TaskException(String msg, String trigger) {
-		super(trigger + ":" + msg);
-		this.trigger = trigger;
+	public TaskException(String errorTrigger, String msg) {
+		super(errorTrigger + ":" + msg);
+		this.trigger = errorTrigger;
 	}
 
 	public String getTrigger() {

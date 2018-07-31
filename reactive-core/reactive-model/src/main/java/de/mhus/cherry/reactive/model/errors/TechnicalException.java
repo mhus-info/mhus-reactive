@@ -25,7 +25,7 @@ package de.mhus.cherry.reactive.model.errors;
 public class TechnicalException extends TaskException {
 
 	public TechnicalException(String msg) {
-		super(msg, "");
+		super(DEFAULT_ERROR, msg);
 	}
 
 	private static final long serialVersionUID = 1L;

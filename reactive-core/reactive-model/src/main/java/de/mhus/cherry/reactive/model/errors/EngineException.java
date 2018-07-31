@@ -25,7 +25,7 @@ package de.mhus.cherry.reactive.model.errors;
 public class EngineException extends TaskException {
 
 	public EngineException(String msg) {
-		super(msg, "");
+		super(DEFAULT_ERROR, msg);
 	}
 
 	private static final long serialVersionUID = 1L;

@@ -602,7 +602,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	public void doNodeErrorHandling(PNode closeNode, String error) throws Exception {
 		PCase caze = getCase(closeNode.getCaseId());
 		EngineContext context = createContext(caze, closeNode);
-		doNodeErrorHandling(context, closeNode, new TaskException("syntetic",error));
+		doNodeErrorHandling(context, closeNode, new TaskException(error, "syntetic"));
 	}
 
 	private void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
