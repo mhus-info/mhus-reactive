@@ -45,6 +45,7 @@ import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
+import de.mhus.cherry.reactive.model.util.NoPool;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
@@ -199,8 +200,10 @@ public class CmdInspect extends MLog implements Action {
 	
 	public EPool getPool(EProcess process, MUri uri) throws NotFoundException {
 		String poolName = uri.getPath();
-		if (MString.isEmpty(poolName))
-			poolName = process.getProcessDescription().defaultPool();
+		if (MString.isEmpty(poolName)) {
+			poolName = process.getProcessDescription().defaultPool().getCanonicalName();
+			if (poolName.equals(NoPool.class.getCanonicalName())) poolName = null;
+		}
 		if (MString.isEmpty(poolName))
 			throw new NotFoundException("default pool not found for process",uri);
 		

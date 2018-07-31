@@ -31,6 +31,12 @@ import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.definition.FmElement;
 
+/**
+ * User task. Handles Form activities.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> implements AUserTask<P> {
 
 	@Override

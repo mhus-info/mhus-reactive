@@ -16,17 +16,19 @@
 package de.mhus.cherry.reactive.model.activity;
 
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.errors.MException;
 
-public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProvider {
+/**
+ * Interface for user handled tasks. Providing from information.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
+public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProvider, AFormProvider {
 
-	UserForm createForm();
-	
 	IProperties getFormValues() throws MException;
 	
 	void doSubmit(IProperties values) throws MException;
-
 	
 }

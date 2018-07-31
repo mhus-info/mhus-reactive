@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Implement an actor. The actor can decide if a user is member of this actor or not.
+ * 
+ * @author mikehummel
+ *
+ */
 public interface AActor {
 
 	boolean hasAccess(String user);

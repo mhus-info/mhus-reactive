@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark a parallel gateway.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AParallelGateway<P extends APool<?>> extends AGateway<P> {
 
 }

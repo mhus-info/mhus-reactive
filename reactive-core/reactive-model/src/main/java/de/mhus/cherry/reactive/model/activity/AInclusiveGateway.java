@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark an inclusive gateway.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AInclusiveGateway<P extends APool<?>> extends AGateway<P> {
 
 }

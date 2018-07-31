@@ -15,6 +15,13 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Base interface for all pool related elements like activities or the pool itself.
+ * Actor will not be related to a pool. They are common.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AElement<P extends APool<?>> {
 
 }

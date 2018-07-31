@@ -20,6 +20,13 @@ import java.lang.annotation.RetentionPolicy;
 
 import de.mhus.cherry.reactive.model.activity.AActor;
 
+/**
+ * With this annotation you can assign an actor to activities. Only if the actor
+ * differs from swim lane or default pool actor.
+ * 
+ * @author mikehummel
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActorAssign {
 	Class<? extends AActor> value();

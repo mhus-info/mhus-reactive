@@ -18,16 +18,27 @@ package de.mhus.cherry.reactive.util.bpmn2;
 import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.ASwimlane;
+import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
+/**
+ * A swim lane get the actor from assigned actor annotation or the default actor from the pool.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public class RSwimlane<P extends APool<?>> implements ASwimlane<P>, ContextRecipient {
 
 	private Class<? extends AActor> actor;
 
 	@Override
 	public void setContext(ProcessContext<?> context) {
-		actor = (Class<? extends AActor>) context.getEPool().getPoolDescription().actorDefault();
+		ActorAssign assigned = getClass().getAnnotation(ActorAssign.class);
+		if (assigned != null)
+			actor = assigned.value();
+		else
+			actor = (Class<? extends AActor>) context.getEPool().getPoolDescription().actorDefault();
 	}
 
 	@Override

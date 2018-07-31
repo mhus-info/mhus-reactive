@@ -3,6 +3,12 @@ package de.mhus.cherry.reactive.util.bpmn2;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.util.activity.REvent;
 
+/**
+ * Timer based event. Set the timer definition as ActivityDescription.event() value.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RTimerEvent<P extends RPool<?>> extends REvent<P> {
 
 	@Override

@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.util;
 
+/**
+ * Mark a start point with this interface to prevent it from
+ * starting on case initialization.
+ * @author mikehummel
+ *
+ */
 public interface InactiveStartPoint {
 
 }

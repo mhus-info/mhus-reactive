@@ -19,6 +19,12 @@ import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.util.activity.RActivity;
 
+/**
+ * Implementation of the default end point.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public class REndPoint<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 
 	@Override

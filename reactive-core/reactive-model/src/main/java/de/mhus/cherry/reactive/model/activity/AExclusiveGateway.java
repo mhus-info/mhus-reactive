@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark an exclusive gateway.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AExclusiveGateway<P extends APool<?>> extends AGateway<P> {
 
 }

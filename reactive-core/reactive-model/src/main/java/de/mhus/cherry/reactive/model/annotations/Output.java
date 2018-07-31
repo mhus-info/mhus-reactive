@@ -15,6 +15,10 @@
  */
 package de.mhus.cherry.reactive.model.annotations;
 
+/**
+ * Define an output in ActivityDescription outputs list.
+ * 
+ */
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -24,8 +28,26 @@ import de.mhus.cherry.reactive.model.util.NoCondition;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Output {
+	/**
+	 * Mapped name, to define the default output set to an empty string (default). Only one
+	 * default output should exist.
+	 * 
+	 * @return name
+	 */
 	String name() default "";
+	/**
+	 * Description
+	 * @return description
+	 */
 	String description() default "";
+	/**
+	 * In case of gateways a condition can be defined.
+	 * @return condition type
+	 */
 	Class<? extends ACondition<?>> condition() default NoCondition.class;
+	/**
+	 * The next linked activity to follow if using this output.
+	 * @return next activity
+	 */
 	Class<? extends AActivity<?>> activity();
 }

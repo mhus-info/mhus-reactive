@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface for start points.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AStartPoint<P extends APool<?>> extends APoint<P> {
 
 }

@@ -18,6 +18,13 @@ package de.mhus.cherry.reactive.util.bpmn2;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.util.activity.RActivity;
 
+/**
+ * This will end the case.
+ * 
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RTerminateEnd<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 
 	@Override

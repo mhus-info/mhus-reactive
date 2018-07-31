@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark events.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AEvent<P extends APool<?>> extends AActivity<P> {
 
 }

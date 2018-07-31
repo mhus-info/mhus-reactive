@@ -18,15 +18,45 @@ package de.mhus.cherry.reactive.model.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.migrate.Migrator;
+import de.mhus.cherry.reactive.model.util.NoPool;
 
+/**
+ * A process must be defined with this annotation.
+ * 
+ * @author mikehummel
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProcessDescription {
+	/**
+	 * Version of the process
+	 * @return version string
+	 */
 	String version();
+	/**
+	 * Name of the process.
+	 * @return name
+	 */
 	String name() default "";
+	/**
+	 * Description of the process.
+	 * @return description
+	 */
 	String description() default "";
-	
+
+	/**
+	 * Migrators should not be used at the moment.
+	 * @return migrators
+	 */
 	Class<? extends Migrator>[] migrator() default {};
-	String defaultPool() default "";
+	
+	/**
+	 * If only the process is called to execute. This should define the
+	 * default pool
+	 * @return pool
+	 */
+	Class<? extends APool<?>> defaultPool() default NoPool.class;
 	
 }

@@ -21,6 +21,12 @@ import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.util.activity.RActivity;
 
+/**
+ * A start point.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public class RStartPoint<P extends RPool<?>> extends RActivity<P> implements AStartPoint<P> {
 
 	@Override

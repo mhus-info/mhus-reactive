@@ -18,10 +18,32 @@ package de.mhus.cherry.reactive.model.annotations;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+/**
+ * If you define new actors you must define it with this annotation.
+ * 
+ * @author mikehummel
+ *
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ActorDescription {
+	/**
+	 * Name of the actor.
+	 * @return name
+	 */
 	String name() default "";
+	/**
+	 * Description for the actor.
+	 * @return description
+	 */
 	String description() default "";
+	/**
+	 * Allowed group mapping
+	 * @return groups
+	 */
 	String[] groups() default {};
+	/**
+	 * Allowed user mapping
+	 * @return users
+	 */
 	String[] users() default {};
 }

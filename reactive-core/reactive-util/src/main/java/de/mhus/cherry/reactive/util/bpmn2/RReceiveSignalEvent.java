@@ -20,6 +20,12 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.util.activity.REvent;
 
+/**
+ * Wait until a signal is received.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RReceiveSignalEvent<P extends RPool<?>> extends REvent<P>{
 
 	@Override

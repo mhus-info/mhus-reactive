@@ -67,6 +67,7 @@ import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
+import de.mhus.cherry.reactive.model.util.NoPool;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
@@ -1070,8 +1071,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	public EPool getPool(EProcess process, MUri uri) throws NotFoundException {
 		String poolName = uri.getPath();
-		if (MString.isEmpty(poolName))
-			poolName = process.getProcessDescription().defaultPool();
+		if (MString.isEmpty(poolName)) {
+			poolName = process.getProcessDescription().defaultPool().getCanonicalName();
+			if (poolName.equals(NoPool.class.getCanonicalName())) poolName = null;
+		}
 		if (MString.isEmpty(poolName))
 			throw new NotFoundException("default pool not found for process",uri);
 		

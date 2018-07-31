@@ -17,6 +17,13 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 
+/**
+ * Execute a sub process. Implementation need to map parameters to and from the sub process. While the sub process is running,
+ * this process is not affected by changing parameters.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RSubProcess<P extends RPool<?>> extends RActivity<P> implements ASubProcess<P> {
 
 	@Override

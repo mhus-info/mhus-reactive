@@ -19,6 +19,12 @@ import java.util.Map;
 
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 
+/**
+ * Interface for pools.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvider {
 
 	Map<String, Object> exportParamters();

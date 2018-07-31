@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark a gateway.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AGateway<P extends APool<?>> extends AActivity<P> {
 
 }

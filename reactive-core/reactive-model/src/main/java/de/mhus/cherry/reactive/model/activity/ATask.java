@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to mark tasks.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface ATask<P extends APool<?>> extends AActivity<P> {
 
 }

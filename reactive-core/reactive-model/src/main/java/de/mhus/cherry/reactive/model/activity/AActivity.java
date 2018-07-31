@@ -19,24 +19,59 @@ import java.util.Map;
 
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
+/**
+ * The basic interface for all activities in a pool. Activity instances are
+ * stored in database. This means between calling different methods the instance itself can
+ * change (stored and recreated).
+ *  
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AActivity<P extends APool<?>> extends AElement<P> {
 
 	String DEFAULT_OUTPUT = "";
 	String NO = "no";
 	String YES = "yes";
 	
+	/**
+	 * Return the current context for the running activity.
+	 * @return runtime context
+	 */
 	ProcessContext<P> getContext();
 	
+	/**
+	 * Helper to get the pool from context.
+	 * @return my pool
+	 */
 	default P getPool() {
 		return getContext().getPool();
 	}
 
+	/**
+	 * Is called if the activity is created.
+	 * 
+	 * @throws Exception
+	 */
 	void initializeActivity() throws Exception;
 	
+	/**
+	 * Is called to execute the activity. Could be more then one time.
+	 * 
+	 * @throws Exception
+	 */
 	void doExecuteActivity() throws Exception;
 
+	/**
+	 * Serialize the parameters to be stored in database.
+	 * @return serialized (serializable values) map.
+	 */
 	Map<String, Object> exportParamters();
 	
+	/**
+	 * Import parameters from database.
+	 * @param parameters
+	 */
 	void importParameters(Map<String, Object> parameters);
 
 }

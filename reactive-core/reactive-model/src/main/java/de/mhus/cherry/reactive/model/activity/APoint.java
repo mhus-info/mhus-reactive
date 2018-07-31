@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to for a point like end or start points.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface APoint<P extends APool<?>> extends AActivity<P> {
 
 }

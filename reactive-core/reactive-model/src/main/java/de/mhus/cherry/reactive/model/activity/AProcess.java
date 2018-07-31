@@ -17,6 +17,11 @@ package de.mhus.cherry.reactive.model.activity;
 
 import de.mhus.cherry.reactive.model.util.NoPool;
 
+/**
+ * Interface for process definitions.
+ * @author mikehummel
+ *
+ */
 public interface AProcess extends AElement<NoPool> {
 
 }

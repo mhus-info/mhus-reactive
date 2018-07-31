@@ -18,6 +18,13 @@ package de.mhus.cherry.reactive.util.bpmn2;
 import de.mhus.cherry.reactive.model.activity.AServiceTask;
 import de.mhus.cherry.reactive.util.activity.RTask;
 
+/**
+ * Execute a service task.
+ * 
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RServiceTask<P extends RPool<?>> extends RTask<P> implements AServiceTask<P> {
 
 }

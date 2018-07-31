@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to define an end point of the current runtime.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface AEndPoint<P extends APool<?>> extends APoint<P> {
 
 }

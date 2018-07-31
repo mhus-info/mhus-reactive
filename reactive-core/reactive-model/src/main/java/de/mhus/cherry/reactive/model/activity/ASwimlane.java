@@ -15,6 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.activity;
 
+/**
+ * Interface to define swim lanes.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface ASwimlane<P extends APool<?>> extends AElement<P> {
 	
 	Class<? extends AActor> getActor();

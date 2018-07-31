@@ -6,6 +6,12 @@ import de.mhus.cherry.reactive.util.activity.RTask;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
 
+/**
+ * Send a external event and step to the next activity.
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public abstract class RSendExternalEvent<P extends RPool<?>> extends RTask<P> implements ASender<P> {
 
 	@Override

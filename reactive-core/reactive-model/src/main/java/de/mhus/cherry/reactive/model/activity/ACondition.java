@@ -17,11 +17,23 @@ package de.mhus.cherry.reactive.model.activity;
 
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 
+/**
+ * Implements a condition for gateways. 
+ * 
+ * @author mikehummel
+ *
+ * @param <P>
+ */
 public interface ACondition<P extends APool<?>> extends AElement<P> {
 	
 	static final int TRUE = 1;
 	static final int FALSE = -1;
 	
+	/**
+	 * Return true or false or for complex conditions the highest value will win.
+	 * @param context
+	 * @return the result of the check
+	 */
 	int check(ProcessContext<P> context);
 	
 }
