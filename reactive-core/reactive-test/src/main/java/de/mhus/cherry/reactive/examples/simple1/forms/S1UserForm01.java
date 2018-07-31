@@ -23,10 +23,13 @@ import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.annotations.generic.Public;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefAttribute;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.Item;
+import de.mhus.lib.form.definition.FmAction;
 import de.mhus.lib.form.definition.FmCombobox;
 import de.mhus.lib.form.definition.FmReadOnly;
 import de.mhus.lib.form.definition.FmText;
@@ -41,7 +44,7 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 	private String text3 = "text3";
 	@PropertyDescription
 	private String option = "1";
-	@PropertyDescription
+	@PropertyDescription(persistent=false)
 	@Public(name="option.items")
 	private Item[] optionOptions = new Item[] {
 			new Item("1","One"),
@@ -55,7 +58,8 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 			new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
 			new FmText(M.n(S1Pool::getText2), "Text2", ""),
 			new FmText(M.n(S1UserForm01::getText3), "Text3", ""),
-			new FmCombobox("option", "Option", "Sample Option with options")
+			new FmCombobox("option", "Option", "Sample Option with options"),
+			new FmAction("submit", "submit:action=submit", "Submit", "Send")
 		);
 	}
 
@@ -71,6 +75,12 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 
 	public String getText3() {
 		return text3;
+	}
+
+	@Override
+	public MProperties doAction(IProperties values, String action) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -386,6 +386,20 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 					e.printStackTrace();
 				}
 			}
+			
+			@Override
+			protected MProperties onAction(INode node, MProperties properties, String action) {
+				System.out.println("Action");
+				try {
+					MProperties res = node.onUserTaskAction(properties, action);
+					return res;
+				} catch (IOException | MException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+
 		};
 		
 		setContent(form);

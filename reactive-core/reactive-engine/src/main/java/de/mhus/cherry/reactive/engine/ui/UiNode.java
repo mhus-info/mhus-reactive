@@ -33,6 +33,7 @@ import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 
@@ -191,6 +192,11 @@ public class UiNode extends MLog implements INode {
 	@Override
 	public String getActor() {
 		return info.getActor();
+	}
+
+	@Override
+	public MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException {
+		return engine.onUserTaskAction(info.getId(), values, action);
 	}
 
 }

@@ -23,6 +23,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 
 public interface INode {
@@ -66,5 +67,7 @@ public interface INode {
 	void doAssign() throws IOException, MException;
 	
 	String getActor();
+
+	MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException;
 	
 }

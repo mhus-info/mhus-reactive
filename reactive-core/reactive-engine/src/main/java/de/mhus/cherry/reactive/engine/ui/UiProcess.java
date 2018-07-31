@@ -37,6 +37,7 @@ public class UiProcess implements IProcess {
 	
 	public UiProcess(UiEngine engine, EProcess process) {
 		this.engine = engine;
+		if (process == null) return;
 		for (String poolName : process.getPoolNames()) {
 			EPool pool = process.getPool(poolName);
 			String pUri = EngineConst.SCHEME_REACTIVE + "://" + process.getCanonicalName() + ":" + process.getVersion() + "/" + pool.getCanonicalName();

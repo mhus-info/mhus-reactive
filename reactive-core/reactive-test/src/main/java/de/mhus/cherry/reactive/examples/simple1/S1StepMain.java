@@ -22,6 +22,7 @@ import de.mhus.cherry.reactive.examples.simple1.events.S1EventMessage;
 import de.mhus.cherry.reactive.examples.simple1.events.S1EventSignal;
 import de.mhus.cherry.reactive.examples.simple1.exclusive.S1GatewayExclusive;
 import de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01;
+import de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02;
 import de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel1;
 import de.mhus.cherry.reactive.examples.simple1.parallel.S1GatewayParallel2;
 import de.mhus.cherry.reactive.examples.simple1.sub.S1ExecuteSubStart;
@@ -52,6 +53,7 @@ import de.mhus.lib.core.MDate;
 				@Output(name="parallel1",activity=S1GatewayParallel1.class),
 				@Output(name="parallel2",activity=S1GatewayParallel2.class),
 				@Output(name="form01",activity=S1UserForm01.class),
+				@Output(name="form02",activity=S1UserForm02.class),
 				@Output(name="substart",activity=S1ExecuteSubStart.class)
 				},
 		lane = S1Lane1.class,

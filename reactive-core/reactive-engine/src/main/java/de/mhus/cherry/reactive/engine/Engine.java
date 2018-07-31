@@ -2229,6 +2229,27 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		}
 	}
 
+	public MProperties onUserTaskAction(UUID nodeId, IProperties values, String action) throws IOException, MException {
+		PNode node = getFlowNode(nodeId);
+		PCase caze = getCase(node.getCaseId());
+		synchronized (caze) {
+			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
+			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
+			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
+		
+			EngineContext context = createContext(caze, node);
+			AElement<?> aNode = context.getANode();
+			if (!(aNode instanceof AUserTask<?>))
+				throw new MException("node activity is not AUserTask",nodeId,aNode.getClass().getCanonicalName());
+			
+			MProperties ret = ((AUserTask<?>)aNode).doAction(values, action);
+			
+			saveFlowNode(context, node, (AActivity<?>) aNode);
+			
+			return ret;
+		}
+	}
+
 	public AElement<?> getANode(UUID nodeId) throws IOException, MException {
 		PNode node = getFlowNode(nodeId);
 		PCase caze = getCase(node.getCaseId());

@@ -24,11 +24,12 @@ import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.MForm;
 import de.mhus.lib.form.PropertiesDataSource;
 import de.mhus.lib.vaadin.form.VaadinForm;
 
-public class VUserForm extends VerticalLayout {
+public class VUserForm extends VerticalLayout implements ActionHandler {
 
 	private static final long serialVersionUID = 1L;
 	private INode node;
@@ -55,16 +56,16 @@ public class VUserForm extends VerticalLayout {
 			
 		});
 		
-		Button bSubmit = new Button("Submit");
-		toolBar.addComponent(bSubmit);
-		bSubmit.addClickListener(new Button.ClickListener() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			public void buttonClick(ClickEvent event) {
-				onFormSubmit(node, dataSource.getProperties());
-			}
-			
-		});
+//		Button bSubmit = new Button("Submit");
+//		toolBar.addComponent(bSubmit);
+//		bSubmit.addClickListener(new Button.ClickListener() {
+//			private static final long serialVersionUID = 1L;
+//			@Override
+//			public void buttonClick(ClickEvent event) {
+//				onFormSubmit(node, dataSource.getProperties());
+//			}
+//			
+//		});
 
 	}
 
@@ -72,6 +73,10 @@ public class VUserForm extends VerticalLayout {
 		
 	}
 
+	protected MProperties onAction(INode node2, MProperties properties, String action) {
+		return null;
+	}
+	
 	protected void onFormCancel() {
 		
 	}
@@ -87,14 +92,33 @@ public class VUserForm extends VerticalLayout {
 //			vform.setShowInformation(true);
 			MForm mform = new MForm(form);
 			mform.setDataSource(dataSource);
+			mform.setActionHandler(this);
 			vform.setForm(mform);
 			vform.doBuild();
-			
+
 			return vform;
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public void doAction(MForm form, String action) {
+		if (action.startsWith("submit:")) {
+			action = action.substring(7);
+			MProperties p = dataSource.getProperties();
+			p.putAll(MProperties.explodeToMProperties(action));
+			onFormSubmit(node, p);
+		} else
+		if (action.startsWith("action:")){
+			action = action.substring(7);
+			MProperties p = dataSource.getProperties();
+			p = onAction(node, p, action);
+			if (p != null)
+				dataSource.getProperties().putAll(p);
+		} else
+			System.out.println("Unknown action type " + action );
 	}
 
 }
