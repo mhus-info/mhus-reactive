@@ -23,6 +23,7 @@ import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.annotations.generic.Public;
+import de.mhus.lib.annotations.pojo.Embedded;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
@@ -30,8 +31,10 @@ import de.mhus.lib.core.definition.DefAttribute;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.Item;
 import de.mhus.lib.form.definition.FmAction;
+import de.mhus.lib.form.definition.FmColumns;
 import de.mhus.lib.form.definition.FmCombobox;
 import de.mhus.lib.form.definition.FmFullWidth;
+import de.mhus.lib.form.definition.FmItemDefinition;
 import de.mhus.lib.form.definition.FmLayout100;
 import de.mhus.lib.form.definition.FmLayout3x33;
 import de.mhus.lib.form.definition.FmLayoutWizard;
@@ -49,20 +52,41 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 	@PropertyDescription(persistent = false)
 	@Public(name = "option.items")
 	private Item[] optionOptions = new Item[] { new Item("1", "One"), new Item("2", "Two"), };
+	@PropertyDescription
+	@Embedded
+	private Address owner = new Address();
+	
+	@PropertyDescription(persistent = false)
+	private Item[] salutationDef = new Item[] { new Item("mr", "Mr"), new Item("mrs", "Mrs"), };
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public UserForm createForm() {
 		return new UserForm().add(
 			new DefAttribute("showInformation", true),
-			new FmLayoutWizard("wizard", "Wizard", "", new FmFullWidth(), 
+			new FmLayoutWizard("wizard", "", "", new FmFullWidth(), 
 					
 				new FmLayout3x33("t1", "Case","",
 					new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
 					new FmVoid(),
 					new FmText(M.n(S1Pool::getText2), "Text2", "")
 				),
-				new FmLayout100("t2", "Node","",
+				new FmLayout3x33("t2", "Owner","",
+						new FmCombobox(M.n(S1UserForm02::getOwner,Address::getSalutation), "Salutation", "", new FmItemDefinition("salutationdef")),
+						new FmText(M.n(S1UserForm02::getOwner,Address::getFirstName), "First Name", ""),
+						new FmText(M.n(S1UserForm02::getOwner,Address::getLastName), "Last Name", ""),
+						
+						new FmText(M.n(S1UserForm02::getOwner,Address::getStreet), "Street", "", new FmColumns(2)),
+						new FmText(M.n(S1UserForm02::getOwner,Address::getStreetNumber), "Number", ""),
+						
+						new FmText(M.n(S1UserForm02::getOwner,Address::getZip), "ZIP", ""),
+						new FmText(M.n(S1UserForm02::getOwner,Address::getTown), "Town", "", new FmColumns(2)),
+
+						new FmText(M.n(S1UserForm02::getOwner,Address::getTelefon), "Phone", ""),
+						new FmText(M.n(S1UserForm02::getOwner,Address::getEmail), "Email", ""),
+						new FmVoid()
+						
+				),
+				new FmLayout100("t3", "Node","",
 					new FmText(M.n(S1UserForm02::getText3), "Text3", ""),
 					new FmCombobox("option", "Option", "Sample Option with options"),
 					new FmAction("submit", "submit:action=submit", "Submit", "Send")
@@ -89,6 +113,10 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 	public MProperties doAction(IProperties values, String action) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Address getOwner() {
+		return owner;
 	}
 
 }

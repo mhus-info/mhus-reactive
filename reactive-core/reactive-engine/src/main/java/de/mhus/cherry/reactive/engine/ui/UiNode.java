@@ -36,6 +36,7 @@ import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.FormControl;
 
 public class UiNode extends MLog implements INode {
 
@@ -197,6 +198,12 @@ public class UiNode extends MLog implements INode {
 	@Override
 	public MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException {
 		return engine.onUserTaskAction(info.getId(), values, action);
+	}
+
+	@Override
+	public Class <? extends FormControl> getUserFormControl() {
+		initANode();
+		return ((AUserTask<?>)aNode).getFormControl();
 	}
 
 }

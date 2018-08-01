@@ -24,7 +24,9 @@ import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.form.ActionHandler;
+import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.MForm;
 import de.mhus.lib.form.PropertiesDataSource;
 import de.mhus.lib.vaadin.form.VaadinForm;
@@ -32,6 +34,7 @@ import de.mhus.lib.vaadin.form.VaadinForm;
 public class VUserForm extends VerticalLayout implements ActionHandler {
 
 	private static final long serialVersionUID = 1L;
+	private static final Log log = Log.getLog(VUserForm.class);
 	private INode node;
 	private Button bCancel;
 	private PropertiesDataSource dataSource;
@@ -93,12 +96,17 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			MForm mform = new MForm(form);
 			mform.setDataSource(dataSource);
 			mform.setActionHandler(this);
+			Class<? extends FormControl> control = node.getUserFormControl();
+			if (control != null) {
+				FormControl controlObject = control.newInstance();
+				mform.setControl(controlObject);
+			}
 			vform.setForm(mform);
 			vform.doBuild();
 
 			return vform;
 		} catch (Throwable t) {
-			t.printStackTrace();
+			log.e(node,t);
 		}
 		return null;
 	}
@@ -118,7 +126,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			if (p != null)
 				dataSource.getProperties().putAll(p);
 		} else
-			System.out.println("Unknown action type " + action );
+			log.w("Unknown action type " + action );
 	}
 
 }

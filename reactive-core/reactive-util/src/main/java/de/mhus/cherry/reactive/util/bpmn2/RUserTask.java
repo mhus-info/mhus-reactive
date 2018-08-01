@@ -29,6 +29,7 @@ import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.definition.FmElement;
 
 /**
@@ -54,13 +55,44 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 	@Hidden
 	public IProperties getFormValues() throws MException {
 		
-		DefRoot form = createForm().build().getRoot();
+//		DefRoot form = createForm().build().getRoot();
 		
 		P pool = getContext().getPool();
 		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
 		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
 		MProperties out = new MProperties();
 
+		for (PojoAttribute<?> attr : modelTask) {
+			String name = attr.getName();
+			PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+			if (desc == null) continue;
+			if (!desc.readable()) continue;
+			if (!desc.writable()) {
+				out.put(name + ".editable", false);
+			}
+			try {
+				out.put(name, attr.get(this));
+			} catch (Throwable t) {
+				log().w(this,attr,t);
+			}
+		}
+
+		for (PojoAttribute<?> attr : modelPool) {
+			String name = attr.getName();
+			if (out.containsKey(name)) continue;
+			PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+			if (desc == null) continue;
+			if (!desc.readable()) continue;
+			if (!desc.writable()) {
+				out.put(name + ".editable", false);
+			}
+			try {
+				out.put(name, attr.get(pool));
+			} catch (Throwable t) {
+				log().w(this,attr,t);
+			}
+		}
+/*
 		// return only in the form defined values
 		for (IDefDefinition item : form.definitions()) {
 			if (item instanceof FmElement) {
@@ -104,7 +136,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 
 			}
 		}
-		
+*/		
 		return out;
 	}
 	
@@ -155,4 +187,14 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 
 	protected abstract void doSubmit() throws MException;
 	
+	@Override
+	public MProperties doAction(IProperties values, String action) {
+		return null;
+	}
+
+	@Override
+	public Class<? extends FormControl> getFormControl() {
+		return null;
+	}
+
 }

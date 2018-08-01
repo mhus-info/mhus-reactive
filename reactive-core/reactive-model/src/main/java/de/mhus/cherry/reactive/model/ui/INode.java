@@ -25,6 +25,7 @@ import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.FormControl;
 
 public interface INode {
 
@@ -69,5 +70,7 @@ public interface INode {
 	String getActor();
 
 	MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException;
+
+	Class<? extends FormControl> getUserFormControl();
 	
 }

@@ -19,6 +19,7 @@ import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.FormControl;
 
 /**
  * Interface for user handled tasks. Providing from information.
@@ -33,5 +34,7 @@ public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProv
 	void doSubmit(IProperties values) throws MException;
 
 	MProperties doAction(IProperties values, String action);
+
+	Class<? extends FormControl> getFormControl();
 	
 }

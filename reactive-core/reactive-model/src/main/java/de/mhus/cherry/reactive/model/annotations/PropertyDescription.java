@@ -30,6 +30,11 @@ public @interface PropertyDescription {
 	 */
 	boolean writable() default true;
 	/**
+	 * Set readable by forms.
+	 * @return true
+	 */
+	boolean readable() default true;
+	/**
 	 * False if value is not stored by default.
 	 * @return true
 	 */
