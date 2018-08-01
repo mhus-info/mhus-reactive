@@ -33,9 +33,11 @@ import de.mhus.lib.form.definition.FmAction;
 import de.mhus.lib.form.definition.FmCombobox;
 import de.mhus.lib.form.definition.FmFullWidth;
 import de.mhus.lib.form.definition.FmLayout100;
+import de.mhus.lib.form.definition.FmLayout3x33;
 import de.mhus.lib.form.definition.FmLayoutWizard;
 import de.mhus.lib.form.definition.FmReadOnly;
 import de.mhus.lib.form.definition.FmText;
+import de.mhus.lib.form.definition.FmVoid;
 
 @ActivityDescription(displayName = "Complex User Form 01", outputs = @Output(activity = S1TheEnd.class))
 public class S1UserForm02 extends RUserTask<S1Pool> {
@@ -54,8 +56,10 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 		return new UserForm().add(
 			new DefAttribute("showInformation", true),
 			new FmLayoutWizard("wizard", "Wizard", "", new FmFullWidth(), 
-				new FmLayout100("t1", "Case","",
+					
+				new FmLayout3x33("t1", "Case","",
 					new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
+					new FmVoid(),
 					new FmText(M.n(S1Pool::getText2), "Text2", "")
 				),
 				new FmLayout100("t2", "Node","",
