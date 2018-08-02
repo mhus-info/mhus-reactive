@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.reactive.vaadin.widgets;
 
+import java.io.IOException;
+
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.HorizontalLayout;
@@ -25,9 +27,11 @@ import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.logging.Log;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.MForm;
+import de.mhus.lib.form.MutableMForm;
 import de.mhus.lib.form.PropertiesDataSource;
 import de.mhus.lib.vaadin.form.VaadinForm;
 
@@ -38,17 +42,19 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 	private INode node;
 	private Button bCancel;
 	private PropertiesDataSource dataSource;
+	private VaadinForm vForm;
 
 	public VUserForm(INode node) {
 		this.node = node;
-		VaadinForm form = createForm();
-		addComponent(form);
-		setExpandRatio(form, 1);
+		vForm = createForm();
+		
+		addComponent(vForm);
+		setExpandRatio(vForm, 1);
 		// add buttons
 		HorizontalLayout toolBar = new HorizontalLayout();
 		addComponent(toolBar);
 		
-		bCancel = new Button("Cancel");
+		bCancel = new Button("Exit");
 		toolBar.addComponent(bCancel);
 		bCancel.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 1L;
@@ -58,6 +64,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			}
 			
 		});
+		setSizeFull();
 		
 //		Button bSubmit = new Button("Submit");
 //		toolBar.addComponent(bSubmit);
@@ -81,7 +88,11 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 	}
 	
 	protected void onFormCancel() {
-		
+		try {
+			node.doUnassign();
+		} catch (IOException | MException e) {
+			log.w(e);
+		}
 	}
 
 	protected VaadinForm createForm() {
@@ -93,7 +104,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			
 			VaadinForm vform = new VaadinForm();
 //			vform.setShowInformation(true);
-			MForm mform = new MForm(form);
+			MutableMForm mform = new MutableMForm(form);
 			mform.setDataSource(dataSource);
 			mform.setActionHandler(this);
 			Class<? extends FormControl> control = node.getUserFormControl();
@@ -103,7 +114,12 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			}
 			vform.setForm(mform);
 			vform.doBuild();
-
+			vform.setSizeFull();
+			
+			mform.setBuilder(vform.getBuilder());
+			if (mform.getControl() != null)
+				mform.getControl().setup();
+			
 			return vform;
 		} catch (Throwable t) {
 			log.e(node,t);
@@ -123,8 +139,10 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			action = action.substring(7);
 			MProperties p = dataSource.getProperties();
 			p = onAction(node, p, action);
-			if (p != null)
+			if (p != null) {
 				dataSource.getProperties().putAll(p);
+				vForm.getBuilder().doUpdateValues();
+			}
 		} else
 			log.w("Unknown action type " + action );
 	}

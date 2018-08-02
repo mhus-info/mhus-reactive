@@ -30,7 +30,7 @@ import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.FormControl;
-import de.mhus.lib.form.definition.FmElement;
+import de.mhus.lib.form.definition.IFmElement;
 
 /**
  * User task. Handles Form activities.
@@ -150,8 +150,8 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 		DefRoot form = createForm().build().getRoot();
 
 		for (IDefDefinition item : form.definitions()) {
-			if (item instanceof FmElement) {
-				FmElement ele = (FmElement)item;
+			if (item instanceof IFmElement) {
+				IFmElement ele = (IFmElement)item;
 				String name = ele.getProperty("name");
 				Object value = values.get(name);
 				if (value != null) {

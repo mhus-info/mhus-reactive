@@ -1,12 +1,20 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import java.util.Locale;
+import java.util.function.Function;
 
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MConstants;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.definition.IDefDefinition;
+import de.mhus.lib.form.definition.FaColumns;
+import de.mhus.lib.form.definition.FaItemDefinition;
+import de.mhus.lib.form.definition.FmCombobox;
+import de.mhus.lib.form.definition.FmText;
+import de.mhus.lib.form.definition.FmVoid;
 
 public class Address {
 	
@@ -31,7 +39,7 @@ public class Address {
 	@PropertyDescription
 	private String email;
 	@PropertyDescription
-	private String tel;
+	private String telefon;
 	@PropertyDescription
 	private String country = COUNTRY_CODE_DE;
 	
@@ -208,11 +216,11 @@ public class Address {
 //	}
 
 	public String getTelefon() {
-		return tel;
+		return telefon;
 	}
 
 	public void setTelefon(String tel) {
-		this.tel = tel;
+		this.telefon = tel;
 	}
 	
 	public String toAddress() {
@@ -242,4 +250,22 @@ public class Address {
 		return getFirstName() + " " + getLastName();
 	}
 
+	public static <T> IDefDefinition[] createForm(Function<T,?> getter) {
+		return new IDefDefinition[] {
+			new FmCombobox(M.n(getter,Address::getSalutation), "Salutation", "", new FaItemDefinition("salutationdef")),
+			new FmText(M.n(getter,Address::getFirstName), "First Name", ""),
+			new FmText(M.n(getter,Address::getLastName), "Last Name", ""),
+			
+			new FmText(M.n(getter,Address::getStreet), "Street", "", new FaColumns(2)),
+			new FmText(M.n(getter,Address::getStreetNumber), "Number", ""),
+			
+			new FmText(M.n(getter,Address::getZip), "ZIP", ""),
+			new FmText(M.n(getter,Address::getTown), "Town", "", new FaColumns(2)),
+	
+			new FmText(M.n(getter,Address::getTelefon), "Phone", ""),
+			new FmText(M.n(getter,Address::getEmail), "Email", ""),
+			new FmVoid()
+		};
+	}
+	
 }

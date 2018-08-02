@@ -28,7 +28,7 @@ import de.mhus.lib.core.definition.DefAttribute;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.Item;
 import de.mhus.lib.form.definition.FmCombobox;
-import de.mhus.lib.form.definition.FmReadOnly;
+import de.mhus.lib.form.definition.FaReadOnly;
 import de.mhus.lib.form.definition.FmText;
 
 @ActivityDescription(
@@ -52,7 +52,7 @@ public class S1UserStep extends RUserTask<S1Pool> {
 	public UserForm createForm() {
 		return new UserForm().add(
 			new DefAttribute("showInformation", true),
-			new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
+			new FmText(M.n(S1Pool::getText1), "Text1", "", new FaReadOnly()),
 			new FmText(M.n(S1Pool::getText2), "Text2", ""),
 			new FmText(M.n(S1UserStep::getText3), "Text3", ""),
 			new FmCombobox("option", "Option", "Sample Option with options")

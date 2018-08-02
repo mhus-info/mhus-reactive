@@ -17,6 +17,7 @@ package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
+import de.mhus.cherry.reactive.examples.simple1.forms.Address.SALUTATION;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -27,19 +28,35 @@ import de.mhus.lib.annotations.pojo.Embedded;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.definition.DefAttribute;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.Item;
+import de.mhus.lib.form.definition.FaColumns;
+import de.mhus.lib.form.definition.FaCustomDateFormat;
+import de.mhus.lib.form.definition.FaDefaultValue;
+import de.mhus.lib.form.definition.FaDisabled;
+import de.mhus.lib.form.definition.FaFullWidth;
+import de.mhus.lib.form.definition.FaHtml;
+import de.mhus.lib.form.definition.FaItemDefinition;
+import de.mhus.lib.form.definition.FaReadOnly;
+import de.mhus.lib.form.definition.FaShowInformationPanel;
 import de.mhus.lib.form.definition.FmAction;
-import de.mhus.lib.form.definition.FmColumns;
+import de.mhus.lib.form.definition.FmCheckbox;
 import de.mhus.lib.form.definition.FmCombobox;
-import de.mhus.lib.form.definition.FmFullWidth;
-import de.mhus.lib.form.definition.FmItemDefinition;
+import de.mhus.lib.form.definition.FmDate;
+import de.mhus.lib.form.definition.FmDate.FORMATS;
+import de.mhus.lib.form.definition.FmLabel;
 import de.mhus.lib.form.definition.FmLayout100;
 import de.mhus.lib.form.definition.FmLayout3x33;
 import de.mhus.lib.form.definition.FmLayoutWizard;
-import de.mhus.lib.form.definition.FmReadOnly;
+import de.mhus.lib.form.definition.FmLink;
+import de.mhus.lib.form.definition.FmNumber;
+import de.mhus.lib.form.definition.FmNumber.TYPES;
+import de.mhus.lib.form.definition.FmOptions;
+import de.mhus.lib.form.definition.FmPassword;
+import de.mhus.lib.form.definition.FmRichText;
 import de.mhus.lib.form.definition.FmText;
+import de.mhus.lib.form.definition.FmTextArea;
 import de.mhus.lib.form.definition.FmVoid;
 
 @ActivityDescription(displayName = "Complex User Form 01", outputs = @Output(activity = S1TheEnd.class))
@@ -55,41 +72,79 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 	@PropertyDescription
 	@Embedded
 	private Address owner = new Address();
+	{
+		owner.setSalutation(SALUTATION.MR);
+		owner.setFirstName("John");
+		owner.setLastName("Doe");
+		owner.setStreet("Baker Street");
+		owner.setStreetNumber("221B");
+		owner.setZip("12345");
+		owner.setTown("Everville");
+		owner.setEmail("john@everville.com");
+		owner.setTelefon("0123 55 55 55");
+	}
 	
 	@PropertyDescription(persistent = false)
-	private Item[] salutationDef = new Item[] { new Item("mr", "Mr"), new Item("mrs", "Mrs"), };
+	private Item[] salutationDef = new Item[] { new Item("MR", "Mr"), new Item("MRS", "Mrs"), };
 
 	@Override
 	public UserForm createForm() {
 		return new UserForm().add(
-			new DefAttribute("showInformation", true),
-			new FmLayoutWizard("wizard", "", "", new FmFullWidth(), 
+			new FaShowInformationPanel(),
+			new FmLayoutWizard("wizard", "", "", new FaFullWidth(), 
 					
 				new FmLayout3x33("t1", "Case","",
-					new FmText(M.n(S1Pool::getText1), "Text1", "", new FmReadOnly()),
-					new FmVoid(),
-					new FmText(M.n(S1Pool::getText2), "Text2", "")
-				),
-				new FmLayout3x33("t2", "Owner","",
-						new FmCombobox(M.n(S1UserForm02::getOwner,Address::getSalutation), "Salutation", "", new FmItemDefinition("salutationdef")),
-						new FmText(M.n(S1UserForm02::getOwner,Address::getFirstName), "First Name", ""),
-						new FmText(M.n(S1UserForm02::getOwner,Address::getLastName), "Last Name", ""),
-						
-						new FmText(M.n(S1UserForm02::getOwner,Address::getStreet), "Street", "", new FmColumns(2)),
-						new FmText(M.n(S1UserForm02::getOwner,Address::getStreetNumber), "Number", ""),
-						
-						new FmText(M.n(S1UserForm02::getOwner,Address::getZip), "ZIP", ""),
-						new FmText(M.n(S1UserForm02::getOwner,Address::getTown), "Town", "", new FmColumns(2)),
-
-						new FmText(M.n(S1UserForm02::getOwner,Address::getTelefon), "Phone", ""),
-						new FmText(M.n(S1UserForm02::getOwner,Address::getEmail), "Email", ""),
-						new FmVoid()
-						
-				),
-				new FmLayout100("t3", "Node","",
-					new FmText(M.n(S1UserForm02::getText3), "Text3", ""),
+						new FmText(M.n(S1Pool::getText1), "Text1", "", new FaReadOnly()),
+						new FmVoid(),
+						new FmText(M.n(S1Pool::getText2), "Text2", "")
+					),
+				new FmLayout3x33("t3", "Node","",
+					new FmText(M.n(S1UserForm02::getText3), "Text3", "",new FaColumns(3)),
+					
 					new FmCombobox("option", "Option", "Sample Option with options"),
-					new FmAction("submit", "submit:action=submit", "Submit", "Send")
+					new FmVoid(new FaColumns(2)),
+					
+					new FmAction("submit", "submit:action=submit", "Submit", "Send"),
+					new FmVoid(),
+					new FmAction("actionrandom", "action:random", "Random", "Random values for text3")
+				),
+				new FmLayout3x33("t2", "Address","Embedded address",
+						Address.createForm(S1UserForm02::getOwner)
+				),
+				new FmLayout100("t4", "Widgets", "Test UI Widgets", 
+					new FmText("xtext", "Text", "Simple Text Widget"),
+					new FmPassword("xpass", "Password", "Password Text Widget"),
+					new FmCombobox("xcombo", "Combobox", "Combobox with items", new FaItemDefinition("salutationdef")),
+					new FmLabel("xlabel", "Label", "Label widget", new FaDefaultValue("Static Label Text")),
+					new FmLabel("xlabelhtml", "Html Label", "Label with html widget", new FaDefaultValue("Static <b>bold Label</b> Text"), new FaHtml() ),
+					new FmNumber("xint", TYPES.INTEGER, "Integer", "Integer number value"),
+					new FmNumber("xdouble", TYPES.DOUBLE, "Double", "Double number value"),
+					new FmNumber("xfloat", TYPES.FLOAT, "Float", "Float number value"),
+					new FmNumber("xlong", TYPES.LONG, "Long", "Long number value"),
+					new FmCheckbox("xcheckbox", "Checkbox", "Checkbox boolean value"),
+					new FmDate("xdate", FORMATS.DATE, "Date", "Date value"),
+					new FmDate("xdatetime", FORMATS.DATETIME, "Date Time", "Date and time values"),
+					new FmDate("xdatetimesec", FORMATS.DATETIMESECONDS, "Date Time Seconds", "Date and time with seconds"),
+					new FmDate("xtime", FORMATS.TIME, "Time", "Time value"),
+					new FmDate("xtimesec", FORMATS.TIMESECONDS, "Time Seconds", "Date incl. seconds value"),
+					new FmDate("xtimecustom", FORMATS.CUSTOM, "Custom Date", "Date in format dd.MM.yyyy HH:mm", new FaCustomDateFormat("dd.MM.yyyy HH:mm")),
+					new FmLink("xlink", "Label", "Link", "Text as link, static link to google", new FaDefaultValue("http://google.com")),
+					new FmOptions("xoptions", "Options", "Options", new FaItemDefinition("salutationdef")),
+					new FmRichText("xrich", "Rich Text", "Rich text widget", new FaFullWidth()),
+					new FmTextArea("xtextarea", "Text Area", "Text Area widget", new FaFullWidth())
+				),
+				new FmLayout100("t5", "Control", "Test Form Control", 
+						new FmText("ctext1", "Text1", "Sync with Text2"),
+						new FmText("ctext2", "Text2", "Sync with Text1"),
+						new FmCombobox("cgender", "Select Gender", "Change visibility be selecting items", new FaItemDefinition("salutationdef")),
+						new FmLayout100("cmale", "Male", "", 
+								new FaDisabled(),
+								new FmCheckbox("cmalesuit", "Suit","Wear a suit")
+						),
+						new FmLayout100("cfemale", "Female", "", 
+								new FaDisabled(),
+								new FmCheckbox("cfemaledress", "Dress","Wear a dress")
+						)
 				)
 			)
 		);
@@ -111,12 +166,22 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 
 	@Override
 	public MProperties doAction(IProperties values, String action) {
-		// TODO Auto-generated method stub
+		if (action.equals("random")) {
+			log().i("Action Random");
+			MProperties out = new MProperties();
+			out.setString("text3", "" + Math.random() );
+			return out;
+		}
 		return null;
 	}
 
 	public Address getOwner() {
 		return owner;
+	}
+
+	@Override
+	public Class<? extends FormControl> getFormControl() {
+		return S1UserForm02Control.class;
 	}
 
 }
