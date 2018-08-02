@@ -144,6 +144,10 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 				vForm.getBuilder().doUpdateValues();
 			}
 		} else
+		if (action.startsWith("control:")) {
+			action = action.substring(8);
+			form.getControl().doAction(action);
+		} else
 			log.w("Unknown action type " + action );
 	}
 

@@ -47,6 +47,7 @@ import de.mhus.lib.form.definition.FmDate;
 import de.mhus.lib.form.definition.FmDate.FORMATS;
 import de.mhus.lib.form.definition.FmLabel;
 import de.mhus.lib.form.definition.FmLayout100;
+import de.mhus.lib.form.definition.FmLayout2x50;
 import de.mhus.lib.form.definition.FmLayout3x33;
 import de.mhus.lib.form.definition.FmLayoutWizard;
 import de.mhus.lib.form.definition.FmLink;
@@ -144,6 +145,10 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 						new FmLayout100("cfemale", "Female", "", 
 								new FaDisabled(),
 								new FmCheckbox("cfemaledress", "Dress","Wear a dress")
+						),
+						new FmLayout2x50("cnow", "Control Action", "", 
+								new FmAction("cnowaction", "control:now", "Now", "Send control:now to the controller, the controller will set the time into the right field"),
+								new FmText("cnowtext", "Now", "", new FaReadOnly())
 						)
 				)
 			)

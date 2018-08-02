@@ -1,24 +1,13 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
-import de.mhus.lib.core.MLog;
+import java.util.Date;
+
+import de.mhus.lib.core.MDate;
 import de.mhus.lib.form.DataSource;
-import de.mhus.lib.form.FormControl;
-import de.mhus.lib.form.MForm;
+import de.mhus.lib.form.FormControlAdapter;
 import de.mhus.lib.form.UiComponent;
 
-public class S1UserForm02Control extends MLog implements FormControl {
-
-	private MForm form;
-
-	@Override
-	public void attachedForm(MForm form) {
-		this.form = form;
-	}
-
-	@Override
-	public void focus(UiComponent component) {
-		
-	}
+public class S1UserForm02Control extends FormControlAdapter {
 
 	@Override
 	public boolean newValue(UiComponent component, Object newValue) {
@@ -53,27 +42,12 @@ public class S1UserForm02Control extends MLog implements FormControl {
 			}
 		}
 			
-		return true;
-	}
-
-	@Override
-	public void reverted(UiComponent component) {
-		
-	}
-
-	@Override
-	public void newValueError(UiComponent component, Object newValue, Throwable t) {
-		
-	}
-
-	@Override
-	public void valueSet(UiComponent component) {
-		
+		return super.newValue(component, newValue);
 	}
 
 	@Override
 	public void setup() {
-		
+		super.setup();
 		try {
 			UiComponent vGender = form.getBuilder().getComponent("cgender");
 			String v = form.getDataSource().getString(vGender, DataSource.VALUE, "");
@@ -84,6 +58,22 @@ public class S1UserForm02Control extends MLog implements FormControl {
 		} catch (Throwable t) {
 			log().e(t);
 		}
+		
+	}
+
+	@Override
+	public void doAction(String action, Object... params) {
+		if (action.equals("now")) {
+			UiComponent v = form.getBuilder().getComponent("cnowtext");
+			try {
+				form.getDataSource().setObject(v, DataSource.VALUE, MDate.toDateTimeSecondsString(new Date()));
+				v.doUpdateValue();
+				return;
+			} catch (Throwable t) {
+				log().e(t);
+			}
+		}
+		super.doAction(action, params);
 	}
 
 }
