@@ -23,13 +23,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
 import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 import de.mhus.lib.form.MForm;
 import de.mhus.lib.form.MutableMForm;
 import de.mhus.lib.form.PropertiesDataSource;
@@ -97,8 +97,8 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 
 	protected VaadinForm createForm() {
 		try {
-			UserForm hForm = node.getUserForm();
-			DefRoot form = hForm.getRoot();
+			IFormInformation hForm = node.getUserForm();
+			DefRoot form = hForm.getForm();
 			dataSource = new PropertiesDataSource();
 			dataSource.setProperties(new MProperties( node.getUserFormValues()));
 			
@@ -107,7 +107,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 			MutableMForm mform = new MutableMForm(form);
 			mform.setDataSource(dataSource);
 			mform.setActionHandler(this);
-			Class<? extends FormControl> control = node.getUserFormControl();
+			Class<? extends FormControl> control = hForm.getFormControl();
 			if (control != null) {
 				FormControl controlObject = control.newInstance();
 				mform.setControl(controlObject);

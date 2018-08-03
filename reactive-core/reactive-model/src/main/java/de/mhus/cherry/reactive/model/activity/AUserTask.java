@@ -20,6 +20,7 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 
 /**
  * Interface for user handled tasks. Providing from information.
@@ -27,7 +28,7 @@ import de.mhus.lib.form.FormControl;
  *
  * @param <P>
  */
-public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProvider, AFormProvider {
+public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProvider, IFormInformation {
 
 	IProperties getFormValues() throws MException;
 	
@@ -35,6 +36,7 @@ public interface AUserTask<P extends APool<?>> extends ATask<P>, IndexValuesProv
 
 	MProperties doAction(IProperties values, String action);
 
+	@Override
 	Class<? extends FormControl> getFormControl();
 	
 }

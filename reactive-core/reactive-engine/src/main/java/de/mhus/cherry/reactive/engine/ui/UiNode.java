@@ -29,14 +29,15 @@ import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.INode;
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.DefaultFormInformation;
 import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 
 public class UiNode extends MLog implements INode {
 
@@ -132,7 +133,7 @@ public class UiNode extends MLog implements INode {
 	}
 
 	@Override
-	public UserForm getUserForm() {
+	public IFormInformation getUserForm() {
 		// TODO check assign
 		try {
 			engine.assignUserTask(info.getId(), ui.getUser());
@@ -141,7 +142,8 @@ public class UiNode extends MLog implements INode {
 			e.printStackTrace();
 		}
 		initANode();
-		return ((AUserTask<?>)aNode).createForm();
+		AUserTask<?> un = (AUserTask<?>)aNode;
+		return new DefaultFormInformation(un.getForm(), un.getActionHandler(), un.getFormControl());
 	}
 
 	@Override

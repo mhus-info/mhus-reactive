@@ -33,6 +33,8 @@ public interface IEngine {
 
 	IProcess getProcess(String uri) throws MException;
 
+	IPool getPool(String uri) throws MException;
+	
 	ICase getCase(String id, String ... propertyNames) throws Exception;
 
 	INode getNode(String id, String ... propertyNames) throws Exception;

@@ -35,7 +35,7 @@ public class UiProcess implements IProcess {
 	private MProperties properties = new MProperties();
 	private UiEngine engine;
 	
-	public UiProcess(UiEngine engine, EProcess process) {
+	public UiProcess(UiEngine engine, EProcess process, MProperties defaultProcessProperties) {
 		this.engine = engine;
 		if (process == null) return;
 		for (String poolName : process.getPoolNames()) {
@@ -96,6 +96,7 @@ public class UiProcess implements IProcess {
 				
 			}
 		}
+		properties.putAll(defaultProcessProperties);
 	}
 
 	@Override

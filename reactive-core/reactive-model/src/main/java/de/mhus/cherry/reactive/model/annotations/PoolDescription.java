@@ -19,9 +19,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import de.mhus.cherry.reactive.model.activity.AActor;
-import de.mhus.cherry.reactive.model.activity.AFormProvider;
 import de.mhus.cherry.reactive.model.util.EverybodyActor;
 import de.mhus.cherry.reactive.model.util.NoForm;
+import de.mhus.lib.form.IFormInformation;
 
 /**
  * You must descripe a pool with this annotation.
@@ -83,13 +83,13 @@ public @interface PoolDescription {
 	 * Define the form provider to create the start form of the process.
 	 * @return initial form provider
 	 */
-	Class<? extends AFormProvider> initialForm() default NoForm.class;
+	Class<? extends IFormInformation> initialForm() default NoForm.class;
 	
 	/**
 	 * Define the form provider to display the running case. This form is
 	 * read only for read only actors and writable for write actors.
 	 * @return display form provider
 	 */
-	Class<? extends AFormProvider> displayForm() default NoForm.class;
+	Class<? extends IFormInformation> displayForm() default NoForm.class;
 	
 }

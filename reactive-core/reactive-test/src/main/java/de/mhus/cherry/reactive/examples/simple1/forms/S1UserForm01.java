@@ -20,16 +20,16 @@ import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.definition.DefAttribute;
+import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.Item;
+import de.mhus.lib.form.definition.FaReadOnly;
 import de.mhus.lib.form.definition.FmAction;
 import de.mhus.lib.form.definition.FmCombobox;
-import de.mhus.lib.form.definition.FaReadOnly;
 import de.mhus.lib.form.definition.FmText;
 
 @ActivityDescription(
@@ -48,10 +48,10 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 			new Item("1","One"),
 			new Item("2","Two"),
 	};
-	@SuppressWarnings("unchecked")
+
 	@Override
-	public UserForm createForm() {
-		return new UserForm().add(
+	public DefRoot getForm() {
+		return new DefRoot(
 			new DefAttribute("showInformation", true),
 			new FmText(M.n(S1Pool::getText1), "Text1", "", new FaReadOnly()),
 			new FmText(M.n(S1Pool::getText2), "Text2", ""),

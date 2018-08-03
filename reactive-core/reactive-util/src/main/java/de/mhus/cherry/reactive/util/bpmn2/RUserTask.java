@@ -29,6 +29,7 @@ import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.definition.IFmElement;
 
@@ -147,8 +148,8 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
 		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
 		
-		DefRoot form = createForm().build().getRoot();
-
+		DefRoot form = getForm().build();
+		
 		for (IDefDefinition item : form.definitions()) {
 			if (item instanceof IFmElement) {
 				IFmElement ele = (IFmElement)item;
@@ -194,6 +195,11 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 
 	@Override
 	public Class<? extends FormControl> getFormControl() {
+		return null;
+	}
+
+	@Override
+	public Class<? extends ActionHandler> getActionHandler() {
 		return null;
 	}
 

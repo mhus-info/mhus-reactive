@@ -21,11 +21,11 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.util.UserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 
 public interface INode {
 
@@ -55,7 +55,7 @@ public interface INode {
 
 	int getScore();
 
-	UserForm getUserForm();
+	IFormInformation getUserForm();
 
 	IProperties getUserFormValues() throws MException;
 

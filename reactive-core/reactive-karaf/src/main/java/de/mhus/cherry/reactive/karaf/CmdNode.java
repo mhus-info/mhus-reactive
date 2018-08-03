@@ -211,7 +211,7 @@ public class CmdNode extends MLog implements Action {
 			if (node.getType() == TYPE_NODE.USER) {
 				System.out.println();
 				AElement<?> aNode = api.getEngine().getANode(node.getId());
-				System.out.println("Form:\n" + ((AUserTask<?>)aNode).createForm().build());
+				System.out.println("Form:\n" + ((AUserTask<?>)aNode).getForm().build());
 				System.out.println("\nValues:\n" + ((AUserTask<?>)aNode).getFormValues());
 			}
 			

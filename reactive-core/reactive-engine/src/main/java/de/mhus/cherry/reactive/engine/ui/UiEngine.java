@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
+import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -38,6 +39,7 @@ import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
+import de.mhus.cherry.reactive.model.ui.IPool;
 import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
@@ -267,8 +269,16 @@ public class UiEngine extends MLog implements IEngine {
 	@Override
 	public IProcess getProcess(String uri) throws MException {
 		if (engine == null) throw new WrongStateEception();
-		UiProcess out = new UiProcess(this, engine.getProcess(MUri.toUri(uri)));
-		out.getProperties().putAll(defaultProcessProperties);
+		UiProcess out = new UiProcess(this, engine.getProcess(MUri.toUri(uri)), defaultProcessProperties);
+		return out;
+	}
+
+	@Override
+	public IPool getPool(String uri) throws MException {
+		if (engine == null) throw new WrongStateEception();
+		MUri u = MUri.toUri(uri);
+		EProcess process = engine.getProcess(u);
+		UiPool out = new UiPool(this, process, engine.getPool(process, u), defaultProcessProperties);
 		return out;
 	}
 
