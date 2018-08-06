@@ -37,6 +37,7 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.IModel;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.ui.IPool;
@@ -482,12 +483,17 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public void close() {
-		// engine = null;
+		// engine = null; // do not close - this instance will survive
 	}
 	
 	@Override
 	public boolean isClosed() {
 		return engine == null;
+	}
+
+	@Override
+	public IModel getModel(UUID nodeId) {
+		return new UiModel(engine, nodeId);
 	}
 	
 }

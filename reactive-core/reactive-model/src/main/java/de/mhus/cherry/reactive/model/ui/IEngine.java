@@ -62,6 +62,14 @@ public interface IEngine {
 	void doArchive(UUID caseId) throws Exception;
 	
 	/**
+	 * Return the surrounding model for the node.
+	 * 
+	 * @param nodeId
+	 * @return The model
+	 */
+	IModel getModel(UUID nodeId);
+	
+	/**
 	 * Will close this UI engine instance. Not the central engine. For some
 	 * implementations this will be helpful to release resources.
 	 * 
