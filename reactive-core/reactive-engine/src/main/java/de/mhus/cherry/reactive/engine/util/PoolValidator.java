@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.ACondition;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.activity.AStartPoint;
@@ -58,7 +59,7 @@ public class PoolValidator {
 			findings.add(new Finding(LEVEL.FATAL,name,"not found")); // should not happen
 			return;
 		}
-		
+				
 		// test object instantiation
 		try {
 			elem.getElementClass().newInstance();
@@ -67,6 +68,10 @@ public class PoolValidator {
 			findings.add(new Finding(LEVEL.FATAL, name, "Can't initialize: " + e.toString()));
 			return;
 		}
+
+		// ignore conditions
+		if (elem.is(ACondition.class))
+			return;
 
 		if (elem.is(ASwimlane.class)) {
 			validateSwimlane(name,elem);

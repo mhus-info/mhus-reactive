@@ -62,7 +62,6 @@ import de.mhus.cherry.reactive.model.engine.StorageProvider;
 import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.errors.TaskException;
 import de.mhus.cherry.reactive.model.errors.TechnicalException;
-import de.mhus.cherry.reactive.model.migrate.Migrator;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
@@ -143,26 +142,34 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		// SCHEDULED NODES
 		fireEvent.doStep("scheduled");
 		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now)) {
-			PNode node = getFlowNode(nodeId.getId());
-			// set state back to ready
-			fireEvent.setScheduledToRunning(node);
-			synchronized (getCaseLock(node)) {
-				node.setState(STATE_NODE.RUNNING);
-				saveFlowNode(null, node, null);
+			try {
+				PNode node = getFlowNode(nodeId.getId());
+				// set state back to ready
+				fireEvent.setScheduledToRunning(node);
+				synchronized (getCaseLock(node)) {
+					node.setState(STATE_NODE.RUNNING);
+					saveFlowNode(null, node, null);
+				}
+			} catch (Throwable t) {
+				log().e(nodeId, t);
 			}
 		}
 		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now)) {
-			PCase caze = getCase(nodeInfo.getCaseId());
-			if (caze.getState() == STATE_CASE.RUNNING)
-				fireScheduledTrigger(nodeInfo);
-			else
-			if (caze.getState() == STATE_CASE.CLOSED) {
-				// stop node also
-				log().d("auto stop waiting node",nodeInfo);
-				PNode node = getFlowNode(nodeInfo.getId());
-				node.setSuspendedState(node.getState());
-				node.setState(STATE_NODE.STOPPED);
-				storage.saveFlowNode(node);
+			try {
+				PCase caze = getCase(nodeInfo.getCaseId());
+				if (caze.getState() == STATE_CASE.RUNNING)
+					fireScheduledTrigger(nodeInfo);
+				else
+				if (caze.getState() == STATE_CASE.CLOSED) {
+					// stop node also
+					log().d("auto stop waiting node",nodeInfo);
+					PNode node = getFlowNode(nodeInfo.getId());
+					node.setSuspendedState(node.getState());
+					node.setState(STATE_NODE.STOPPED);
+					storage.saveFlowNode(node);
+				}
+			} catch (Throwable t) {
+				log().e(nodeInfo, t);
 			}
 		}
 
@@ -177,29 +184,33 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				synchronized (executing) {
 					if (executing.contains(nodeInfo.getId())) continue;
 				}
-				PNode node = getFlowNode(nodeInfo.getId());
-				PCase caze = getCase(node.getCaseId());
-				if (isProcessActive(caze)) {
-					if (caze.getState() == STATE_CASE.RUNNING) {
-						doneCnt++;
-						FlowNodeExecutor executor = new FlowNodeExecutor(node);
-						threads.add(executor);
-						synchronized (executing) {
-							executing.add(node.getId());
+				try {
+					PNode node = getFlowNode(nodeInfo.getId());
+					PCase caze = getCase(node.getCaseId());
+					if (isProcessActive(caze)) {
+						if (caze.getState() == STATE_CASE.RUNNING) {
+							doneCnt++;
+							FlowNodeExecutor executor = new FlowNodeExecutor(node);
+							threads.add(executor);
+							synchronized (executing) {
+								executing.add(node.getId());
+							}
+							Thread thread = new Thread(executor);
+							executor.thread = thread;
+							thread.start();
+							if (threads.size() >= maxThreads) break;
+						} else
+						if (caze.getState() == STATE_CASE.CLOSED) {
+							// stop node also
+							log().d("auto stop running node",nodeInfo);
+							node.setSuspendedState(node.getState());
+							node.setState(STATE_NODE.STOPPED);
+							storage.saveFlowNode(node);
 						}
-						Thread thread = new Thread(executor);
-						executor.thread = thread;
-						thread.start();
-						if (threads.size() >= maxThreads) break;
-					} else
-					if (caze.getState() == STATE_CASE.CLOSED) {
-						// stop node also
-						log().d("auto stop running node",nodeInfo);
-						node.setSuspendedState(node.getState());
-						node.setState(STATE_NODE.STOPPED);
-						storage.saveFlowNode(node);
-					}
-				} 
+					} 
+				} catch (Throwable t) {
+					log().e(nodeInfo, t);
+				}
 			}
 			
 			while (threads.size() > 0) {
@@ -215,28 +226,32 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				synchronized (executing) {
 					if (executing.contains(nodeId)) continue;
 				}
-				PNode node = getFlowNode(nodeId.getId());
-				PCase caze = getCase(node.getCaseId());
-				if (isProcessActive(caze)) {
-					if (caze.getState() == STATE_CASE.RUNNING) {
-						synchronized (executing) {
-							executing.add(nodeId.getId());
+				try {
+					PNode node = getFlowNode(nodeId.getId());
+					PCase caze = getCase(node.getCaseId());
+					if (isProcessActive(caze)) {
+						if (caze.getState() == STATE_CASE.RUNNING) {
+							synchronized (executing) {
+								executing.add(nodeId.getId());
+							}
+							doneCnt++;
+							doFlowNode(node);
+							synchronized (executing) {
+								executing.remove(nodeId);
+							}
+							// sleep
+							MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+	
+						} else
+						if (caze.getState() == STATE_CASE.CLOSED) {
+							// stop node also
+							node.setSuspendedState(node.getState());
+							node.setState(STATE_NODE.STOPPED);
+							storage.saveFlowNode(node);
 						}
-						doneCnt++;
-						doFlowNode(node);
-						synchronized (executing) {
-							executing.remove(nodeId);
-						}
-						// sleep
-						MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
-
-					} else
-					if (caze.getState() == STATE_CASE.CLOSED) {
-						// stop node also
-						node.setSuspendedState(node.getState());
-						node.setState(STATE_NODE.STOPPED);
-						storage.saveFlowNode(node);
 					}
+				} catch (Throwable t) {
+					log().e(nodeId, t);
 				}
 			}
 		}
@@ -270,13 +285,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				HashSet<UUID> usedRuntime = new HashSet<>();
 				
 				for ( PNodeInfo nodeId : storage.getFlowNodes(caseInfo.getId(), null)) {
-					PNode node = getFlowNode(nodeId.getId());
-					if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
-						allRuntime.add(node.getId());
-					} else
-					if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
-						found = true;
-						usedRuntime.add(node.getRuntimeId());
+					try {
+						PNode node = getFlowNode(nodeId.getId());
+						if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
+							allRuntime.add(node.getId());
+						} else
+						if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
+							found = true;
+							usedRuntime.add(node.getRuntimeId());
+						}
+					} catch (Throwable t) {
+						log().w(nodeId,t);
 					}
 				}
 				
@@ -287,7 +306,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 						PNode runtime = getFlowNode(rId);
 						closeRuntime(runtime);
 					} catch (Throwable t) {
-						log().e(rId,t);
+						log().w(rId,t);
 						fireEvent.error(rId,t);
 					}
 				}
@@ -1051,16 +1070,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 	
 	public void savePCase(PCase pCase, APool<?> aPool, boolean init) throws IOException {
-		Map<String, Object> newParameters = aPool.exportParamters();
-		pCase.getParameters().putAll(newParameters);
-		
-		if (aPool instanceof IndexValuesProvider) {
-			pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(init) );
-		} else {
-			pCase.setIndexValues(null);
+		if (aPool != null) {
+			Map<String, Object> newParameters = aPool.exportParamters();
+			pCase.getParameters().putAll(newParameters);
+			
+			if (aPool instanceof IndexValuesProvider) {
+				pCase.setIndexValues( ((IndexValuesProvider)aPool).createIndexValues(init) );
+			} else {
+				pCase.setIndexValues(null);
+			}
+			fireEvent.saveCase(pCase, aPool);
 		}
-		
-		fireEvent.saveCase(pCase, aPool);
 		synchronized (getCaseLock(pCase)) {
 			synchronized (caseCache) {
 				caseCache.put(pCase.getId(), pCase);
@@ -1393,12 +1413,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				PCase caze = getCase(caseId.getId());
 				synchronized (getCaseLock(caze)) {
 					fireEvent.archiveCase(caze);
-					archive.saveCase(caze);
-					for (PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
-						PNode node = getFlowNode(nodeId.getId());
-						archive.saveFlowNode(node);
+					try {
+						archive.saveCase(caze);
+						for (PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
+							PNode node = getFlowNode(nodeId.getId());
+							archive.saveFlowNode(node);
+						}
+						storage.deleteCaseAndFlowNodes(caze.getId());
+					} catch (Throwable t) {
+						log().e(caseId,t);
 					}
-					storage.deleteCaseAndFlowNodes(caze.getId());
 				}
 			}
 		} catch (Throwable t) {
@@ -1541,55 +1565,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 	
 	/**
-	 * Migrate the content of a running case. The case must be suspended or closed.
-	 * The case will be archived before migration. It is possible to restore the case
-	 * after fail.
+	 * Archive case and nodes.
 	 * 
 	 * @param caseId
-	 * @param migrator
-	 * @param toUri 
 	 * @throws MException
 	 * @throws IOException
 	 */
-	public void migrateCase(UUID caseId, String toUri, String migrator) throws MException, IOException {
+	public void prepareMigrateCase(UUID caseId) throws MException, IOException {
 		PCase caze = getCase(caseId);
 		if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
 			throw new MException("already is not suspended",caseId);
-		
-		fireEvent.migrateCase(caze, toUri, migrator);
-		
-		// create from context
-		EngineContext fromContext = createContext(caze);
-		
-		// create to context
-		MUri uri = MUri.toUri(toUri);
-		EProcess process = getProcess(uri);
-		EPool pool = getPool(process, uri);
-		
-		EngineContext toContext = new EngineContext(this);
-		toContext.setUri(uri.toString());
-		toContext.setEProcess(process);
-		toContext.setEPool(pool);
-		
-		// create migrator
-		Migrator migratorObj = null;
-		for (Class<? extends Migrator> ano : process.getProcessDescription().migrator())
-				if (ano.getName().equals(migrator)) {
-					try {
-						migratorObj = ano.newInstance();
-					} catch (InstantiationException | IllegalAccessException e) {
-						throw new MException(toUri,migrator,e);
-					}
-				}
-		if (migratorObj == null) {
-			try {
-				migratorObj = (Migrator) this.getClass().getClassLoader().loadClass(migrator).newInstance();
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			}
-		}
-		if (migratorObj == null)
-			throw new MException("migrator not found",migrator);
-		
+				
 		// load all nodes
 		LinkedList<PNode> nodes = new LinkedList<>();
 		for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
@@ -1602,22 +1588,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			archive.saveCase(caze);
 			for (PNode node : nodes)
 				archive.saveFlowNode(node);
-	
-			// migrate
-			migratorObj.doMigrate(new EngineMigrateContext(fromContext, toContext, caze, nodes));
-			
-			// validate output
-			if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
-				throw new MException("It's not allowed to change case state, change suspendedState instead");
-			for (PNode node : nodes)
-				if (node.getState() != STATE_NODE.SUSPENDED && node.getState() != STATE_NODE.CLOSED)
-					throw new MException("It's not allowed to change flow node state, change suspendedState instead");
-			
-			// store
-			storage.saveCase(caze);
-			for (PNode node : nodes)
-				storage.saveFlowNode(node);
 		}
+		
 	}
 	
 	/**

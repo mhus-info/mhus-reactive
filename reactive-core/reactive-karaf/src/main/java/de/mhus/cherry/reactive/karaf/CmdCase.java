@@ -52,7 +52,6 @@ import de.mhus.lib.core.console.ConsoleTable;
 public class CmdCase extends MLog implements Action {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
-			+ " migrate <caseid> <uri> <migrator>  - migrate case\n"
 			+ " view <id> [user] [lang ]- view case details\n"
 			+ " nodes <id>       - print case bound nodes\n"
 			+ " list [search: state=,name=,search=,index0..9=,uri=] - list all cases\n"
@@ -91,10 +90,6 @@ public class CmdCase extends MLog implements Action {
 		} else
 		if (cmd.equals("resave")) {
 			api.getEngine().resaveCase(UUID.fromString(parameters[0]));
-		} else
-		if (cmd.equals("migrate")) {
-			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
-			api.getEngine().migrateCase(caze.getId(), parameters[1], parameters[2]);
 		} else
 		if (cmd.equals("view")) {
 			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);

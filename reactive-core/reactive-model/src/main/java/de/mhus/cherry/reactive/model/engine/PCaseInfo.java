@@ -127,5 +127,10 @@ public class PCaseInfo {
 	public String getMilestone() {
 		return milestone;
 	}
+	
+	@Override
+	public String toString() {
+		return "PCaseInfo:" + id + "," + state + "," + uri;
+	}
 
 }

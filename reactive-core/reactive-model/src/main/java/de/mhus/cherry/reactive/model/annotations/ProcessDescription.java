@@ -19,7 +19,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import de.mhus.cherry.reactive.model.activity.APool;
-import de.mhus.cherry.reactive.model.migrate.Migrator;
 import de.mhus.cherry.reactive.model.util.NoPool;
 
 /**
@@ -45,12 +44,6 @@ public @interface ProcessDescription {
 	 * @return description
 	 */
 	String description() default "";
-
-	/**
-	 * Migrators should not be used at the moment.
-	 * @return migrators
-	 */
-	Class<? extends Migrator>[] migrator() default {};
 	
 	/**
 	 * If only the process is called to execute. This should define the

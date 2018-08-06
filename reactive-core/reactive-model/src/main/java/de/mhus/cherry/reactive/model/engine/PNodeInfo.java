@@ -117,7 +117,7 @@ public class PNodeInfo {
 
 	@Override
 	public String toString() {
-		return id + " " + caseId + " " + canonicalName + " " + assigned + " " + state + " " + type;
+		return "PNodeInfo:" + id + " " + caseId + " " + canonicalName + " " + assigned + " " + state + " " + type;
 	}
 	
 	public String getUri() {
