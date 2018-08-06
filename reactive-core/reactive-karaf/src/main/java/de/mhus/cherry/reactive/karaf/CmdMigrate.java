@@ -48,10 +48,10 @@ public class CmdMigrate extends MLog implements Action {
 	@Option(name="-r", aliases="--resume", description="Resume after migration",required=false)
 	private boolean resume;
 
-	@Option(name="-c", aliases="--case", description="Case manipulation rule: name:<name> canonical:<name> milestone:<text> closeCode:<int> closeMessage<text> rm:<key> date:<key>=<date> string:<key>=<text> long: int: bool: uuid: double:",required=false, multiValued=true)
+	@Option(name="-c", aliases="--case", description="Case manipulation rule: name:<name> canonical:<name> milestone:<text> closeCode:<int> closeMessage<text> status<status> rm:<key> date:<key>=<date> string:<key>=<text> long: int: bool: uuid: double:",required=false, multiValued=true)
 	private String[] caseRules;
 
-	@Option(name="-n", aliases="--node", description="Node manipulating rule: name:<name> canonical:<name> rm:<key>  date:<key>=<date> string:<key>=<text> actor:<text> long: int: bool: uuid: double:",required=false, multiValued=true)
+	@Option(name="-n", aliases="--node", description="Node manipulating rule: name:<name> canonical:<name> rm:<key>  date:<key>=<date> string:<key>=<text> actor:<text> status<status> long: int: bool: uuid: double:",required=false, multiValued=true)
 	private String[] nodeRules;
 
 	private MUri uri;
@@ -180,6 +180,9 @@ public class CmdMigrate extends MLog implements Action {
 					case "actor":
 						nodeModel.getAttribute("actor").set(node, rule);
 						break;
+					case "status":
+						node.setSuspendedState(STATE_NODE.valueOf(rule));
+						break;
 					case "":
 					case "string":
 						node.getParameters().put(k, v);
@@ -246,6 +249,9 @@ public class CmdMigrate extends MLog implements Action {
 						break;
 					case "closeMessage":
 						caseModel.getAttribute("closemessage").set(caze,rule);
+						break;
+					case "status":
+						caze.setState(STATE_CASE.valueOf(rule));
 						break;
 					case "":
 					case "string":
