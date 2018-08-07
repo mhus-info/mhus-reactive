@@ -90,12 +90,21 @@ public class CmdCase extends MLog implements Action {
 				if (node.getType() == TYPE_NODE.RUNTIME) {
 					System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
 					try {
+						ConsoleTable table = new ConsoleTable(full);
+						table.setHeaderValues("Time","Type","From","To","Msg");
+						table.getColumn(0).weight = 0;
+						table.getColumn(1).weight = 0;
+						table.getColumn(2).weight = 0;
+						table.getColumn(3).weight = 0;
+						table.getColumn(4).weight = 1;
+
 						EngineContext context = api.getEngine().createContext(caze);
 						PNode pRuntime = api.getEngine().getFlowNode(node.getId());
 						RuntimeNode aRuntime = api.getEngine().createRuntimeObject(context, pRuntime);
 						for (EngineMessage msg : aRuntime.getMessages()) {
-							System.out.println("--- " + msg);
+							table.addRowValues(MDate.toIso8601(msg.getTimestamp()), msg.getType(), msg.getFromNode(), msg.getToNode(), msg.getMessage() ); 
 						}
+						table.print(System.out);
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}

@@ -99,7 +99,7 @@ public class EngineMessage {
 	
 	@Override
 	public String toString() {
-		return MDate.toIso8601(ts) + " " + originalMsg;
+		return originalMsg;
 	}
 	
 }
