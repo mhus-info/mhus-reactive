@@ -12,13 +12,16 @@ COPY repository /root/.m2/repository/
 RUN find ~/.m2/repository \
 	&& cd /opt/karaf \
 	&& ./bin/start \
+	&& echo "Wait for startup"
 	&& sleep 2 \
 	&& while [ "$(grep -c Done data/log/karaf.log)" = "0" ]; do echo "."; sleep 10; done \
+	&& sleep 5
 	&& echo "feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/${REACTIVE_VERSION}/xml/features" | ./bin/client \
 	&& sleep 2 \
 	&& echo "feature:install cherry-reactive-dev cherry-reactive-all" | ./bin/client \
 	&& sleep 2 \
 	&& ./bin/stop \
+	&& echo "Wait for shutdown"
 	&& sleep 5 \
 	&& while [ "$(grep -c Stopping\ JMX\ OSGi\ agent data/log/karaf.log)" = "0" ]; do echo "."; sleep 5; done \
 	&& rm -r ~/.m2/repository/*

@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.reactive.util.bpmn2;
 
+import java.util.Map.Entry;
+
 import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -24,14 +26,11 @@ import de.mhus.cherry.reactive.util.activity.RAbstractTask;
 import de.mhus.lib.annotations.pojo.Hidden;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.definition.DefRoot;
-import de.mhus.lib.core.definition.IDefDefinition;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
-import de.mhus.lib.form.definition.IFmElement;
 
 /**
  * User task. Handles Form activities.
@@ -148,35 +147,32 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 		PojoModel modelTask = ActivityUtil.createFormPojoModel(getClass());
 		PojoModel modelPool = ActivityUtil.createFormPojoModel(pool.getClass());
 		
-		DefRoot form = getForm().build();
 		
-		for (IDefDefinition item : form.definitions()) {
-			if (item instanceof IFmElement) {
-				IFmElement ele = (IFmElement)item;
-				String name = ele.getProperty("name");
-				Object value = values.get(name);
-				if (value != null) {
-					if (modelTask.hasAttribute(name)) {
-						PojoAttribute<Object> attr = modelTask.getAttribute(name);
-						PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
-						if (desc.writable()) {
-							try {
-								attr.set(this, value);
-							} catch (Throwable t) {
-								log().w(this,attr,t);
-							}
-						}
-					} else
-					if (modelPool.hasAttribute(name)) {
-						PojoAttribute<Object> attr = modelPool.getAttribute(name);
-						PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
-						if (desc.writable()) {
-							try {
-								attr.set(pool, value);
-							} catch (Throwable t) {
-								log().w(this,attr,t);
-							}
-						}
+		
+		// DefRoot form = getForm().build();
+		
+		for (Entry<String, Object> entry : values.entrySet()) {
+			String name = entry.getKey();
+			Object value = entry.getValue();
+			if (modelTask.hasAttribute(name)) {
+				PojoAttribute<Object> attr = modelTask.getAttribute(name);
+				PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+				if (desc.writable()) {
+					try {
+						attr.set(this, value);
+					} catch (Throwable t) {
+						log().w(this,attr,t);
+					}
+				}
+			} else
+			if (modelPool.hasAttribute(name)) {
+				PojoAttribute<Object> attr = modelPool.getAttribute(name);
+				PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+				if (desc.writable()) {
+					try {
+						attr.set(pool, value);
+					} catch (Throwable t) {
+						log().w(this,attr,t);
 					}
 				}
 			}

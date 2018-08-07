@@ -24,6 +24,7 @@ import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
+import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
@@ -56,9 +57,15 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 		return out;
 	}
 
+	/**
+	 * import all parameters, convert all keys to lower case to
+	 * be compatible to the pojo model
+	 */
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void importParameters(Map<String, Object> parameters) {
+		parameters = MCollection.toLowerCaseKeys(parameters);
+
 		for(PojoAttribute attr : getPojoModel()) {
 			try {
 				PropertyDescription desc = (PropertyDescription) attr.getAnnotation(PropertyDescription.class);

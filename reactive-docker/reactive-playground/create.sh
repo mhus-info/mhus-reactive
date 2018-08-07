@@ -24,6 +24,8 @@ do
   cp -r ~/.m2/repository/$f/* repository/$f
 done
 
+#cp -r ~/.m2/repository/* repository/
+
 if [ "$1" = "clean" ]; then
 	docker build --no-cache -t reactive-playground .
 else

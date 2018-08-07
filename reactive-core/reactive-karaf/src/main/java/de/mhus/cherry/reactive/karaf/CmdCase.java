@@ -27,14 +27,18 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
+import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.ICaseDescription;
@@ -59,7 +63,8 @@ public class CmdCase extends MLog implements Action {
 			+ " suspend <id>     - suspend case\n"
 			+ " archive <id>     - archive case\n"
 			+ " cancel <id>      - cancel hard\n"
-			+ " locked           - print locked cases"
+			+ " locked           - print locked cases\n"
+			+ " runtime <id>     - print all runtime information"
 			+ "", multiValued=false)
     String cmd;
 
@@ -79,6 +84,24 @@ public class CmdCase extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("runtime")) {
+			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			for (PNodeInfo node : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
+				if (node.getType() == TYPE_NODE.RUNTIME) {
+					System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
+					try {
+						EngineContext context = api.getEngine().createContext(caze);
+						PNode pRuntime = api.getEngine().getFlowNode(node.getId());
+						RuntimeNode aRuntime = api.getEngine().createRuntimeObject(context, pRuntime);
+						for (EngineMessage msg : aRuntime.getMessages()) {
+							System.out.println("--- " + msg);
+						}
+					} catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+			}
+		} else
 		if (cmd.equals("locked")) {
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");

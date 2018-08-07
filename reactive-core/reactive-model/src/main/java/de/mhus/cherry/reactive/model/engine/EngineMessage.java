@@ -17,6 +17,9 @@ package de.mhus.cherry.reactive.model.engine;
 
 import java.util.UUID;
 
+import de.mhus.lib.core.MCast;
+import de.mhus.lib.core.MDate;
+
 public class EngineMessage {
 
 	public enum TYPE {OTHER,FLOW,ERROR,CONNECT,START}
@@ -29,10 +32,16 @@ public class EngineMessage {
 	private UUID fromNode;
 	private UUID toNode;
 	private String originalMsg;
+	private long ts;
 
 	public EngineMessage(String msg) {
 		originalMsg = msg;
-		int p = msg.indexOf(':');
+		int p = msg.indexOf('|');
+		if (p >= 0) {
+			ts = MCast.tolong(msg.substring(0, p), 0);
+			msg = msg.substring(p+1);
+		}
+		p = msg.indexOf(':');
 		if (p >= 0) {
 			String t = msg.substring(0, p+1);
 			switch (t) {
@@ -84,9 +93,13 @@ public class EngineMessage {
 		return toNode;
 	}
 	
+	public long getTimestamp() {
+		return ts;
+	}
+	
 	@Override
 	public String toString() {
-		return originalMsg;
+		return MDate.toIso8601(ts) + " " + originalMsg;
 	}
 	
 }
