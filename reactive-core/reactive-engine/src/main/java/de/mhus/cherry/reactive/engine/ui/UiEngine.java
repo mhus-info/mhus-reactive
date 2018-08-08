@@ -32,6 +32,7 @@ import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
@@ -469,7 +470,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public INodeDescription getNodeDescritpion(String uri, String name) throws Exception {
+	public INodeDescription getNodeDescription(String uri, String name) throws Exception {
 		return new UiNodeDescription(this, uri, name);
 	}
 
@@ -492,8 +493,24 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public IModel getModel(UUID nodeId) {
-		return new UiModel(engine, nodeId);
+	public IModel getModel(UUID nodeId) throws Exception {
+		PNodeInfo node = engine.getFlowNodeInfo(nodeId);
+		if (!hasReadAccess(node.getUri())) return null;
+		return new UiModel(this, engine, nodeId);
+	}
+
+	@Override
+	public IModel[] getCaseModels(UUID caseId) throws Exception {
+		if (engine == null) throw new WrongStateEception();
+		PCaseInfo caze = engine.getCaseInfo(caseId);
+		if (!hasReadAccess(caze.getUri())) 
+			return null;
+		LinkedList<IModel> out = new LinkedList<>();
+		for (PNodeInfo node : engine.storageGetFlowNodes(caseId, null)) {
+			if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.SEVERE)
+				out.add(new UiModel(this, engine, node.getId()));
+		}
+		return out.toArray(new IModel[out.size()]);
 	}
 	
 }

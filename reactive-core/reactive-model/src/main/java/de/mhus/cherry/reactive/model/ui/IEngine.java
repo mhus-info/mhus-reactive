@@ -44,12 +44,12 @@ public interface IEngine {
 	}
 
 	default INodeDescription getNodeDescription(INode node) throws Exception {
-		return getNodeDescritpion(node.getUri(), node.getCanonicalName());
+		return getNodeDescription(node.getUri(), node.getCanonicalName());
 	}
 
 	ICaseDescription getCaseDescription(String uri) throws Exception;
 
-	INodeDescription getNodeDescritpion(String uri, String name) throws Exception;
+	INodeDescription getNodeDescription(String uri, String name) throws Exception;
 
 	Locale getLocale();
 
@@ -66,9 +66,19 @@ public interface IEngine {
 	 * 
 	 * @param nodeId
 	 * @return The model
+	 * @throws Exception 
 	 */
-	IModel getModel(UUID nodeId);
-	
+	IModel getModel(UUID nodeId) throws Exception;
+
+	/**
+	 * Return all node models for the running case.
+	 * 
+	 * @param caseId
+	 * @return all node models
+	 * @throws Exception 
+	 */
+	IModel[] getCaseModels(UUID caseId) throws Exception;
+
 	/**
 	 * Will close this UI engine instance. Not the central engine. For some
 	 * implementations this will be helpful to release resources.
