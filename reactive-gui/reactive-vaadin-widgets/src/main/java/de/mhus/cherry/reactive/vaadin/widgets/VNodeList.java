@@ -48,6 +48,7 @@ public class VNodeList extends MhuTable {
 	protected static final Action ACTION_UNASSIGN = new Action("Unassign");
 	protected static final Action ACTION_EXECUTE = new Action("Do it");
 	protected static final Action ACTION_REFRESH = new Action("Refresh");
+	protected static final Action ACTION_DETAILS = new Action("Details");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
 	MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
@@ -118,6 +119,7 @@ public class VNodeList extends MhuTable {
 						}
 						list.add(ACTION_EXECUTE);
 					}
+					list.add(ACTION_DETAILS);
 					list.add(ACTION_REFRESH);
 				}
 				return list.toArray(new Action[list.size()]);
@@ -126,13 +128,14 @@ public class VNodeList extends MhuTable {
             public void handleAction(final Action action, final Object sender,
                     final Object target) {
             	try {
-					INode node = engine.getNode(((NodeItem)target).getId().toString());
 					
 	            	if (action == ACTION_UNASSIGN) {
+	            		INode node = engine.getNode(((NodeItem)target).getId().toString());
 	            		node.doUnassign();
 	            		doReload();
 	            	} else
 	            	if (action == ACTION_ASSIGN) {
+	            		INode node = engine.getNode(((NodeItem)target).getId().toString());
 	            		node.doAssign();
 	            		doReload();
 	            	} else
@@ -141,6 +144,9 @@ public class VNodeList extends MhuTable {
 	            	} else
 	            	if (action == ACTION_REFRESH) {
 	            		doReload();
+	            	} else
+	            	if (action == ACTION_DETAILS) {
+	            		doDetails((NodeItem)target);
 	            	}
 				} catch (Throwable t) {
 					log.e(t);
@@ -164,6 +170,10 @@ public class VNodeList extends MhuTable {
 			}
 		});
         setImmediate(true);
+		
+	}
+
+	protected void doDetails(NodeItem target) {
 		
 	}
 

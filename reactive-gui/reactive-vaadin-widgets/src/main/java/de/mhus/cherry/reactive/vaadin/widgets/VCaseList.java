@@ -45,6 +45,7 @@ public class VCaseList extends MhuTable {
 	private static final long serialVersionUID = 1L;
 	protected static final Action ACTION_REFRESH = new Action("Refresh");
 	protected static final Action ACTION_ARCHIVE = new Action("Archive");
+	protected static final Action ACTION_DETAILS = new Action("Details");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
 	MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
@@ -105,6 +106,7 @@ public class VCaseList extends MhuTable {
 				
 				if (target != null) {
 					CaseItem caze = (CaseItem)target;
+					list.add(ACTION_DETAILS);
 					list.add(ACTION_REFRESH);
 					if (caze.getState() == STATE_CASE.CLOSED)
 						list.add(ACTION_ARCHIVE);
@@ -121,8 +123,12 @@ public class VCaseList extends MhuTable {
 	            		doReload();
 	            	}
 	            	if (action == ACTION_ARCHIVE) {
-						CaseItem caze = (CaseItem)target;
+					CaseItem caze = (CaseItem)target;
 	            		doArchive(caze);
+	            	}
+	            	if (action == ACTION_DETAILS) {
+					CaseItem caze = (CaseItem)target;
+	            		doDetails(caze);
 	            	}
 				} catch (Throwable t) {
 					log.e(t);
@@ -146,6 +152,10 @@ public class VCaseList extends MhuTable {
 			}
 		});
         setImmediate(true);
+		
+	}
+
+	protected void doDetails(CaseItem caze) {
 		
 	}
 

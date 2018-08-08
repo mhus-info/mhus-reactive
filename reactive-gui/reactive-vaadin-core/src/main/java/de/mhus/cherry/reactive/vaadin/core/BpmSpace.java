@@ -37,8 +37,11 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.cherry.reactive.vaadin.widgets.CaseItem;
 import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
+import de.mhus.cherry.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
+import de.mhus.cherry.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
 import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.lib.core.IProperties;
@@ -274,14 +277,24 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		VNodeList list = new VNodeList() {
 			private static final long serialVersionUID = 1L;
 			@Override
-			protected void doOpenUserForm(NodeItem selected) {
+			protected void doOpenUserForm(NodeItem node) {
 				try {
-					showUserForm(selected);
+					showUserForm(node);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			@Override
+			protected void doDetails(NodeItem node) {
+				try {
+					showNodeDetails(node);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 		};
 		list.configure(engine, criterias, properties);
 
@@ -317,10 +330,49 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         return l;
 	}
 
+	protected void showNodeDetails(NodeItem item) {
+		VNodeDetails panel = new VNodeDetails() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onCancel() {
+				System.out.println("Cancel");
+				showNodeList();
+			}
+		};
+		
+		panel.configure(engine, item);
+		
+		setContent(panel);
+	}
+
+	protected void showCaseDetails(CaseItem item) {
+		VCaseDetails panel = new VCaseDetails() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void onCancel() {
+				System.out.println("Cancel");
+				showNodeList();
+			}
+		};
+		
+		panel.configure(engine, item);
+		
+		setContent(panel);
+	}
+	
 	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
-		VCaseList list = new VCaseList();
+		VCaseList list = new VCaseList() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected void doDetails(CaseItem caze) {
+				showCaseDetails(caze);
+			}
+		};
 		
 		VerticalLayout l = new VerticalLayout();
 		SearchField searchText = new SearchField(null);
@@ -365,9 +417,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 						context.getLocale());
 	}
 
-	protected void showUserForm(NodeItem selected) throws Exception {
+	protected void showUserForm(NodeItem item) throws Exception {
 
-		INode node = engine.getNode(selected.getId().toString());
+		INode node = engine.getNode(item.getId().toString());
+
 		VUserForm form = new VUserForm(node) {
 			private static final long serialVersionUID = 1L;
 			@Override
