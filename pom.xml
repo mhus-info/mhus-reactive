@@ -186,9 +186,7 @@
 
 	<modules>
 		<module>reactive-core</module>
-		<!-- 
 		<module>reactive-sop</module>
-		 -->
 		<module>reactive-gui</module>
 		<module>reactive-tools</module>
 		<module>reactive-feature</module>
