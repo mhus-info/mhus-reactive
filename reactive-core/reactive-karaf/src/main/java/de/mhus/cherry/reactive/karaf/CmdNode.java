@@ -32,13 +32,11 @@ import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AUserTask;
-import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
-import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
@@ -84,27 +82,12 @@ public class CmdNode extends MLog implements Action {
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 
 		if (cmd.equals("runtime")) {
-			
-			
-			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Time","Type","From","To","Msg");
-			table.getColumn(0).weight = 0;
-			table.getColumn(1).weight = 0;
-			table.getColumn(2).weight = 0;
-			table.getColumn(3).weight = 0;
-			table.getColumn(4).weight = 1;
-
 			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
 			PCase caze = api.getEngine().getCase(node.getCaseId());
 			EngineContext context = api.getEngine().createContext(caze, node);
 			PNode pRuntime = api.getEngine().getRuntimeForPNode(context, node);
 			System.out.println(">>> RUNTIME " + pRuntime.getId() + " " + pRuntime.getState());
-			RuntimeNode aRuntime = api.getEngine().createRuntimeObject(context, pRuntime);
-			for (EngineMessage msg : aRuntime.getMessages()) {
-				table.addRowValues(MDate.toIso8601(msg.getTimestamp()), msg.getType(), msg.getFromNode(), msg.getToNode(), msg.getMessage() ); 
-			}
-			table.print(System.out);
-			
+			Util.printRuntime(api, caze, pRuntime, full);
 		} else
 		if (cmd.equals("submit")) {
 			MProperties p = new MProperties();

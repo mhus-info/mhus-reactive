@@ -27,10 +27,8 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.ui.UiProcess;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
-import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -38,7 +36,6 @@ import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
-import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.ICaseDescription;
@@ -90,21 +87,8 @@ public class CmdCase extends MLog implements Action {
 				if (node.getType() == TYPE_NODE.RUNTIME) {
 					System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
 					try {
-						ConsoleTable table = new ConsoleTable(full);
-						table.setHeaderValues("Time","Type","From","To","Msg");
-						table.getColumn(0).weight = 0;
-						table.getColumn(1).weight = 0;
-						table.getColumn(2).weight = 0;
-						table.getColumn(3).weight = 0;
-						table.getColumn(4).weight = 1;
-
-						EngineContext context = api.getEngine().createContext(caze);
 						PNode pRuntime = api.getEngine().getFlowNode(node.getId());
-						RuntimeNode aRuntime = api.getEngine().createRuntimeObject(context, pRuntime);
-						for (EngineMessage msg : aRuntime.getMessages()) {
-							table.addRowValues(MDate.toIso8601(msg.getTimestamp()), msg.getType(), msg.getFromNode(), msg.getToNode(), msg.getMessage() ); 
-						}
-						table.print(System.out);
+						Util.printRuntime(api, caze, pRuntime, full);
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}
