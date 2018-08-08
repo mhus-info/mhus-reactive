@@ -1675,6 +1675,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	// -- archive
 
+	public Result<PCaseInfo> archiveSearchCases(SearchCriterias criterias) throws IOException {
+		return archive.searchCases(criterias);
+	}
+
+	public Result<PNodeInfo> archiveSearchFlowNodes(SearchCriterias criterias) throws IOException {
+		return archive.searchFlowNodes(criterias);
+	}
+
 	public PCase archiveLoadCase(UUID id) throws IOException, NotFoundException {
 		return archive.loadCase(id);
 	}
