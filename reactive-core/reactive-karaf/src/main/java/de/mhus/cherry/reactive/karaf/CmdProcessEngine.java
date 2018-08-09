@@ -94,7 +94,7 @@ public class CmdProcessEngine extends MLog implements Action {
 					String v = MString.afterIndex(parts, '=');
 					p.put(k, v);
 				}
-				api.getEngine().fireExternal(UUID.fromString(parameters[1]), p);
+				api.getEngine().fireExternal(UUID.fromString(parameters[1]), null, p);
 				System.out.println("OK");
 			} else
 			if (parameters[0].equals("message")) {

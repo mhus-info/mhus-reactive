@@ -865,7 +865,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				Map<String, String> p = uri.getQuery();
 				if (p != null) parameters.putAll(p);
 			}
-			fireExternal(nodeId, parameters);
+			
+			String taskName = uri.getPath();
+			if (MString.isEmptyTrim(taskName)) taskName = null; // ignore if is empty
+			fireExternal(nodeId, taskName, parameters);
 			return null;
 		}
 		case "bpmx": {
@@ -1929,9 +1932,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	}
 
-	public void fireExternal(UUID nodeId, Map<String, Object> parameters) throws NotFoundException, IOException {
-		fireEvent.fireExternal(nodeId,parameters);
+	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws NotFoundException, IOException {
+		fireEvent.fireExternal(nodeId, taskName, parameters);
 		PNode node = getFlowNode(nodeId);
+		if (taskName != null && !node.getName().equals(taskName)) {
+			fireEvent.error("Wrong task name",taskName,nodeId);
+			throw new NotFoundException("Wrong task name");
+		}
+		
 		synchronized (getCaseLock(node)) {
 			if (node.getType() != TYPE_NODE.EXTERN) throw new NotFoundException("not external",nodeId);
 			if (node.getState() == STATE_NODE.SUSPENDED) {

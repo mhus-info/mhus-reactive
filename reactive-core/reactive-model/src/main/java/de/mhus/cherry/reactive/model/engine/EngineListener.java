@@ -90,7 +90,7 @@ public interface EngineListener {
 
 	void fireMessage(UUID caseId, String message, Map<String, Object> parameters);
 
-	void fireExternal(UUID nodeId, Map<String, Object> parameters);
+	void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters);
 
 	void fireSignal(String signal, Map<String, Object> parameters);
 

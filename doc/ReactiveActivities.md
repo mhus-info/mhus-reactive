@@ -23,7 +23,7 @@ RJoinGateway:
   incoming threads in logical parts.
 
   
-RTask/RServiceTask/RHumanTask/... Output:
+RTask/RServiceTask/RUserTask/... Output:
 * Return null or DEFAULT_OUTPUT to execute the default output (without specified name)
 * Return RETRY to execute doExecute again. Attention: Set the tryCount() in PNode, by default only ONE execution is allowed
 

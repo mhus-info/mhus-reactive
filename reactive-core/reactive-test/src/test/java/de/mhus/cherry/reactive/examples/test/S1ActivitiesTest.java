@@ -526,7 +526,7 @@ public class S1ActivitiesTest extends TestCase {
 				if (i == 5) {
 					for (PNodeInfo node : engine.storageGetFlowNodes(caseId, STATE_NODE.WAITING)) {
 						if (node.getType() == TYPE_NODE.EXTERN) {
-							engine.fireExternal(node.getId(), new MProperties());
+							engine.fireExternal(node.getId(), null, new MProperties());
 							found = true;
 						}
 					}
