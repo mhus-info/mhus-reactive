@@ -62,14 +62,18 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	 * be compatible to the pojo model
 	 */
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void importParameters(Map<String, Object> parameters) {
+		importParameters(parameters, false);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void importParameters(Map<String, Object> parameters, boolean initial) {
 		parameters = MCollection.toLowerCaseKeys(parameters);
 
 		for(PojoAttribute attr : getPojoModel()) {
 			try {
 				PropertyDescription desc = (PropertyDescription) attr.getAnnotation(PropertyDescription.class);
-				if (desc != null && desc.initial()) {
+				if (desc != null && (!initial || desc.initial())) {
 					Object value = parameters.get(attr.getName());
 					if (value != null)
 						attr.set(this, value);
@@ -83,7 +87,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	@Override
 	public void initializeCase(Map<String, Object> parameters) throws Exception {
 		checkInputParameters(parameters);
-		importParameters(parameters);
+		importParameters(parameters, true);
 	}
 
 	/**

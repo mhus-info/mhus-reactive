@@ -52,4 +52,11 @@ public @interface ProcessDescription {
 	 */
 	Class<? extends APool<?>> defaultPool() default NoPool.class;
 	
+	/**
+	 * Set to true of this process can be deployed (if it is not already deployed)
+	 * and activated.
+	 * @return true
+	 */
+	boolean autoDeploy() default false;
+	
 }

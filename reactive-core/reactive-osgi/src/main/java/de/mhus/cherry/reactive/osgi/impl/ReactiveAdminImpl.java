@@ -45,6 +45,7 @@ import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.LEVEL;
 import de.mhus.cherry.reactive.model.activity.AProcess;
+import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
@@ -138,13 +139,25 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			if (availableProcesses.put(canonicalName, new ProcessInfo(info, canonicalName, loader)) != null)
 				log().w("Process was already present",canonicalName);
 		}
-		if (autoDeploy && isProcessActivated(canonicalName) )
-			try {
-				deploy(canonicalName, false, false);
-				return true;
-			} catch (MException e) {
-				log().e(canonicalName,e);
-			}
+		// find process
+		if (autoDeploy) {
+			ProcessDescription desc = findProcessDescription(canonicalName);
+			if (isProcessActivated(canonicalName))
+				try {
+					deploy(canonicalName, false, false);
+					return true;
+				} catch (MException e) {
+					log().e(canonicalName,e);
+				}
+			else
+			if (desc != null && desc.autoDeploy())
+				try {
+					deploy(canonicalName, false, true);
+					return true;
+				} catch (MException e) {
+					log().e(canonicalName,e);
+				}
+		}	
 		return false;
 	}
 
@@ -159,6 +172,16 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		synchronized (availableProcesses) {
 			return Collections.unmodifiableCollection(availableProcesses.keySet());
 		}
+	}
+	
+	private ProcessDescription findProcessDescription(String name) {
+		ProcessInfo info = null;
+		synchronized (availableProcesses) {
+			info = availableProcesses.get(name);
+		}
+		if (info == null) return null;
+		EProcess process = config.processProvider.getProcess(info.deployedName);
+		return process.getProcessDescription();
 	}
 	
 	@Override
