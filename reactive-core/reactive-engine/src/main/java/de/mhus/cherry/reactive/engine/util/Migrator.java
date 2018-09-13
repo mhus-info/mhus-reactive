@@ -87,7 +87,7 @@ public class Migrator {
 						monitor.println(">>> Migrate " + caseInfo);
 						if (!test) {
 							migrateCase(caze);
-							engine.savePCase(caze, null, false);
+							engine.storageUpdateFull(caze);
 						} else {
 							System.out.println(caze);
 							System.out.println(caze.getParameters());
@@ -104,7 +104,7 @@ public class Migrator {
 								monitor.println(">>> Migrate " + nodeInfo);
 								if (!test) {
 									migrateNode(node);
-									engine.saveFlowNode(node);
+									engine.storageUpdateFull(node);
 								} else {
 									monitor.println(node);
 									monitor.println(node.getParameters());

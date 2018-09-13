@@ -15,8 +15,10 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -45,6 +47,7 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MTimeInterval;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -61,7 +64,10 @@ public class CmdCase extends MLog implements Action {
 			+ " archive <id>     - archive case\n"
 			+ " cancel <id>      - cancel hard\n"
 			+ " locked           - print locked cases\n"
-			+ " runtime <id>     - print all runtime information"
+			+ " runtime <id>     - print all runtime information\n"
+			+ " setoption <id> [key=value]*\n"
+			+ " setparam <id> [key=value]*\n"
+			+ " updatefull <id>   - update case and nodes in database"
 			+ "", multiValued=false)
     String cmd;
 
@@ -81,6 +87,41 @@ public class CmdCase extends MLog implements Action {
 
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		
+		if (cmd.equals("updatefull")) {
+			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			System.out.println("CASE " + caze.getId());
+			api.getEngine().storageUpdateFull(caze);
+			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
+				PNode node = api.getEngine().getFlowNode(info.getId());
+				System.out.println("NODE " + node.getId());
+				api.getEngine().storageUpdateFull(node);
+			}
+			System.out.println("UPDATED");
+		} else
+		if (cmd.equals("setoption")) {
+			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			Field field = caze.getClass().getDeclaredField("options");
+			field.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			Map<String, Object> p = (Map<String, Object>) field.get(caze);
+			for (int i = 1; i < parameters.length; i++) {
+				String x = parameters[i];
+				MProperties.appendToMap(p, x);
+			}
+			api.getEngine().savePCase(caze, null, false);
+			api.getEngine().storageUpdateFull(caze);
+			System.out.println("SAVED");
+		} else
+		if (cmd.equals("setparam")) {
+			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			Map<String, Object> p = caze.getParameters();
+			for (int i = 1; i < parameters.length; i++) {
+				String x = parameters[i];
+				MProperties.appendToMap(p, x);
+			}
+			api.getEngine().savePCase(caze, null, false);
+			System.out.println("SAVED");
+		} else
 		if (cmd.equals("runtime")) {
 			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
 			for (PNodeInfo node : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
@@ -176,11 +217,11 @@ public class CmdCase extends MLog implements Action {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
 			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Id","CustomId","Uri","State","Close");
+			table.setHeaderValues("Id","CustomId","Customer","Uri","State","Close");
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 				PCase caze = api.getEngine().getCase(info.getId());
 				if (all || caze.getState() != STATE_CASE.CLOSED)
-					table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+					table.addRowValues(info.getId(), caze.getCustomId(), caze.getCustomerId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 			}
 			table.print(System.out);
 		} else

@@ -44,6 +44,7 @@ import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.LEVEL;
+import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
@@ -141,7 +142,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 		// find process
 		if (autoDeploy) {
-			ProcessDescription desc = findProcessDescription(canonicalName);
+			ProcessDescription desc = findProcessDescription(loader, canonicalName);
 			if (isProcessActivated(canonicalName))
 				try {
 					deploy(canonicalName, false, false);
@@ -174,14 +175,17 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		}
 	}
 	
-	private ProcessDescription findProcessDescription(String name) {
+	private ProcessDescription findProcessDescription(ProcessLoader loader, String name) {
 		ProcessInfo info = null;
 		synchronized (availableProcesses) {
 			info = availableProcesses.get(name);
 		}
 		if (info == null) return null;
-		EProcess process = config.processProvider.getProcess(info.deployedName);
-		return process.getProcessDescription();
+		for (Class<? extends AElement<?>> elem : loader.getElements())
+			if (AProcess.class.isAssignableFrom(elem)) {
+				return elem.getAnnotation(ProcessDescription.class);
+			}
+		return null;
 	}
 	
 	@Override

@@ -82,6 +82,74 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 
 	@Override
+	public void updateFullCase(PCase caze) throws IOException {
+		try {
+			
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			caze.writeExternal(new ObjectOutputStream(outStream));
+			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+
+			DbConnection con = pool.getConnection();
+			MProperties prop = new MProperties();
+			prop.put("id", caze.getId());
+			prop.put("content", 		inStream);
+			prop.put("modified", 		new Date());
+			prop.put("state", 			caze.getState());
+			prop.put("closedCode", 		caze.getClosedCode());
+			prop.put("closedMessage", 	M.trunc(caze.getClosedMessage() == null ? "" : caze.getClosedMessage(), 400) );
+			prop.put("milestone",       M.trunc(caze.getMilestone(), 200));
+
+			prop.put("created", 		new Date(caze.getCreationDate()));
+			prop.put("custom", 			M.trunc(caze.getCustomId(), 700));
+			prop.put("customer", 			M.trunc(caze.getCustomerId(), 700));
+			prop.put("name", 			caze.getCanonicalName());
+			prop.put("uri", 			M.trunc(caze.getUri(), 700));
+			MUri u = MUri.toUri(caze.getUri());
+			prop.put("process", MString.beforeIndex(u.getLocation(), ':'));
+			prop.put("version", MString.afterIndex(u.getLocation(),':'));
+			prop.put("pool", u.getPath());
+
+			String sql = "UPDATE " + prefix + "_case_ SET "
+					+ "content_=$content$,"
+					+ "modified_=$modified$,"
+					+ "state_=$state$,"
+					+ "milestone_=$milestone$,"
+					+ "created_=$created$,"
+					+ "custom_=$custom$,"
+					+ "customer_=$customer$,"
+					+ "name_=$name$,"
+					+ "uri_=$uri$,"
+					+ "process_=$crocess$,"
+					+ "version_=$version$,"
+					+ "pool_=$pool$,"
+					+ "closed_code_=$closedCode$,"
+					+ "closed_code_=$closedCode$,"
+					+ "closed_message_=$closedMessage$";
+
+			if (caze.getIndexValues() != null) {
+				String[] idx = caze.getIndexValues();
+				for (int i = 0; i < MAX_INDEX_VALUES; i++)
+					if (idx.length > i && idx[i] != null) {
+						prop.put("index" + i, M.trunc(idx[i], 300));
+						sql = sql + ",index" + i + "_=$index"+i+"$";
+					}
+			}
+			
+			sql = sql + " WHERE id_=$id$";
+			
+			DbStatement sta = con.createStatement(sql);
+			sta.executeUpdate(prop);
+			sta.close();
+
+			con.commit();
+			con.close();
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+
+	}
+	
+	@Override
 	public void saveCase(PCase caze) throws IOException {
 		try {
 			DbConnection con = pool.getConnection();
@@ -260,6 +328,90 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		}
 	}
 
+	@Override
+	public void updateFullFlowNode(PNode flow) throws IOException {
+		
+		try {
+			DbConnection con = pool.getConnection();
+			
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			flow.writeExternal(new ObjectOutputStream(outStream));
+			ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+
+			MProperties prop = new MProperties();
+			prop.put("id", flow.getId());
+			prop.put("content", 	inStream);
+			prop.put("modified", 	new Date());
+			prop.put("state", 		flow.getState());
+			prop.put("type", 		flow.getType());
+			prop.put("signal", 		M.trunc(flow.getSignalsAsString(), 700));
+			prop.put("message", 	M.trunc(flow.getMessagesAsString(), 700));
+			prop.put("actor", 		M.trunc(flow.getActor(), 100));
+
+			PCaseInfo caze = loadCaseInfo(flow.getCaseId());
+			if (caze == null) throw new IOException("Case "+ flow.getCaseId()+" not found to update node " + flow.getId());
+			prop.put("name", 		M.trunc(flow.getCanonicalName(), 700));
+			prop.put("case",		flow.getCaseId());
+			prop.put("created", 	new Date(flow.getCreationDate()));
+			prop.put("custom", 		M.trunc(caze.getCustomId(), 700));
+			prop.put("customer", 		M.trunc(caze.getCustomerId(), 700));
+			prop.put("uri", 		M.trunc(caze.getUri(), 700));
+			MUri u = MUri.toUri(caze.getUri());
+			prop.put("process", MString.beforeIndex(u.getLocation(), ':'));
+			prop.put("version", MString.afterIndex(u.getLocation(),':'));
+			prop.put("pool", u.getPath());
+
+			if (flow.getAssignedUser() != null)
+				prop.put("assigned", flow.getAssignedUser());
+			Entry<String, Long> scheduled = flow.getNextScheduled();
+			long scheduledLong = 0;
+			if (scheduled != null && scheduled.getValue() != null)
+				scheduledLong = scheduled.getValue();
+			prop.put("scheduled", scheduledLong);
+
+			String sql = "UPDATE " + prefix + "_node_ SET "
+					+ "content_=$content$,"
+					+ "modified_=$modified$,"
+					+ "state_=$state$,"
+					+ "type_=$type$,"
+					+ "signal_=$signal$,"
+					+ "message_=$message$,"
+					+ "scheduled_=$scheduled$,"
+					+ "assigned_=$assigned$,"
+					+ "name_=$name$,"
+					+ "case_=$case$,"
+					+ "created_=$created$,"
+					+ "custom_=$custom$,"
+					+ "customer_=$customer$,"
+					+ "uri_=$uri$,"
+					+ "process_=$process$,"
+					+ "version_=$version$,"
+					+ "pool_=$pool$,"
+					+ "actor_ = $actor$";
+			
+			if (flow.getIndexValues() != null) {
+				String[] idx = flow.getIndexValues();
+				for (int i = 0; i < MAX_INDEX_VALUES; i++)
+					if (idx.length > i && idx[i] != null) {
+						prop.put("index" + i, M.trunc(idx[i], 300));
+						sql = sql + ",index" + i + "_=$index"+i+"$";
+					}
+			}
+			
+			sql = sql + " WHERE id_=$id$";
+					
+			DbStatement sta = con.createStatement(sql);
+			sta.executeUpdate(prop);
+			sta.close();
+			
+			con.commit();
+			con.close();
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+
+	}
+		
 	@Override
 	public void saveFlowNode(PNode flow) throws IOException {
 		

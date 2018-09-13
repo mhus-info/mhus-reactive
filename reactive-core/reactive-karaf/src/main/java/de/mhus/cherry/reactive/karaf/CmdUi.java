@@ -78,10 +78,10 @@ public class CmdUi extends MLog implements Action {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
 			List<ICase> res = api.searchCases(criterias, page, size);
 			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Id","CustomId","Name","State","Uri");
+			table.setHeaderValues("Id","CustomId","CustomerId","Name","State","Uri");
 			for (ICase info : res) {
 				ICaseDescription desc = api.getCaseDescription(info);
-				table.addRowValues(info.getId(),info.getCustomId(),desc.getDisplayName(),info.getState(),info.getUri());
+				table.addRowValues(info.getId(),info.getCustomId(),info.getCustomerId(),desc.getDisplayName(),info.getState(),info.getUri());
 			}
 			table.print(System.out);
 		} else

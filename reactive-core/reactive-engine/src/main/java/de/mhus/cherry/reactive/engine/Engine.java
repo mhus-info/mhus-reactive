@@ -2322,5 +2322,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		RuntimeNode runtime = newContext.getARuntime();
 		return runtime;
 	}
+
+	public void storageUpdateFull(PCase caze) throws IOException {
+		storage.updateFullCase(caze);
+	}
+	
+	public void storageUpdateFull(PNode node) throws IOException {
+		storage.updateFullFlowNode(node);
+	}
 	
 }

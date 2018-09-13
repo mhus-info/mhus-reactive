@@ -136,5 +136,9 @@ public interface StorageProvider {
 	boolean setCasePriority(UUID caseId, int priority) throws IOException;
 
 	boolean setCaseScope(UUID caseId, int scope) throws IOException;
+
+	void updateFullCase(PCase caze) throws IOException;
+	
+	void updateFullFlowNode(PNode node) throws IOException;
 	
 }

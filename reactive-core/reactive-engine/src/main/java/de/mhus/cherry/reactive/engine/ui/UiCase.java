@@ -101,6 +101,7 @@ public class UiCase extends MLog implements ICase {
 	}
 
 	@Override
+	@Public
 	public String getMilestone() {
 		return info.getMilestone();
 	}
