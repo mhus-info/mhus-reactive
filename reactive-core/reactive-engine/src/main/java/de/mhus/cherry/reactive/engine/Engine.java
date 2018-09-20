@@ -1275,7 +1275,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 			} else {
 				flow.setLastRunDate(System.currentTimeMillis());
-				activity.doExecuteActivity();
+				try {
+					context.getPool().beforeExecute(activity);
+					activity.doExecuteActivity();
+				} finally {
+					context.getPool().afterExecute(activity);
+				}
 			}
 			// secure switch state away from NEW
 			if (flow.getState() == STATE_NODE.NEW) {

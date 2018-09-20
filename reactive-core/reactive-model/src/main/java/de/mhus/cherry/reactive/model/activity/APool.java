@@ -35,4 +35,8 @@ public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvi
 	
 	void closeCase();
 
+	void beforeExecute(AActivity<?> activity);
+
+	void afterExecute(AActivity<?> activity);
+
 }

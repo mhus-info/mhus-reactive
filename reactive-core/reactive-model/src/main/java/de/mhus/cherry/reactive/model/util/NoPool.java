@@ -17,6 +17,7 @@ package de.mhus.cherry.reactive.model.util;
 
 import java.util.Map;
 
+import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.lib.errors.NotSupportedException;
 
@@ -46,6 +47,14 @@ public class NoPool implements APool<NoPool> {
 	@Override
 	public String[] createIndexValues(boolean init) {
 		return null;
+	}
+
+	@Override
+	public void beforeExecute(AActivity<?> activity) {
+	}
+
+	@Override
+	public void afterExecute(AActivity<?> activity) {
 	}
 
 }

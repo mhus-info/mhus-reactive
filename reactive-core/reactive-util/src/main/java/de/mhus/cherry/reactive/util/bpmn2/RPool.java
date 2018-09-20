@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
@@ -113,6 +114,14 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	@Override
 	public void setContext(ProcessContext<?> context) {
 		this.context = context;
+	}
+
+	@Override
+	public void beforeExecute(AActivity<?> activity) {
+	}
+
+	@Override
+	public void afterExecute(AActivity<?> activity) {
 	}
 
 }
