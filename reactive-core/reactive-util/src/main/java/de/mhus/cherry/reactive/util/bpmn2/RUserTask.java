@@ -19,6 +19,7 @@ import java.util.Map.Entry;
 
 import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
@@ -39,6 +40,11 @@ import de.mhus.lib.form.FormControl;
  * @param <P>
  */
 public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> implements AUserTask<P> {
+
+	public static final String FORM_CUSTOM_ID = "_customId";
+	public static final String FORM_CUSTOMER_ID = "_customerId";
+	public static final String FORM_MILESTONE = "_milestone";
+	public static final String FORM_CASE_ID = "_caseId";
 
 	@Override
 	public void initializeActivity() throws Exception {
@@ -92,6 +98,16 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 				log().w(this,attr,t);
 			}
 		}
+		
+		// add default values
+		{
+			PCase caze = getContext().getPCase();
+			out.setString(FORM_CUSTOM_ID, caze.getCustomId());
+			out.setString(FORM_CUSTOMER_ID, caze.getCustomerId());
+			out.setString(FORM_MILESTONE, caze.getMilestone());
+			out.setString(FORM_CASE_ID, caze.getId().toString());
+		}
+		
 /*
 		// return only in the form defined values
 		for (IDefDefinition item : form.definitions()) {
@@ -153,6 +169,9 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P> imp
 		
 		for (Entry<String, Object> entry : values.entrySet()) {
 			String name = entry.getKey();
+			if (name.startsWith("_")) // ignore internal
+				continue;
+			
 			Object value = entry.getValue();
 			if (modelTask.hasAttribute(name)) {
 				PojoAttribute<Object> attr = modelTask.getAttribute(name);
