@@ -198,6 +198,7 @@ public class CmdCase extends MLog implements Action {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CName","State","Type","Scheduled");
+			table.getColumn(0).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
 				if (all || node.getState() != STATE_NODE.CLOSED) {
@@ -218,6 +219,7 @@ public class CmdCase extends MLog implements Action {
 			
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Customer","Uri","State","Close");
+			table.getColumn(0).minWidth = 32;
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 				PCase caze = api.getEngine().getCase(info.getId());
 				if (all || caze.getState() != STATE_CASE.CLOSED)

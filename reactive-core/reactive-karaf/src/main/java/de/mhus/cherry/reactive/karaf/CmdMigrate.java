@@ -55,6 +55,9 @@ public class CmdMigrate extends MLog implements Action {
 	@Option(name="-n", aliases="--node", description="Node manipulating rule: name:<name> canonical:<name> rm:<key>  date:<key>=<date> string:<key>=<text> actor:<text> status<status> long: int: bool: uuid: double:",required=false, multiValued=true)
 	private String[] nodeRules;
 
+	@Option(name="-v", aliases="--verbose", description="Verbose output",required=false)
+	private boolean verbose;
+
 	@Override
 	public Object execute() throws Exception {
 
@@ -70,6 +73,7 @@ public class CmdMigrate extends MLog implements Action {
 		migrator.setTest(test);
 		migrator.setCaseRules(caseRules);
 		migrator.setNodeRules(nodeRules);
+		migrator.setVerbose(verbose);
 		
 		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
 		Engine engine = api.getEngine();

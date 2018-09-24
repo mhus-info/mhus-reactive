@@ -29,6 +29,7 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.pojo.AttributesStrategy;
 import de.mhus.lib.core.pojo.DefaultFilter;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.pojo.PojoParser;
@@ -51,10 +52,11 @@ public class Migrator {
 	private String[] caseRules;
 	private String[] nodeRules;
 
-	private PojoModel nodeModel = new PojoParser().parse(PNode.class,"_",null).filter(new DefaultFilter(true, false, false, false, true) ).getModel();
-	private PojoModel caseModel = new PojoParser().parse(PCase.class,"_",null).filter(new DefaultFilter(true, false, false, false, true) ).getModel();
+	private PojoModel nodeModel = new PojoParser().parse(PNode.class,new AttributesStrategy(false,true,"_",null)).filter(new DefaultFilter(true, false, false, false, true) ).getModel();
+	private PojoModel caseModel = new PojoParser().parse(PCase.class,new AttributesStrategy(false,true,"_",null)).filter(new DefaultFilter(true, false, false, false, true) ).getModel();
 	private VersionRange version;
 	private MUri uri;
+	private boolean verbose = false;
 
 	public Migrator(Monitor monitor) {
 		this.monitor = monitor;
@@ -160,6 +162,8 @@ public class Migrator {
 						k = MString.beforeIndex(rule, '=');
 						v = MString.afterIndex(rule, '=');
 					}
+					if (verbose)
+						monitor.println("--- SET ",action,":=",rule);
 					switch (action) {
 					case "name":
 						nodeModel.getAttribute("name").set(node, rule);
@@ -210,6 +214,7 @@ public class Migrator {
 			} catch (Throwable t) {
 				monitor.println("*** Rule: " + rule);
 				monitor.println(t);
+				t.printStackTrace(); //TODO remove
 			}
 		}
 	}
@@ -280,6 +285,7 @@ public class Migrator {
 			} catch (Throwable t) {
 				monitor.println("*** Rule: " + rule);
 				monitor.println(t);
+				t.printStackTrace(); //TODO remove
 			}
 		}
 	}
@@ -312,14 +318,28 @@ public class Migrator {
 			String p = u.getLocation();
 			String v = MString.afterIndex(p, ':');
 			p = MString.beforeIndex(p, ':');
-			if (!p.equals(process)) return false;
-			if (version != null && !version.includes(new Version(v))) return false;
-			if (MString.isSet(pool) && !pool.equals(p)) return false;
+			String oPool = MString.beforeIndex(u.getPath(), '/', u.getPath());
+			
+			if (!p.equals(process)) {
+				if (verbose) monitor.print("--- Ignore by process name",u );
+				return false;
+			}
+			if (version != null && !version.includes(new Version(v))) {
+				if (verbose) monitor.print("--- Ignore by process version",u );
+				return false;
+			}
+			if (MString.isSet(pool) && !pool.equals(oPool)) {
+				if (verbose) monitor.print("--- Ignore by pool name",u );
+				return false;
+			}
 		}
 		
 		if (ids != null && caseRules != null) {
 			filtered = true;
-			if (!MCollection.contains(ids, info.getId().toString())) return false;
+			if (!MCollection.contains(ids, info.getId().toString())) {
+				if (verbose) monitor.print("--- Ignore by id",info.getId() );
+				return false;
+			}
 		}
 		
 		if (!filtered)
@@ -350,6 +370,14 @@ public class Migrator {
 			activity = MString.afterIndex(pool, '/');
 			pool = MString.beforeIndex(pool, '/');
 		}
+	}
+
+	public boolean isVerbose() {
+		return verbose;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 }
