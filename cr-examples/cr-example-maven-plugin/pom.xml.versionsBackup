@@ -19,33 +19,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>reactive-sop-rest</artifactId>
-	<packaging>bundle</packaging>
+	<artifactId>cr-example-maven-plugin</artifactId>
+	<packaging>jar</packaging>
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
-		<artifactId>reactive-sop</artifactId>
-		<version>1.0.1</version>
+		<artifactId>cr-examples</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${bundle.plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>
-							de.mhus.cherry.reactive.sop.rest.*;version=${project.version}
-						</Export-Package>
-						<Import-Package>*</Import-Package>
-						<DynamicImport-Package>*</DynamicImport-Package>
-						<Service-Component>*</Service-Component>
-					</instructions>
-				</configuration>
+				<groupId>de.mhus.cherry.reactive</groupId>
+				<artifactId>reactive-maven-plugin</artifactId>
+				<version>${project.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>validate</goal>
+							<goal>designer</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -57,28 +52,32 @@
 			<version>${mhulib.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-sop-api</artifactId>
-			<version>${mhusop.version}</version>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>5.0.0</version>
 		</dependency>
 		<dependency>
-            <groupId>biz.aQute</groupId>
-            <artifactId>bndlib</artifactId>
-            <version>${bndlib.version}</version>
-        </dependency>
-		
+			<groupId>biz.aQute</groupId>
+			<artifactId>bndlib</artifactId>
+			<version>${bndlib.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.mhus.cherry.reactive</groupId>
+			<artifactId>reactive-engine</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
