@@ -16,6 +16,7 @@
 package de.mhus.cherry.reactive.engine.util;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
@@ -163,7 +164,7 @@ public class Migrator {
 						v = MString.afterIndex(rule, '=');
 					}
 					if (verbose)
-						monitor.println("--- SET ",action,":=",rule);
+						monitor.println("--- SET ",action,": ",rule);
 					switch (action) {
 					case "name":
 						nodeModel.getAttribute("name").set(node, rule);
@@ -207,6 +208,14 @@ public class Migrator {
 					case "rm":
 						node.getParameters().remove(rule);
 						break;
+					case "message":
+						if (rule.equals("null")) {
+							node.setMessage(null);
+						} else {
+							if (node.getMessage() == null) node.setMessage(new HashMap<>());
+							node.getMessage().put(k, v);
+						}
+						break;
 					default:
 						monitor.println("*** Unknown action " + action);
 					}
@@ -214,7 +223,6 @@ public class Migrator {
 			} catch (Throwable t) {
 				monitor.println("*** Rule: " + rule);
 				monitor.println(t);
-				t.printStackTrace(); //TODO remove
 			}
 		}
 	}
@@ -285,7 +293,6 @@ public class Migrator {
 			} catch (Throwable t) {
 				monitor.println("*** Rule: " + rule);
 				monitor.println(t);
-				t.printStackTrace(); //TODO remove
 			}
 		}
 	}
@@ -334,6 +341,15 @@ public class Migrator {
 			}
 		}
 		
+		if (ids != null && nodeRules != null) {
+			try {
+				for (PNodeInfo nodeInfo : engine.storageGetFlowNodes(info.getId(), null)) {
+					if (MCollection.contains(ids, nodeInfo.getId().toString()))
+						return true;
+				}
+			} catch (Throwable t) {}
+		}
+
 		if (ids != null && caseRules != null) {
 			filtered = true;
 			if (!MCollection.contains(ids, info.getId().toString())) {
@@ -341,7 +357,7 @@ public class Migrator {
 				return false;
 			}
 		}
-		
+				
 		if (!filtered)
 			return false;
 		

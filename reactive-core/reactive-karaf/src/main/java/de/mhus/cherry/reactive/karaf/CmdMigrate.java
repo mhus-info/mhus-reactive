@@ -34,7 +34,7 @@ import de.mhus.lib.core.util.MUri;
 @Service
 public class CmdMigrate extends MLog implements Action {
 
-	@Argument(index=0, name="uri", required=true, description="Filter for process, pool, activity in format bpm://<process>[:<version-range>][/<pool>[/<activity>]]", multiValued=false)
+	@Argument(index=0, name="uri", required=false, description="Filter for process, pool, activity in format bpm://<process>[:<version-range>][/<pool>[/<activity>]]", multiValued=false)
     String uriStr;
 
 	@Option(name="-t", aliases="--test", description="Test it and don't do it",required=false)

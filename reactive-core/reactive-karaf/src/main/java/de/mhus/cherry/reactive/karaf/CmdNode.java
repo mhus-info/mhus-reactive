@@ -153,8 +153,9 @@ public class CmdNode extends MLog implements Action {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
 			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
+			table.setHeaderValues("Id","Custom","Name","State","Type","Modified","Scheduled","CaseId","Assigned","Uri");
 			table.getColumn(0).minWidth = 32;
+			table.getColumn(7).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
 				if (all || (node.getState() != STATE_NODE.CLOSED && node.getType() != TYPE_NODE.RUNTIME) ) {
@@ -171,6 +172,7 @@ public class CmdNode extends MLog implements Action {
 							node.getName(),
 							node.getState(),
 							node.getType(), 
+							new Date(info.getModified()),
 							scheduled, 
 							node.getCaseId(),
 							node.getAssignedUser(),
@@ -214,6 +216,7 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("NextScheduled: " + node.getNextScheduled());
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());
+			System.out.println("Message    : " + node.getMessage());
 
 			System.out.println();
 			for (Entry<String, Object> entry : node.getParameters().entrySet())

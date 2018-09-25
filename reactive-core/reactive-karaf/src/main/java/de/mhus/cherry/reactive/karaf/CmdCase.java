@@ -197,7 +197,7 @@ public class CmdCase extends MLog implements Action {
 		if (cmd.equals("nodes")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
 			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Id","CName","State","Type","Scheduled");
+			table.setHeaderValues("Id","CName","State","Type","Modified","Scheduled");
 			table.getColumn(0).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				PNode node = api.getEngine().getFlowNode(info.getId());
@@ -209,7 +209,7 @@ public class CmdCase extends MLog implements Action {
 						if (diff > 0)
 							scheduled = MTimeInterval.getIntervalAsString(diff);
 					}
-					table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), scheduled);
+					table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), new Date(info.getModified()), scheduled);
 				}
 			}
 			table.print(System.out);
@@ -218,12 +218,12 @@ public class CmdCase extends MLog implements Action {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
 			ConsoleTable table = new ConsoleTable(full);
-			table.setHeaderValues("Id","CustomId","Customer","Uri","State","Close");
+			table.setHeaderValues("Id","CustomId","Customer","Modified","Uri","State","Close");
 			table.getColumn(0).minWidth = 32;
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 				PCase caze = api.getEngine().getCase(info.getId());
 				if (all || caze.getState() != STATE_CASE.CLOSED)
-					table.addRowValues(info.getId(), caze.getCustomId(), caze.getCustomerId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+					table.addRowValues(info.getId(), caze.getCustomId(), caze.getCustomerId(), new Date(info.getModified()), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 			}
 			table.print(System.out);
 		} else
