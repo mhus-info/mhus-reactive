@@ -163,6 +163,13 @@ public class CmdCase extends MLog implements Action {
 			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
 			System.out.println("Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
 			System.out.println("Options   : " + caze.getOptions());
+			String[] values = caze.getIndexValues();
+			if (values != null) {
+				for (int i = 0; i < values.length; i++)
+					System.out.println("Value " + i + ": " + values[i]);
+			} else {
+				System.out.println("Values are empty");
+			}
 			if (caze.getParameters() != null) {
 				System.out.println();
 				for (Entry<String, Object> entry : caze.getParameters().entrySet()) {

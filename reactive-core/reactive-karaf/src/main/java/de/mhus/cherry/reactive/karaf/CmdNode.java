@@ -217,6 +217,13 @@ public class CmdNode extends MLog implements Action {
 			System.out.println("MessageList: " + node.getMessagesAsString());
 			System.out.println("SignalList : " + node.getSignalsAsString());
 			System.out.println("Message    : " + node.getMessage());
+			String[] values = node.getIndexValues();
+			if (values != null) {
+				for (int i = 0; i < values.length; i++)
+					System.out.println("Value " + i + ": " + values[i]);
+			} else {
+				System.out.println("Values are empty");
+			}
 
 			System.out.println();
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
