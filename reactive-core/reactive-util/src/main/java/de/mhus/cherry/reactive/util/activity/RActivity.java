@@ -96,4 +96,18 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
 		return pojoModel;
 	}
 
+	protected void error(Object ... msg) {
+		log().e(msg);
+		try {
+			getContext().getARuntime().doErrorMsg(getContext().getPNode(), msg);
+		} catch (Throwable t) {}
+	}
+		
+	protected void debug(Object ... msg) {
+		log().d(msg);
+		try {
+			getContext().getARuntime().doDebugMsg(getContext().getPNode(), msg);
+		} catch (Throwable t) {}
+	}
+	
 }

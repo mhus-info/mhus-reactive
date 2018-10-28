@@ -21,11 +21,12 @@ import de.mhus.lib.core.MCast;
 
 public class EngineMessage {
 
-	public enum TYPE {OTHER,FLOW,ERROR,CONNECT,START}
+	public enum TYPE {OTHER,FLOW,ERROR,DEBUG,CONNECT,START}
 	public static final String FLOW_PREFIX = "flow:";
 	public static final String CONNECT_PREFIX = "connect:";
 	public static final String START_PREFIX = "start:";
 	public static final String ERROR_PREFIX = "error:";
+	public static final String DEBUG_PREFIX = "debug:";
 	private TYPE type = TYPE.OTHER;
 	private String msg;
 	private UUID fromNode;
@@ -46,6 +47,7 @@ public class EngineMessage {
 			switch (t) {
 			case FLOW_PREFIX: type = TYPE.FLOW;break;
 			case ERROR_PREFIX: type = TYPE.ERROR;break;
+			case DEBUG_PREFIX: type = TYPE.DEBUG;break;
 			case CONNECT_PREFIX: type = TYPE.CONNECT;break;
 			case START_PREFIX: type = TYPE.START;break;
 			}
@@ -68,6 +70,7 @@ public class EngineMessage {
 				}
 				break;
 			case ERROR:
+			case DEBUG:
 			case OTHER:
 				break;
 			}

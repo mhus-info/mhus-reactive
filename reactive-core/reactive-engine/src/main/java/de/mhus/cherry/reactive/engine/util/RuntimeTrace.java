@@ -51,6 +51,10 @@ public class RuntimeTrace {
 				if (ansi) out.print(ANSIConsole.ansiForeground(COLOR.RED));
 				out.print("*** ");
 				break;
+			case DEBUG:
+				if (ansi) out.print(ANSIConsole.ansiForeground(COLOR.YELLOW));
+				out.print("--- ");
+				break;
 			case START:
 				if (ansi) out.print(ANSIConsole.ansiForeground(COLOR.BLUE));
 				out.print("+++ ");

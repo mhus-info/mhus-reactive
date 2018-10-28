@@ -99,6 +99,11 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		save();
 	}
 
+	public void doDebugMsg(PNode flow, Object ... objects) {
+		addMessage(EngineMessage.DEBUG_PREFIX +  flow.getId() + "," + flow.getName() + " " + MSystem.toString("Debug", objects));
+		save();
+	}
+	
 //	public void closedActivity(PNode flow) {
 //		addFlowMessage(flow.getId(), flow.getName() + " closedActivity");
 //	}
