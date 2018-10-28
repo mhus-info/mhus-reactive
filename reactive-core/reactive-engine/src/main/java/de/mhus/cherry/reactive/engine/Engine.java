@@ -82,6 +82,7 @@ import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
@@ -1939,7 +1940,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	}
 
-	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws NotFoundException, IOException, ValidationException {
+	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws IOException, MException {
 		fireEvent.fireExternal(nodeId, taskName, parameters);
 		PNode node = getFlowNode(nodeId);
 		if (taskName != null && !node.getName().equals(taskName)) {
@@ -1955,7 +1956,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				AActivity<?> aNode = context.getANode();
 				if (aNode instanceof ValidateParametersBeforeExecute)
 					((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
-			} catch (ValidationException t) {
+			} catch (MException t) {
+				throw t;
+			} catch (MRuntimeException t) {
 				throw t;
 			} catch (Throwable t) {
 				throw new IOException(t);
@@ -1994,7 +1997,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					AActivity<?> aNode = context.getANode();
 					if (aNode instanceof ValidateParametersBeforeExecute)
 						((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
-				} catch (ValidationException t) {
+				} catch (ValidationException | UsageException t) {
 					log().d(node,t);
 					continue;
 				} catch (Throwable t) {
