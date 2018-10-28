@@ -67,6 +67,7 @@ import de.mhus.cherry.reactive.model.util.CloseActivity;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
 import de.mhus.cherry.reactive.model.util.NoPool;
+import de.mhus.cherry.reactive.model.util.ValidateParametersBeforeExecute;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
@@ -84,6 +85,7 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
+import de.mhus.lib.errors.ValidationException;
 
 public class Engine extends MLog implements EEngine, InternalEngine {
 
@@ -1937,16 +1939,33 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	}
 
-	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws NotFoundException, IOException {
+	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws NotFoundException, IOException, ValidationException {
 		fireEvent.fireExternal(nodeId, taskName, parameters);
 		PNode node = getFlowNode(nodeId);
 		if (taskName != null && !node.getName().equals(taskName)) {
 			fireEvent.error("Wrong task name",taskName,nodeId);
 			throw new NotFoundException("Wrong task name");
 		}
+
+		// check parameters
+		if (node.getState() == STATE_NODE.WAITING || node.getState() == STATE_NODE.SUSPENDED && node.getSuspendedState() == STATE_NODE.WAITING) {
+			try {
+				PCase caze = getCase(node.getCaseId());
+				EngineContext context = createContext(caze, node);
+				AActivity<?> aNode = context.getANode();
+				if (aNode instanceof ValidateParametersBeforeExecute)
+					((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
+			} catch (ValidationException t) {
+				throw t;
+			} catch (Throwable t) {
+				throw new IOException(t);
+			}
+		}
 		
+		// Set into running mode
 		synchronized (getCaseLock(node)) {
 			if (node.getType() != TYPE_NODE.EXTERN) throw new NotFoundException("not external",nodeId);
+			
 			if (node.getState() == STATE_NODE.SUSPENDED) {
 				if (node.getSuspendedState() != STATE_NODE.WAITING) throw new NotFoundException("not waiting",nodeId);
 				node.setSuspendedState(STATE_NODE.RUNNING);
@@ -1966,6 +1985,24 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
 			PNode node = getFlowNode(nodeInfo.getId());
+			
+			// check parameters
+			if (node.getState() == STATE_NODE.WAITING) {
+				try {
+					PCase caze = getCase(node.getCaseId());
+					EngineContext context = createContext(caze, node);
+					AActivity<?> aNode = context.getANode();
+					if (aNode instanceof ValidateParametersBeforeExecute)
+						((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
+				} catch (ValidationException t) {
+					log().d(node,t);
+					continue;
+				} catch (Throwable t) {
+					log().w(node,t);
+					continue;
+				}
+			}
+			
 			synchronized (getCaseLock(node)) {
 				if (node.getState() == STATE_NODE.SUSPENDED) {
 					log().w("message for suspended node will not be delivered",node,message);
