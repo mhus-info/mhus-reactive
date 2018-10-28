@@ -6,5 +6,7 @@
 * PCase and PNode are cached. You must use get getCase and getFlowNode methods to load these objects to avoid the existence of parallel instances. In this case data lost could happen (depends the order of saving). Only in special cases the engine is working with copies.
 
 == Activities
+
 * Implement 'IndexValuesProvider' to provider the index values. Return null or in the value null if you don't need to change the values. Return an empty string to reset the value.
- 
+* Implement 'ValidateParametersBeforeExecute' in External or Message listening events to validate parameters before the event is going back to status RUNNING. External events will throw an ValidationException. Message events will be ignored if validation fails. For External events the parameter validation will also performed in suspended mode.
+
