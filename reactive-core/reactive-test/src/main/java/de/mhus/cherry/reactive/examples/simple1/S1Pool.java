@@ -21,6 +21,7 @@ import java.util.Map;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
+import de.mhus.lib.basics.consts.GenerateConst;
 
 @PoolDescription(
 		displayName="Example Pool",
@@ -28,6 +29,7 @@ import de.mhus.cherry.reactive.util.bpmn2.RPool;
 		indexDisplayNames = {"Text 1","Text 2","Created"},
 		actorRead=S1ActorManager.class
 		)
+@GenerateConst
 public class S1Pool extends RPool<S1Pool> {
 
 	@PropertyDescription(displayName="Switch Text", writable = false, initial = true )

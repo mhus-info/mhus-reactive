@@ -16,9 +16,10 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import java.util.Locale;
-import java.util.function.Function;
 
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.lib.basics.consts.GenerateConst;
+import de.mhus.lib.basics.consts.Identifier;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MConstants;
@@ -31,6 +32,7 @@ import de.mhus.lib.form.definition.FmCombobox;
 import de.mhus.lib.form.definition.FmText;
 import de.mhus.lib.form.definition.FmVoid;
 
+@GenerateConst
 public class Address {
 	
 	public static final String COUNTRY_CODE_DE = Address.getCountryCode(MConstants.LOCALE_DE_DE);
@@ -265,20 +267,20 @@ public class Address {
 		return getFirstName() + " " + getLastName();
 	}
 
-	public static <T> IDefDefinition[] createForm(Function<T,?> getter) {
+	public static <T> IDefDefinition[] createForm(Identifier getter) {
 		return new IDefDefinition[] {
-			new FmCombobox(M.n(getter,Address::getSalutation), "Salutation", "", new FaItemDefinition("salutationdef")),
-			new FmText(M.n(getter,Address::getFirstName), "First Name", ""),
-			new FmText(M.n(getter,Address::getLastName), "Last Name", ""),
+			new FmCombobox(M.n(getter,Address_.FIELD_SALUTATION), "Salutation", "", new FaItemDefinition("salutationdef")),
+			new FmText(M.n(getter,Address_.FIELD_FIRSTNAME), "First Name", ""),
+			new FmText(M.n(getter,Address_.FIELD_LASTNAME), "Last Name", ""),
 			
-			new FmText(M.n(getter,Address::getStreet), "Street", "", new FaColumns(2)),
-			new FmText(M.n(getter,Address::getStreetNumber), "Number", ""),
+			new FmText(M.n(getter,Address_.FIELD_STREET), "Street", "", new FaColumns(2)),
+			new FmText(M.n(getter,Address_.FIELD_STREETNUMBER), "Number", ""),
 			
-			new FmText(M.n(getter,Address::getZip), "ZIP", ""),
-			new FmText(M.n(getter,Address::getTown), "Town", "", new FaColumns(2)),
+			new FmText(M.n(getter,Address_.FIELD_ZIP), "ZIP", ""),
+			new FmText(M.n(getter,Address_.FIELD_TOWN), "Town", "", new FaColumns(2)),
 	
-			new FmText(M.n(getter,Address::getTelefon), "Phone", ""),
-			new FmText(M.n(getter,Address::getEmail), "Email", ""),
+			new FmText(M.n(getter,Address_.FIELD_TELEFON), "Phone", ""),
+			new FmText(M.n(getter,Address_.FIELD_EMAIL), "Email", ""),
 			new FmVoid()
 		};
 	}

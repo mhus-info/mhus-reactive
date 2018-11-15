@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright 2018 Mike Hummel
@@ -15,10 +16,14 @@
     limitations under the License.
 
 -->
-<user>
-  <password plain="123" />
-  <information name="Admin" />
-  <groups>
-    <group name="ADMINISTRATOR"/>
-  </groups>
+<user modified="2018-07-07 12:24:42">
+	<password plain="`B:678" />
+	<attributes>
+	</attributes>
+	<acl>
+	</acl>
+	<groups>
+		<group name="ADMINISTRATOR" />
+	</groups>
+	<information name="admin" />
 </user>

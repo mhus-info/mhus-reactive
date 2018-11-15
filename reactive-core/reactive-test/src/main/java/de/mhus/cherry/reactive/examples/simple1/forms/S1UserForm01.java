@@ -16,12 +16,14 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
+import de.mhus.cherry.reactive.examples.simple1.S1Pool_;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.util.bpmn2.RUserTask;
 import de.mhus.lib.annotations.generic.Public;
+import de.mhus.lib.basics.consts.GenerateConst;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.definition.DefAttribute;
 import de.mhus.lib.core.definition.DefRoot;
@@ -36,6 +38,7 @@ import de.mhus.lib.form.definition.FmText;
 		displayName = "Complex User Form 01",
 		outputs = @Output(activity=S1TheEnd.class)
 		)
+@GenerateConst
 public class S1UserForm01 extends RUserTask<S1Pool> {
 
 	@PropertyDescription
@@ -53,9 +56,9 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 	public DefRoot getForm() {
 		return new DefRoot(
 			new DefAttribute("showInformation", true),
-			new FmText(M.n(S1Pool::getText1), "Text1", "", new FaReadOnly()),
-			new FmText(M.n(S1Pool::getText2), "Text2", ""),
-			new FmText(M.n(S1UserForm01::getText3), "Text3", ""),
+			new FmText(M.n(S1Pool_.FIELD_TEXT1), "Text1", "", new FaReadOnly()),
+			new FmText(M.n(S1Pool_.FIELD_TEXT2), "Text2", ""),
+			new FmText(M.n(S1UserForm01_.FIELD_TEXT3), "Text3", ""),
 			new FmCombobox("option", "Option", "Sample Option with options"),
 			new FmAction("submit", "submit:action=submit", "Submit", "Send")
 		);
