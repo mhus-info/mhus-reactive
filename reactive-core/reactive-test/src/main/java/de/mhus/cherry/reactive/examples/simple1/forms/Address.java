@@ -270,11 +270,11 @@ public class Address {
 	public static <T> IDefDefinition[] createForm(Identifier getter) {
 		return new IDefDefinition[] {
 			new FmCombobox(M.n(getter,Address_.FIELD_SALUTATION), "Salutation", "", new FaItemDefinition("salutationdef")),
-			new FmText(M.n(getter,Address_.FIELD_FIRSTNAME), "First Name", ""),
-			new FmText(M.n(getter,Address_.FIELD_LASTNAME), "Last Name", ""),
+			new FmText(M.n(getter,Address_.FIELD_FIRST_NAME), "First Name", ""),
+			new FmText(M.n(getter,Address_.FIELD_LAST_NAME), "Last Name", ""),
 			
 			new FmText(M.n(getter,Address_.FIELD_STREET), "Street", "", new FaColumns(2)),
-			new FmText(M.n(getter,Address_.FIELD_STREETNUMBER), "Number", ""),
+			new FmText(M.n(getter,Address_.FIELD_STREET_NUMBER), "Number", ""),
 			
 			new FmText(M.n(getter,Address_.FIELD_ZIP), "ZIP", ""),
 			new FmText(M.n(getter,Address_.FIELD_TOWN), "Town", "", new FaColumns(2)),
