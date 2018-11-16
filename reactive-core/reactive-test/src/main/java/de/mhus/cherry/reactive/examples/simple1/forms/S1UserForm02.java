@@ -16,8 +16,8 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
-import de.mhus.cherry.reactive.examples.simple1.S1Pool_;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
+import de.mhus.cherry.reactive.examples.simple1._S1Pool;
 import de.mhus.cherry.reactive.examples.simple1.forms.Address.SALUTATION;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
@@ -98,12 +98,12 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 			new FmLayoutWizard("wizard", "", "", new FaFullWidth(), 
 					
 				new FmLayout3x33("t1", "Case","",
-						new FmText(M.n(S1Pool_.FIELD_TEXT1), "Text1", "", new FaReadOnly()),
+						new FmText(M.n(_S1Pool._TEXT1), "Text1", "", new FaReadOnly()),
 						new FmVoid(),
-						new FmText(M.n(S1Pool_.FIELD_TEXT2), "Text2", "")
+						new FmText(M.n(_S1Pool._TEXT2), "Text2", "")
 					),
 				new FmLayout3x33("t3", "Node","",
-					new FmText(M.n(S1UserForm02_.FIELD_TEXT3), "Text3", "",new FaColumns(3)),
+					new FmText(M.n(_S1UserForm02._TEXT3), "Text3", "",new FaColumns(3)),
 					
 					new FmCombobox("option", "Option", "Sample Option with options"),
 					new FmVoid(new FaColumns(2)),
@@ -113,7 +113,7 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
 					new FmAction("actionrandom", "action:random", "Random", "Random values for text3")
 				),
 				new FmLayout3x33("t2", "Address","Embedded address",
-						Address.createForm(S1UserForm02_.FIELD_OWNER)
+						Address.createForm(_S1UserForm02._OWNER)
 				),
 				new FmLayout100("t4", "Widgets", "Test UI Widgets", 
 					new FmText("xtext", "Text", "Simple Text Widget"),

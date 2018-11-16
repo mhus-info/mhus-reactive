@@ -16,8 +16,8 @@
 package de.mhus.cherry.reactive.examples.simple1.forms;
 
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
-import de.mhus.cherry.reactive.examples.simple1.S1Pool_;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
+import de.mhus.cherry.reactive.examples.simple1._S1Pool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -56,9 +56,9 @@ public class S1UserForm01 extends RUserTask<S1Pool> {
 	public DefRoot getForm() {
 		return new DefRoot(
 			new DefAttribute("showInformation", true),
-			new FmText(M.n(S1Pool_.FIELD_TEXT1), "Text1", "", new FaReadOnly()),
-			new FmText(M.n(S1Pool_.FIELD_TEXT2), "Text2", ""),
-			new FmText(M.n(S1UserForm01_.FIELD_TEXT3), "Text3", ""),
+			new FmText(M.n(_S1Pool._TEXT1), "Text1", "", new FaReadOnly()),
+			new FmText(M.n(_S1Pool._TEXT2), "Text2", ""),
+			new FmText(M.n(_S1UserForm01._TEXT3), "Text3", ""),
 			new FmCombobox("option", "Option", "Sample Option with options"),
 			new FmAction("submit", "submit:action=submit", "Submit", "Send")
 		);

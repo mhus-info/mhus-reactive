@@ -74,8 +74,8 @@ public class S1UserStep extends RUserTask<S1Pool> {
 	public DefRoot getForm() {
 		return new DefRoot(
 				new DefAttribute("showInformation", true),
-				new FmText(M.n(S1Pool_.FIELD_TEXT1), "Text1", "", new FaReadOnly()),
-				new FmText(M.n(S1Pool_.FIELD_TEXT2), "Text2", ""),
+				new FmText(M.n(_S1Pool._TEXT1), "Text1", "", new FaReadOnly()),
+				new FmText(M.n(_S1Pool._TEXT2), "Text2", ""),
 			//	new FmText(M.n(S1UserStep_.FIELD_TEXT3), "Text3", ""),
 				new FmCombobox("option", "Option", "Sample Option with options")
 		);
