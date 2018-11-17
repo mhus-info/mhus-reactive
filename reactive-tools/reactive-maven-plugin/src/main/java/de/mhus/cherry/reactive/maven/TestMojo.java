@@ -50,7 +50,7 @@ public class TestMojo extends AbstractMojo {
     @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
     private List<String> compilePath;
         
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		
@@ -97,7 +97,6 @@ public class TestMojo extends AbstractMojo {
 		return MMaven.locateArtifact(MMaven.toArtifact(item.getGroupId(), item.getArtifactId(), item.getVersion(), item.getType()));
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<File> getCompileClasspathElements( )
     {
         List<File> list = new ArrayList<File>( project.getArtifacts().size() + 1 );

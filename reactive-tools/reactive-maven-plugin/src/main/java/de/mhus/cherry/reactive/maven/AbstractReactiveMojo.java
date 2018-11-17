@@ -35,7 +35,6 @@ public abstract class AbstractReactiveMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-	@SuppressWarnings("unchecked")
 	public DefaultProcessProvider createProvider() throws DependencyResolutionRequiredException, MException {
 		
 		LinkedList<File> files = new LinkedList<>();
