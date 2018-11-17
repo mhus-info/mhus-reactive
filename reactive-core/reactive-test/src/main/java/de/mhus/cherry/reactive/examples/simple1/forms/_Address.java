@@ -5,7 +5,7 @@ import de.mhus.lib.basics.consts.ConstBase;
 
 /**
  * File created by mhu const generator. Changes will be overwritten.
- * 16.11.2018
+ * 17.11.2018
  **/
 
 public class _Address extends ConstBase {
@@ -46,7 +46,6 @@ public class _Address extends ConstBase {
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"de.mhus.cherry.reactive");
   public static final Identifier PROJECT_VERSION = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"1.0.2-SNAPSHOT");
-  public static final Identifier _$_SWITCH__TABLE$DE$MHUS$CHERRY$REACTIVE$EXAMPLES$SIMPLE1$FORMS$_ADDRESS$_SALUTATION = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"$SWITCH_TABLE$de$mhus$cherry$reactive$examples$simple1$forms$Address$SALUTATION");
   public static final Identifier _COUNTRY = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Country");
   public static final Identifier _COUNTRY_CODE = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"CountryCode");
   public static final Identifier _COUNTRY__CODE__DE = new Identifier(de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"COUNTRY_CODE_DE");

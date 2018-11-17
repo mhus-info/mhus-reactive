@@ -5,7 +5,7 @@ import de.mhus.lib.basics.consts.ConstBase;
 
 /**
  * File created by mhu const generator. Changes will be overwritten.
- * 16.11.2018
+ * 17.11.2018
  **/
 
 public class _S1UserForm02 extends ConstBase {
