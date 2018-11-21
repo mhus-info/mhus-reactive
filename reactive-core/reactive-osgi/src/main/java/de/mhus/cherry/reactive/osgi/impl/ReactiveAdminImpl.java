@@ -66,6 +66,7 @@ import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.sql.DataSourceProvider;
 import de.mhus.lib.sql.DefaultDbPool;
+import de.mhus.lib.sql.Dialect;
 
 //TODO renew datasource reference from time to time ... 
 
@@ -558,6 +559,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		if (refs.size() == 0) throw new MException("datasource not found",storageDsName);
 		storageDataSource = context.getService(refs.iterator().next());
 		storageDsProvider.setDataSource(storageDataSource);
+		try {
+			String driver = storageDataSource.getConnection().getMetaData().getDriverName();
+			Dialect dialect = Dialect.findDialect(driver);
+			storageDsProvider.setDialect(dialect);
+		} catch (Exception e) {
+			log().e(e);
+		}
 	}
 
 	protected void updateArchiveDataSource() throws InvalidSyntaxException, MException {
