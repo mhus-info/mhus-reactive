@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.vaadin.event.Action;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 
