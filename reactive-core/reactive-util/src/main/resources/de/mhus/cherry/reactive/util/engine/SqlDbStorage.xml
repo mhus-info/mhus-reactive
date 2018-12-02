@@ -28,6 +28,20 @@
 	  <field name="index8" type="string" size="300" />
 	  <field name="index9" type="string" size="300" />
 	</table>
+	<index name="$/prefix$_case_st" table="$/prefix$_case" fields="state" unique="false" />
+    <index name="$/prefix$_case_c1" table="$/prefix$_case" fields="custom" unique="false" />
+    <index name="$/prefix$_case_c2" table="$/prefix$_case" fields="customer" unique="false" />
+    <index name="$/prefix$_case_i0" table="$/prefix$_case" fields="index0" unique="false" />
+    <index name="$/prefix$_case_i1" table="$/prefix$_case" fields="index1" unique="false" />
+    <index name="$/prefix$_case_i2" table="$/prefix$_case" fields="index2" unique="false" />
+    <index name="$/prefix$_case_i3" table="$/prefix$_case" fields="index3" unique="false" />
+    <index name="$/prefix$_case_i4" table="$/prefix$_case" fields="index4" unique="false" />
+    <index name="$/prefix$_case_i5" table="$/prefix$_case" fields="index5" unique="false" />
+    <index name="$/prefix$_case_i6" table="$/prefix$_case" fields="index6" unique="false" />
+    <index name="$/prefix$_case_i7" table="$/prefix$_case" fields="index7" unique="false" />
+    <index name="$/prefix$_case_i8" table="$/prefix$_case" fields="index8" unique="false" />
+    <index name="$/prefix$_case_i9" table="$/prefix$_case" fields="index9" unique="false" />
+	
 	<table name="$/prefix$_node" primary_key="id">
 	  <field name="id" type="string" size="36" />
 	  <field name="case" type="string" size="36" />
@@ -61,6 +75,22 @@
 	  <field name="index9" type="string" size="300" />
 	  <field name="actor" type="string" size="100" />
 	</table>
+    <index name="$/prefix$_node_st" table="$/prefix$_node" fields="state" unique="false" />
+    <index name="$/prefix$_node_ca" table="$/prefix$_node" fields="case" unique="false" />
+    <index name="$/prefix$_node_c1" table="$/prefix$_node" fields="custom" unique="false" />
+    <index name="$/prefix$_node_c2" table="$/prefix$_node" fields="customer" unique="false" />
+    <index name="$/prefix$_node_ac" table="$/prefix$_node" fields="actor" unique="false" />
+    <index name="$/prefix$_node_i0" table="$/prefix$_node" fields="index0" unique="false" />
+    <index name="$/prefix$_node_i1" table="$/prefix$_node" fields="index1" unique="false" />
+    <index name="$/prefix$_node_i2" table="$/prefix$_node" fields="index2" unique="false" />
+    <index name="$/prefix$_node_i3" table="$/prefix$_node" fields="index3" unique="false" />
+    <index name="$/prefix$_node_i4" table="$/prefix$_node" fields="index4" unique="false" />
+    <index name="$/prefix$_node_i5" table="$/prefix$_node" fields="index5" unique="false" />
+    <index name="$/prefix$_node_i6" table="$/prefix$_node" fields="index6" unique="false" />
+    <index name="$/prefix$_node_i7" table="$/prefix$_node" fields="index7" unique="false" />
+    <index name="$/prefix$_node_i8" table="$/prefix$_node" fields="index8" unique="false" />
+    <index name="$/prefix$_node_i9" table="$/prefix$_node" fields="index9" unique="false" />
+    
 	<table name="$/prefix$_engine" primary_key="id">
 	  <field name="id" type="string" size="36" />
 	  <field name="content" type="blob" />
