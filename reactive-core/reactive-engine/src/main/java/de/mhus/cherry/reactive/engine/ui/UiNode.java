@@ -189,7 +189,7 @@ public class UiNode extends MLog implements INode {
 	public void doAssign() throws IOException, MException {
 		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
 			throw new AccessDeniedException();
-		engine.unassignUserTask(info.getId());
+		engine.assignUserTask(info.getId(), ui.getUser());
 	}
 
 	@Override
