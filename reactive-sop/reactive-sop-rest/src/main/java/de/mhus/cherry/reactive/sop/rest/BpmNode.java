@@ -25,13 +25,13 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotSupportedException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
-import de.mhus.osgi.sop.api.rest.AbstractObjectListNode;
+import de.mhus.osgi.sop.api.rest.ObjectListNode;
 import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.JsonResult;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(provide=RestNodeService.class)
-public class BpmNode extends AbstractObjectListNode<Object> {
+public class BpmNode extends ObjectListNode<Object> {
 
 	@Override
 	public String[] getParentNodeIds() {

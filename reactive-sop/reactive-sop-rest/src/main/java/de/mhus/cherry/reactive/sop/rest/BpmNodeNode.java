@@ -29,12 +29,12 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
-import de.mhus.osgi.sop.api.rest.AbstractObjectListNode;
+import de.mhus.osgi.sop.api.rest.ObjectListNode;
 import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(provide=RestNodeService.class)
-public class BpmNodeNode extends AbstractObjectListNode<INode> {
+public class BpmNodeNode extends ObjectListNode<INode> {
 
 	@Override
 	public String[] getParentNodeIds() {
