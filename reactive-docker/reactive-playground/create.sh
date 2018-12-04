@@ -31,3 +31,5 @@ if [ "$1" = "clean" ]; then
 else
 	docker build -t reactive-playground .
 fi	
+
+rm -r repository/*

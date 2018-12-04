@@ -112,9 +112,8 @@
         <bundle>mvn:com.vaadin/vaadin-server/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-compatibility-client-compiled/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-client-compiled/${vaadin.version}</bundle>
-<!-- 
+
 		<bundle>mvn:de.mhus.ports/vaadin-refresher/${ports.vaadin.version}</bundle>
- -->
 
 		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhulib.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${osgiservlets.version}</bundle>
