@@ -27,7 +27,8 @@ RUN set -x \
 	&& sleep 5 \
 	&& while [ "$(grep -c Stopping\ JMX\ OSGi\ agent data/log/karaf.log)" = "0" ]; do echo "."; sleep 5; done \
 	&& rm -r ~/.m2/repository/* \
-	&& rm -r /opt/karaf/data/log/*
+	&& rm -r /opt/karaf/data/log/* \
+	&& touch installdone.mark
 	
 COPY etc/* /opt/karaf/etc/
 COPY deploy/* /opt/karaf/deploy/
