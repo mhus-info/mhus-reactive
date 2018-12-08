@@ -35,6 +35,7 @@ import de.mhus.lib.form.MutableMForm;
 import de.mhus.lib.form.PropertiesDataSource;
 import de.mhus.lib.vaadin.form.VaadinForm;
 
+@SuppressWarnings("deprecation")
 public class VUserForm extends VerticalLayout implements ActionHandler {
 
 	private static final long serialVersionUID = 1L;

@@ -56,6 +56,7 @@ import de.mhus.lib.vaadin.desktop.Navigable;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
 import de.mhus.osgi.sop.api.aaa.AccessApi;
 
+@SuppressWarnings("deprecation")
 public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable {
 
 	private static Log log = Log.getLog(BpmSpace.class);

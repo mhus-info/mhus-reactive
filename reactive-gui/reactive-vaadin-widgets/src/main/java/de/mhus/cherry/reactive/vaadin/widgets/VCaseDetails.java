@@ -27,6 +27,7 @@ import com.vaadin.ui.Panel;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 
+@SuppressWarnings("deprecation")
 public class VCaseDetails extends Panel {
 
 	private static final long serialVersionUID = 1L;

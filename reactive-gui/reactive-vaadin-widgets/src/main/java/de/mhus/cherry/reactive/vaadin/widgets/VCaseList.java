@@ -39,6 +39,7 @@ import de.mhus.lib.vaadin.ExpandingTable;
 import de.mhus.lib.vaadin.MhuTable;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
+@SuppressWarnings("deprecation")
 public class VCaseList extends MhuTable {
 
 	private Log log = Log.getLog(VCaseList.class);

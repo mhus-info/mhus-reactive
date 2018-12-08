@@ -22,6 +22,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.v7.ui.TextArea;
 import com.vaadin.v7.ui.VerticalLayout;
 
+@SuppressWarnings("deprecation")
 public class ExecuteProcessForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -58,7 +59,6 @@ public class ExecuteProcessForm extends VerticalLayout {
 		toolBar.addComponent(bSubmit);
 		bSubmit.addClickListener(new Button.ClickListener() {
 			private static final long serialVersionUID = 1L;
-			@SuppressWarnings("deprecation")
 			@Override
 			public void buttonClick(ClickEvent event) {
 				try {
