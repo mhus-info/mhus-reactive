@@ -53,11 +53,11 @@ public class BpmNodeNode extends ObjectListNode<INode> {
 		AaaContext context = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 
-		String propertyNames = callContext.getParameter("_names");
+		String propertyNames = callContext.getParameter("names");
 
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
-		int page = M.c(callContext.getParameter("_page"), 0);
-		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
+		int page = M.c(callContext.getParameter("page"), 0);
+		int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
 		try {
 			return engine.searchNodes(criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
 		} catch (IOException e) {

@@ -53,11 +53,11 @@ public class BpmCaseNode extends ObjectListNode<ICase> {
 		AaaContext context = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 
-		String propertyNames = callContext.getParameter("_names");
+		String propertyNames = callContext.getParameter("names");
 
 		SearchCriterias criterias = new SearchCriterias(new MProperties(callContext.getParameters()));
-		int page = M.c(callContext.getParameter("_page"), 0);
-		int size = Math.min(M.c(callContext.getParameter("_size"), 100), 1000);
+		int page = M.c(callContext.getParameter("page"), 0);
+		int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
 		try {
 			return engine.searchCases(criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
 		} catch (IOException e) {
@@ -77,7 +77,7 @@ public class BpmCaseNode extends ObjectListNode<ICase> {
 		AaaContext acontext = aaa.getCurrent();
 		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 		
-		String propertyNames = context.getParameter("_names");
+		String propertyNames = context.getParameter("names");
 		
 		return engine.getCase(id, propertyNames == null ? null : propertyNames.split(","));
 		
