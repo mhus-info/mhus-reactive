@@ -36,7 +36,7 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "parchive", description = "Archive data lookup")
@@ -78,7 +78,7 @@ public class CmdArchive extends MLog implements Action {
 			if (scheduledEntry != null) {
 				long diff = scheduledEntry.getValue() - System.currentTimeMillis();
 				if (diff > 0)
-					scheduled = MTimeInterval.getIntervalAsString(diff);
+					scheduled = MPeriod.getIntervalAsString(diff);
 			}
 			System.out.println("Scheduled : " + scheduled);
 			System.out.println("Type      : " + node.getType());
@@ -136,7 +136,7 @@ public class CmdArchive extends MLog implements Action {
 			System.out.println("CName     : " + caze.getCanonicalName());
 			System.out.println("CreatedBy : " + caze.getCreatedBy());
 			System.out.println("Created   : " + MDate.toIso8601(new Date(caze.getCreationDate())));
-			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
+			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MPeriod.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
 			System.out.println("Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
 			System.out.println("Options   : " + caze.getOptions());
 			if (caze.getParameters() != null) {

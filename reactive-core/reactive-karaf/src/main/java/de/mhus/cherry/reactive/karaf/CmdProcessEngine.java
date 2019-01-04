@@ -36,7 +36,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pengine", description = "Engine modifiations")
@@ -213,7 +213,7 @@ public class CmdProcessEngine extends MLog implements Action {
 					if (scheduledEntry != null) {
 						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
 						if (diff > 0)
-							scheduled = MTimeInterval.getIntervalAsString(diff);
+							scheduled = MPeriod.getIntervalAsString(diff);
 					}
 					table.addRowValues(
 							node.getId(),

@@ -48,7 +48,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pcase", description = "Case modifiations")
@@ -160,7 +160,7 @@ public class CmdCase extends MLog implements Action {
 			System.out.println("CName     : " + caze.getCanonicalName());
 			System.out.println("CreatedBy : " + caze.getCreatedBy());
 			System.out.println("Created   : " + MDate.toIso8601(new Date(caze.getCreationDate())));
-			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MTimeInterval.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
+			System.out.println("Scheduled : " + (caze.getScheduled() > 0 ? MPeriod.getIntervalAsString(caze.getScheduled() - System.currentTimeMillis()) : "-"));
 			System.out.println("Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
 			System.out.println("Options   : " + caze.getOptions());
 			String[] values = caze.getIndexValues();
@@ -214,7 +214,7 @@ public class CmdCase extends MLog implements Action {
 					if (scheduledEntry != null) {
 						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
 						if (diff > 0)
-							scheduled = MTimeInterval.getIntervalAsString(diff);
+							scheduled = MPeriod.getIntervalAsString(diff);
 					}
 					table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), new Date(info.getModified()), scheduled);
 				}

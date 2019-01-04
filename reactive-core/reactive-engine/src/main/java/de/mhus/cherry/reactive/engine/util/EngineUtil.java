@@ -29,7 +29,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.lib.core.MString;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.schedule.CronJob;
 import de.mhus.lib.errors.NotFoundException;
@@ -46,7 +46,7 @@ public class EngineUtil {
 		if (MString.isEmptyTrim(timer))
 			return -1;
 
-		long time = MTimeInterval.toTime(timer, -1);
+		long time = MPeriod.toTime(timer, -1);
 		if (time < 0) {
 			CronJob.Definition def = new CronJob.Definition(timer);
 			if(def.isDisabled()) {

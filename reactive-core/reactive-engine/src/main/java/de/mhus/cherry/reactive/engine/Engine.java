@@ -75,7 +75,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
@@ -341,7 +341,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		public boolean isFinished() {
 			if (finished || outtimed) return true;
 			try {
-				if (MTimeInterval.isTimeOut(start, node.getActivityTimeout())) {
+				if (MPeriod.isTimeOut(start, node.getActivityTimeout())) {
 					fireEvent.error("activity timeout",node);
 					outtimed = true;
 					return true;
@@ -784,7 +784,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				if (options.getBoolean( EngineConst.PARAM_PROGRESS, false)) {
 					long waitTime = 300;
 					long start = System.currentTimeMillis();
-					long timeout = MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_PROGRESS_TIMEOUT), MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5);
+					long timeout = MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_PROGRESS_TIMEOUT), MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
 					while (true) {
 						PCase caze = getCase(id);
 						if (
@@ -795,7 +795,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 								caze.getState() == STATE_CASE.SUSPENDED
 							)
 							throw new MException("Progress not reached before close",id);
-						if (MTimeInterval.isTimeOut(start, timeout)) 
+						if (MPeriod.isTimeOut(start, timeout)) 
 							throw new TimeoutRuntimeException("Wait for progress timeout",id);
 						Thread.sleep(waitTime);
 					}
@@ -1323,7 +1323,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 	
 	private long newScheduledTime(PNode flow) {
-		return System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS;
+		return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS;
 	}
 
 	public APool<?> createPoolObject(EPool pool) throws InstantiationException, IllegalAccessException {

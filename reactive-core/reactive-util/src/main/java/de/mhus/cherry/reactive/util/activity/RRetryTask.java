@@ -19,7 +19,7 @@ import de.mhus.cherry.reactive.model.activity.AServiceTask;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 
 /**
  * Use this task type to check something in intervals. The default interval is fifteen minutes.
@@ -51,7 +51,7 @@ public abstract class RRetryTask<P extends RPool<?>> extends RTask<P> implements
 	 */
 	public long getDefaultInterval() {
 		String intervalStr = getClass().getAnnotation(ActivityDescription.class).event();
-		return MTimeInterval.toMilliseconds(intervalStr, 60000 * 15);
+		return MPeriod.toMilliseconds(intervalStr, 60000 * 15);
 		
 	}
 	

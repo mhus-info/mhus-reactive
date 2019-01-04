@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.errors.UsageException;
 
 public class PNode implements Externalizable {
@@ -282,7 +282,7 @@ public class PNode implements Externalizable {
 			time = "-";
 		} else
 		if (next != null)
-			time = next.getKey() + "@" + MTimeInterval.getIntervalAsString((next.getValue() - System.currentTimeMillis() ));
+			time = next.getKey() + "@" + MPeriod.getIntervalAsString((next.getValue() - System.currentTimeMillis() ));
 		return "PNode: " + getCanonicalName() + " " + state + " " + time + " " + id;
 	}
 

@@ -58,7 +58,7 @@ import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MThread;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
@@ -369,7 +369,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		e = engine;
 		if (e == null) return 0;
 		if (System.currentTimeMillis() > nextCleanup) {
-			nextCleanup = System.currentTimeMillis() + MTimeInterval.MINUTE_IN_MILLISECOUNDS / 2;
+			nextCleanup = System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS / 2;
 			e.cleanupCases();
 		}
 		return cnt;

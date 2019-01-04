@@ -15,7 +15,7 @@
  */
 package de.mhus.cherry.reactive.model.engine;
 
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.cfg.CfgLong;
 
 public class EngineConst {
@@ -23,7 +23,7 @@ public class EngineConst {
 	public static final String SCHEME_REACTIVE = "bpm";
 	public static final String OPTION_CUSTOM_ID = "customId";
 	public static final String OPTION_CUSTOMER_ID = "customerId";
-	public static CfgLong DEFAULT_ACTIVITY_TIMEOUT = new CfgLong(EEngine.class, "defaultActivityTimeout", MTimeInterval.MINUTE_IN_MILLISECOUNDS * 5);
+	public static CfgLong DEFAULT_ACTIVITY_TIMEOUT = new CfgLong(EEngine.class, "defaultActivityTimeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
 	public static final int TRY_COUNT = 3;
 	public static final String ENGINE_EXECUTE_PARALLEL = "engine.execute.parallel";
 	public static final String ENGINE_EXECUTE_MAX_THREADS = "engine.execute.max.threads";

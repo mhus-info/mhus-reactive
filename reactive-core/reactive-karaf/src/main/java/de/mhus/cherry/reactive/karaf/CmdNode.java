@@ -48,7 +48,7 @@ import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
-import de.mhus.lib.core.MTimeInterval;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 
 @Command(scope = "reactive", name = "pnode", description = "Node modifiations")
@@ -119,7 +119,7 @@ public class CmdNode extends MLog implements Action {
 			for (UUID nodeId : api.getEngine().getExecuting()) {
 				PNode node = api.getEngine().getFlowNode(nodeId);
 				PCase caze = api.getEngine().getCase(node.getCaseId());
-				String time = MTimeInterval.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
+				String time = MPeriod.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
 				table.addRowValues(node.getId(),caze.getName(), node.getName(),time,node.getState(),node.getType(), node.getCaseId());
 			}
 			table.print(System.out);
@@ -164,7 +164,7 @@ public class CmdNode extends MLog implements Action {
 					if (scheduledEntry != null) {
 						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
 						if (diff > 0)
-							scheduled = MTimeInterval.getIntervalAsString(diff);
+							scheduled = MPeriod.getIntervalAsString(diff);
 					}
 					table.addRowValues(
 							node.getId(),
@@ -199,7 +199,7 @@ public class CmdNode extends MLog implements Action {
 			if (scheduledEntry != null) {
 				long diff = scheduledEntry.getValue() - System.currentTimeMillis();
 				if (diff > 0)
-					scheduled = MTimeInterval.getIntervalAsString(diff);
+					scheduled = MPeriod.getIntervalAsString(diff);
 			}
 			System.out.println("Scheduled : " + scheduled);
 			System.out.println("Type      : " + node.getType());
