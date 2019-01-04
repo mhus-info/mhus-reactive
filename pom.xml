@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.mhus.cherry.reactive</groupId>
 	<artifactId>cherry-reactive</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.5.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model</name>
 	<description>BPM Implementation base on a java class model. It allows to create more complex and refactorable models.</description>
@@ -51,10 +51,10 @@
 	</developers>
 	
 	<properties>
-		<mhulib.version>3.4.1-SNAPSHOT</mhulib.version>
-		<mhusop.version>1.3.5-SNAPSHOT</mhusop.version>
-		<osgitools.version>1.4.5-SNAPSHOT</osgitools.version>
-		<osgiservlets.version>1.4.2</osgiservlets.version>
+		<mhulib.version>3.5.0-SNAPSHOT</mhulib.version>
+		<mhusop.version>1.5.0-SNAPSHOT</mhusop.version>
+		<osgitools.version>1.5.0-SNAPSHOT</osgitools.version>
+		<osgiservlets.version>1.5.0-SNAPSHOT</osgiservlets.version>
 		<ports.version>1.3.6</ports.version>
 		<ports.vaadin.version>1.3.6</ports.vaadin.version>
 				
