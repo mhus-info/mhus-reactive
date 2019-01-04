@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>reactive-tools</artifactId>
-		<version>1.0.2-SNAPSHOT</version>
+		<version>1.0.2</version>
 	</parent>
 	<packaging>maven-plugin</packaging>
 	<name>Reactive Maven Plugin</name>
