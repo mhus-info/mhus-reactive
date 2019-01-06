@@ -15,7 +15,7 @@
  */
 package de.mhus.cherry.reactive.examples.simple1;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 

@@ -20,12 +20,12 @@ import java.util.Locale;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.MenuBar.MenuItem;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.lib.vaadin.desktop.GuiSpace;
 import de.mhus.lib.vaadin.desktop.GuiSpaceService;
 import de.mhus.lib.vaadin.desktop.HelpContext;
 
-@Component(immediate=true,provide=GuiSpaceService.class)
+@Component(immediate=true,service=GuiSpaceService.class)
 public class BpmSpaceService extends GuiSpace {
 
 	@Override

@@ -17,7 +17,7 @@ package de.mhus.cherry.reactive.sop.rest;
 
 import java.util.List;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.lib.core.MApi;
@@ -30,7 +30,7 @@ import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.JsonResult;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
-@Component(provide=RestNodeService.class)
+@Component(service=RestNodeService.class)
 public class BpmNode extends ObjectListNode<Object> {
 
 	@Override

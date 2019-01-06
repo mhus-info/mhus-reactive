@@ -81,11 +81,6 @@
 			<artifactId>org.osgi.core</artifactId>
 			<version>5.0.0</version>
 		</dependency>
-		<dependency>
-            <groupId>biz.aQute</groupId>
-            <artifactId>bndlib</artifactId>
-            <version>${bndlib.version}</version>
-        </dependency>
 		
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
@@ -102,6 +97,12 @@
 			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+        </dependency>
 		
 	</dependencies>
 

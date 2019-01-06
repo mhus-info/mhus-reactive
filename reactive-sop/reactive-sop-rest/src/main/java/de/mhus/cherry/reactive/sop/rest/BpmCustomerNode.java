@@ -18,7 +18,7 @@ package de.mhus.cherry.reactive.sop.rest;
 import java.io.IOException;
 import java.util.List;
 
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
@@ -34,7 +34,7 @@ import de.mhus.osgi.sop.api.rest.ObjectListNode;
 import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
-@Component(provide=RestNodeService.class)
+@Component(service=RestNodeService.class)
 public class BpmCustomerNode extends ObjectListNode<ICase> {
 
 	@Override

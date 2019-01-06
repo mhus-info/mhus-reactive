@@ -21,8 +21,8 @@ import java.util.Locale;
 
 import org.osgi.service.component.ComponentContext;
 
-import aQute.bnd.annotation.component.Activate;
-import aQute.bnd.annotation.component.Component;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.reactive.engine.ui.UiEngine;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
@@ -32,7 +32,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SoftHashMap;
 
-@Component(provide={IEngineFactory.class,IEngineAdmin.class})
+@Component(service={IEngineFactory.class,IEngineAdmin.class})
 public class IEngineFactoryImpl implements IEngineFactory, IEngineAdmin {
 
 	private SoftHashMap<String, IEngine> cache = new SoftHashMap<>();

@@ -48,7 +48,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>de.mhus.ports.karaf.tooling</groupId>
+				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-services-maven-plugin</artifactId>
 				<configuration>
 					<artifactInclude>.*mhu.*</artifactInclude>
@@ -59,7 +59,7 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>de.mhus.ports.karaf.tooling</groupId>
+					<groupId>org.apache.karaf.tooling</groupId>
 					<artifactId>karaf-services-maven-plugin</artifactId>
 					<version>${karaf.tool.version}</version>
 					<executions>
@@ -106,11 +106,6 @@
             <artifactId>org.osgi.compendium</artifactId>
             <version>${osgi.version}</version>
         </dependency>
-		<dependency>
-            <groupId>biz.aQute</groupId>
-            <artifactId>bndlib</artifactId>
-            <version>${bndlib.version}</version>
-        </dependency>
 		
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
@@ -132,6 +127,13 @@
 			<artifactId>reactive-osgi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>bndlib</artifactId>
+            <version>${bndlib.version}</version>
+            <scope>provided</scope>
+        </dependency>
 		
 	</dependencies>
 
