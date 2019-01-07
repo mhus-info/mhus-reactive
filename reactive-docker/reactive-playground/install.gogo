@@ -1,0 +1,8 @@
+REACTIVE_VERSION=1.5.0-SNAPSHOT
+
+feature:repo-add cxf
+feature:install cxf
+feature:install openjpa3
+
+feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/${REACTIVE_VERSION}/xml/features
+feature:install cherry-reactive-dev cherry-reactive-all
