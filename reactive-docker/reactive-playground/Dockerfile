@@ -1,4 +1,4 @@
-FROM mhus/apache-karaf-playground:4.2.1
+FROM mhus/apache-karaf-playground:4.2.2
 MAINTAINER Mike Hummel <mh@mhus.de>
 
 #ENV KARAF_UID 0
