@@ -22,7 +22,7 @@ cd reactive-playground
 docker tag reactive-playground "mhus/reactive-playground:1.5.0-SNAPSHOT"
 docker tag reactive-playground "mhus/reactive-playground:latest"
 
-docker push "mhus/reactive-playground:1.0.2.3-SNAPSHOT"
+docker push "mhus/reactive-playground:1.5.0-SNAPSHOT"
 docker push "mhus/reactive-playground:latest"
 
 First Start:
