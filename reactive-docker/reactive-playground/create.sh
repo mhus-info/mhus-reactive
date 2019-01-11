@@ -22,6 +22,6 @@ else
 fi	
 
 docker rm reactive-playground-stage1
-docker run -d --name reactive-playground-stage1 -v /Users/mikehummel/.m2:/root/.m2 -p 18181:8181 reactive-playground-stage1
+docker run --name reactive-playground-stage1 -v /Users/mikehummel/.m2:/root/.m2 reactive-playground-stage1
 docker commit reactive-playground-stage1 reactive-playground
 
