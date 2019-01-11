@@ -1,0 +1,3 @@
+
+feature:repo-add camel 2.20.0
+feature:install deployer camel-blueprint aries-blueprint

@@ -1,0 +1,3 @@
+# cxf will kill the client session need to process in the next deploy file
+feature:repo-add cxf
+feature:install cxf

@@ -15,21 +15,13 @@
 # limitations under the License.
 #
 
-rm -r repository/*
-
-for f in $(cd  ~/.m2/repository;find . -type d -name \*SNAPSHOT\*)
-do 
-  echo Import $f
-  mkdir -p repository/$f
-  cp -r ~/.m2/repository/$f/* repository/$f
-done
-
-#cp -r ~/.m2/repository/* repository/
-
 if [ "$1" = "clean" ]; then
-	docker build --no-cache -t reactive-playground .
+	docker build --no-cache -t reactive-playground-stage1 .
 else
-	docker build -t reactive-playground .
+	docker build -t reactive-playground-stage1 .
 fi	
 
-rm -r repository/*
+docker rm reactive-playground-stage1
+docker run -d --name reactive-playground-stage1 -v /Users/mikehummel/.m2:/root/.m2 -p 18181:8181 reactive-playground-stage1
+docker commit reactive-playground-stage1 reactive-playground
+
