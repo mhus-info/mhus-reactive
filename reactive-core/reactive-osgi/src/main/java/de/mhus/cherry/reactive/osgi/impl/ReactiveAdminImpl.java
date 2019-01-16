@@ -315,23 +315,35 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
 			@Override
 			public AProcess addingService(ServiceReference<AProcess> reference) {
-				AProcess process = context.getService(reference);
-				OsgiProcessLoader loader = new OsgiProcessLoader(process);
-				addProcess(reference.getBundle().getSymbolicName() + ":" + process.getClass().getSimpleName(), loader);
+			    try {
+    				AProcess process = context.getService(reference);
+    				OsgiProcessLoader loader = new OsgiProcessLoader(process);
+    				addProcess(reference.getBundle().getSymbolicName() + ":" + process.getClass().getSimpleName(), loader);
+			    } catch (Throwable t) {
+			        log().e(reference, t);
+			    }
 				return null;
 			}
 
 			@Override
 			public void modifiedService(ServiceReference<AProcess> reference, AProcess service) {
-				OsgiProcessLoader loader = new OsgiProcessLoader(service);
-				removeProcess(loader.getProcessCanonicalName());
-				addProcess(reference.getBundle().getSymbolicName() + ":" + service.getClass().getSimpleName(), loader);
+			    try {
+    				OsgiProcessLoader loader = new OsgiProcessLoader(service);
+    				removeProcess(loader.getProcessCanonicalName());
+    				addProcess(reference.getBundle().getSymbolicName() + ":" + service.getClass().getSimpleName(), loader);
+                } catch (Throwable t) {
+                    log().e(reference, t);
+                }
 			}
 
 			@Override
 			public void removedService(ServiceReference<AProcess> reference, AProcess service) {
-				OsgiProcessLoader loader = new OsgiProcessLoader(service);
-				removeProcess(loader.getProcessCanonicalName());
+			    try {
+			        OsgiProcessLoader loader = new OsgiProcessLoader(service);
+			        removeProcess(loader.getProcessCanonicalName());
+                } catch (Throwable t) {
+                    log().e(reference, t);
+                }
 			}
 		});
 		processTracker.open(true);
