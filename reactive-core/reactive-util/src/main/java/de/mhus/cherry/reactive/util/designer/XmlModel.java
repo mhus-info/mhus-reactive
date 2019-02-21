@@ -17,6 +17,7 @@ package de.mhus.cherry.reactive.util.designer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -233,11 +234,11 @@ public class XmlModel extends MLog {
 			if (clazz != null) {
 				if (entry == null || !entry.getClass().getCanonicalName().equals(clazz.getCanonicalName())) {
 					try {
-						entry = clazz.newInstance();
+						entry = clazz.getDeclaredConstructor().newInstance();
 						elements.put(cName, entry);
 						entry.doUpdate(element);
 						entry.setUsed(true);
-					} catch (InstantiationException | IllegalAccessException e) {
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 						log().e(clazz, e);
 					}
 				} else {

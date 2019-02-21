@@ -16,6 +16,7 @@
 package de.mhus.cherry.reactive.engine;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
@@ -97,7 +98,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 				if (aPool instanceof ContextRecipient)
 					((ContextRecipient)aPool).setContext(this);
 				aPool.importParameters(getPCase().getParameters());
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				log().e(e);
 			}
 		return aPool;
@@ -111,7 +112,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 				aLane = (ASwimlane<APool<?>>) engine.createSwimlaneObject(this, getENode());
 				if (aLane instanceof ContextRecipient)
 					((ContextRecipient)aLane).setContext(this);
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				log().w(e);
 			}
 		}
@@ -165,7 +166,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 				if (aNode instanceof ContextRecipient)
 					((ContextRecipient)aNode).setContext(this);
 				((AActivity<?>)aNode).importParameters(getPNode().getParameters());
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				log().w(e);
 			}
 		}

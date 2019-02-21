@@ -16,6 +16,7 @@
 package de.mhus.cherry.reactive.engine;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -1326,12 +1327,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS;
 	}
 
-	public APool<?> createPoolObject(EPool pool) throws InstantiationException, IllegalAccessException {
-		return pool.getPoolClass().newInstance();		
+	public APool<?> createPoolObject(EPool pool) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return pool.getPoolClass().getDeclaredConstructor().newInstance();		
 	}
 
-	public AElement<?> createActivityObject(EElement element) throws InstantiationException, IllegalAccessException {
-		return element.getElementClass().newInstance();		
+	public AElement<?> createActivityObject(EElement element) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return element.getElementClass().getDeclaredConstructor().newInstance();		
 	}
 
 	/**
@@ -1382,9 +1383,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	 * @return The Swim lane object
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
+	 * @throws SecurityException 
+	 * @throws NoSuchMethodException 
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
 	 */
-	public ASwimlane<?> createSwimlaneObject(EngineContext context, EElement eNode) throws InstantiationException, IllegalAccessException {
-		ASwimlane<?> out = eNode.getSwimlane().newInstance();
+	public ASwimlane<?> createSwimlaneObject(EngineContext context, EElement eNode) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		ASwimlane<?> out = eNode.getSwimlane().getDeclaredConstructor().newInstance();
 		// lifecycle
 		if (out instanceof ContextRecipient)
 			((ContextRecipient)out).setContext(context);
@@ -1812,7 +1817,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			{
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorRead();
 				for (Class<? extends AActor> actorClass : actorClasss) {
-					AActor actor = actorClass.newInstance();
+					AActor actor = actorClass.getDeclaredConstructor().newInstance();
 					if (actor instanceof ContextRecipient)
 						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
@@ -1822,7 +1827,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			{
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
 				for (Class<? extends AActor> actorClass : actorClasss) {
-					AActor actor = actorClass.newInstance();
+					AActor actor = actorClass.getDeclaredConstructor().newInstance();
 					if (actor instanceof ContextRecipient)
 						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
@@ -1856,7 +1861,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			{
 				Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorWrite();
 				for (Class<? extends AActor> actorClass : actorClasss) {
-					AActor actor = actorClass.newInstance();
+					AActor actor = actorClass.getDeclaredConstructor().newInstance();
 					if (actor instanceof ContextRecipient)
 						((ContextRecipient)actor).setContext(context);
 					boolean hasAccess = actor.hasAccess(user);
@@ -1887,7 +1892,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			context.setEPool(pool);
 			Class<? extends AActor>[] actorClasss = pool.getPoolDescription().actorInitiator();
 			for (Class<? extends AActor> actorClass : actorClasss) {
-				AActor actor = actorClass.newInstance();
+				AActor actor = actorClass.getDeclaredConstructor().newInstance();
 				if (actor instanceof ContextRecipient)
 					((ContextRecipient)actor).setContext(context);
 				boolean hasAccess = actor.hasAccess(user);
@@ -1926,7 +1931,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			Class<? extends AActor> actorClass = eNode.getAssignedActor(pool);
 			
 			// create actor and let check access
-			AActor actor = actorClass.newInstance();
+			AActor actor = actorClass.getDeclaredConstructor().newInstance();
 			if (actor instanceof ContextRecipient)
 				((ContextRecipient)actor).setContext(context);
 			boolean hasAccess = actor.hasAccess(user);

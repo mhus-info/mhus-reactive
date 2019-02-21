@@ -15,6 +15,8 @@
  */
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.engine.EPool;
@@ -84,8 +86,8 @@ public class UiPool extends MLog implements IPool {
 		Class<? extends IFormInformation> form = pd.initialForm();
 		if (form == null || form.getCanonicalName().equals(NoForm.class.getCanonicalName())) return null;
 		try {
-			return form.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			return form.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			log().e(e);
 		}
 		return null;
@@ -96,8 +98,8 @@ public class UiPool extends MLog implements IPool {
 		Class<? extends IFormInformation> form = pd.displayForm();
 		if (form == null || form.getCanonicalName().equals(NoForm.class.getCanonicalName())) return null;
 		try {
-			return form.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
+			return form.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			log().e(e);
 		}
 		return null;

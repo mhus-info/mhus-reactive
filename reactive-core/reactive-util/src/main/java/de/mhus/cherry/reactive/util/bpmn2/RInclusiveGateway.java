@@ -47,7 +47,7 @@ public class RInclusiveGateway<P extends RPool<?>> extends RGateway<P> implement
 				defaultOutput = output;
 			} else {
 				Class<? extends ACondition<P>> condition = (Class<? extends ACondition<P>>) output.condition();
-				int res = condition.newInstance().check(getContext());
+				int res = condition.getDeclaredConstructor().newInstance().check(getContext());
 				if (res >= 0) {
 					successful.add(output);
 				}
