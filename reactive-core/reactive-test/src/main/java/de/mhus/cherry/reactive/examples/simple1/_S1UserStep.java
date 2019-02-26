@@ -5,7 +5,7 @@ import de.mhus.lib.basics.consts.ConstBase;
 
 /**
  * File created by mhu const generator. Changes will be overwritten.
- * 4.1.2019
+ * 26.2.2019
  **/
 
 public class _S1UserStep extends ConstBase {
@@ -38,7 +38,7 @@ public class _S1UserStep extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"de.mhus.cherry.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"1.5.0-SNAPSHOT");
+  public static final Identifier PROJECT_VERSION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"1.5.0");
   public static final Identifier _ACTION_HANDLER = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"ActionHandler");
   public static final Identifier _CONTEXT = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"Context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"createIndexValues");

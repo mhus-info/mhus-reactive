@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.mhus.cherry.reactive</groupId>
 	<artifactId>cherry-reactive</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.0</version>
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model</name>
 	<description>BPM Implementation base on a java class model. It allows to create more complex and refactorable models.</description>
@@ -51,10 +51,10 @@
 	</developers>
 	
 	<properties>
-		<mhulib.version>3.5.1-SNAPSHOT</mhulib.version>
-		<mhusop.version>1.5.1-SNAPSHOT</mhusop.version>
-		<osgitools.version>1.5.1-SNAPSHOT</osgitools.version>
-		<osgiservlets.version>1.5.1-SNAPSHOT</osgiservlets.version>
+		<mhulib.version>3.5.0</mhulib.version>
+		<mhusop.version>1.5.0</mhusop.version>
+		<osgitools.version>1.5.0</osgitools.version>
+		<osgiservlets.version>1.5.0</osgiservlets.version>
 		<ports.version>1.3.7</ports.version>
 		<ports.vaadin.version>1.3.7</ports.vaadin.version>
 				
@@ -114,7 +114,7 @@
 		<plugin>
 	      <groupId>org.apache.maven.plugins</groupId>
 	      <artifactId>maven-javadoc-plugin</artifactId>
-	      <version>2.9.1</version>
+	      <version>3.0.1</version>
 	      <configuration>
 	      	<failOnError>false</failOnError>
 	      </configuration>
@@ -220,8 +220,10 @@
 		<module>reactive-sop</module>
 		<module>reactive-gui</module>
 		<module>reactive-tools</module>
+		<!-- could not deploy features to central repo at the moment
 		<module>reactive-feature</module>
 		<module>cr-examples</module>
+		 -->
 	</modules>
 
 	<distributionManagement>
