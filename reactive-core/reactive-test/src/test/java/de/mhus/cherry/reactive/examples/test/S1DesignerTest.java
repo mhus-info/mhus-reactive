@@ -17,16 +17,18 @@ package de.mhus.cherry.reactive.examples.test;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
+
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.util.designer.DesignerUtil;
 import de.mhus.cherry.reactive.util.designer.XmlModel;
-import junit.framework.TestCase;
 
-public class S1DesignerTest extends TestCase {
+public class S1DesignerTest {
 
+    @Test
 	public void testCreateDesign() throws Exception {
 		File f = new File("target/classes");
 		System.out.println(f.getAbsolutePath());

@@ -5,7 +5,7 @@ import de.mhus.lib.basics.consts.ConstBase;
 
 /**
  * File created by mhu const generator. Changes will be overwritten.
- * 26.2.2019
+ * 28.2.2019
  **/
 
 public class _S1Pool extends ConstBase {
@@ -30,7 +30,7 @@ public class _S1Pool extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"de.mhus.cherry.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"1.5.0");
+  public static final Identifier PROJECT_VERSION = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"1.6.0-SNAPSHOT");
   public static final Identifier _AFTER_EXECUTE = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"afterExecute");
   public static final Identifier _BEFORE_EXECUTE = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"beforeExecute");
   public static final Identifier _CHECK_INPUT_PARAMETERS = new Identifier(de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"checkInputParameters");

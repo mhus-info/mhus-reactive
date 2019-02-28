@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.junit.jupiter.api.Test;
+
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.EngineContext;
@@ -45,15 +47,16 @@ import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class S1ActivitiesTest extends TestCase {
+public class S1ActivitiesTest  {
 
 	private EngineConfiguration config;
 	private Engine engine;
 	long sleep = 10;
 	private Console console;
 
+	@Test
 	public void testSubStart() throws Exception {
 		
 		createEnigne();
@@ -92,6 +95,7 @@ public class S1ActivitiesTest extends TestCase {
 
 	}
 	
+    @Test
 	public void testParallel2() throws Exception {
 		
 		createEnigne();
@@ -126,6 +130,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 
+    @Test
 	public void testParallel1() throws Exception {
 		
 		createEnigne();
@@ -160,6 +165,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 
+    @Test
 	public void testTriggerTimer() throws Exception {
 		
 		createEnigne();
@@ -203,6 +209,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 
+    @Test
 	public void testTriggerMessage() throws Exception {
 		
 		createEnigne();
@@ -246,6 +253,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 
+    @Test
 	public void testTriggerSignal() throws Exception {
 		
 		createEnigne();
@@ -289,6 +297,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 
+    @Test
 	public void testSecond() throws Exception {
 				
 		createEnigne();
@@ -323,6 +332,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testThird() throws Exception {
 		
 		createEnigne();
@@ -357,6 +367,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testError1() throws Exception {
 		
 		createEnigne();
@@ -391,6 +402,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testFatal() throws Exception {
 		
 		createEnigne();
@@ -425,6 +437,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testNone() throws Exception {
 		
 		createEnigne();
@@ -467,6 +480,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testStartpoint() throws Exception {
 		
 		createEnigne();
@@ -501,6 +515,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testExternal() throws Exception {
 		
 		createEnigne();
@@ -546,6 +561,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testSignal() throws Exception {
 		
 		createEnigne();
@@ -594,6 +610,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testMessage() throws Exception {
 		
 		createEnigne();
@@ -650,6 +667,7 @@ public class S1ActivitiesTest extends TestCase {
 		archiveEngine(engine, config);
 	}
 	
+    @Test
 	public void testExclusiveGateway() throws Exception {
 		
 		createEnigne();

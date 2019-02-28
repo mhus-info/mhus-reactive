@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
-		<version>1.5.0</version>
+		<version>1.6.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -32,27 +32,10 @@
 	    		<plugin>
 	    			<groupId>de.mhus.lib</groupId>
 	    			<artifactId>constgenerator-maven-plugin</artifactId>
-	    			<version>${mhulib.version}</version>
-				<executions>
-		          <execution>
-		            <phase>compile</phase>
-		            <goals>
-		              <goal>const-generate</goal>
-		            </goals>
-		          </execution>
-		        </executions>
-		          <dependencies>
-			        <dependency>
-				        	<groupId>de.mhus.lib</groupId>
-				        	<artifactId>mhu-lib-annotations</artifactId>
-				        	<version>${mhulib.version}</version>
-			        </dependency>
-		          </dependencies>
 	    		</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${bundle.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
@@ -74,12 +57,10 @@
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
 			<artifactId>mhu-lib-core</artifactId>
-			<version>${mhulib.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
-			<version>5.0.0</version>
 		</dependency>
 		
 		<dependency>
@@ -101,7 +82,6 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>${osgi.version}</version>
         </dependency>
 		
 	</dependencies>
