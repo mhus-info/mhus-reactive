@@ -41,7 +41,6 @@
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		
 	</dependencies>

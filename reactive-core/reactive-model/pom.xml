@@ -26,12 +26,7 @@
 		<artifactId>reactive-core</artifactId>
 		<version>1.6.0-SNAPSHOT</version>
 	</parent>
-
-	<build>
-		<plugins>
-		</plugins>
-	</build>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>

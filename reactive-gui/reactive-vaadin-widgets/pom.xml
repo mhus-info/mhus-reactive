@@ -58,7 +58,6 @@
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
@@ -72,13 +71,11 @@
         
     	<dependency>
     		<groupId>com.vaadin</groupId>
-    		<artifactId>vaadin-server</artifactId>
-    		<version>${vaadin.version}</version>
+    		<artifactId>vaadin-compatibility-server</artifactId>
     	</dependency>
     	<dependency>
     		<groupId>com.vaadin</groupId>
-    		<artifactId>vaadin-shared</artifactId>
-    		<version>${vaadin.version}</version>
+    		<artifactId>vaadin-compatibility-shared</artifactId>
     	</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

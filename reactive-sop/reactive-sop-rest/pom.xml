@@ -62,16 +62,11 @@
 		<dependency>
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
-			<version>${project.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.compendium -->
 		<dependency>
 		    <groupId>org.osgi</groupId>
 		    <artifactId>org.osgi.compendium</artifactId>
 		</dependency>
-		
-
-		
 	</dependencies>
 
 </project>
