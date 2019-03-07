@@ -27,42 +27,41 @@
 		<feature>openjpa</feature>
 		<feature>jndi</feature>
 
-
 		<!-- mhu-lib -->
 		
-		<bundle>mvn:org.jsoup/jsoup/1.8.3</bundle>
-		<bundle>mvn:mysql/mysql-connector-java/5.1.18</bundle>
+		<bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
+		<bundle>mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
 		
-		<bundle>mvn:org.apache.commons/commons-jexl/2.1.1</bundle>
-		<bundle><![CDATA[wrap:mvn:org.w3c.css/sac/1.3/$Bundle-SymbolicName=sac&Bundle-Version=1.3&Export-Package=org.w3c.css.sac;version="1.3",!*]]></bundle>
+		<bundle>mvn:org.apache.commons/commons-jexl/${commons-jexl.version}</bundle>
+		<bundle><![CDATA[wrap:mvn:org.w3c.css/sac/${w3c.css.sac}/$Bundle-SymbolicName=sac&Bundle-Version=${w3c.css.sac}&Export-Package=org.w3c.css.sac;version="${w3c.css.sac}",!*]]></bundle>
 
-		<bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.5</bundle>
-		<bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.5</bundle>
-		<bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/1.3.2/$Bundle-SymbolicName=commons-io&Bundle-Version=1.3.2&Export-Package=org.apache.commons.io;version="1.3.2",!*]]></bundle>
+		<bundle>mvn:org.codehaus.jackson/jackson-core-asl/${jackson.version}</bundle>
+		<bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.version}</bundle>
+		<bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/${commons-io.version}/$Bundle-SymbolicName=commons-io&Bundle-Version=1.3.2&Export-Package=org.apache.commons.io;version="1.3.2",!*]]></bundle>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhulib.version}</bundle>
-		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhulib.version}</bundle>
-		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhulib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhus-lib.version}</bundle>
 
 		<!-- osgi tools -->
 		
-		<bundle>mvn:org.bouncycastle/bcprov-jdk16/1.46</bundle>
+		<bundle>mvn:org.bouncycastle/bcprov-jdk16/${bouncycastle.version}</bundle>
 		
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${osgitools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${osgitools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${osgitools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>
 
-		<bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/1.1.1</bundle>
+		<bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
 				
 		<!-- sop -->
 		
-		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhusop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhusop.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
 		
 		<!-- reactive -->
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-osgi/${project.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-karaf/${project.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-osgi/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-karaf/${cherry-reactive.version}</bundle>
 		
 	</feature>
 	
@@ -72,19 +71,19 @@
 
 		<!-- sop -->
 		
-		<bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhusop.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
 
 	</feature>
 	
 	<feature name='cherry-reactive-dev' description='Development tools' version='${project.version}'>
 		
-		<bundle>mvn:org.hsqldb/hsqldb/2.3.2</bundle>
+		<bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
 		
 		<feature>cherry-reactive-core</feature>
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-dev/${project.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${project.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${project.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-dev/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${cherry-reactive.version}</bundle>
 
 	</feature>
 	
@@ -93,11 +92,11 @@
 		<feature>http</feature>
 		<feature>http-whiteboard</feature>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-j2ee/${mhulib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-j2ee/${mhus-lib.version}</bundle>
 		
         <bundle><![CDATA[wrap:mvn:com.googlecode.gentyref/gentyref/1.2.0/$Bundle-SymbolicName=gentyref&Bundle-Version=1.2.0&Export-Package=com.googlecode.gentyref;version="1.2.0",!*]]></bundle>
-        <bundle>mvn:org.jsoup/jsoup/1.11.3</bundle>
-		<bundle>mvn:de.mhus.ports/vaadin-shared-deps/${ports.vaadin.version}</bundle>
+        <bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
+		<bundle>mvn:de.mhus.ports/vaadin-shared-deps/${mhus-ports-vaadin.version}</bundle>
 		<bundle>mvn:com.vaadin/vaadin-compatibility-shared/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-shared/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-compatibility-themes/${vaadin.version}</bundle>
@@ -113,17 +112,17 @@
         <bundle>mvn:com.vaadin/vaadin-compatibility-client-compiled/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-client-compiled/${vaadin.version}</bundle>
 
-		<bundle>mvn:de.mhus.ports/vaadin-refresher/${ports.vaadin.version}</bundle>
+		<bundle>mvn:de.mhus.ports/vaadin-refresher/${mhus-ports-vaadin.version}</bundle>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhulib.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${osgiservlets.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-vaadinbridge/${osgiservlets.version}</bundle>
+		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-karaf-vaadinbridge/${mhus-osgi-tools.version}</bundle>
 
-		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-theme/${mhusop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/${mhusop.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-theme/${mhus-sop.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/${mhus-sop.version}</bundle>
 
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${project.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${project.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${cherry-reactive.version}</bundle>
 	
 	</feature>	
 	
