@@ -509,7 +509,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			config.processProvider = new DefaultProcessProvider();
 			
 			// listener
-			config.listener.add(EngineListenerUtil.createLogInfoListener());
+			config.listener.add(EngineListenerUtil.createLogDebugListener());
 			
 			engine = new Engine(config);
 			
