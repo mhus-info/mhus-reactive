@@ -1,4 +1,4 @@
-FROM apache-karaf:4.2.2
+FROM apache-karaf:4.2.3
 MAINTAINER Mike Hummel <mh@mhus.de>
 
 #ENV KARAF_UID 0

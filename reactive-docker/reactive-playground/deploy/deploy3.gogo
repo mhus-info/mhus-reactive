@@ -1,4 +1,4 @@
-REACTIVE_VERSION=1.5.0-SNAPSHOT
+REACTIVE_VERSION=1.6.0-SNAPSHOT
 
 feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/${REACTIVE_VERSION}/xml/features
 feature:install openjpa3 cherry-reactive-dev cherry-reactive-all
