@@ -22,6 +22,6 @@ else
 fi	
 
 docker rm reactive-playground-stage1
-docker run --name reactive-playground-stage1 -v ~/.m2:/root/.m2 reactive-playground-stage1
+docker run --name reactive-playground-stage1 -e PREVENT_ENVIRONMENT=1 -v ~/.m2:/home/user/.m2 reactive-playground-stage1
 docker commit reactive-playground-stage1 reactive-playground
 

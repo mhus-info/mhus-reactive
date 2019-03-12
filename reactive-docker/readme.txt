@@ -29,7 +29,7 @@ First Start:
 
 * docker rm reactive-playground
 
-* docker run -it --name reactive-playground -p 18181:8181 mhus/reactive-playground:1.0.2.2-SNAPSHOT
+* docker run -it --name reactive-playground -p 18181:8181 mhus/reactive-playground
 
 * Go to http://localhost:18181/sop
 

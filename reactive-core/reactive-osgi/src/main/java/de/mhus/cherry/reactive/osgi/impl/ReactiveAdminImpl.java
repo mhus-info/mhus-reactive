@@ -30,12 +30,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
+
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
@@ -57,8 +57,8 @@ import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MPeriod;
+import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
@@ -77,11 +77,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private EngineConfiguration config;
 	private Engine engine;
 	private BundleContext context;
-	private CfgString storageDsName = new CfgString(ReactiveAdmin.class, "storageDsName", "reactive-storage");
+	private static CfgString storageDsName = new CfgString(ReactiveAdmin.class, "storageDsName", "reactive-storage");
 	private DataSource storageDataSource;
 	private DataSourceProvider storageDsProvider;
 	private DefaultDbPool storagePool;
-	private CfgString archiveDsName = new CfgString(ReactiveAdmin.class, "archiveDsName", "reactive-archive");
+	private static CfgString archiveDsName = new CfgString(ReactiveAdmin.class, "archiveDsName", "reactive-archive");
 	private DataSource archiveDataSource;
 	private DataSourceProvider archiveDsProvider;
 	private DefaultDbPool archivePool;
@@ -96,7 +96,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private long nextCleanup;
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
-	
+	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
 	// --- Process list handling
 	
 	@Override
@@ -509,7 +509,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			config.processProvider = new DefaultProcessProvider();
 			
 			// listener
-			config.listener.add(EngineListenerUtil.createLogDebugListener());
+			if (engineLogLevel.value().equals("INFO"))
+			    config.listener.add(EngineListenerUtil.createLogInfoListener());
+            if (engineLogLevel.value().equals("DEBUG"))
+                config.listener.add(EngineListenerUtil.createLogDebugListener());
 			
 			engine = new Engine(config);
 			
@@ -611,6 +614,5 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			return info.loader;
 		}
 	}
-	
-	
+
 }
