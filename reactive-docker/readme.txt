@@ -56,7 +56,7 @@ Start again:
 docker start -i reactive-playground
 
 Start with shared maven repository (for development):
-docker run -it --name reactive-playground -v /home/user/.m2:/root/.m2 -p 18181:8181 mhus/reactive-playground
+docker run -it --name reactive-playground -v ~/.m2:/home/user/.m2 -p 18181:8181 reactive-playground
 
 Commit and Push:
 docker commit reactive-playground mhus/reactive-playground:1.0.2.3-SNAPSHOT
