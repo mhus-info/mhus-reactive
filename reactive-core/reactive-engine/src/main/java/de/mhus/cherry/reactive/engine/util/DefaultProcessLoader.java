@@ -30,6 +30,7 @@ import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.MSystem;
 
 public class DefaultProcessLoader extends MLog implements ProcessLoader {
 	
@@ -102,6 +103,8 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 		// load class and test if it's Element
 		for (String name : classNames) {
 			try {
+			    if (MSystem.isWindows())
+			        name = name.replace('\\', '/');
 				Class<?> clazz = classLoader.loadClass(name);
 				if (AElement.class.isAssignableFrom(clazz))
 					elementClasses.add((Class<? extends AElement<?>>) clazz);
