@@ -34,7 +34,7 @@ import de.mhus.osgi.sop.api.rest.CallContext;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(service=RestNodeService.class)
-public class BpmCaseNode extends ObjectListNode<ICase> {
+public class BpmCaseNode extends ObjectListNode<ICase,ICase> {
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -65,10 +65,10 @@ public class BpmCaseNode extends ObjectListNode<ICase> {
 		}
 	}
 
-	@Override
-	public Class<ICase> getManagedClass() {
-		return ICase.class;
-	}
+//	@Override
+//	public Class<ICase> getManagedClass() {
+//		return ICase.class;
+//	}
 
 	@Override
 	protected ICase getObjectForId(CallContext context, String id) throws Exception {

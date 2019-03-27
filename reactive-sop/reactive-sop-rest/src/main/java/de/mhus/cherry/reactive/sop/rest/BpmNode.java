@@ -31,7 +31,7 @@ import de.mhus.osgi.sop.api.rest.JsonResult;
 import de.mhus.osgi.sop.api.rest.RestNodeService;
 
 @Component(service=RestNodeService.class)
-public class BpmNode extends ObjectListNode<Object> {
+public class BpmNode extends ObjectListNode<Object,Object> {
 
 	@Override
 	public String[] getParentNodeIds() {
@@ -48,10 +48,10 @@ public class BpmNode extends ObjectListNode<Object> {
 		return null;
 	}
 
-	@Override
-	public Class<Object> getManagedClass() {
-		return Object.class;
-	}
+//	@Override
+//	public Class<Object> getManagedClass() {
+//		return Object.class;
+//	}
 
 	@Override
 	protected Object getObjectForId(CallContext context, String id) throws Exception {
