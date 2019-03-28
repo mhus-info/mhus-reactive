@@ -34,8 +34,8 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 public class BpmNode extends ObjectListNode<Object,Object> {
 
 	@Override
-	public String[] getParentNodeIds() {
-		return new String[] {ROOT_ID,PUBLIC_ID,FOUNDATION_ID};
+	public String[] getParentNodeCanonicalClassNames() {
+		return new String[] {ROOT_PARENT,PUBLIC_PARENT,FOUNDATION_PARENT};
 	}
 
 	@Override

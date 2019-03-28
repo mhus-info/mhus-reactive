@@ -38,8 +38,8 @@ import de.mhus.osgi.sop.api.rest.RestNodeService;
 public class BpmCustomerNode extends ObjectListNode<ICase,ICase> {
 
 	@Override
-	public String[] getParentNodeIds() {
-		return new String[] {ROOT_ID,FOUNDATION_ID};
+	public String[] getParentNodeCanonicalClassNames() {
+		return new String[] {ROOT_PARENT,FOUNDATION_PARENT};
 	}
 
 	@Override
