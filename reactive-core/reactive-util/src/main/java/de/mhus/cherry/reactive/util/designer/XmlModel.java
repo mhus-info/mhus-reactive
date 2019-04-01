@@ -149,7 +149,7 @@ public class XmlModel extends MLog {
 				// ignore
 				// <bpmn2:boundaryEvent id="BoundaryEvent_1" name="" attachedToRef="Task_2">
 			} else {
-				log().i("Unknown element", eName);
+				log().w("Unknown element", eName);
 				XElement entry = new XUnknown();
 				entry.doUpdate(elem);
 				elements.put(elem.getAttribute("id"), entry);

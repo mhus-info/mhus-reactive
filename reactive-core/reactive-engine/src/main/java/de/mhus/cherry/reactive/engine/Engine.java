@@ -111,7 +111,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		try {
 			config.persistent = storage.loadEngine();
 		} catch (NotFoundException | IOException e) {
-			log().i(e.toString());
+			log().w(e.toString());
 		}
 		if (config.persistent == null) {
 			log().i("Initial new engine persistence");

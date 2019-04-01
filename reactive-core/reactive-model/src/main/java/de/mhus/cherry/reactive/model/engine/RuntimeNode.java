@@ -120,7 +120,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 				log().e(e);
 			}
 		} else {
-			log().i("Context not set in runtime");
+			log().w("Context not set in runtime");
 		}
 	}
 
