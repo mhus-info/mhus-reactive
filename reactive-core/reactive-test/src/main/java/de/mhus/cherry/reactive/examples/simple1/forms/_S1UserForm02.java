@@ -40,7 +40,7 @@ public class _S1UserForm02 extends ConstBase {
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"de.mhus.cherry.reactive");
   public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"1.6.1-SNAPSHOT");
   public static final Identifier _ACTION_HANDLER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"ActionHandler");
-  public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"Context");
+  public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"createIndexValues");
   public static final Identifier _DEBUG = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"debug");
   public static final Identifier _DO_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"doAction");
@@ -58,14 +58,14 @@ public class _S1UserForm02 extends ConstBase {
   public static final Identifier _FORM__MILESTONE = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"FORM_MILESTONE");
   public static final Identifier _IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"importParameters");
   public static final Identifier _INITIALIZE_ACTIVITY = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"initializeActivity");
-  public static final Identifier _LOG = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"log");
+  public static final Identifier _LOG = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"log");
   public static final Identifier _OPTION = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"option");
   public static final Identifier _OPTION_OPTIONS = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"optionOptions");
-  public static final Identifier _OWNER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"Owner");
-  public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"PojoModel");
+  public static final Identifier _OWNER = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"owner");
+  public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"pojoModel");
   public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"registerNatives");
   public static final Identifier _RETRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"RETRY");
   public static final Identifier _SALUTATION_DEF = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"salutationDef");
-  public static final Identifier _TEXT3 = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"Text3");
+  public static final Identifier _TEXT3 = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"text3");
 
 }

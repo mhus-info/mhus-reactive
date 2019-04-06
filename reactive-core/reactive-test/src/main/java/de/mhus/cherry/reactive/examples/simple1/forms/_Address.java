@@ -45,25 +45,25 @@ public class _Address extends ConstBase {
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"de.mhus.cherry.reactive");
   public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"1.6.1-SNAPSHOT");
-  public static final Identifier _COUNTRY = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Country");
+  public static final Identifier _COUNTRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"country");
   public static final Identifier _COUNTRY_CODE = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"CountryCode");
   public static final Identifier _COUNTRY__CODE__DE = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"COUNTRY_CODE_DE");
   public static final Identifier _CREATE_FORM = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"createForm");
-  public static final Identifier _EMAIL = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Email");
-  public static final Identifier _FIRST_NAME = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"FirstName");
-  public static final Identifier _LAST_NAME = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"LastName");
+  public static final Identifier _EMAIL = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"email");
+  public static final Identifier _FIRST_NAME = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"firstName");
+  public static final Identifier _LAST_NAME = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"lastName");
   public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"registerNatives");
-  public static final Identifier _SALUTATION = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Salutation");
-  public static final Identifier _STREET = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Street");
-  public static final Identifier _STREET_NUMBER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"StreetNumber");
-  public static final Identifier _TELEFON = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Telefon");
-  public static final Identifier _TOWN = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Town");
+  public static final Identifier _SALUTATION = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"salutation");
+  public static final Identifier _STREET = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"street");
+  public static final Identifier _STREET_NUMBER = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"streetNumber");
+  public static final Identifier _TELEFON = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"telefon");
+  public static final Identifier _TOWN = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"town");
   public static final Identifier _TO_ADDRESS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toAddress");
   public static final Identifier _TO_ADDRESS_TEXT = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toAddressText");
   public static final Identifier _TO_NAME = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toName");
   public static final Identifier _TO_SALUTATION = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toSalutation");
   public static final Identifier _TO_SALUTATION_INT = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toSalutationInt");
   public static final Identifier _TO_SALUTATION_STRING = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"toSalutationString");
-  public static final Identifier _ZIP = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"Zip");
+  public static final Identifier _ZIP = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"zip");
 
 }

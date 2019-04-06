@@ -1,3 +1,4 @@
-# cxf will kill the client session need to process in the next deploy file
-feature:repo-add cxf
-feature:install cxf
+REACTIVE_VERSION=1.6.1-SNAPSHOT
+
+feature:repo-add mvn:de.mhus.cherry.reactive/reactive-feature/${REACTIVE_VERSION}/xml/features
+feature:install openjpa3 cherry-reactive-dev cherry-reactive-all
