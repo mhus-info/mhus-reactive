@@ -80,7 +80,7 @@ public class CmdUi extends MLog implements Action {
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","CustomerId","Name","State","Uri");
 			for (ICase info : res) {
-				ICaseDescription desc = api.getCaseDescription(info);
+				ICaseDescription desc = api.getCaseDescription2(info);
 				table.addRowValues(info.getId(),info.getCustomId(),info.getCustomerId(),desc.getDisplayName(),info.getState(),info.getUri());
 			}
 			table.print(System.out);
@@ -91,14 +91,14 @@ public class CmdUi extends MLog implements Action {
 			ConsoleTable table = new ConsoleTable(full);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
 			for (INode info : res) {
-				INodeDescription desc = api.getNodeDescription(info);
+				INodeDescription desc = api.getNodeDescription2(info);
 				table.addRowValues(info.getId(),info.getCustomId(),desc.getDisplayName(),info.getNodeState(),info.getUri());
 			}
 			table.print(System.out);
 		} else
 		if (cmd.equals("case")) {
 			ICase info = api.getCase(parameters[0], parameters.length > 1 ? parameters : null);
-			ICaseDescription desc = api.getCaseDescription(info);
+			ICaseDescription desc = api.getCaseDescription2(info);
 			System.out.println("Id         : " + info.getId());
 			System.out.println("Uri        : " + info.getUri());
 			System.out.println("Name       : " + desc.getDisplayName());
@@ -110,7 +110,7 @@ public class CmdUi extends MLog implements Action {
 		} else
 		if (cmd.equals("node")) {
 			INode info = api.getNode(parameters[0], parameters.length > 1 ? parameters : null);
-			INodeDescription desc = api.getNodeDescription(info);
+			INodeDescription desc = api.getNodeDescription2(info);
 			System.out.println("Id         : " + info.getId());
 			System.out.println("Uri        : " + info.getUri());
 			System.out.println("Name       : " + desc.getDisplayName());

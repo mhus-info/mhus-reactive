@@ -90,7 +90,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 	
 	protected void onFormCancel() {
 		try {
-			engine.doUnassign(node.getId().toString());
+			engine.doUnassignUserTask(node.getId().toString());
 		} catch (Exception e) {
 			log.w(e);
 		}
@@ -98,10 +98,10 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 
 	protected VaadinForm createForm() {
 		try {
-			IFormInformation hForm = engine.getUserForm(node.getId().toString());
+			IFormInformation hForm = engine.getNodeUserForm(node.getId().toString());
 			DefRoot form = hForm.getForm();
 			dataSource = new PropertiesDataSource();
-			dataSource.setProperties(new MProperties( engine.getUserFormValues(node.getId().toString())));
+			dataSource.setProperties(new MProperties( engine.getNodeUserFormValues(node.getId().toString())));
 			
 			VaadinForm vform = new VaadinForm();
 //			vform.setShowInformation(true);

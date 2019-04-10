@@ -462,7 +462,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
 	@Override
-	public Object doExecute(String uri, IProperties properties) throws Exception {
+	public Object doExecute2(String uri, IProperties properties) throws Exception {
 		if (engine == null) throw new WrongStateEception();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);
@@ -519,7 +519,7 @@ public class UiEngine extends MLog implements IEngine {
 	}
 
     @Override
-    public IFormInformation getUserForm(String id) throws Exception {
+    public IFormInformation getNodeUserForm(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
@@ -536,7 +536,7 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
-    public IProperties getUserFormValues(String id) throws Exception {
+    public IProperties getNodeUserFormValues(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
@@ -545,7 +545,7 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
-    public Class <? extends FormControl> getUserFormControl(String id) throws Exception {
+    public Class <? extends FormControl> getNodeUserFormControl(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
@@ -575,7 +575,7 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
-    public void doUnassign(String id) throws Exception {
+    public void doUnassignUserTask(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
@@ -584,7 +584,7 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
-    public void doAssign(String id) throws Exception {
+    public void doAssignUserTask(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))

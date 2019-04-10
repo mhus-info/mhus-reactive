@@ -244,7 +244,7 @@ public class CmdNode extends MLog implements Action {
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
 				INode inode = engine.getNode(node.getId().toString(), new String[]{"*"});
-				INodeDescription idesc = engine.getNodeDescription(inode);
+				INodeDescription idesc = engine.getNodeDescription2(inode);
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());

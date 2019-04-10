@@ -28,6 +28,7 @@ import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.IFormInformation;
 
+// for serialization and remote access reasons - do not implement methods with the same name
 public interface IEngine {
 
 	List<INode> searchNodes(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException;
@@ -44,27 +45,27 @@ public interface IEngine {
 	
 	INode getNode(String id, String ... propertyNames) throws Exception;
 
-	IFormInformation getUserForm(String id) throws Exception;
+	IFormInformation getNodeUserForm(String id) throws Exception;
 
-    IProperties getUserFormValues(String id) throws MException, Exception;
+    IProperties getNodeUserFormValues(String id) throws MException, Exception;
 
-    Class<? extends FormControl> getUserFormControl(String id) throws Exception;
+    Class<? extends FormControl> getNodeUserFormControl(String id) throws Exception;
 
     void submitUserTask(String id, IProperties values) throws Exception;
 
-    void doUnassign(String id) throws Exception;
+    void doUnassignUserTask(String id) throws Exception;
 
-    void doAssign(String id) throws Exception;
+    void doAssignUserTask(String id) throws Exception;
 
     MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception;
 
     // case 
     
-	default ICaseDescription getCaseDescription(ICase caze) throws Exception {
+	default ICaseDescription getCaseDescription2(ICase caze) throws Exception {
 		return getCaseDescription(caze.getUri());
 	}
 
-	default INodeDescription getNodeDescription(INode node) throws Exception {
+	default INodeDescription getNodeDescription2(INode node) throws Exception {
 		return getNodeDescription(node.getUri(), node.getCanonicalName());
 	}
 
@@ -78,7 +79,7 @@ public interface IEngine {
 
 	Object doExecute(String uri) throws Exception;
 
-	Object doExecute(String uri, IProperties properties) throws Exception;
+	Object doExecute2(String uri, IProperties properties) throws Exception;
 	
 	void doArchive(UUID caseId) throws Exception;
 	

@@ -185,7 +185,7 @@ public class CmdCase extends MLog implements Action {
 				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
 				ICase icase = engine.getCase(caze.getId().toString(), new String[]{"*"});
-				ICaseDescription idesc = engine.getCaseDescription(icase);
+				ICaseDescription idesc = engine.getCaseDescription2(icase);
 				System.out.println();
 				System.out.println("User        : " + engine.getUser());
 				System.out.println("Locale      : " + engine.getLocale());

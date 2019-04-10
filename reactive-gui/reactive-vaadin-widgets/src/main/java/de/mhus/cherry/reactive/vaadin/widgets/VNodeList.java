@@ -132,12 +132,12 @@ public class VNodeList extends MhuTable {
 					
 	            	if (action == ACTION_UNASSIGN) {
 	            		INode node = engine.getNode(((NodeItem)target).getId().toString());
-	            		engine.doUnassign(node.getId().toString());
+	            		engine.doUnassignUserTask(node.getId().toString());
 	            		doReload();
 	            	} else
 	            	if (action == ACTION_ASSIGN) {
 	            		INode node = engine.getNode(((NodeItem)target).getId().toString());
-	            		engine.doAssign(node.getId().toString());
+	            		engine.doAssignUserTask(node.getId().toString());
 	            		doReload();
 	            	} else
 	            	if (action == ACTION_EXECUTE) {
