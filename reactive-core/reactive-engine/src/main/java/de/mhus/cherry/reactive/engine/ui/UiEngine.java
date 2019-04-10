@@ -25,7 +25,10 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
+import de.mhus.cherry.reactive.model.activity.AActivity;
+import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
@@ -52,6 +55,8 @@ import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.lib.errors.WrongStateEception;
+import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 
 public class UiEngine extends MLog implements IEngine {
 
@@ -126,7 +131,7 @@ public class UiEngine extends MLog implements IEngine {
 								}
 							}
 						}
-						out.add(new UiNode(engine,this, info, properties));
+						out.add(new UiNode(info, properties));
 					}
 					cnt++;
 				} catch (Exception e) {
@@ -427,7 +432,7 @@ public class UiEngine extends MLog implements IEngine {
 			}
 		}
 		
-		return new UiNode(engine ,this, info, properties);
+		return new UiNode(info, properties);
 	}
 
 	@Override
@@ -512,5 +517,88 @@ public class UiEngine extends MLog implements IEngine {
 		}
 		return out.toArray(new IModel[out.size()]);
 	}
-	
+
+    @Override
+    public IFormInformation getUserForm(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        // TODO check assign
+        try {
+            engine.assignUserTask(info.getId(), getUser());
+        } catch (IOException | MException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        AUserTask<?> un = (AUserTask<?>)initANode(info);
+        return new UiFormInformation(un.getForm(), un.getActionHandler(), un.getFormControl());
+    }
+
+    @Override
+    public IProperties getUserFormValues(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        return ((AUserTask<?>)initANode(info)).getFormValues();
+    }
+
+    @Override
+    public Class <? extends FormControl> getUserFormControl(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        return ((AUserTask<?>)initANode(info)).getFormControl();
+    }
+
+    private synchronized AActivity<?> initANode(PNodeInfo info) {
+        try {
+            PNode node = engine.getFlowNode(info.getId());
+            PCase caze = engine.getCase(node.getCaseId());
+            EngineContext context = engine.createContext(caze, node);
+            return context.getANode();
+        } catch (Throwable t) {
+            log().e(t);
+            return null;
+        }
+    }
+
+    @Override
+    public void submitUserTask(String id, IProperties values) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        engine.submitUserTask(info.getId(), values);
+    }
+
+    @Override
+    public void doUnassign(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        engine.unassignUserTask(info.getId());
+    }
+
+    @Override
+    public void doAssign(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        engine.assignUserTask(info.getId(), getUser());
+    }
+
+    @Override
+    public MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        return engine.onUserTaskAction(info.getId(), values, action);
+    }
+    
 }

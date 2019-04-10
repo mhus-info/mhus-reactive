@@ -15,6 +15,10 @@
  */
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
@@ -33,7 +37,7 @@ import de.mhus.cherry.reactive.model.ui.IModel;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.lib.core.util.MUri;
 
-public class UiModel implements IModel {
+public class UiModel implements IModel, Externalizable {
 
 	private UUID nodeId;
 	private INodeDescription[] outputs;
@@ -98,5 +102,25 @@ public class UiModel implements IModel {
 	public EngineMessage[] getRuntimeMessages() {
 		return messages;
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(nodeId);
+        out.writeObject(outputs);
+        out.writeObject(messages);
+        out.writeObject(predecessor);
+        out.writeObject(node);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        nodeId = (UUID) in.readObject();
+        outputs = (INodeDescription[]) in.readObject();
+        messages = (EngineMessage[]) in.readObject();
+        predecessor = (INodeDescription) in.readObject();
+        node = (INodeDescription) in.readObject();
+    }
 
 }

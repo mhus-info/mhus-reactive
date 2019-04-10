@@ -15,18 +15,17 @@
  */
 package de.mhus.cherry.reactive.vaadin.core;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.vaadin.v7.data.Property.ValueChangeEvent;
-import com.vaadin.v7.data.Property.ValueChangeListener;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
-import com.vaadin.v7.ui.HorizontalLayout;
-import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.MenuItem;
+import com.vaadin.v7.data.Property.ValueChangeEvent;
+import com.vaadin.v7.data.Property.ValueChangeListener;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.v7.ui.Tree;
 import com.vaadin.v7.ui.VerticalLayout;
 
@@ -49,7 +48,6 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
-import de.mhus.lib.errors.MException;
 import de.mhus.lib.vaadin.SearchField;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
@@ -422,7 +420,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
 		INode node = engine.getNode(item.getId().toString());
 
-		VUserForm form = new VUserForm(node) {
+		VUserForm form = new VUserForm(engine,node) {
 			private static final long serialVersionUID = 1L;
 			@Override
 			protected void onFormCancel() {
@@ -433,9 +431,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			protected void onFormSubmit(INode node, MProperties properties) {
 				System.out.println("Submit");
 				try {
-					node.submitUserTask(properties);
+					engine.submitUserTask(node.getId().toString(), properties);
 					showNodeList();
-				} catch (IOException | MException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -445,9 +443,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			protected MProperties onAction(INode node, MProperties properties, String action) {
 				System.out.println("Action");
 				try {
-					MProperties res = node.onUserTaskAction(properties, action);
+					MProperties res = engine.onUserTaskAction(node.getId().toString(),properties, action);
 					return res;
-				} catch (IOException | MException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

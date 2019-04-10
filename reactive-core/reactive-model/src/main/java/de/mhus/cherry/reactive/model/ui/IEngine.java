@@ -22,8 +22,11 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.lib.core.IProperties;
+import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.form.FormControl;
+import de.mhus.lib.form.IFormInformation;
 
 public interface IEngine {
 
@@ -37,8 +40,26 @@ public interface IEngine {
 	
 	ICase getCase(String id, String ... propertyNames) throws Exception;
 
+	// node
+	
 	INode getNode(String id, String ... propertyNames) throws Exception;
 
+	IFormInformation getUserForm(String id) throws Exception;
+
+    IProperties getUserFormValues(String id) throws MException, Exception;
+
+    Class<? extends FormControl> getUserFormControl(String id) throws Exception;
+
+    void submitUserTask(String id, IProperties values) throws Exception;
+
+    void doUnassign(String id) throws Exception;
+
+    void doAssign(String id) throws Exception;
+
+    MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception;
+
+    // case 
+    
 	default ICaseDescription getCaseDescription(ICase caze) throws Exception {
 		return getCaseDescription(caze.getUri());
 	}

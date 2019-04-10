@@ -15,6 +15,10 @@
  */
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,7 +28,7 @@ import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.MLog;
 
-public class UiCase extends MLog implements ICase {
+public class UiCase extends MLog implements ICase, Externalizable {
 
 	private PCaseInfo info;
 	private Map<String, String> properties;
@@ -105,5 +109,20 @@ public class UiCase extends MLog implements ICase {
 	public String getMilestone() {
 		return info.getMilestone();
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(info);
+        out.writeObject(properties);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        info = (PCaseInfo) in.readObject();
+        properties = (Map<String, String>) in.readObject();
+    }
 
 }

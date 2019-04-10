@@ -15,12 +15,17 @@
  */
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.errors.MException;
 
-public class UiNodeDescription extends MLog implements INodeDescription {
+public class UiNodeDescription extends MLog implements INodeDescription, Externalizable {
 
 	private String uri;
 	private String name;
@@ -50,5 +55,21 @@ public class UiNodeDescription extends MLog implements INodeDescription {
 	public String getPropertyName(String property) {
 		return process.getPropertyName(uri, name, property);
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(uri);
+        out.writeObject(name);
+        // out.writeObject(process);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        uri = (String) in.readObject();
+        name = (String) in.readObject();
+        // process = (IProcess) in.readObject();
+    }
 
 }

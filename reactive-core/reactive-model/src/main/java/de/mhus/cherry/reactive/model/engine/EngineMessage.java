@@ -15,11 +15,15 @@
  */
 package de.mhus.cherry.reactive.model.engine;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.UUID;
 
 import de.mhus.lib.core.MCast;
 
-public class EngineMessage {
+public class EngineMessage implements Externalizable {
 
 	public enum TYPE {OTHER,FLOW,ERROR,DEBUG,CONNECT,START}
 	public static final String FLOW_PREFIX = "flow:";
@@ -103,5 +107,27 @@ public class EngineMessage {
 	public String toString() {
 		return originalMsg;
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(type);
+        out.writeObject(msg);
+        out.writeObject(fromNode);
+        out.writeObject(toNode);
+        out.writeObject(originalMsg);
+        out.writeLong(ts);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        type = (TYPE) in.readObject();
+        msg = (String) in.readObject();
+        fromNode = (UUID) in.readObject();
+        toNode = (UUID) in.readObject();
+        originalMsg = (String) in.readObject();
+        ts = in.readLong();
+    }
 	
 }

@@ -15,43 +15,28 @@
  */
 package de.mhus.cherry.reactive.engine.ui;
 
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Map;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.engine.EngineContext;
-import de.mhus.cherry.reactive.model.activity.AElement;
-import de.mhus.cherry.reactive.model.activity.AUserTask;
-import de.mhus.cherry.reactive.model.engine.PCase;
-import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.annotations.generic.Public;
-import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.core.MProperties;
-import de.mhus.lib.errors.AccessDeniedException;
-import de.mhus.lib.errors.MException;
-import de.mhus.lib.form.DefaultFormInformation;
-import de.mhus.lib.form.FormControl;
-import de.mhus.lib.form.IFormInformation;
 
-public class UiNode extends MLog implements INode {
+public class UiNode extends MLog implements INode, Externalizable {
 
 	private PNodeInfo info;
 	private Map<String, String> properties;
-	private Engine engine;
-	private AElement<?> aNode;
-	private UiEngine ui;
 
-	public UiNode(Engine engine, UiEngine ui,PNodeInfo info, Map<String, String> properties) {
-		this.engine = engine;
+	public UiNode(PNodeInfo info, Map<String, String> properties) {
 		this.info =info;
 		this.properties = properties;
-		this.ui = ui;
 	}
 
 	@Override
@@ -131,65 +116,10 @@ public class UiNode extends MLog implements INode {
 	public int getScore() {
 		return info.getScore();
 	}
-
-	@Override
-	public IFormInformation getUserForm() {
-		// TODO check assign
-		try {
-			engine.assignUserTask(info.getId(), ui.getUser());
-		} catch (IOException | MException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		initANode();
-		AUserTask<?> un = (AUserTask<?>)aNode;
-		return new DefaultFormInformation(un.getForm(), un.getActionHandler(), un.getFormControl());
-	}
-
-	@Override
-	public IProperties getUserFormValues() throws MException {
-		// TODO check assign
-		initANode();
-		return ((AUserTask<?>)aNode).getFormValues();
-	}
 	
-	@Override
-	public void submitUserTask(IProperties values) throws IOException, MException {
-		// TODO check assign
-		engine.submitUserTask(info.getId(), values);
-	}
-	
-	
-
-	private synchronized void initANode() {
-		if (aNode != null) return;
-		try {
-			PNode node = engine.getFlowNode(info.getId());
-			PCase caze = engine.getCase(node.getCaseId());
-			EngineContext context = engine.createContext(caze, node);
-			aNode = context.getANode();
-		} catch (Throwable t) {
-			log().e(t);
-		}
-	}
-
 	@Override
 	public String getAssigned() {
 		return info.getAssigned();
-	}
-
-	@Override
-	public void doUnassign() throws IOException, MException {
-		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
-			throw new AccessDeniedException();
-		engine.unassignUserTask(info.getId());
-	}
-
-	@Override
-	public void doAssign() throws IOException, MException {
-		if (!engine.hasExecuteAccess(info.getId(), ui.getUser()))
-			throw new AccessDeniedException();
-		engine.assignUserTask(info.getId(), ui.getUser());
 	}
 
 	@Override
@@ -197,15 +127,19 @@ public class UiNode extends MLog implements INode {
 		return info.getActor();
 	}
 
-	@Override
-	public MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException {
-		return engine.onUserTaskAction(info.getId(), values, action);
-	}
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(info);
+        out.writeObject(properties);
+    }
 
-	@Override
-	public Class <? extends FormControl> getUserFormControl() {
-		initANode();
-		return ((AUserTask<?>)aNode).getFormControl();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        info = (PNodeInfo) in.readObject();
+        properties = (Map<String, String>) in.readObject();
+    }
 
 }

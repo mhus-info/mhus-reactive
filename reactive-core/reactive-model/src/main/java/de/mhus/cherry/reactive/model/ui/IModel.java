@@ -15,11 +15,12 @@
  */
 package de.mhus.cherry.reactive.model.ui;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 
-public interface IModel {
+public interface IModel extends Serializable {
 
 	/**
 	 * Return the predecessor if exists.

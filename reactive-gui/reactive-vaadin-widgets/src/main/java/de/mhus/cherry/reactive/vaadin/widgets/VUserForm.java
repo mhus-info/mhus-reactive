@@ -15,18 +15,16 @@
  */
 package de.mhus.cherry.reactive.vaadin.widgets;
 
-import java.io.IOException;
-
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.v7.ui.HorizontalLayout;
 import com.vaadin.v7.ui.VerticalLayout;
 
+import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.logging.Log;
-import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.IFormInformation;
@@ -44,8 +42,10 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 	private Button bCancel;
 	private PropertiesDataSource dataSource;
 	private VaadinForm vForm;
+    private IEngine engine;
 
-	public VUserForm(INode node) {
+	public VUserForm(IEngine engine, INode node) {
+	    this.engine = engine;
 		this.node = node;
 		vForm = createForm();
 		
@@ -90,18 +90,18 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 	
 	protected void onFormCancel() {
 		try {
-			node.doUnassign();
-		} catch (IOException | MException e) {
+			engine.doUnassign(node.getId().toString());
+		} catch (Exception e) {
 			log.w(e);
 		}
 	}
 
 	protected VaadinForm createForm() {
 		try {
-			IFormInformation hForm = node.getUserForm();
+			IFormInformation hForm = engine.getUserForm(node.getId().toString());
 			DefRoot form = hForm.getForm();
 			dataSource = new PropertiesDataSource();
-			dataSource.setProperties(new MProperties( node.getUserFormValues()));
+			dataSource.setProperties(new MProperties( engine.getUserFormValues(node.getId().toString())));
 			
 			VaadinForm vform = new VaadinForm();
 //			vform.setShowInformation(true);

@@ -15,12 +15,16 @@
  */
 package de.mhus.cherry.reactive.model.engine;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 
-public class PNodeInfo {
+public class PNodeInfo implements Externalizable {
 
 	private UUID id;
 	private UUID caseId;
@@ -156,5 +160,45 @@ public class PNodeInfo {
 	public String getActor() {
 		return actor;
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(id);
+        out.writeObject(caseId);
+        out.writeObject(canonicalName);
+        out.writeObject(assigned);
+        out.writeObject(state);
+        out.writeObject(type);
+        out.writeObject(customId);
+        out.writeObject(uri);
+        out.writeObject(indexValues);
+        out.writeObject(customerId);
+        out.writeLong(created);
+        out.writeLong(modified);
+        out.writeInt(priority);
+        out.writeInt(score);
+        out.writeObject(actor);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        id = (UUID) in.readObject();
+        caseId = (UUID) in.readObject();
+        canonicalName = (String) in.readObject();
+        assigned = (String) in.readObject();
+        state = (STATE_NODE) in.readObject();
+        type = (TYPE_NODE) in.readObject();
+        customId = (String) in.readObject();
+        uri = (String) in.readObject();
+        indexValues = (String[]) in.readObject();
+        customerId = (String) in.readObject();
+        created = in.readLong();
+        modified = in.readLong();
+        priority = in.readInt();
+        score = in.readInt();
+        actor = (String) in.readObject();
+    }
 
 }

@@ -15,6 +15,10 @@
  */
 package de.mhus.cherry.reactive.model.engine;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -25,7 +29,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 
-public class SearchCriterias {
+public class SearchCriterias implements Externalizable {
 
 	public String name;
 	public String custom;
@@ -199,5 +203,55 @@ public class SearchCriterias {
 				"actors",actors
 				);
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(name);
+        out.writeObject(custom);
+        out.writeObject(customer);
+        out.writeObject(process);
+        out.writeObject(version);
+        out.writeObject(pool);
+        out.writeBoolean(unassigned);
+        out.writeObject(assigned);
+        out.writeObject(nodeState);
+        out.writeObject(index);
+        out.writeObject(caseState);
+        out.writeObject(uri);
+        out.writeObject(caseId);
+        out.writeObject(type);
+        out.writeObject(order);
+        out.writeBoolean(orderAscending);
+        out.writeInt(priority);
+        out.writeInt(score);
+        out.writeObject(milestone);
+        out.writeObject(actors);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        name = (String)in.readObject();
+        custom = (String)in.readObject();
+        customer = (String)in.readObject();
+        process = (String)in.readObject();
+        version = (String)in.readObject();
+        pool = (String)in.readObject();
+        unassigned = in.readBoolean();
+        assigned = (String)in.readObject();
+        nodeState = (STATE_NODE)in.readObject();
+        index = (String[])in.readObject();
+        caseState = (STATE_CASE)in.readObject();
+        uri = (String)in.readObject();
+        caseId = (UUID)in.readObject();
+        type = (TYPE_NODE)in.readObject();
+        order = (ORDER)in.readObject();
+        orderAscending = in.readBoolean();
+        priority = in.readInt();
+        score = in.readInt();
+        milestone = (String)in.readObject();
+        actors = (String[])in.readObject();
+    }
 	
 }

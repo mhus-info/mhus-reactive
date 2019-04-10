@@ -15,17 +15,11 @@
  */
 package de.mhus.cherry.reactive.model.ui;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.lib.core.IProperties;
-import de.mhus.lib.core.MProperties;
-import de.mhus.lib.errors.MException;
-import de.mhus.lib.form.FormControl;
-import de.mhus.lib.form.IFormInformation;
 
 public interface INode {
 
@@ -55,22 +49,8 @@ public interface INode {
 
 	int getScore();
 
-	IFormInformation getUserForm();
-
-	IProperties getUserFormValues() throws MException;
-
-	void submitUserTask(IProperties values) throws IOException, MException;
-
 	String getAssigned();
-
-	void doUnassign() throws IOException, MException;
-
-	void doAssign() throws IOException, MException;
 	
 	String getActor();
-
-	MProperties onUserTaskAction(MProperties values, String action) throws IOException, MException;
-
-	Class<? extends FormControl> getUserFormControl();
 	
 }
