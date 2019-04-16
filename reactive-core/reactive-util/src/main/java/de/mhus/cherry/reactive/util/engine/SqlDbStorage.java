@@ -123,7 +123,6 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 					+ "version_=$version$,"
 					+ "pool_=$pool$,"
 					+ "closed_code_=$closedCode$,"
-					+ "closed_code_=$closedCode$,"
 					+ "closed_message_=$closedMessage$";
 
 			if (caze.getIndexValues() != null) {
