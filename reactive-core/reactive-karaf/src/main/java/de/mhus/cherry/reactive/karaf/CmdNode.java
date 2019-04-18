@@ -43,7 +43,7 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
@@ -79,7 +79,7 @@ public class CmdNode extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
 		if (cmd.equals("runtime")) {
 			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
@@ -241,7 +241,7 @@ public class CmdNode extends MLog implements Action {
 				Locale locale = null;
 				if (parameters.length > 2)
 					locale = Locale.forLanguageTag(parameters[2]);
-				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
+				IEngineFactory uiFactory = M.l(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
 				INode inode = engine.getNode(node.getId().toString(), new String[]{"*"});
 				INodeDescription idesc = engine.getNodeDescription2(inode);

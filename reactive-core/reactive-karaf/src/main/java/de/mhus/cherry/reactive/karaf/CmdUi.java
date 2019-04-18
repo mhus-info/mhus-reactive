@@ -32,7 +32,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -72,7 +72,7 @@ public class CmdUi extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		IEngine api = MApi.lookup(IEngineFactory.class).create(user, Locale.forLanguageTag(locale));
+		IEngine api = M.l(IEngineFactory.class).create(user, Locale.forLanguageTag(locale));
 		
 		if (cmd.equals("cases")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 

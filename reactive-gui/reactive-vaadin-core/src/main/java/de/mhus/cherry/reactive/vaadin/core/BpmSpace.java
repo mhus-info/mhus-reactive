@@ -44,7 +44,7 @@ import de.mhus.cherry.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
 import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.lib.core.IProperties;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
@@ -407,10 +407,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 	}
 	
 	private void initEngine() {
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
 		if (context == null) return;
-		engine = MApi.lookup(IEngineFactory.class)
+		engine = M.l(IEngineFactory.class)
 				.create(
 						context.getAccountId(), 
 						context.getLocale());

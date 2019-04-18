@@ -28,7 +28,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.SoftHashMap;
 
@@ -49,7 +49,7 @@ public class IEngineFactoryImpl implements IEngineFactory, IEngineAdmin {
 		synchronized (cache) {
 			IEngine engine = cache.get(user + "#" + locale.getLanguage());
 			if (engine != null && !engine.isClosed()) return engine;
-			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+			ReactiveAdmin api = M.l(ReactiveAdmin.class);
 			engine = new UiEngine(api.getEngine(), user, locale);
 			((UiEngine)engine).setDefaultProcessProperties(defaultProcessProperties);
 			cache.put(user + "#" + locale.getLanguage(), engine);

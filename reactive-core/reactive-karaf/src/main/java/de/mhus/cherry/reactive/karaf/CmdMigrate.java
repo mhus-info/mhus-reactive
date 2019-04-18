@@ -24,7 +24,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.util.Migrator;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.strategy.DefaultMonitor;
 import de.mhus.lib.core.strategy.Monitor;
@@ -75,7 +75,7 @@ public class CmdMigrate extends MLog implements Action {
 		migrator.setNodeRules(nodeRules);
 		migrator.setVerbose(verbose);
 		
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		Engine engine = api.getEngine();
 		migrator.setEngine(engine);
 		

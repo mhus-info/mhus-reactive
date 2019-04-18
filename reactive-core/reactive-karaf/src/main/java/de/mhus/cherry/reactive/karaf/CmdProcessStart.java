@@ -22,7 +22,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 
@@ -44,7 +44,7 @@ public class CmdProcessStart extends MLog implements Action {
 		if (uri.startsWith(EngineConst.SCHEME_REACTIVE + ":") ) {
 			MProperties properties = MProperties.explodeToMProperties(parameters);
 			
-			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+			ReactiveAdmin api = M.l(ReactiveAdmin.class);
 			api.getEngine().start(uri, properties);
 		} else {
 			System.out.println("Unknown schema: " + uri);

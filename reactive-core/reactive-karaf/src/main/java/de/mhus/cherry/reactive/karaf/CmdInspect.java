@@ -47,7 +47,7 @@ import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.util.NoPool;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ConsoleTable;
@@ -181,7 +181,7 @@ public class CmdInspect extends MLog implements Action {
 
 	private EProcess findProcess(String string) throws MException {
 		if (!string.startsWith("bpm://")) string = "bpm://" + string;
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		EProcess process = null;
 		MUri uri = MUri.toUri(string);
 		try {

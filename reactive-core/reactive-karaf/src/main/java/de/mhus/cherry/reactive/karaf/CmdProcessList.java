@@ -22,7 +22,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.ConsoleTable;
@@ -44,7 +44,7 @@ public class CmdProcessList extends MLog implements Action {
 		ConsoleTable table = new ConsoleTable();
 		table.fitToConsole();
 		table.setHeaderValues("Registered", "Deployed", "Status","Info","Deployed");
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		for (String name : api.getAvailableProcesses()) {
 			String deployName = api.getProcessDeployName(name);
 			if (all || deployName != null) {

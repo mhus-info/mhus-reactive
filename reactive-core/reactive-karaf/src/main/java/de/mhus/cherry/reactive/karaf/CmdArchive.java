@@ -33,7 +33,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
@@ -62,7 +62,7 @@ public class CmdArchive extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		Engine engine = api.getEngine();
 		
 		if (cmd.equals("node")) {

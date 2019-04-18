@@ -44,7 +44,7 @@ import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
@@ -85,7 +85,7 @@ public class CmdCase extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		
 		if (cmd.equals("updatefull")) {
 			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
@@ -182,7 +182,7 @@ public class CmdCase extends MLog implements Action {
 				Locale locale = null;
 				if (parameters.length > 2)
 					locale = Locale.forLanguageTag(parameters[2]);
-				IEngineFactory uiFactory = MApi.lookup(IEngineFactory.class);
+				IEngineFactory uiFactory = M.l(IEngineFactory.class);
 				IEngine engine = uiFactory.create(user, locale);
 				ICase icase = engine.getCase(caze.getId().toString(), new String[]{"*"});
 				ICaseDescription idesc = engine.getCaseDescription2(icase);

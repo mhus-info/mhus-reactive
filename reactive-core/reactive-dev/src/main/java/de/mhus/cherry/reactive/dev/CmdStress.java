@@ -22,7 +22,7 @@ import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
@@ -52,7 +52,7 @@ public class CmdStress extends MLog implements Action {
 			console.setColor(COLOR.RED, null);
 			System.out.println(">>> " + cnt + ": " + uri);
 			console.cleanup();
-			ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+			ReactiveAdmin api = M.l(ReactiveAdmin.class);
 			api.getEngine().start(uri);
 			pos = (pos+1) % uris.length;
 			Thread.sleep(interval * 1000);

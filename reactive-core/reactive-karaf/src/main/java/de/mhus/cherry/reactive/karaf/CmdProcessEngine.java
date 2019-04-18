@@ -32,7 +32,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
@@ -75,13 +75,13 @@ public class CmdProcessEngine extends MLog implements Action {
 	@Override
 	public Object execute() throws Exception {
 
-		ReactiveAdmin api = MApi.lookup(ReactiveAdmin.class);
+		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		
 		if (cmd.equals("execute")) {
 			System.out.println(api.getEngine().doExecute(parameters[0]));
 		} else
 		if (cmd.equals("cleanup")) {
-			IEngineAdmin uiApi = MApi.lookup(IEngineAdmin.class);
+			IEngineAdmin uiApi = M.l(IEngineAdmin.class);
 			uiApi.cleanupCache();
 			System.out.println("OK");
 		} else

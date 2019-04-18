@@ -24,7 +24,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
@@ -49,9 +49,9 @@ public class BpmNodeNode extends ObjectListNode<INode,INode> {
 	@Override
 	protected List<INode> getObjectList(CallContext callContext) throws MException {
 
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
-		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+		IEngine engine = M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 
 		String propertyNames = callContext.getParameter("names");
 
@@ -73,9 +73,9 @@ public class BpmNodeNode extends ObjectListNode<INode,INode> {
 	@Override
 	protected INode getObjectForId(CallContext context, String id) throws Exception {
 		
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext acontext = aaa.getCurrent();
-		IEngine engine = MApi.lookup(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
+		IEngine engine = M.l(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 
 		String propertyNames = context.getParameter("_names");
 

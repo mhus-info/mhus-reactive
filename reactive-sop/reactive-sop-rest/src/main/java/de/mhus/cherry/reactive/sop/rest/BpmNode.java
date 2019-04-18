@@ -20,7 +20,7 @@ import java.util.List;
 import org.osgi.service.component.annotations.Component;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
-import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.M;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotSupportedException;
 import de.mhus.osgi.sop.api.aaa.AaaContext;
@@ -65,9 +65,9 @@ public class BpmNode extends ObjectListNode<Object,Object> {
 	
 	@Override
 	protected void doCreate(JsonResult result, CallContext callContext) throws Exception {
-		AccessApi aaa = MApi.lookup(AccessApi.class);
+		AccessApi aaa = M.l(AccessApi.class);
 		AaaContext context = aaa.getCurrent();
-		IEngine engine = MApi.lookup(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+		IEngine engine = M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
 		
 		String uri = callContext.getParameter("uri");
 		String res = String.valueOf(engine.doExecute(uri));
