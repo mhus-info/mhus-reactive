@@ -83,8 +83,8 @@
                 <module>reactive-sop</module>
                 <module>reactive-gui</module>
                 <module>reactive-tools</module>
-                <!-- could not deploy features to central repo at the moment
                 <module>reactive-feature</module>
+                <!-- do not deploy examples
                 <module>cr-examples</module>
                  -->
             </modules>
