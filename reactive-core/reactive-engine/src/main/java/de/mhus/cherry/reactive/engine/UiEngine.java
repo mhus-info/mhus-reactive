@@ -42,6 +42,7 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
@@ -98,7 +99,8 @@ public class UiEngine extends MLog implements IEngine {
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
-		for (PNodeInfo info : engine.storageSearchFlowNodes(criterias)) {
+		Result<PNodeInfo> result = engine.storageSearchFlowNodes(criterias);
+		for (PNodeInfo info : result) {
 			if (user.equals(info.getAssigned()) || hasReadAccess(info.getUri())) {
 				try {
 					if (cnt >= first) {
@@ -157,6 +159,7 @@ public class UiEngine extends MLog implements IEngine {
 				if (out.size() >= size) break;
 			}
 		}
+		result.close();
 		return out;
 	}
 
@@ -166,7 +169,8 @@ public class UiEngine extends MLog implements IEngine {
 		LinkedList<ICase> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
-		for (PCaseInfo info : engine.storageSearchCases(criterias)) {
+		Result<PCaseInfo> result = engine.storageSearchCases(criterias);
+		for (PCaseInfo info : result) {
 			if (hasReadAccess(info.getUri())) {
 				try {
 					if (cnt >= first) {
@@ -226,6 +230,7 @@ public class UiEngine extends MLog implements IEngine {
 				if (out.size() >= size) break;
 			}
 		}
+		result.close();
 		return out;
 	}
 
