@@ -207,16 +207,34 @@ public class CmdCase extends MLog implements Action {
 			table.setHeaderValues("Id","CName","State","Type","Modified","Scheduled");
 			table.getColumn(0).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
-				PNode node = api.getEngine().getFlowNode(info.getId());
-				if (all || node.getState() != STATE_NODE.CLOSED) {
-					String scheduled = "-";
-					Entry<String, Long> scheduledEntry = node.getNextScheduled();
-					if (scheduledEntry != null) {
-						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-						if (diff > 0)
-							scheduled = MPeriod.getIntervalAsString(diff);
-					}
-					table.addRowValues(node.getId(),node.getCanonicalName(),node.getState(),node.getType(), new Date(info.getModified()), scheduled);
+				if (all || info.getState() != STATE_NODE.CLOSED) {
+				    try {
+    				    PNode node = api.getEngine().getFlowNode(info.getId());
+    					String scheduled = "-";
+    					Entry<String, Long> scheduledEntry = node.getNextScheduled();
+    					if (scheduledEntry != null) {
+    						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+    						if (diff > 0)
+    							scheduled = MPeriod.getIntervalAsString(diff);
+    					}
+    					table.addRowValues(
+    					        node.getId(),
+    					        node.getCanonicalName(),
+    					        node.getState(),
+    					        node.getType(), 
+    					        new Date(info.getModified()), 
+    					        scheduled
+    					    );
+				    } catch (Throwable t ) {
+                        table.addRowValues(
+                                info.getId(),
+                                info.getCanonicalName(),
+                                info.getState(),
+                                info.getType(), 
+                                new Date(info.getModified()), 
+                                t.getMessage()
+                            );
+				    }
 				}
 			}
 			table.print(System.out);
@@ -228,9 +246,30 @@ public class CmdCase extends MLog implements Action {
 			table.setHeaderValues("Id","CustomId","Customer","Modified","Uri","State","Close");
 			table.getColumn(0).minWidth = 32;
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
-				PCase caze = api.getEngine().getCase(info.getId());
-				if (all || caze.getState() != STATE_CASE.CLOSED)
-					table.addRowValues(info.getId(), caze.getCustomId(), caze.getCustomerId(), new Date(info.getModified()), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+			    if (all || info.getState() != STATE_CASE.CLOSED) {
+			        try {
+    			        PCase caze = api.getEngine().getCase(info.getId());
+    					table.addRowValues(
+    					        info.getId(), 
+    					        caze.getCustomId(), 
+    					        caze.getCustomerId(), 
+    					        new Date(info.getModified()), 
+    					        caze.getUri(), 
+    					        caze.getState(), 
+    					        caze.getClosedCode() + " " + caze.getClosedMessage() 
+    					    );
+			        } catch (Throwable t) {
+                        table.addRowValues(
+                                info.getId(), 
+                                info.getCustomId(), 
+                                info.getCustomerId(), 
+                                new Date(info.getModified()), 
+                                info.getUri(), 
+                                info.getState(), 
+                                t.getMessage()
+                            );
+			        }
+			    }
 			}
 			table.print(System.out);
 		} else
@@ -257,6 +296,10 @@ public class CmdCase extends MLog implements Action {
 				}
 			}
 		} else
+        if (cmd.equals("erase")) {
+            System.out.println("Erase: " + parameters[0]);
+            api.getEngine().storageDeleteCaseAndFlowNodes(UUID.fromString(parameters[0]));
+        } else
 		if (cmd.equals("cancel")) {
 			for (String id : parameters) {
 				System.out.println("Cancel: " + id);

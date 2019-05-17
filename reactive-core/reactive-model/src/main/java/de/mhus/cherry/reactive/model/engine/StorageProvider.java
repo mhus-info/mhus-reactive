@@ -52,6 +52,14 @@ public interface StorageProvider {
 	 */
 	void deleteCaseAndFlowNodes(UUID id) throws IOException;
 	
+    /**
+     * Delete the flow data from storage.
+     * 
+     * @param id
+     * @throws IOException 
+     */
+    void deleteFlowNode(UUID id) throws IOException;
+	
 	/**
 	 * Save or update the flow node.
 	 * @param flow

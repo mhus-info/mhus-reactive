@@ -157,27 +157,42 @@ public class CmdNode extends MLog implements Action {
 			table.getColumn(0).minWidth = 32;
 			table.getColumn(7).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
-				PNode node = api.getEngine().getFlowNode(info.getId());
-				if (all || (node.getState() != STATE_NODE.CLOSED && node.getType() != TYPE_NODE.RUNTIME) ) {
-					String scheduled = "-";
-					Entry<String, Long> scheduledEntry = node.getNextScheduled();
-					if (scheduledEntry != null) {
-						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-						if (diff > 0)
-							scheduled = MPeriod.getIntervalAsString(diff);
-					}
-					table.addRowValues(
-							node.getId(),
-							info.getCustomId(), 
-							node.getName(),
-							node.getState(),
-							node.getType(), 
-							new Date(info.getModified()),
-							scheduled, 
-							node.getCaseId(),
-							node.getAssignedUser(),
-							info.getUri()
-							);
+				if (all || (info.getState() != STATE_NODE.CLOSED && info.getType() != TYPE_NODE.RUNTIME) ) {
+				    try {
+    				    PNode node = api.getEngine().getFlowNode(info.getId());
+    					String scheduled = "-";
+    					Entry<String, Long> scheduledEntry = node.getNextScheduled();
+    					if (scheduledEntry != null) {
+    						long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+    						if (diff > 0)
+    							scheduled = MPeriod.getIntervalAsString(diff);
+    					}
+    					table.addRowValues(
+    							node.getId(),
+    							info.getCustomId(), 
+    							node.getName(),
+    							node.getState(),
+    							node.getType(), 
+    							new Date(info.getModified()),
+    							scheduled, 
+    							node.getCaseId(),
+    							node.getAssignedUser(),
+    							info.getUri()
+    							);
+				    } catch (Throwable t) {
+                        table.addRowValues(
+                                info.getId(),
+                                info.getCustomId(), 
+                                info.getCanonicalName(),
+                                info.getState(),
+                                info.getType(), 
+                                new Date(info.getModified()),
+                                "?", 
+                                info.getCaseId(),
+                                t.getMessage(),
+                                info.getUri()
+                                );
+				    }
 				}
 			}
 			table.print(System.out);
@@ -268,6 +283,10 @@ public class CmdNode extends MLog implements Action {
 				api.getEngine().cancelFlowNode(UUID.fromString(id));
 			}
 		} else
+        if (cmd.equals("erase")) {
+            System.out.println("Erase: " + parameters[0]);
+            api.getEngine().storageDeleteFlowNode(UUID.fromString(parameters[0]));
+        } else
 		if (cmd.equals("retry")) {
 			for (String id : parameters) {
 				System.out.println("Retry: " + id);

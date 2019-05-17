@@ -18,7 +18,6 @@ package de.mhus.cherry.reactive.examples.simple1.forms;
 import de.mhus.cherry.reactive.examples.simple1.S1Pool;
 import de.mhus.cherry.reactive.examples.simple1.S1TheEnd;
 import de.mhus.cherry.reactive.examples.simple1._S1Pool;
-import de.mhus.cherry.reactive.examples.simple1.forms.Address.SALUTATION;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
@@ -30,6 +29,7 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.util.Address.SALUTATION;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.Item;
@@ -62,7 +62,7 @@ import de.mhus.lib.form.definition.FmText;
 import de.mhus.lib.form.definition.FmTextArea;
 import de.mhus.lib.form.definition.FmVoid;
 
-@ActivityDescription(displayName = "Complex User Form 01", outputs = @Output(activity = S1TheEnd.class))
+@ActivityDescription(displayName = "Complex User Form 02", outputs = @Output(activity = S1TheEnd.class))
 @GenerateConst
 public class S1UserForm02 extends RUserTask<S1Pool> {
 

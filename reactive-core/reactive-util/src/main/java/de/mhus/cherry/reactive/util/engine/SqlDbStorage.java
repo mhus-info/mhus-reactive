@@ -327,6 +327,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 		}
 	}
 
+    @Override
+    public void deleteFlowNode(UUID id) throws IOException {
+        try {
+            DbConnection con = pool.getConnection();
+            MProperties prop = new MProperties();
+            prop.put("id", id);
+            {
+                DbStatement sta = con.createStatement("DELETE FROM " + prefix + "_node_ WHERE id_=$id$");
+                sta.execute(prop);
+            }
+            con.commit();
+            con.close();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+    
 	@Override
 	public void updateFullFlowNode(PNode flow) throws IOException {
 		

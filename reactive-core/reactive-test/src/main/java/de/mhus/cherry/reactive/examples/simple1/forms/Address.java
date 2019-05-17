@@ -26,6 +26,7 @@ import de.mhus.lib.core.MConstants;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.definition.IDefDefinition;
+import de.mhus.lib.core.util.Address.SALUTATION;
 import de.mhus.lib.form.definition.FaColumns;
 import de.mhus.lib.form.definition.FaItemDefinition;
 import de.mhus.lib.form.definition.FmCombobox;
@@ -36,9 +37,7 @@ import de.mhus.lib.form.definition.FmVoid;
 public class Address {
 	
 	public static final String COUNTRY_CODE_DE = Address.getCountryCode(MConstants.LOCALE_DE_DE);
-	
-	public enum SALUTATION {OTHER,MR,MRS,COMPANY,AGENCY,COUPLE}
-	
+		
 	@PropertyDescription
 	private SALUTATION salutation;
 	@PropertyDescription

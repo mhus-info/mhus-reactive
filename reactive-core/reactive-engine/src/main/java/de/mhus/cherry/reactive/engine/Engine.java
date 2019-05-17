@@ -1689,6 +1689,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		return storage.getMessageFlowNodes(caseId, state, message);
 	}
 
+    public void storageDeleteCaseAndFlowNodes(UUID caseId) throws IOException {
+        storage.deleteCaseAndFlowNodes(caseId);
+    }
+    
+    public void storageDeleteFlowNode(UUID nodeId) throws IOException {
+        storage.deleteFlowNode(nodeId);
+    }
+    
 	// -- archive
 
 	public Result<PCaseInfo> archiveSearchCases(SearchCriterias criterias) throws IOException {

@@ -5,9 +5,13 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import de.mhus.cherry.reactive.model.ui.IEngineClassLoader;
+import de.mhus.lib.core.M;
+import de.mhus.lib.core.MActivator;
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MXml;
 import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.lang.AlreadyBoundException;
+import de.mhus.lib.core.lang.LocalClassLoader;
 import de.mhus.lib.core.logging.MLogUtil;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
@@ -61,13 +65,15 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             MLogUtil.log().e(getClass(),e);
             out.writeObject(null);
         }
-        if (actionHandler != null)
-            out.writeObject(actionHandler.getClass().getCanonicalName());
-        else
+        if (actionHandler != null) {
+            out.writeObject(actionHandler.getCanonicalName());
+            out.writeObject(MSystem.getBytes(actionHandler));
+        } else
             out.writeObject(null);
-        if (formControl != null)
-            out.writeObject(formControl.getClass().getCanonicalName());
-        else
+        if (formControl != null) {
+            out.writeObject(formControl.getCanonicalName());
+            out.writeObject(MSystem.getBytes(formControl));
+        } else
             out.writeObject(null);
     }
 
@@ -85,13 +91,30 @@ public class UiFormInformation implements IFormInformation, Externalizable {
         }
         {
             String name = (String) in.readObject();
-            if (name != null)
-                actionHandler = (Class<? extends ActionHandler>) IEngineClassLoader.instance().load(name);
+            if (name != null) {
+                byte[] code = (byte[]) in.readObject();
+                try {
+                    LocalClassLoader cl = new LocalClassLoader( M.l(MActivator.class) );
+                    cl.addClassCode(name, code);
+                    actionHandler = (Class<? extends ActionHandler>) cl.loadClass(name);
+                } catch (AlreadyBoundException e) {
+                    throw new IOException(name, e);
+                }
+            }
         }
         {
             String name = (String) in.readObject();
-            if (name != null)
-                formControl = (Class<? extends FormControl>) IEngineClassLoader.instance().load(name);
+            if (name != null) {
+                byte[] code = (byte[]) in.readObject();
+                try {
+                    
+                    LocalClassLoader cl = new LocalClassLoader( M.l(MActivator.class) );
+                    cl.addClassCode(name, code);
+                    formControl = (Class<? extends FormControl>) cl.loadClass(name);
+                } catch (AlreadyBoundException e) {
+                    throw new IOException(name, e);
+                }
+            }
         }
     }
 
