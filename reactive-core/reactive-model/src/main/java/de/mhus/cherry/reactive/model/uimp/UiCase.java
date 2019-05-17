@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.model.uimp;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -30,8 +30,11 @@ import de.mhus.lib.core.MLog;
 
 public class UiCase extends MLog implements ICase, Externalizable {
 
+    private static final long serialVersionUID = 1L;
 	private PCaseInfo info;
 	private Map<String, String> properties;
+	
+	public UiCase() {}
 	
 	public UiCase(PCaseInfo info, Map<String, String> properties) {
 		this.info = info;

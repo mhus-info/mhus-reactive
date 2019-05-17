@@ -38,6 +38,8 @@ public class PCaseInfo implements Externalizable {
 	private int score;
 	private String milestone;
 
+    public PCaseInfo() {}
+    
 	public PCaseInfo(
 			UUID id, 
 			String uri, 

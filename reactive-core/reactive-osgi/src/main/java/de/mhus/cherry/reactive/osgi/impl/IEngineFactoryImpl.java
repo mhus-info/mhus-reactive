@@ -23,7 +23,8 @@ import org.osgi.service.component.ComponentContext;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import de.mhus.cherry.reactive.engine.ui.UiEngine;
+
+import de.mhus.cherry.reactive.engine.UiEngine;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;

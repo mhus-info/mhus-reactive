@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.model.uimp;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
 import de.mhus.cherry.reactive.model.ui.ICaseDescription;
 import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.errors.MException;
 
-public class UiCaseDescription extends MLog implements ICaseDescription {
+public class UiCaseDescription extends MLog implements ICaseDescription, Externalizable {
 
-	private IProcess process;
+    private static final long serialVersionUID = 1L;
+    private IProcess process;
 	private String uri;
 
-	public UiCaseDescription(UiEngine ui, String uri) {
+	public UiCaseDescription() {}
+	
+	public UiCaseDescription(String uri, IProcess process) {
 		this.uri = uri;
-		try {
-			process = ui.getProcess(uri);
-		} catch (MException e) {
-			log().d(uri,e);
-		}
+		this.process = process;
 	}
 
 	@Override
@@ -48,5 +51,19 @@ public class UiCaseDescription extends MLog implements ICaseDescription {
 	public String getPropertyName(String property) {
 		return process.getPropertyName(uri, null, property);
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(uri);
+        out.writeObject(process);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        uri = (String) in.readObject();
+        process = (IProcess) in.readObject();
+    }
 
 }

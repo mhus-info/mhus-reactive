@@ -20,6 +20,7 @@ import java.util.Map;
 
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.cherry.reactive.model.util.EverybodyActor;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.basics.consts.GenerateConst;
 
@@ -27,7 +28,8 @@ import de.mhus.lib.basics.consts.GenerateConst;
 		displayName="Example Pool",
 		description="This pool is used to test the current development",
 		indexDisplayNames = {"Text 1","Text 2","Created"},
-		actorRead=S1ActorManager.class
+		actorRead=S1ActorWorker.class,
+		actorInitiator=S1ActorManager.class
 		)
 @GenerateConst
 public class S1Pool extends RPool<S1Pool> {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.engine;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -24,19 +24,25 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AUserTask;
+import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
+import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.annotations.PoolDescription;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.cherry.reactive.model.engine.EElement;
+import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
+import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
+import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.ICaseDescription;
@@ -46,9 +52,20 @@ import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.ui.IPool;
 import de.mhus.cherry.reactive.model.ui.IProcess;
+import de.mhus.cherry.reactive.model.uimp.UiCase;
+import de.mhus.cherry.reactive.model.uimp.UiCaseDescription;
+import de.mhus.cherry.reactive.model.uimp.UiFormInformation;
+import de.mhus.cherry.reactive.model.uimp.UiModel;
+import de.mhus.cherry.reactive.model.uimp.UiNode;
+import de.mhus.cherry.reactive.model.uimp.UiNodeDescription;
+import de.mhus.cherry.reactive.model.uimp.UiPool;
+import de.mhus.cherry.reactive.model.uimp.UiProcess;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.pojo.PojoAttribute;
+import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
@@ -276,7 +293,72 @@ public class UiEngine extends MLog implements IEngine {
 	@Override
 	public IProcess getProcess(String uri) throws MException {
 		if (engine == null) throw new WrongStateEception();
-		UiProcess out = new UiProcess(this, engine.getProcess(MUri.toUri(uri)), defaultProcessProperties);
+		
+		MProperties properties = new MProperties();
+
+		EProcess process = engine.getProcess(MUri.toUri(uri));
+		if ( process == null) return null;
+            for (String poolName : process.getPoolNames()) {
+                EPool pool = process.getPool(poolName);
+                String pUri = EngineConst.SCHEME_REACTIVE + "://" + process.getCanonicalName() + ":" + process.getVersion() + "/" + pool.getCanonicalName();
+                
+                PoolDescription pd = pool.getPoolDescription();
+                if (pd != null) { // paranoia
+                    properties.setString(pUri + "#displayName", pd.displayName().length() == 0 ? pool.getName() : pd.displayName());
+                    properties.setString(pUri + "#description", pd.description());
+                    String[] index = pd.indexDisplayNames();
+                    for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
+                        if (index[i] != null)
+                            properties.setString(pUri + "#pnode.index" + i, index[i]);
+                    }
+                    PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
+                    for( PojoAttribute<?> attr : pojoModel) {
+                        String name = attr.getName();
+                        PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+                        if (desc != null) {
+                            if (desc.displayName().length() != 0)
+                                name = desc.displayName();
+                            else
+                            if (desc.name().length() != 0)
+                                name = desc.name();
+                        }
+                        properties.setString(pUri + "#case." + attr.getName(), name);
+                    }
+                }
+                    
+                
+                for (String eleName : pool.getElementNames()) {
+                    EElement ele = pool.getElement(eleName);
+                    ActivityDescription desc = ele.getActivityDescription();
+                    if (desc == null) continue;
+                    String eUri = pUri + "/" + ele.getCanonicalName();
+                    
+                    properties.setString(eUri + "#displayName", desc.displayName().length() == 0 ? ele.getName() : desc.displayName());
+                    properties.setString(eUri + "#description", desc.description());
+                    String[] index = desc.indexDisplayNames();
+                    for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
+                        if (index[i] != null)
+                            properties.setString(eUri + "#pnode.index" + i, index[i]);
+                    }
+                    PojoModel pojoModel = ActivityUtil.createPojoModel(ele.getElementClass());
+                    for( PojoAttribute<?> attr : pojoModel) {
+                        String name = attr.getName();
+                        PropertyDescription pdesc = attr.getAnnotation(PropertyDescription.class);
+                        if (pdesc != null) {
+                            if (pdesc.displayName().length() != 0)
+                                name = pdesc.displayName();
+                            else
+                            if (pdesc.name().length() != 0)
+                                name = pdesc.name();
+                        }
+                        properties.setString(pUri + "#node." + attr.getName(), name);
+                    }
+                    
+                }
+        }
+        properties.putAll(defaultProcessProperties);
+
+		UiProcess out = new UiProcess(properties, getLocale());
 		return out;
 	}
 
@@ -285,7 +367,40 @@ public class UiEngine extends MLog implements IEngine {
 		if (engine == null) throw new WrongStateEception();
 		MUri u = MUri.toUri(uri);
 		EProcess process = engine.getProcess(u);
-		UiPool out = new UiPool(this, process, engine.getPool(process, u), defaultProcessProperties);
+		EPool pool = engine.getPool(process, u);
+		
+        if (pool == null) return null;
+            
+        MProperties properties = new MProperties();
+        String pUri = EngineConst.SCHEME_REACTIVE + "://" + process.getCanonicalName() + ":" + process.getVersion() + "/" + pool.getCanonicalName();
+    
+        PoolDescription pd = pool.getPoolDescription();
+        if (pd != null) { // paranoia
+            properties.setString(pUri + "#displayName", pd.displayName().length() == 0 ? pool.getName() : pd.displayName());
+            properties.setString(pUri + "#description", pd.description());
+            String[] index = pd.indexDisplayNames();
+            for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
+                if (index[i] != null)
+                    properties.setString(pUri + "#pnode.index" + i, index[i]);
+            }
+            PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
+            for( PojoAttribute<?> attr : pojoModel) {
+                String name = attr.getName();
+                PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+                if (desc != null) {
+                    if (desc.displayName().length() != 0)
+                        name = desc.displayName();
+                    else
+                    if (desc.name().length() != 0)
+                        name = desc.name();
+                }
+                properties.setString(pUri + "#case." + attr.getName(), name);
+            }
+        }
+        properties.putAll(defaultProcessProperties);
+            
+		
+		UiPool out = new UiPool( pUri, pd, properties);
 		return out;
 	}
 
@@ -471,12 +586,24 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public ICaseDescription getCaseDescription(String uri) throws Exception {
-		return new UiCaseDescription(this,uri);
+        IProcess process = null;
+       try {
+            process = getProcess(uri);
+        } catch (MException e) {
+            log().d(uri,e);
+        }
+		return new UiCaseDescription(uri, process);
 	}
 
 	@Override
 	public INodeDescription getNodeDescription(String uri, String name) throws Exception {
-		return new UiNodeDescription(this, uri, name);
+        IProcess process = null;
+       try {
+            process = getProcess(uri);
+        } catch (MException e) {
+            log().d(uri,e);
+        }
+		return new UiNodeDescription(uri, name, process);
 	}
 
 	@Override
@@ -501,7 +628,7 @@ public class UiEngine extends MLog implements IEngine {
 	public IModel getModel(UUID nodeId) throws Exception {
 		PNodeInfo node = engine.getFlowNodeInfo(nodeId);
 		if (!hasReadAccess(node.getUri())) return null;
-		return new UiModel(this, engine, nodeId);
+		return newUiModel(this, engine, nodeId);
 	}
 
 	@Override
@@ -513,11 +640,51 @@ public class UiEngine extends MLog implements IEngine {
 		LinkedList<IModel> out = new LinkedList<>();
 		for (PNodeInfo node : engine.storageGetFlowNodes(caseId, null)) {
 			if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.SEVERE)
-				out.add(new UiModel(this, engine, node.getId()));
+				out.add(newUiModel(this, engine, node.getId()));
 		}
 		return out.toArray(new IModel[out.size()]);
 	}
 
+	private IModel newUiModel(UiEngine ui, Engine engine, UUID nodeId) throws Exception {
+	    
+	    INodeDescription[] outputs;
+	    EngineMessage[] messages;
+	    INodeDescription predecessor = null;
+	    INodeDescription node;
+
+        PNode pNode = engine.getFlowNode(nodeId);
+        PCase caze = engine.getCase(pNode.getCaseId());
+        MUri uri = MUri.toUri(caze.getUri());
+        EProcess process = engine.getProcess(uri);
+        EPool pool = engine.getPool(process, uri);
+        String uriStr = "bpm://" + process.getCanonicalName() + "/" + pool.getCanonicalName();
+        node = ui.getNodeDescription(uriStr, pNode.getCanonicalName());
+        EElement element = pool.getElement(pNode.getCanonicalName());
+        ActivityDescription desc = element.getActivityDescription();
+        
+        Output[] out = desc.outputs();
+        outputs = new INodeDescription[out.length];
+        for (int i = 0; i < out.length; i++)
+            outputs[i] = ui.getNodeDescription(uriStr,out[i].activity().getCanonicalName());
+        
+        EngineContext context = engine.createContext(caze, pNode);
+        PNode pRuntime = engine.getRuntimeForPNode(context, pNode);
+        RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
+
+        messages = aRuntime.getMessages().toArray(new EngineMessage[0]);
+        
+        for ( EngineMessage msg : messages) {
+            if (msg.getToNode() != null && msg.getFromNode() != null && msg.getToNode().equals(nodeId)) {
+                PNodeInfo predecessorNode = engine.getFlowNodeInfo(msg.getFromNode());
+                predecessor = ui.getNodeDescription(uriStr, predecessorNode.getCanonicalName());
+                break;
+            }
+        }
+        
+        return new UiModel(nodeId, outputs, messages, predecessor, node);
+
+	}
+	
     @Override
     public IFormInformation getNodeUserForm(String id) throws Exception {
         if (engine == null) throw new WrongStateEception();

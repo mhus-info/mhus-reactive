@@ -42,6 +42,8 @@ public class PNodeInfo implements Externalizable {
 	private int score;
 	private String actor;
 
+    public PNodeInfo() {}
+    
 	public PNodeInfo(
 			UUID id, 
 			UUID caseId, 

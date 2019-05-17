@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.model.uimp;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -23,22 +23,20 @@ import java.io.ObjectOutput;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
-import de.mhus.lib.errors.MException;
 
 public class UiNodeDescription extends MLog implements INodeDescription, Externalizable {
 
+    private static final long serialVersionUID = 1L;
 	private String uri;
 	private String name;
 	private IProcess process;
 
-	public UiNodeDescription(UiEngine ui, String uri, String name) {
+	public UiNodeDescription() {}
+	
+	public UiNodeDescription(String uri, String name, IProcess process) {
 		this.uri = uri;
 		this.name = name;
-		try {
-			process = ui.getProcess(uri);
-		} catch (MException e) {
-			log().d(uri,e);
-		}
+		this.process = process;
 	}
 
 	@Override

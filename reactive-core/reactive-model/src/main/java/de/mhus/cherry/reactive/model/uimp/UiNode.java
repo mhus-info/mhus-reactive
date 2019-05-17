@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.model.uimp;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -31,9 +31,12 @@ import de.mhus.lib.core.MLog;
 
 public class UiNode extends MLog implements INode, Externalizable {
 
+    private static final long serialVersionUID = 1L;
 	private PNodeInfo info;
 	private Map<String, String> properties;
 
+	public UiNode() {}
+	
 	public UiNode(PNodeInfo info, Map<String, String> properties) {
 		this.info =info;
 		this.properties = properties;

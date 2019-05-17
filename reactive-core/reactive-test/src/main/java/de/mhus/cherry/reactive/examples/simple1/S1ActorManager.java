@@ -19,7 +19,8 @@ import de.mhus.cherry.reactive.model.annotations.ActorDescription;
 import de.mhus.cherry.reactive.util.activity.RActor;
 
 @ActorDescription(
-		name="admin"
+		name="admin",
+		groups="PORTAL_ADMIN"
 )
 public class S1ActorManager extends RActor {
 

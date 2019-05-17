@@ -15,8 +15,12 @@
  */
 package de.mhus.cherry.reactive.examples.simple1;
 
+import de.mhus.cherry.reactive.model.annotations.ActorDescription;
 import de.mhus.cherry.reactive.util.activity.RActor;
 
+@ActorDescription(
+        groups="INT_USER"
+)
 public class S1ActorWorker extends RActor {
 
 }

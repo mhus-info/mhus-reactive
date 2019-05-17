@@ -13,62 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.cherry.reactive.engine.ui;
+package de.mhus.cherry.reactive.model.uimp;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.lang.reflect.InvocationTargetException;
 
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
-import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
-import de.mhus.cherry.reactive.model.engine.EPool;
-import de.mhus.cherry.reactive.model.engine.EProcess;
-import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.ui.IPool;
-import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.NoForm;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.pojo.PojoAttribute;
-import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.form.IFormInformation;
 
-public class UiPool extends MLog implements IPool {
+public class UiPool extends MLog implements IPool, Externalizable {
 
-	@SuppressWarnings("unused")
-	private UiEngine engine;
-	private MProperties properties = new MProperties();
+    private static final long serialVersionUID = 1L;
+	private MProperties properties = null;
 	private String pUri;
 	private PoolDescription pd;
 
-	public UiPool(UiEngine engine, EProcess process, EPool pool, MProperties defaultProcessProperties) {
-		this.engine = engine;
-		if (pool == null) return;
-		
-		pUri = EngineConst.SCHEME_REACTIVE + "://" + process.getCanonicalName() + ":" + process.getVersion() + "/" + pool.getCanonicalName();
-
-		pd = pool.getPoolDescription();
-		if (pd != null) { // paranoia
-			properties.setString(pUri + "#displayName", pd.displayName().length() == 0 ? pool.getName() : pd.displayName());
-			properties.setString(pUri + "#description", pd.description());
-			String[] index = pd.indexDisplayNames();
-			for (int i = 0; i < Math.min(index.length, EngineConst.MAX_INDEX_VALUES); i++) {
-				if (index[i] != null)
-					properties.setString(pUri + "#pnode.index" + i, index[i]);
-			}
-			PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
-			for( PojoAttribute<?> attr : pojoModel) {
-				String name = attr.getName();
-				PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
-				if (desc != null) {
-					if (desc.displayName().length() != 0)
-						name = desc.displayName();
-					else
-					if (desc.name().length() != 0)
-						name = desc.name();
-				}
-				properties.setString(pUri + "#case." + attr.getName(), name);
-			}
-		}
-		properties.putAll(defaultProcessProperties);
+    public UiPool() {}
+    
+	public UiPool(String pUri, PoolDescription pd, MProperties properties) {
+	    this.pUri = pUri;
+	    this.pd = pd;
+	    this.properties = properties;
 	}
 
 	@Override
@@ -104,5 +76,21 @@ public class UiPool extends MLog implements IPool {
 		}
 		return null;
 	}
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(1);
+        out.writeObject(pUri);
+        out.writeObject(pd);
+        out.writeObject(properties);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        pUri = (String) in.readObject();
+        pd = (PoolDescription) in.readObject();
+        properties = (MProperties) in.readObject();
+    }
 
 }

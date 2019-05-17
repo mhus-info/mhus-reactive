@@ -1806,9 +1806,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		MUri muri = MUri.toUri(uri);
 		try {
 			EProcess process = getProcess(muri);
-			if (process == null) return false;
+			if (process == null) {
+	               log().d("hasReadAccess: Process not found",uri);
+	               return false;
+			}
 			EPool pool = getPool(process, muri);
-			if (pool == null) return false;
+			if (pool == null) {
+                log().d("hasReadAccess: Pool not found",uri);
+                return false;
+			}
 			EngineContext context = new EngineContext(this);
 			context.setUri(uri);
 			context.setEProcess(process);
@@ -1835,6 +1841,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				}
 			}
 			
+            log().d("hasReadAccess: Access not found",uri);
 			return false;
 			
 		} catch (Throwable t) {
@@ -1850,9 +1857,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		MUri muri = MUri.toUri(uri);
 		try {
 			EProcess process = getProcess(muri);
-			if (process == null) return false;
+			if (process == null) {
+	              log().d("hasWriteAccess: Process not found",uri);
+			    return false;
+			}
 			EPool pool = getPool(process, muri);
-			if (pool == null) return false;
+			if (pool == null) {
+                log().d("hasWriteAccess: Pool not found",uri);
+			    return false;
+			}
 			EngineContext context = new EngineContext(this);
 			context.setUri(uri);
 			context.setEProcess(process);
@@ -1869,6 +1882,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				}
 			}
 			
+            log().d("hasWriteAccess: Access not found",uri);
 			return false;
 			
 		} catch (Throwable t) {
@@ -1883,9 +1897,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		try {
 
 			EProcess process = getProcess(uri);
-			if (process == null) return false;
+			if (process == null) {
+			    log().d("hasInitiateAccess: Process not found",uri);
+			    return false;
+			}
 			EPool pool = getPool(process, uri);
-			if (pool == null) return false;
+			if (pool == null) {
+                log().d("hasInitiateAccess: Pool not found",uri);
+			    return false;
+			}
 			EngineContext context = new EngineContext(this);
 			context.setUri(uri.toString());
 			context.setEProcess(process);
@@ -1898,6 +1918,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				boolean hasAccess = actor.hasAccess(user);
 				if (hasAccess) return true;
 			}
+            log().d("hasInitiateAccess: Access not found",uri);
 			return false;
 
 		} catch (Throwable t) {
@@ -1919,9 +1940,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			
 			MUri muri = MUri.toUri(uri);
 			EProcess process = getProcess(muri);
-			if (process == null) return false;
+			if (process == null) {
+	             log().d("hasExecuteAccess: Process not found",uri);
+			    return false;
+			}
 			EPool pool = getPool(process, muri);
-			if (pool == null) return false;
+			if (pool == null) {
+                log().d("hasExecuteAccess: Pool not found",uri);
+			    return false;
+			}
 			EngineContext context = new EngineContext(this, node);
 			context.setUri(uri);
 			context.setEProcess(process);
