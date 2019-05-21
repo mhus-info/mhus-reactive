@@ -86,7 +86,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             try {
                 form = ModelUtil.toModel( MXml.loadXml(formXml).getDocumentElement() );
             } catch (Exception e) {
-                MLogUtil.log().e(getClass(),e);
+                throw new IOException("Form: " + formXml, e);
             }
         }
         {
@@ -98,7 +98,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
                     cl.addClassCode(name, code);
                     actionHandler = (Class<? extends ActionHandler>) cl.loadClass(name);
                 } catch (AlreadyBoundException e) {
-                    throw new IOException(name, e);
+                    throw new IOException("ActionHandler: " + name, e);
                 }
             }
         }
@@ -112,7 +112,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
                     cl.addClassCode(name, code);
                     formControl = (Class<? extends FormControl>) cl.loadClass(name);
                 } catch (AlreadyBoundException e) {
-                    throw new IOException(name, e);
+                    throw new IOException("FormControl: " + name, e);
                 }
             }
         }
