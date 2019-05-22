@@ -20,7 +20,6 @@ import java.util.Map;
 
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
-import de.mhus.cherry.reactive.model.util.EverybodyActor;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.basics.consts.GenerateConst;
 
