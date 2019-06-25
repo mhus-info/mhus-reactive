@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -48,16 +47,16 @@ import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.util.NoPool;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pinspect", description = "Inspect deployed processes")
 @Service
-public class CmdInspect extends MLog implements Action {
+public class CmdInspect extends AbstractCmd {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
 			+ " pools <process>\n"
@@ -74,7 +73,7 @@ public class CmdInspect extends MLog implements Action {
 	private boolean full;
 
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 		
 		switch (cmd) {
 		case "pools": {

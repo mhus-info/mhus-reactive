@@ -21,7 +21,6 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -45,15 +44,15 @@ import de.mhus.cherry.reactive.model.uimp.UiProcess;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
-import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
-import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pnode", description = "Node modifiations")
 @Service
-public class CmdNode extends MLog implements Action {
+public class CmdNode extends AbstractCmd {
 
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
@@ -77,7 +76,7 @@ public class CmdNode extends MLog implements Action {
 
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 

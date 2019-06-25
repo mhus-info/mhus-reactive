@@ -15,25 +15,24 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pundeploy", description = "Undeploy processes")
 @Service
-public class CmdProcessUndeploy extends MLog implements Action {
+public class CmdProcessUndeploy extends AbstractCmd {
 
 
 	@Argument(index=0, name="name", required=true, description="Process name", multiValued=false)
     String name;
 
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 		
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		api.undeploy(name);

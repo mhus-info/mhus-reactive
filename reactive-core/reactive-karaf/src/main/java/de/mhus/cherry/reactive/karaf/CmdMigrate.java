@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -25,14 +24,14 @@ import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.util.Migrator;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.strategy.DefaultMonitor;
 import de.mhus.lib.core.strategy.Monitor;
 import de.mhus.lib.core.util.MUri;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pmigrate", description = "Manipulate process data in suspended cases")
 @Service
-public class CmdMigrate extends MLog implements Action {
+public class CmdMigrate extends AbstractCmd {
 
 	@Argument(index=0, name="uri", required=false, description="Filter for process, pool, activity in format bpm://<process>[:<version-range>][/<pool>[/<activity>]]", multiValued=false)
     String uriStr;
@@ -59,7 +58,7 @@ public class CmdMigrate extends MLog implements Action {
 	private boolean verbose;
 
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 
 		Monitor monitor = new DefaultMonitor(CmdMigrate.class);
 		Migrator migrator = new Migrator(monitor);

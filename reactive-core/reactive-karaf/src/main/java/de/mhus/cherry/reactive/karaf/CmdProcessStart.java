@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
@@ -23,12 +22,12 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pstart", description = "Start case")
 @Service
-public class CmdProcessStart extends MLog implements Action {
+public class CmdProcessStart extends AbstractCmd {
 
 
 	@Argument(index=0, name="uri", required=true, description="Process uri", multiValued=false)
@@ -39,7 +38,7 @@ public class CmdProcessStart extends MLog implements Action {
 
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 
 		if (uri.startsWith(EngineConst.SCHEME_REACTIVE + ":") ) {
 			MProperties properties = MProperties.explodeToMProperties(parameters);

@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -23,11 +22,11 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pdeploy", description = "Deploy processes")
 @Service
-public class CmdProcessDeploy extends MLog implements Action {
+public class CmdProcessDeploy extends AbstractCmd {
 
 
 	@Argument(index=0, name="name", required=true, description="Process name", multiValued=false)
@@ -41,7 +40,7 @@ public class CmdProcessDeploy extends MLog implements Action {
 
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 		
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		api.deploy(name,!notAdd,activate);

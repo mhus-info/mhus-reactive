@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -33,12 +32,12 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.ConsoleTable;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pui", description = "UI lookup")
 @Service
-public class CmdUi extends MLog implements Action {
+public class CmdUi extends AbstractCmd {
 
 	@Argument(index=0, name="user", required=true, description="Username")
 	String user;
@@ -70,7 +69,7 @@ public class CmdUi extends MLog implements Action {
 	private int size = 100;
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 
 		IEngine api = M.l(IEngineFactory.class).create(user, Locale.forLanguageTag(locale));
 		

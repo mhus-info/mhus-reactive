@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
@@ -24,13 +23,13 @@ import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.lib.core.util.MUri;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pls", description = "List processes")
 @Service
-public class CmdProcessList extends MLog implements Action {
+public class CmdProcessList extends AbstractCmd {
 
 	@Option(name="-a", aliases="--all", description="Print all versions (instead of active)",required=false)
 	private boolean all;
@@ -39,7 +38,7 @@ public class CmdProcessList extends MLog implements Action {
 	private boolean pools;
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 		
 		ConsoleTable table = new ConsoleTable();
 		table.fitToConsole();
