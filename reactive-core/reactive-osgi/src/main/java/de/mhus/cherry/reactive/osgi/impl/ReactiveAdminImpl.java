@@ -311,6 +311,25 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	public void doActivate(ComponentContext ctx) {
 		instance = this;
 		context = ctx.getBundleContext();
+		// try to start engine
+		new MThread(new Runnable() {
+		    @Override
+            public void run() {
+		        while (true) {
+    		        try {
+    		            startEngine();
+    		            activate();
+    		            return;
+    		        } catch (Throwable t) {
+    		            log().i("Can't start engine",t.toString());
+    		        }
+    		        MThread.sleep(10000);
+		        }
+		    }
+		}).start();
+	}
+	
+	private void activate() {
 		processTracker = new ServiceTracker<>(context, AProcess.class, new ServiceTrackerCustomizer<AProcess, AProcess>() {
 
 			@Override
