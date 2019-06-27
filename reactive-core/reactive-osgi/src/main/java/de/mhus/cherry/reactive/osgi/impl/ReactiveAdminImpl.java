@@ -316,6 +316,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		    @Override
             public void run() {
 		        while (true) {
+		            if (stopExecutor) return;
     		        try {
     		            startEngine();
     		            activate();
@@ -410,14 +411,15 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	public void doDeactivate(ComponentContext ctx) {
 		stopExecutor  = true;
 		int cnt = 60;
-		log().i("Wait for engine to stop");
-		while (executor.isAlive() && cnt > 0) {
-			MThread.sleep(1000);
-			cnt--;
-		}
-		if (cnt == 0)
-			log().w("Engine not stopped");
-		
+		if (executor != null) {
+    		log().i("Wait for engine to stop");
+    		while (executor.isAlive() && cnt > 0) {
+    			MThread.sleep(1000);
+    			cnt--;
+    		}
+    		if (cnt == 0)
+    			log().w("Engine not stopped");
+		}	
 		instance = null;
 		stopEngine();
 		processTracker.close();
