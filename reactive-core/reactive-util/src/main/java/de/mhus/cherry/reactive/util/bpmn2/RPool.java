@@ -89,9 +89,17 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 	public void initializeCase(Map<String, Object> parameters) throws Exception {
 		checkInputParameters(parameters);
 		importParameters(parameters, true);
+		checkStartCase();
 	}
 
 	/**
+	 * Check if the case can be started. All parameters will be set already.
+	 */
+	protected void checkStartCase() throws Exception {
+	    
+	};
+	
+    /**
 	 * Check and manipulate incoming parameters before they are written to the case.
 	 * Throw an exception if the parameters are not valid.
 	 * 
