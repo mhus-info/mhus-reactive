@@ -68,8 +68,8 @@ public class CmdProcessEngine extends AbstractCmd {
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
 
-	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
-	private boolean full;
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
 	
 	@Override
 	public Object execute2() throws Exception {
@@ -191,7 +191,7 @@ public class CmdProcessEngine extends AbstractCmd {
 			{
 				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
 				
-				ConsoleTable table = new ConsoleTable(full);
+				ConsoleTable table = new ConsoleTable(consoleTable);
 				table.setHeaderValues("Id","CustomId","Uri","State","Close");
 				for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 					PCase caze = api.getEngine().getCase(info.getId());
@@ -203,7 +203,7 @@ public class CmdProcessEngine extends AbstractCmd {
 			{
 				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
 				
-				ConsoleTable table = new ConsoleTable(full);
+				ConsoleTable table = new ConsoleTable(consoleTable);
 				table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
 				for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 					PNode node = api.getEngine().getFlowNode(info.getId());

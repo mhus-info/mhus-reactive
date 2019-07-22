@@ -68,8 +68,8 @@ public class CmdNode extends AbstractCmd {
 	@Option(name="-a", aliases="--all", description="Print all",required=false)
 	private boolean all;
 
-	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
-	private boolean full;
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
 	
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
     String[] parameters;
@@ -86,7 +86,7 @@ public class CmdNode extends AbstractCmd {
 			EngineContext context = api.getEngine().createContext(caze, node);
 			PNode pRuntime = api.getEngine().getRuntimeForPNode(context, node);
 			System.out.println(">>> RUNTIME " + pRuntime.getId() + " " + pRuntime.getState());
-			Util.printRuntime(api, caze, pRuntime, full);
+			Util.printRuntime(api, caze, pRuntime, consoleTable);
 		} else
 		if (cmd.equals("submit")) {
 			MProperties p = new MProperties();
@@ -113,7 +113,7 @@ public class CmdNode extends AbstractCmd {
 		} else
 		if (cmd.equals("executing")) {
 			
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","Case","Name","Time","State","Type","CaseId");
 			for (UUID nodeId : api.getEngine().getExecuting()) {
 				PNode node = api.getEngine().getFlowNode(nodeId);
@@ -127,7 +127,7 @@ public class CmdNode extends AbstractCmd {
 		if (cmd.equals("values")) {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","0","1","2","3","4","5","6","7","8","9");
 			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 				if (all || (info.getState() != STATE_NODE.CLOSED && info.getType() != TYPE_NODE.RUNTIME) ) {
@@ -151,7 +151,7 @@ public class CmdNode extends AbstractCmd {
 			if (cmd.equals("list")) {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","Custom","Name","State","Type","Modified","Scheduled","CaseId","Assigned","Uri");
 			table.getColumn(0).minWidth = 32;
 			table.getColumn(7).minWidth = 32;

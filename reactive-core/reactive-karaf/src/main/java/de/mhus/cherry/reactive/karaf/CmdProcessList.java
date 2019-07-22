@@ -37,10 +37,13 @@ public class CmdProcessList extends AbstractCmd {
 	@Option(name="-p", aliases="--pools", description="Print also pools",required=false)
 	private boolean pools;
 	
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
+
 	@Override
 	public Object execute2() throws Exception {
 		
-		ConsoleTable table = new ConsoleTable();
+		ConsoleTable table = new ConsoleTable(consoleTable);
 		table.fitToConsole();
 		table.setHeaderValues("Registered", "Deployed", "Status","Info","Deployed");
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);

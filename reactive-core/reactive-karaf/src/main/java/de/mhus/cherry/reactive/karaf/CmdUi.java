@@ -59,8 +59,8 @@ public class CmdUi extends AbstractCmd {
 	@Option(name="-a", aliases="--all", description="Print all",required=false)
 	private boolean all;
 
-	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
-	private boolean full;
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
 	
 	@Option(name="-p", aliases="--page", description="Page number",required=false)
 	private int page = 0;
@@ -76,7 +76,7 @@ public class CmdUi extends AbstractCmd {
 		if (cmd.equals("cases")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
 			List<ICase> res = api.searchCases(criterias, page, size);
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","CustomId","CustomerId","Name","State","Uri");
 			for (ICase info : res) {
 				ICaseDescription desc = api.getCaseDescription2(info);
@@ -87,7 +87,7 @@ public class CmdUi extends AbstractCmd {
 		if (cmd.equals("nodes")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
 			List<INode> res = api.searchNodes(criterias, page, size);
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
 			for (INode info : res) {
 				INodeDescription desc = api.getNodeDescription2(info);

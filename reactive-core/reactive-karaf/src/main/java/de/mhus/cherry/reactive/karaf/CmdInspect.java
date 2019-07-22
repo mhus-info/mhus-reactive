@@ -69,9 +69,9 @@ public class CmdInspect extends AbstractCmd {
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
 	String[] parameters;
 	
-	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
-	private boolean full;
-
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
+    
 	@Override
 	public Object execute2() throws Exception {
 		
@@ -126,7 +126,7 @@ public class CmdInspect extends AbstractCmd {
 			EProcess process = findProcess(parameters[0]);
 			EPool pool = getPool(process, uri);
 			
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Type","Name","Canonical Name","Swimlane","Outputs","Trigger");
 			for (String name : pool.getElementNames()) {
 				EElement element = pool.getElement(name);

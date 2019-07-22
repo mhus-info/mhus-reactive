@@ -53,10 +53,8 @@ public class CmdArchive extends AbstractCmd {
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
 	String[] parameters;
 	
-	@Option(name="-f", aliases="--full", description="Print full table output",required=false)
-	private boolean full;
-
-
+    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
+    String consoleTable;
 	
 	@Override
 	public Object execute2() throws Exception {
@@ -104,7 +102,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PNodeInfo> res = engine.archiveSearchFlowNodes(criterias);
 			
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","Custom","Name","State","Type","CaseId","Assigned","Uri");
 
 			for (PNodeInfo info : res) {
@@ -150,7 +148,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PCaseInfo> res = engine.archiveSearchCases(criterias);
 
-			ConsoleTable table = new ConsoleTable(full);
+			ConsoleTable table = new ConsoleTable(consoleTable);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : res) {
 				PCase caze = api.getEngine().getCase(info.getId());
