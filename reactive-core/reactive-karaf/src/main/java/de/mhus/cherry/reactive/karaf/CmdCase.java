@@ -76,9 +76,6 @@ public class CmdCase extends AbstractCmd {
 	@Option(name="-a", aliases="--all", description="Print all",required=false)
 	private boolean all;
 
-    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
-    String consoleTable;
-	
 	@Override
 	public Object execute2() throws Exception {
 
@@ -126,7 +123,7 @@ public class CmdCase extends AbstractCmd {
 					System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
 					try {
 						PNode pRuntime = api.getEngine().getFlowNode(node.getId());
-						Util.printRuntime(api, caze, pRuntime, consoleTable);
+						Util.printRuntime(api, caze, pRuntime, tableAll, tblOpt);
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}
@@ -134,7 +131,7 @@ public class CmdCase extends AbstractCmd {
 			}
 		} else
 		if (cmd.equals("locked")) {
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (UUID id : api.getEngine().getLockedCases()) {
 				PCase caze = api.getEngine().getCase(id);
@@ -200,7 +197,7 @@ public class CmdCase extends AbstractCmd {
 		} else
 		if (cmd.equals("nodes")) {
 			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Id","CName","State","Type","Modified","Scheduled");
 			table.getColumn(0).minWidth = 32;
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
@@ -239,7 +236,7 @@ public class CmdCase extends AbstractCmd {
 		if (cmd.equals("list")) {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Id","CustomId","Customer","Modified","Uri","State","Close");
 			table.getColumn(0).minWidth = 32;
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {

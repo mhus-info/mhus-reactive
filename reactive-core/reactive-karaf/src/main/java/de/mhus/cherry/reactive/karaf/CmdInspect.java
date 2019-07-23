@@ -17,7 +17,6 @@ package de.mhus.cherry.reactive.karaf;
 
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
-import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
@@ -69,9 +68,6 @@ public class CmdInspect extends AbstractCmd {
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
 	String[] parameters;
 	
-    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
-    String consoleTable;
-    
 	@Override
 	public Object execute2() throws Exception {
 		
@@ -126,7 +122,7 @@ public class CmdInspect extends AbstractCmd {
 			EProcess process = findProcess(parameters[0]);
 			EPool pool = getPool(process, uri);
 			
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Type","Name","Canonical Name","Swimlane","Outputs","Trigger");
 			for (String name : pool.getElementNames()) {
 				EElement element = pool.getElement(name);

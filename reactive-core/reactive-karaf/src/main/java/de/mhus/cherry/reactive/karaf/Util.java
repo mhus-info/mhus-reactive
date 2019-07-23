@@ -30,10 +30,10 @@ import de.mhus.lib.core.console.ConsoleTable;
 
 public class Util {
 
-	public static void printRuntime(ReactiveAdmin api, PCase caze, PNode pRuntime, String consoleTable) throws Exception {
+	public static void printRuntime(ReactiveAdmin api, PCase caze, PNode pRuntime, boolean tableAll, String tblOpt) throws Exception {
 		
 		HashMap<UUID, String> cacheActivityNames = new HashMap<>();
-		ConsoleTable table = new ConsoleTable(consoleTable);
+		ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 		table.setHeaderValues("Time","Type","From","To","Msg");
 		table.getColumn(0).weight = 0;
 		table.getColumn(1).weight = 0;

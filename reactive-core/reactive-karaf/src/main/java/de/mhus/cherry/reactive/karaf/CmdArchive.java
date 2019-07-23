@@ -21,7 +21,6 @@ import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
-import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.engine.Engine;
@@ -52,9 +51,6 @@ public class CmdArchive extends AbstractCmd {
 
 	@Argument(index=1, name="parameters", required=false, description="Parameters", multiValued=true)
 	String[] parameters;
-	
-    @Option(name = "-ct", aliases = { "--console-table" }, description = "Console table options", required = false, multiValued = false)
-    String consoleTable;
 	
 	@Override
 	public Object execute2() throws Exception {
@@ -102,7 +98,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PNodeInfo> res = engine.archiveSearchFlowNodes(criterias);
 			
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Id","Custom","Name","State","Type","CaseId","Assigned","Uri");
 
 			for (PNodeInfo info : res) {
@@ -148,7 +144,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PCaseInfo> res = engine.archiveSearchCases(criterias);
 
-			ConsoleTable table = new ConsoleTable(consoleTable);
+			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : res) {
 				PCase caze = api.getEngine().getCase(info.getId());
