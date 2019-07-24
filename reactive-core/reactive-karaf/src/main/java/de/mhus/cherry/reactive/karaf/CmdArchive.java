@@ -98,7 +98,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PNodeInfo> res = engine.archiveSearchFlowNodes(criterias);
 			
-			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","Custom","Name","State","Type","CaseId","Assigned","Uri");
 
 			for (PNodeInfo info : res) {
@@ -144,7 +144,7 @@ public class CmdArchive extends AbstractCmd {
 			SearchCriterias criterias = new SearchCriterias(parameters);
 			Result<PCaseInfo> res = engine.archiveSearchCases(criterias);
 
-			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : res) {
 				PCase caze = api.getEngine().getCase(info.getId());

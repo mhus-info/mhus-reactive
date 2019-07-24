@@ -40,7 +40,7 @@ public class CmdProcessList extends AbstractCmd {
 	@Override
 	public Object execute2() throws Exception {
 		
-		ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+		ConsoleTable table = new ConsoleTable(tblOpt);
 		table.fitToConsole();
 		table.setHeaderValues("Registered", "Deployed", "Status","Info","Deployed");
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);

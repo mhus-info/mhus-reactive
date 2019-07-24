@@ -122,7 +122,7 @@ public class CmdInspect extends AbstractCmd {
 			EProcess process = findProcess(parameters[0]);
 			EPool pool = getPool(process, uri);
 			
-			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Type","Name","Canonical Name","Swimlane","Outputs","Trigger");
 			for (String name : pool.getElementNames()) {
 				EElement element = pool.getElement(name);

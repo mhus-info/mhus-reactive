@@ -73,7 +73,7 @@ public class CmdUi extends AbstractCmd {
 		if (cmd.equals("cases")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
 			List<ICase> res = api.searchCases(criterias, page, size);
-			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","CustomId","CustomerId","Name","State","Uri");
 			for (ICase info : res) {
 				ICaseDescription desc = api.getCaseDescription2(info);
@@ -84,7 +84,7 @@ public class CmdUi extends AbstractCmd {
 		if (cmd.equals("nodes")) {
 			SearchCriterias criterias = new SearchCriterias(parameters); 
 			List<INode> res = api.searchNodes(criterias, page, size);
-			ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","CustomId","Name","State","Uri");
 			for (INode info : res) {
 				INodeDescription desc = api.getNodeDescription2(info);

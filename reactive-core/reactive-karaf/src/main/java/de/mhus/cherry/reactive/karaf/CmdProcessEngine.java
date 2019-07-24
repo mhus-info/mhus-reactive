@@ -187,7 +187,7 @@ public class CmdProcessEngine extends AbstractCmd {
 			{
 				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
 				
-				ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+				ConsoleTable table = new ConsoleTable(tblOpt);
 				table.setHeaderValues("Id","CustomId","Uri","State","Close");
 				for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 					PCase caze = api.getEngine().getCase(info.getId());
@@ -199,7 +199,7 @@ public class CmdProcessEngine extends AbstractCmd {
 			{
 				SearchCriterias criterias = new SearchCriterias(new String[] {"state=severe"});
 				
-				ConsoleTable table = new ConsoleTable(tableAll, tblOpt);
+				ConsoleTable table = new ConsoleTable(tblOpt);
 				table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
 				for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 					PNode node = api.getEngine().getFlowNode(info.getId());
