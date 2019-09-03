@@ -113,9 +113,9 @@
         <bundle>mvn:com.vaadin/vaadin-compatibility-client-compiled/${vaadin.version}</bundle>
         <bundle>mvn:com.vaadin/vaadin-client-compiled/${vaadin.version}</bundle>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-vaadin/${mhus-lib.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-vaadinbridge/${mhus-osgi-servlets.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-vaadinbridge/${mhus-osgi-servlets.version}</bundle>
+		<bundle>mvn:de.mhus.vaadin/vaadin-core/${mhus-vaadin.version}</bundle>
+        <bundle>mvn:de.mhus.vaadin/vaadin-osgi-bridge/${mhus-vaadin.version}</bundle>
+        <bundle>mvn:de.mhus.vaadin/vaadin-karaf-bridge/${mhus-vaadin.version}</bundle>
 
 		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-theme/${mhus-sop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/${mhus-sop.version}</bundle>
