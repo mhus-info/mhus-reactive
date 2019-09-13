@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
@@ -101,6 +102,24 @@ public interface IEngine {
 	 */
 	IModel[] getCaseModels(UUID caseId) throws Exception;
 
+	/**
+	 * Return all runtime messages of a case.
+	 * 
+	 * @param caseId
+	 * @return List of message trails.
+	 * @throws Exception
+	 */
+	List<EngineMessage[]> getCaseRuntimeMessages(String caseId) throws Exception;
+	
+	/**
+	 * Return the runtime trail of a node.
+	 * 
+	 * @param nodeId
+	 * @return Message trail of the runtime
+	 * @throws Exception
+	 */
+    EngineMessage[] getNodeRuntimeMessage(String nodeId) throws Exception;
+    
 	/**
 	 * Will close this UI engine instance. Not the central engine. For some
 	 * implementations this will be helpful to release resources.

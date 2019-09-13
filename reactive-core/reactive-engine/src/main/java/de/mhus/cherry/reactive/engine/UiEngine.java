@@ -41,6 +41,7 @@ import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
@@ -771,6 +772,49 @@ public class UiEngine extends MLog implements IEngine {
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
         return engine.onUserTaskAction(info.getId(), values, action);
+    }
+
+    @Override
+    public List<EngineMessage[]> getCaseRuntimeMessages(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Case",id);
+        
+        LinkedList<EngineMessage[]> out = new LinkedList<>();
+        PCase caze = engine.getCase(info.getId());
+        EngineContext context = engine.createContext(caze);
+        
+        for (PNodeInfo node : engine.storageGetFlowNodes(info.getId(), null)) {
+            if (node.getType() == TYPE_NODE.RUNTIME) {
+                System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
+                try {
+                    PNode pRuntime = engine.getFlowNode(node.getId());
+                    RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
+                    List<EngineMessage> messages = aRuntime.getMessages();
+                    out.add(messages.toArray(new EngineMessage[messages.size()]));
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        }
+        
+        return out;
+    }
+
+    @Override
+    public EngineMessage[] getNodeRuntimeMessage(String id) throws Exception {
+        if (engine == null) throw new WrongStateEception();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user))
+            throw new NotFoundException("Node",id);
+        PNode node = engine.getFlowNode(info.getId());
+        PCase caze = engine.getCase(info.getCaseId());
+        EngineContext context = engine.createContext(caze, node);
+        PNode pRuntime = engine.getRuntimeForPNode(context, node);
+        RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
+        List<EngineMessage> messages = aRuntime.getMessages();
+        return messages.toArray(new EngineMessage[messages.size()]);
     }
     
 }
