@@ -73,7 +73,7 @@ import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import de.mhus.lib.errors.WrongStateEception;
+import de.mhus.lib.errors.WrongStateException;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.IFormInformation;
 
@@ -96,7 +96,7 @@ public class UiEngine extends MLog implements IEngine {
 	
 	@Override
 	public List<INode> searchNodes(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		LinkedList<INode> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -166,7 +166,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public List<ICase> searchCases(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		LinkedList<ICase> out = new LinkedList<>();
 		int cnt = 0;
 		int first = page * size;
@@ -298,7 +298,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public IProcess getProcess(String uri) throws MException {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		
 		MProperties properties = new MProperties();
 
@@ -370,7 +370,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public IPool getPool(String uri) throws MException {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		MUri u = MUri.toUri(uri);
 		EProcess process = engine.getProcess(u);
 		EPool pool = engine.getPool(process, u);
@@ -412,7 +412,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public ICase getCase(String id, String ... propertyNames) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
 		if (!engine.hasReadAccess(info.getUri(), user))
 			return null;
@@ -479,7 +479,7 @@ public class UiEngine extends MLog implements IEngine {
 	
 	@Override
 	public INode getNode(String id, String ... propertyNames) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
 		if (!engine.hasReadAccess(info.getUri(), user))
 			return null;
@@ -576,7 +576,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public Object doExecute(String uri) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);
 		return engine.execute(u);
@@ -584,7 +584,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public Object doExecute2(String uri, IProperties properties) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		MutableUri u = (MutableUri) MUri.toUri(uri);
 		u.setUsername(user);
 		return engine.execute(u, properties);
@@ -614,7 +614,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public void doArchive(UUID caseId) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		PCaseInfo caze = engine.getCaseInfo(caseId);
 		if (caze.getState() != STATE_CASE.CLOSED) throw new MException("wrong case state",caseId);
 		engine.archiveCase(caseId);
@@ -639,7 +639,7 @@ public class UiEngine extends MLog implements IEngine {
 
 	@Override
 	public IModel[] getCaseModels(UUID caseId) throws Exception {
-		if (engine == null) throw new WrongStateEception();
+		if (engine == null) throw new WrongStateException();
 		PCaseInfo caze = engine.getCaseInfo(caseId);
 		if (!hasReadAccess(caze.getUri())) 
 			return null;
@@ -693,7 +693,7 @@ public class UiEngine extends MLog implements IEngine {
 	
     @Override
     public IFormInformation getNodeUserForm(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -710,7 +710,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public IProperties getNodeUserFormValues(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -719,7 +719,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public Class <? extends FormControl> getNodeUserFormControl(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -740,7 +740,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public void submitUserTask(String id, IProperties values) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -749,7 +749,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public void doUnassignUserTask(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -758,7 +758,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public void doAssignUserTask(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -767,7 +767,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
@@ -776,7 +776,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public List<EngineMessage[]> getCaseRuntimeMessages(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Case",id);
@@ -804,7 +804,7 @@ public class UiEngine extends MLog implements IEngine {
 
     @Override
     public EngineMessage[] getNodeRuntimeMessage(String id) throws Exception {
-        if (engine == null) throw new WrongStateEception();
+        if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
