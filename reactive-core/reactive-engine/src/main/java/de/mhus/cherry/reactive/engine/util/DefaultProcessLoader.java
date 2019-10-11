@@ -86,6 +86,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 					for (Enumeration<JarEntry> enu = jar.entries();enu.hasMoreElements();) {
 						JarEntry entry = enu.nextElement();
 						String name = entry.getName();
+						if (MSystem.isWindows()) name = name.replace('\\', '/'); // windows compatible
 						if (name.endsWith(".class") && name.indexOf('$') < 0) {
 							if (name.startsWith("/")) name = name.substring(1);
 							String canonicalName = MString.beforeLastIndex(name,'.').replace('/', '.'); 
@@ -122,6 +123,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
 			else
 			if (file.isFile() && file.getName().endsWith(".class")) {
 				String name = file.getAbsolutePath().substring(base.length());
+                if (MSystem.isWindows()) name = name.replace('\\', '/'); // windows compatible
 				if (name.startsWith("/")) name = name.substring(1);
 				String canonicalName = MString.beforeLastIndex(name,'.').replace('/', '.'); 
 				if (filter == null || canonicalName.startsWith(filter))
