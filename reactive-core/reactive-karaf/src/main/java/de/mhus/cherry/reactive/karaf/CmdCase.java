@@ -58,15 +58,18 @@ public class CmdCase extends AbstractCmd {
 			+ " view <id> [user] [lang ]- view case details\n"
 			+ " nodes <id>       - print case bound nodes\n"
 			+ " list [search: state=,name=,search=,index0..9=,uri=] - list all cases\n"
-			+ " resume <id>      - resume case\n"
-			+ " suspend <id>     - suspend case\n"
-			+ " archive <id>     - archive case\n"
-			+ " cancel <id>      - cancel hard\n"
+			+ " resume <id>*     - resume case\n"
+			+ " suspend <id>*    - suspend case\n"
+			+ " archive [id]*    - archive case or all if id is not set\n"
+			+ " cancel <id>*     - cancel hard\n"
 			+ " locked           - print locked cases\n"
 			+ " runtime <id>     - print all runtime information\n"
 			+ " setoption <id> [key=value]*\n"
 			+ " setparam <id> [key=value]*\n"
-			+ " updatefull <id>   - update case and nodes in database"
+			+ "Experimental:\n"
+			+ " updatefull <id>   - update case and nodes in database\n"
+			+ " resave <id>      - load and save the data of the case again\n"
+			+ " erase <uuid>     - erase a case data\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -140,7 +143,8 @@ public class CmdCase extends AbstractCmd {
 			table.print(System.out);
 		} else
 		if (cmd.equals("resave")) {
-			api.getEngine().resaveCase(UUID.fromString(parameters[0]));
+		    PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+			api.getEngine().resaveCase(caze.getId());
 		} else
 		if (cmd.equals("view")) {
 			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
@@ -196,7 +200,7 @@ public class CmdCase extends AbstractCmd {
 			
 		} else
 		if (cmd.equals("nodes")) {
-			PCase caze = api.getEngine().getCase(UUID.fromString(parameters[0]));
+		    PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
 			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","CName","State","Type","Modified","Scheduled");
 			table.getColumn(0).minWidth = 32;
@@ -269,14 +273,26 @@ public class CmdCase extends AbstractCmd {
 		} else
 		if (cmd.equals("resume")) {
 			for (String id : parameters) {
-				System.out.println("Resume: " + id);
-				api.getEngine().resumeCase(UUID.fromString(id));
+			    try {
+    			    PCase caze = EngineUtil.getCase(api.getEngine(), id);
+    			    System.out.println("Resume: " + caze);
+    				api.getEngine().resumeCase(caze.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
 			}
 		} else
 		if (cmd.equals("suspend")) {
 			for (String id : parameters) {
-				System.out.println("Suspend: " + id);
-				api.getEngine().suspendCase(UUID.fromString(id));
+			    try {
+    			    PCase caze = EngineUtil.getCase(api.getEngine(), id);
+    			    System.out.println("Suspend: " + caze);
+    				api.getEngine().suspendCase(caze.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
 			}
 		} else
 		if (cmd.equals("archive")) {
@@ -285,8 +301,14 @@ public class CmdCase extends AbstractCmd {
 				api.getEngine().archiveAll();
 			} else {
 				for (String id : parameters) {
-					System.out.println("Archive: " + id);
-					api.getEngine().archiveCase(UUID.fromString(id));
+				    try {
+    				    PCase caze = EngineUtil.getCase(api.getEngine(), id);
+    					System.out.println("Archive: " + caze);
+    					api.getEngine().archiveCase(caze.getId());
+				    } catch (Throwable t) {
+				        System.out.println("Error in " + id);
+				        t.printStackTrace();
+				    }
 				}
 			}
 		} else
@@ -296,8 +318,14 @@ public class CmdCase extends AbstractCmd {
         } else
 		if (cmd.equals("cancel")) {
 			for (String id : parameters) {
-				System.out.println("Cancel: " + id);
-				api.getEngine().closeCase(UUID.fromString(id), true, -1, "cancelled by cmd");
+			    try {
+    			    PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+    			    System.out.println("Cancel: " + caze);
+    				api.getEngine().closeCase(caze.getId(), true, -1, "cancelled by cmd");
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
 			}
 		} else {
 			System.out.println("Unknown command");

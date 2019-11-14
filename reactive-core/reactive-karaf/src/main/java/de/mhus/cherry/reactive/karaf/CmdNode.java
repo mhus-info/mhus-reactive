@@ -56,12 +56,19 @@ public class CmdNode extends AbstractCmd {
 
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
-			+ " executing       - print currently executing nodes\n"
-			+ " list [search: state=,name=,search=,index0..9=,uri=,case=]  - list all nodes\n"
-			+ " view <id> [user] [lang] - view node details\n"
-			+ " cancel <id>   - cancel node\n"
-			+ " retry <id>    - set node back to running\n"
-			+ " runtime <id>  - print runtime for this node\n"
+			+ " executing                - print currently executing nodes\n"
+			+ " list [search: state=,name=,search=,index0..9=,uri=,case=]\n"
+			+ "                          - list all nodes\n"
+			+ " view <id> [user] [lang]  - view node details\n"
+			+ " cancel <id>*             - cancel node\n"
+			+ " retry <id>*              - set node back to running\n"
+			+ " runtime <id>             - print runtime for this node\n"
+			+ " assign <id> <user>       - assign a user task to a user\n"
+			+ " unassign <id>            - unassign a user task\n"
+			+ "Experimental:\n"
+			+ " erase <uuid>\n"
+			+ " submit <id> [key=value]* - submit a user form\n"
+			+ " resave <id>              - load and save node again"
 			+ "", multiValued=false)
     String cmd;
 
@@ -78,7 +85,7 @@ public class CmdNode extends AbstractCmd {
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
 		if (cmd.equals("runtime")) {
-			PNode node = api.getEngine().getFlowNode(UUID.fromString(parameters[0]));
+		    PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
 			PCase caze = api.getEngine().getCase(node.getCaseId());
 			EngineContext context = api.getEngine().createContext(caze, node);
 			PNode pRuntime = api.getEngine().getRuntimeForPNode(context, node);
@@ -86,26 +93,34 @@ public class CmdNode extends AbstractCmd {
 			Util.printRuntime(api, caze, pRuntime, tblOpt);
 		} else
 		if (cmd.equals("submit")) {
-			MProperties p = new MProperties();
+		    PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
+		    System.out.println("Update: " + node);
+		    MProperties p = new MProperties();
 			for (int i = 1; i < parameters.length; i++) {
 				String parts = parameters[i];
 				String k = MString.beforeIndex(parts, '=');
 				String v = MString.afterIndex(parts, '=');
 				p.put(k, v);
 			}
-			api.getEngine().submitUserTask(UUID.fromString(parameters[0]), p);
+			api.getEngine().submitUserTask(node.getId(), p);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("unassign")) {
-			api.getEngine().unassignUserTask(UUID.fromString(parameters[0]));
+            PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
+            System.out.println("Update: " + node);
+		    api.getEngine().unassignUserTask(node.getId());
 			System.out.println("OK");
 		} else
 		if (cmd.equals("assign")) {
-			api.getEngine().assignUserTask(UUID.fromString(parameters[0]), parameters[1]);
+            PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
+            System.out.println("Update: " + node);
+			api.getEngine().assignUserTask(node.getId(), parameters[1]);
 			System.out.println("OK");
 		} else
 		if (cmd.equals("resave")) {
-			api.getEngine().resaveFlowNode(UUID.fromString(parameters[0]));
+            PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
+            System.out.println("Update: " + node);
+			api.getEngine().resaveFlowNode(node.getId());
 			System.out.println("OK");
 		} else
 		if (cmd.equals("executing")) {
@@ -275,8 +290,14 @@ public class CmdNode extends AbstractCmd {
 		} else
 		if (cmd.equals("cancel")) {
 			for (String id : parameters) {
-				System.out.println("Cancel: " + id);
-				api.getEngine().cancelFlowNode(UUID.fromString(id));
+			    try {
+		            PNode node = EngineUtil.getFlowNode(api.getEngine(),id);
+		            System.out.println("Cancel: " + node);
+		            api.getEngine().cancelFlowNode(node.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
 			}
 		} else
         if (cmd.equals("erase")) {
@@ -285,8 +306,14 @@ public class CmdNode extends AbstractCmd {
         } else
 		if (cmd.equals("retry")) {
 			for (String id : parameters) {
-				System.out.println("Retry: " + id);
-				api.getEngine().retryFlowNode(UUID.fromString(id));
+			    try {
+			        PNode node = EngineUtil.getFlowNode(api.getEngine(),id);
+    				System.out.println("Retry: " + node);
+    				api.getEngine().retryFlowNode(node.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
 			}
 		} else {
 			System.out.println("Unknown command");
