@@ -58,6 +58,7 @@ public class SearchCriterias implements Externalizable {
 	public String milestone;
 
 	public String[] actors;
+    public int limit = 0;
 	
 	public SearchCriterias() {}
 	
@@ -173,6 +174,8 @@ public class SearchCriterias implements Externalizable {
 			case "milestone":
 				milestone = v;
 				break;
+			case "limit":
+			    limit = M.c(v, 0);
 			default:
 			}
 		}
@@ -227,6 +230,7 @@ public class SearchCriterias implements Externalizable {
         out.writeInt(score);
         out.writeObject(milestone);
         out.writeObject(actors);
+        out.writeInt(limit);
     }
 
     @Override
@@ -252,6 +256,7 @@ public class SearchCriterias implements Externalizable {
         score = in.readInt();
         milestone = (String)in.readObject();
         actors = (String[])in.readObject();
+        limit = in.readInt();
     }
 	
 }

@@ -869,13 +869,18 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			}
 			
 			
-			// at last order
+			// after where: order
 			if (search.order != null) {
 				sql.append("ORDER BY ").append(search.order.name().toLowerCase()).append("_ ");
 				if (!search.orderAscending)
 					sql.append("DESC ");
 			}
 			
+            // after order: limit
+            if (search.limit > 0) {
+                sql.append("LIMIT ").append(search.limit).append(" ");
+            }
+            
 			DbConnection con = pool.getConnection();
 			DbStatement sta = con.createStatement(sql.toString());
 			DbResult res = sta.executeQuery(prop);
@@ -971,11 +976,16 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 				}
 			}
 			
-			// at last order
+			// after where: order
 			if (search.order != null) {
 				sql.append("ORDER BY ").append(search.order.name().toLowerCase()).append("_ ");
 				if (!search.orderAscending)
 					sql.append("DESC ");
+			}
+			
+			// after order: limit
+			if (search.limit > 0) {
+			    sql.append("LIMIT ").append(search.limit).append(" ");
 			}
 
 			DbConnection con = pool.getConnection();
