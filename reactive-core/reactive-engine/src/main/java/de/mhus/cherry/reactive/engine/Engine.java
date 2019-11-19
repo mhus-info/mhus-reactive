@@ -168,6 +168,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					// stop node also
 					log().d("auto stop waiting node",nodeInfo);
 					PNode node = getFlowNode(nodeInfo.getId());
+					node.setExitMessage("stopped by process nodes 1");
 					node.setSuspendedState(node.getState());
 					node.setState(STATE_NODE.STOPPED);
 					storage.saveFlowNode(node);
@@ -207,6 +208,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 						if (caze.getState() == STATE_CASE.CLOSED) {
 							// stop node also
 							log().d("auto stop running node",nodeInfo);
+		                    node.setExitMessage("stopped by process nodes 2");
 							node.setSuspendedState(node.getState());
 							node.setState(STATE_NODE.STOPPED);
 							storage.saveFlowNode(node);
@@ -249,6 +251,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 						} else
 						if (caze.getState() == STATE_CASE.CLOSED) {
 							// stop node also
+		                    node.setExitMessage("stopped by process nodes 3");
 							node.setSuspendedState(node.getState());
 							node.setState(STATE_NODE.STOPPED);
 							storage.saveFlowNode(node);
@@ -439,6 +442,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					log().e(t);
 					fireEvent.error(flow,activity,t);
 					// set failed
+                    flow.setExitMessage("stopped by save flow node: " + t.getMessage());
 					flow.setSuspendedState(flow.getState());
 					flow.setState(STATE_NODE.STOPPED);
 				}
@@ -1295,6 +1299,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				flow.setTryCount(flow.getTryCount()-1);
 				if (flow.getTryCount() <= 0) {
 					flow.setSuspendedState(STATE_NODE.RUNNING);
+                    flow.setExitMessage("stopped by do lifecycle");
 					flow.setState(STATE_NODE.STOPPED);
 				} else {
 					flow.setScheduled(newScheduledTime(flow));
@@ -2232,6 +2237,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				// trigger not found
 				fireEvent.error("Trigger for timer not found",triggerName,node);
 				node.setSuspendedState(node.getState());
+                node.setExitMessage("stopped by fire sheduled trigger");
 				node.setState(STATE_NODE.STOPPED);
 				saveFlowNode(node);
 			}

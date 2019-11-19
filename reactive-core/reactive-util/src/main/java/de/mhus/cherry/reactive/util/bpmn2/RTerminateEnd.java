@@ -16,6 +16,7 @@
 package de.mhus.cherry.reactive.util.bpmn2;
 
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.util.activity.RActivity;
 
 /**
@@ -30,6 +31,7 @@ public abstract class RTerminateEnd<P extends RPool<?>> extends RActivity<P> imp
 	@Override
 	public void doExecuteActivity() throws Exception {
 		getContext().getPCase().close(getExitCode(), getExitMessage());
+        getContext().getPNode().setState(STATE_NODE.CLOSED);
 	}
 
 	protected abstract int getExitCode();
