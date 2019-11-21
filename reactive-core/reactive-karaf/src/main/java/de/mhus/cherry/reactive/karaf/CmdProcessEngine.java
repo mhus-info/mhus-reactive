@@ -128,11 +128,11 @@ public class CmdProcessEngine extends AbstractCmd {
 			System.out.println(api.addProcess(parameters, true));
 		} else
 		if (cmd.equals("cleanup")) {
-			api.getEngine().cleanupCases();
+			api.getEngine().doCleanupCases();
 			System.out.println("OK");
 		} else
 		if (cmd.equals("step")) {
-			api.getEngine().processNodes();
+			api.getEngine().doProcessNodes();
 			System.out.println("OK");
 		} else
 		if (cmd.equals("parameters")) {

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
+import de.mhus.cherry.reactive.engine.CaseLock;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -77,9 +78,11 @@ public class Migrator {
 			if (info.getState() != STATE_CASE.SUSPENDED && info.getState() != STATE_CASE.CLOSED && filter(info)) {
 				monitor.println("*** Suspend " + info);
 				if (!test) {
-					monitor.incrementStep();
-					engine.suspendCase(info.getId());
-					engine.prepareMigrateCase(info.getId());
+				    try (CaseLock lock = engine.getCaseLock(info)) {
+    					monitor.incrementStep();
+    					engine.suspendCase(info.getId());
+    					engine.prepareMigrateCase(lock);
+				    }
 				}
 			}
 		}

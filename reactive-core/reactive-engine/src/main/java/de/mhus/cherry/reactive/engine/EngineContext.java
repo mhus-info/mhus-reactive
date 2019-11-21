@@ -266,13 +266,4 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		return engine.getAaaProvider();
 	}
 
-	@Override
-	public Object getLock() {
-		if (pNode != null)
-			return engine.getCaseLock(pNode.getCaseId());
-		if (pCase != null)
-			return engine.getCaseLock(pCase.getId());
-		return engine;
-	}
-
 }

@@ -38,6 +38,5 @@ public interface ProcessContext<P extends APool<?>> {
 	void saveRuntime() throws IOException;
 	AaaProvider getAaaProvider();
 	EEngine getEEngine();
-	Object getLock();
 	
 }
