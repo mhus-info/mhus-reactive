@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
-import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;

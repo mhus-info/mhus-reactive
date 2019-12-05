@@ -1078,6 +1078,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			hasNext = res.next();
 		}
 
+        @Override
+        public String toString() {
+            return MSystem.toString(this, hasNext);
+        }
+        
 		@Override
 		public Iterator<PCaseInfo> iterator() {
 			return this;
@@ -1126,6 +1131,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			this.con = con;
 			this.res = res;
 			hasNext = res.next();
+		}
+		
+		@Override
+        public String toString() {
+		    return MSystem.toString(this, hasNext);
 		}
 
 		@Override

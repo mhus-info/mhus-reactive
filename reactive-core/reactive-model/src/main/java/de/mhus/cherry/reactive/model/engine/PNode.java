@@ -414,6 +414,7 @@ public class PNode implements Externalizable {
 		
 		lastRunDate = in.readLong();
 		state = (STATE_NODE) in.readObject();
+		startState = state;
 		suspendedState = (STATE_NODE) in.readObject();
 		schedulers = (HashMap<String, Long>) in.readObject();
 		signalTriggers = (HashMap<String, String>) in.readObject();

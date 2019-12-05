@@ -87,7 +87,7 @@ public class CmdNode extends AbstractCmd {
 		if (cmd.equals("runtime")) {
 		    PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
 			PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
-			EngineContext context = api.getEngine().createContext(caze, node);
+			EngineContext context = api.getEngine().createContext(null, caze, node);
 			PNode pRuntime = api.getEngine().getRuntimeForPNode(context, node);
 			System.out.println(">>> RUNTIME " + pRuntime.getId() + " " + pRuntime.getState());
 			Util.printRuntime(api, caze, pRuntime, tblOpt);

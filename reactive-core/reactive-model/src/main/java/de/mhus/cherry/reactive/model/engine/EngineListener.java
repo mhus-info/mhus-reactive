@@ -43,10 +43,10 @@ public interface EngineListener {
 
 	void closeCase(PCase caze, boolean hard);
 
-	void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t);
+	void doNodeErrorHandling(CaseLock lock, ProcessContext<?> context, PNode pNode, Throwable t);
 
 	// Don't change !!!
-	void saveRuntime(PNode pRuntime, RuntimeNode aRuntime);
+	void saveRuntime(CaseLock lock, PNode pRuntime, RuntimeNode aRuntime);
 
 	void doFlowNodeScheduled(PNode pNode);
 
@@ -111,5 +111,9 @@ public interface EngineListener {
 	void initFailed(RuntimeNode runtime, PNode flow);
 
 	void initStop(RuntimeNode runtime, PNode flow);
+
+    void lock(CaseLock pCaseLock, UUID caseId);
+
+    void release(CaseLock pCaseLock, UUID caseId);
 
 }

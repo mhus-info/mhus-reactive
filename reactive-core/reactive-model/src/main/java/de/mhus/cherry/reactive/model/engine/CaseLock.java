@@ -22,5 +22,9 @@ public interface CaseLock extends Closeable {
     public void close();
 
     void saveFlowNode(PNode node) throws IOException, NotFoundException;
+
+    RuntimeNode getRuntime(UUID nodeId);
+
+    void putRuntime(UUID id, RuntimeNode runtime);
     
 }

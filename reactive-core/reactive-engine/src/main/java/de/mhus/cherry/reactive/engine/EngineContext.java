@@ -18,7 +18,7 @@ package de.mhus.cherry.reactive.engine;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
+import de.mhus.cherry.reactive.engine.util.PCaseLock;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
@@ -26,6 +26,7 @@ import de.mhus.cherry.reactive.model.activity.ASwimlane;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
+import de.mhus.cherry.reactive.model.engine.CaseLock;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EEngine;
@@ -59,14 +60,18 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 	private RuntimeNode aRuntime;
 
 	private ASwimlane<APool<?>> aLane;
+	
+	private CaseLock lock;
 
-	public EngineContext(Engine engine) {
+	public EngineContext(CaseLock lock, Engine engine) {
 		this.engine = engine;
+		this.lock = lock;
 	}
 		
-	public EngineContext(Engine engine, PNode pNode) {
+	public EngineContext(CaseLock lock, Engine engine, PNode pNode) {
 		this.engine = engine;
 		this.pNode = pNode;
+        this.lock = lock;
 	}
 	
 	public EngineContext(EngineContext parent, PNode pNode) {
@@ -80,6 +85,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		this.aPool = parent.aPool;
 		
 		this.pNode = pNode;
+		this.lock = parent.lock;
 
 	}
 
@@ -262,7 +268,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 
 	@Override
 	public void saveRuntime() throws IOException {
-	    try (Engine.PCaseLock lock = engine.getCaseLock(getPRuntime())) {
+	    try (PCaseLock lock = engine.getCaseLock(getPRuntime())) {
 	        lock.saveRuntime(getPRuntime(), aRuntime);
 	    }
 	}
@@ -271,5 +277,9 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 	public AaaProvider getAaaProvider() {
 		return engine.getAaaProvider();
 	}
+
+    public CaseLock getCaseLock() {
+        return lock;
+    }
 
 }

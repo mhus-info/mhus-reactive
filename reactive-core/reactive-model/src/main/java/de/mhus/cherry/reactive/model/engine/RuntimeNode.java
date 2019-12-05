@@ -37,7 +37,16 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 	private Map<String, Object> parameters;
 
 	private ProcessContext<?> context;
+    private UUID nodeId;
 
+	public RuntimeNode() {}
+	
+	public RuntimeNode(UUID uuid) {
+//	    System.out.println("### Create Runtime Note " + MSystem.getObjectId(this));
+//	    System.out.println(MCast.toString("### Create Runtime Note " + MSystem.getObjectId(this) + ": " + uuid, Thread.currentThread().getStackTrace()));
+	    nodeId = uuid;
+	}
+	
 	private void addFlowMessage(PNode flow, String name, String msg) {
 		addMessage(EngineMessage.FLOW_PREFIX + flow.getId() + "," + flow.getState() + "," + name + "," + msg);
 	}
@@ -70,10 +79,12 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 
 	
 	public Map<String, Object> exportParamters() {
+//	    System.out.println("### Export " + MSystem.getObjectId(this) + " " + nodeId + ": " + (parameters == null ? "" : parameters.get(CLOSE_ACTIVITY)));
 		return parameters;
 	}
 	
 	public void importParameters(Map<String, Object> parameters) {
+//        System.out.println("### Import " + MSystem.getObjectId(this) + " " + nodeId + ": " + (parameters == null ? "" : parameters.get(CLOSE_ACTIVITY)));
 		this.parameters = parameters;
 	}
 
@@ -109,6 +120,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 //	}
 
 	public void setCloseActivity(UUID id) {
+//	    System.out.println("### Set CloseActivity: " + MSystem.getObjectId(this) + " " + nodeId + ": " + id);
 		parameters.put(CLOSE_ACTIVITY, id.toString());
 		save();
 	}
@@ -144,8 +156,13 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 
 	public UUID getCloseActivity() {
 		 Object closeId = parameters.get(CLOSE_ACTIVITY);
+//		 System.out.println("Get CLose Activity " + MSystem.getObjectId(this) + " " + nodeId + ": " + closeId);
 		 if (closeId == null) return null;
 		 return UUID.fromString(String.valueOf(closeId));
 	}
 	
+	@Override
+    public String toString() {
+	    return MSystem.toString(this, nodeId, parameters == null ? "?" : parameters.get(CLOSE_ACTIVITY));
+	}
 }

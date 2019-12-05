@@ -673,7 +673,7 @@ public class UiEngine extends MLog implements IEngine {
         for (int i = 0; i < out.length; i++)
             outputs[i] = ui.getNodeDescription(uriStr,out[i].activity().getCanonicalName());
         
-        EngineContext context = engine.createContext(caze, pNode);
+        EngineContext context = engine.createContext(null, caze, pNode);
         PNode pRuntime = engine.getRuntimeForPNode(context, pNode);
         RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
 
@@ -730,7 +730,7 @@ public class UiEngine extends MLog implements IEngine {
         try {
             PNode node = engine.getNodeWithoutLock(info.getId());
             PCase caze = engine.getCaseWithoutLock(node.getCaseId());
-            EngineContext context = engine.createContext(caze, node);
+            EngineContext context = engine.createContext(null, caze, node);
             return context.getANode();
         } catch (Throwable t) {
             log().e(t);
@@ -810,7 +810,7 @@ public class UiEngine extends MLog implements IEngine {
             throw new NotFoundException("Node",id);
         PNode node = engine.getNodeWithoutLock(info.getId());
         PCase caze = engine.getCaseWithoutLock(info.getCaseId());
-        EngineContext context = engine.createContext(caze, node);
+        EngineContext context = engine.createContext(null, caze, node);
         PNode pRuntime = engine.getRuntimeForPNode(context, node);
         RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
         List<EngineMessage> messages = aRuntime.getMessages();
