@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.engine.CaseLock;
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.model.engine.CaseLock;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
@@ -102,7 +102,7 @@ public class Migrator {
 			if (filter(caseInfo)) {
 				
 				if (caseRules != null) {
-					PCase caze = engine.getCase(caseInfo.getId());
+					PCase caze = engine.getCaseWithoutLock(caseInfo.getId());
 					if (caze.getState() == STATE_CASE.SUSPENDED || caze.getState() == STATE_CASE.CLOSED) {
 						monitor.incrementStep();
 						monitor.println(">>> Migrate " + caseInfo);
@@ -120,7 +120,7 @@ public class Migrator {
 				if (nodeRules != null) {
 					for (PNodeInfo nodeInfo : engine.storageGetFlowNodes(caseInfo.getId(), null)) {
 						if (filter(nodeInfo)) {
-							PNode node = engine.getFlowNode(nodeInfo.getId());
+							PNode node = engine.getNodeWithoutLock(nodeInfo.getId());
 							if (node.getState() == STATE_NODE.SUSPENDED || node.getState() == STATE_NODE.CLOSED) {
 								monitor.println(">>> Migrate " + nodeInfo);
 								if (!test) {

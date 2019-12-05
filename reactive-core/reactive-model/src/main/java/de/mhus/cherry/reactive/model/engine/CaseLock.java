@@ -1,12 +1,9 @@
-package de.mhus.cherry.reactive.engine;
+package de.mhus.cherry.reactive.model.engine;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.UUID;
 
-import de.mhus.cherry.reactive.model.engine.PCase;
-import de.mhus.cherry.reactive.model.engine.PNode;
-import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.lib.errors.NotFoundException;
 
 public interface CaseLock extends Closeable {
@@ -15,13 +12,15 @@ public interface CaseLock extends Closeable {
     
     PNode getFlowNode(UUID id) throws NotFoundException, IOException;
     
-    default PNode getFlowNode(PNodeInfo nodeInfo) {
+    default PNode getFlowNode(PNodeInfo nodeInfo) throws NotFoundException, IOException {
         return getFlowNode(nodeInfo.getId());
     }
     
-    void closeCase(boolean hard, int code, String msg) throws IOException;
+    void closeCase(boolean hard, int code, String msg) throws IOException, NotFoundException;
 
     @Override
     public void close();
+
+    void saveFlowNode(PNode node) throws IOException, NotFoundException;
     
 }

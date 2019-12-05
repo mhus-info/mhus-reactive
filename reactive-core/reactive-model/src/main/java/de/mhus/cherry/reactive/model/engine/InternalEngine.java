@@ -15,8 +15,11 @@
  */
 package de.mhus.cherry.reactive.model.engine;
 
+import java.util.UUID;
+
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.util.MUri;
+import de.mhus.lib.errors.MException;
 
 /**
  * Enhanced, not default engine features.
@@ -31,5 +34,19 @@ public interface InternalEngine {
 	Object execute(MUri uri, IProperties parameters) throws Exception;
 
 	void doNodeErrorHandling(PNode closeNode, String error) throws Exception;
+
+	CaseLock getCaseLockByNode(UUID nodeId) throws MException;
+	
+    CaseLock getCaseLock(PNodeInfo nodeInfo);
+
+    CaseLock getCaseLock(PCaseInfo caseInfo);
+
+    CaseLock getCaseLock(PNode node);
+
+    CaseLock getCaseLockOrNull(PNodeInfo nodeInfo);
+
+    CaseLock getCaseLockOrNull(UUID caseId);
+
+    CaseLock getCaseLock(UUID caseId);
 
 }

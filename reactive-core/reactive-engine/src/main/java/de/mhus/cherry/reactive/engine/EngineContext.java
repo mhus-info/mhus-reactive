@@ -18,6 +18,7 @@ package de.mhus.cherry.reactive.engine;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
+import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
@@ -253,12 +254,17 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 			log().w("create undefined following activity",getENode(),next);
 		
 		EElement start = getEPool().getElement(next.getCanonicalName());
-		return engine.createActivity(this, getPNode(), start);
+		PNode node = getPNode();
+		try (PCaseLock lock = engine.getCaseLock(node)) {
+		    return lock.createActivity(this, node, start);
+		}
 	}
 
 	@Override
 	public void saveRuntime() throws IOException {
-		engine.saveRuntime(getPRuntime(), aRuntime);
+	    try (Engine.PCaseLock lock = engine.getCaseLock(getPRuntime())) {
+	        lock.saveRuntime(getPRuntime(), aRuntime);
+	    }
 	}
 
 	@Override

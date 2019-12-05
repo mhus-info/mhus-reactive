@@ -15,6 +15,9 @@
  */
 package de.mhus.cherry.reactive.examples.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -23,6 +26,7 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.mockup.EngineMockUp;
@@ -47,7 +51,6 @@ import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class S1ActivitiesTest  {
 
@@ -78,7 +81,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze1 = engine.getCase(caseId1);
+				PCase caze1 = engine.getCaseWithoutLock(caseId1);
 				if (caze1.getState() == STATE_CASE.CLOSED) {
 					assertEquals("spock", caze1.getParameters().get("text2"));
 					break;
@@ -117,7 +120,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -152,7 +155,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -187,7 +190,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze1 = engine.getCase(caseId);
+				PCase caze1 = engine.getCaseWithoutLock(caseId);
 				if (caze1.getState() == STATE_CASE.CLOSED) {
 					assertEquals(2, caze1.getClosedCode());
 					break;
@@ -231,7 +234,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze1 = engine.getCase(caseId);
+				PCase caze1 = engine.getCaseWithoutLock(caseId);
 				if (caze1.getState() == STATE_CASE.CLOSED) {
 					assertEquals(2, caze1.getClosedCode());
 					break;
@@ -275,7 +278,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze1 = engine.getCase(caseId);
+				PCase caze1 = engine.getCaseWithoutLock(caseId);
 				if (caze1.getState() == STATE_CASE.CLOSED) {
 					assertEquals(2, caze1.getClosedCode());
 					break;
@@ -319,7 +322,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -354,7 +357,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -389,7 +392,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -424,7 +427,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -461,7 +464,7 @@ public class S1ActivitiesTest  {
 				
 				boolean found = false;
 				for (PNodeInfo nodeId : engine.storageGetFlowNodes(caseId, STATE_NODE.RUNNING)) {
-					PNode node = engine.getFlowNode(nodeId.getId());
+					PNode node = engine.getNodeWithoutLock(nodeId.getId());
 					found = true;
 					node.setScheduled(System.currentTimeMillis());
 					config.storage.saveFlowNode(node);
@@ -470,8 +473,9 @@ public class S1ActivitiesTest  {
 			}
 			assertTrue(i < 10);
 			mockup.close();
-			engine.closeCase(caseId, true, -1, "test");
-			
+            try (PCaseLock lock = engine.getCaseLock(caseId)) {
+                lock.closeCase(true, -1, "test");
+            }			
 		} catch (Throwable t) {
 			t.printStackTrace();
 			throw t;
@@ -502,7 +506,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -547,7 +551,7 @@ public class S1ActivitiesTest  {
 					}
 				}
 				
-				PCase caze = engine.getCase(caseId);
+				PCase caze = engine.getCaseWithoutLock(caseId);
 				if (caze.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(i < 10);
@@ -595,8 +599,8 @@ public class S1ActivitiesTest  {
 					}
 				}
 				
-				PCase caze1 = engine.getCase(caseId1);
-				PCase caze2 = engine.getCase(caseId2);
+				PCase caze1 = engine.getCaseWithoutLock(caseId1);
+				PCase caze2 = engine.getCaseWithoutLock(caseId2);
 				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(found);
@@ -652,8 +656,8 @@ public class S1ActivitiesTest  {
 					}
 				}
 				
-				PCase caze1 = engine.getCase(caseId1);
-				PCase caze2 = engine.getCase(caseId2);
+				PCase caze1 = engine.getCaseWithoutLock(caseId1);
+				PCase caze2 = engine.getCaseWithoutLock(caseId2);
 				if (caze1.getState() == STATE_CASE.CLOSED && caze2.getState() == STATE_CASE.CLOSED) break;
 			}
 			assertTrue(found);
@@ -689,7 +693,7 @@ public class S1ActivitiesTest  {
 				step(i);
 				mockup.step();
 				
-				PCase caze1 = engine.getCase(caseId1);
+				PCase caze1 = engine.getCaseWithoutLock(caseId1);
 				if (caze1.getState() == STATE_CASE.CLOSED) {
 					assertEquals(2, caze1.getClosedCode());
 					break;
@@ -741,9 +745,9 @@ public class S1ActivitiesTest  {
 		
 		// find runtime
 		for (PNodeInfo nodeId : engine.storageGetFlowNodes(null, null)) {
-			PNode node = engine.getFlowNode(nodeId.getId());
+			PNode node = engine.getNodeWithoutLock(nodeId.getId());
 			if (node.getType() == TYPE_NODE.RUNTIME) {
-				PCase caze = engine.getCase(node.getCaseId());
+				PCase caze = engine.getCaseWithoutLock(node.getCaseId());
 				EngineContext context = engine.createContext(caze);
 				RuntimeNode runtime = engine.createRuntimeObject(context, node);
 				RuntimeTrace trace = new RuntimeTrace(runtime);

@@ -28,6 +28,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -62,7 +63,7 @@ public class CmdCase extends AbstractCmd {
 			+ " suspend <id>*    - suspend case\n"
 			+ " archive [id]*    - archive case or all if id is not set\n"
 			+ " cancel <id>*     - cancel hard\n"
-			+ " locked           - print locked cases\n"
+			// + " locked           - print locked cases\n"
 			+ " runtime <id>     - print all runtime information\n"
 			+ " setoption <id> [key=value]*\n"
 			+ " setparam <id> [key=value]*\n"
@@ -85,39 +86,46 @@ public class CmdCase extends AbstractCmd {
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		
 		if (cmd.equals("updatefull")) {
-			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
-			System.out.println("CASE " + caze.getId());
-			api.getEngine().storageUpdateFull(caze);
-			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
-				PNode node = api.getEngine().getFlowNode(info.getId());
-				System.out.println("NODE " + node.getId());
-				api.getEngine().storageUpdateFull(node);
-			}
-			System.out.println("UPDATED");
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+                PCase caze = lock.getCase();
+    			System.out.println("CASE " + caze.getId());
+    			api.getEngine().storageUpdateFull(caze);
+    			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
+    				PNode node = api.getEngine().getNodeWithoutLock(info.getId());
+    				System.out.println("NODE " + node.getId());
+    				api.getEngine().storageUpdateFull(node);
+    			}
+    			System.out.println("UPDATED");
+            }
 		} else
 		if (cmd.equals("setoption")) {
-			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
-			Field field = caze.getClass().getDeclaredField("options");
-			field.setAccessible(true);
-			@SuppressWarnings("unchecked")
-			Map<String, Object> p = (Map<String, Object>) field.get(caze);
-			for (int i = 1; i < parameters.length; i++) {
-				String x = parameters[i];
-				MProperties.appendToMap(p, x);
+		    
+			try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+			    PCase caze = lock.getCase();
+    			Field field = caze.getClass().getDeclaredField("options");
+    			field.setAccessible(true);
+    			@SuppressWarnings("unchecked")
+    			Map<String, Object> p = (Map<String, Object>) field.get(caze);
+    			for (int i = 1; i < parameters.length; i++) {
+    				String x = parameters[i];
+    				MProperties.appendToMap(p, x);
+    			}
+    			lock.savePCase(null, false);
+    			api.getEngine().storageUpdateFull(caze);
+    			System.out.println("SAVED");
 			}
-			api.getEngine().savePCase(caze, null, false);
-			api.getEngine().storageUpdateFull(caze);
-			System.out.println("SAVED");
 		} else
 		if (cmd.equals("setparam")) {
-			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
-			Map<String, Object> p = caze.getParameters();
-			for (int i = 1; i < parameters.length; i++) {
-				String x = parameters[i];
-				MProperties.appendToMap(p, x);
-			}
-			api.getEngine().savePCase(caze, null, false);
-			System.out.println("SAVED");
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+                PCase caze = lock.getCase();
+    			Map<String, Object> p = caze.getParameters();
+    			for (int i = 1; i < parameters.length; i++) {
+    				String x = parameters[i];
+    				MProperties.appendToMap(p, x);
+    			}
+    			lock.savePCase(null, false);
+    			System.out.println("SAVED");
+            }
 		} else
 		if (cmd.equals("runtime")) {
 			PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
@@ -125,7 +133,7 @@ public class CmdCase extends AbstractCmd {
 				if (node.getType() == TYPE_NODE.RUNTIME) {
 					System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
 					try {
-						PNode pRuntime = api.getEngine().getFlowNode(node.getId());
+						PNode pRuntime = api.getEngine().getNodeWithoutLock(node.getId());
 						Util.printRuntime(api, caze, pRuntime, tblOpt);
 					} catch (Throwable t) {
 						t.printStackTrace();
@@ -133,15 +141,15 @@ public class CmdCase extends AbstractCmd {
 				}
 			}
 		} else
-		if (cmd.equals("locked")) {
-			ConsoleTable table = new ConsoleTable(tblOpt);
-			table.setHeaderValues("Id","CustomId","Uri","State","Close");
-			for (UUID id : api.getEngine().getLockedCases()) {
-				PCase caze = api.getEngine().getCase(id);
-				table.addRowValues(caze.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
-			}
-			table.print(System.out);
-		} else
+//		if (cmd.equals("locked")) {
+//			ConsoleTable table = new ConsoleTable(tblOpt);
+//			table.setHeaderValues("Id","CustomId","Uri","State","Close");
+//			for (UUID id : api.getEngine().getLockedCases()) {
+//				PCase caze = api.getEngine().getCase(id);
+//				table.addRowValues(caze.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
+//			}
+//			table.print(System.out);
+//		} else
 		if (cmd.equals("resave")) {
 		    PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
 			api.getEngine().resaveCase(caze.getId());
@@ -207,7 +215,7 @@ public class CmdCase extends AbstractCmd {
 			for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
 				if (all || info.getState() != STATE_NODE.CLOSED) {
 				    try {
-    				    PNode node = api.getEngine().getFlowNode(info.getId());
+    				    PNode node = api.getEngine().getNodeWithoutLock(info.getId());
     					String scheduled = "-";
     					Entry<String, Long> scheduledEntry = node.getNextScheduled();
     					if (scheduledEntry != null) {
@@ -246,7 +254,7 @@ public class CmdCase extends AbstractCmd {
 			for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
 			    if (all || info.getState() != STATE_CASE.CLOSED) {
 			        try {
-    			        PCase caze = api.getEngine().getCase(info.getId());
+    			        PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
     					table.addRowValues(
     					        info.getId(), 
     					        caze.getCustomId(), 
@@ -318,10 +326,10 @@ public class CmdCase extends AbstractCmd {
         } else
 		if (cmd.equals("cancel")) {
 			for (String id : parameters) {
-			    try {
-    			    PCase caze = EngineUtil.getCase(api.getEngine(), parameters[0]);
+	            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+	                PCase caze = lock.getCase();
     			    System.out.println("Cancel: " + caze);
-    				api.getEngine().closeCase(caze.getId(), true, -1, "cancelled by cmd");
+    				lock.closeCase(true, -1, "cancelled by cmd");
                 } catch (Throwable t) {
                     System.out.println("Error in " + id);
                     t.printStackTrace();

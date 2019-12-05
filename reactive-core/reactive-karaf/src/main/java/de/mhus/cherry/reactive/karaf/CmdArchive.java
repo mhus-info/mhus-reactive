@@ -102,7 +102,7 @@ public class CmdArchive extends AbstractCmd {
 			table.setHeaderValues("Id","Custom","Name","State","Type","CaseId","Assigned","Uri");
 
 			for (PNodeInfo info : res) {
-				PNode node = api.getEngine().getFlowNode(info.getId());
+				PNode node = api.getEngine().getNodeWithoutLock(info.getId());
 				table.addRowValues(
 						node.getId(),
 						info.getCustomId(), 
@@ -147,7 +147,7 @@ public class CmdArchive extends AbstractCmd {
 			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","CustomId","Uri","State","Close");
 			for (PCaseInfo info : res) {
-				PCase caze = api.getEngine().getCase(info.getId());
+				PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
 				table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 			}
 			table.print(System.out);

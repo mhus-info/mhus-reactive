@@ -38,7 +38,9 @@ public interface EEngine {
 
 	Result<PNodeInfo> storageGetMessageFlowNodes(UUID caseId, STATE_NODE state, String message) throws IOException;
 
-	// PNode getFlowNode(UUID nodeId) throws NotFoundException, IOException;
+	PNode getNodeWithoutLock(UUID nodeId) throws NotFoundException, IOException;
+
+    PCase getCaseWithoutLock(UUID caseId) throws NotFoundException, IOException;
 
 	// void saveFlowNode(PNode flow) throws IOException, NotFoundException;
 

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.engine.Engine.PCaseLock;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -28,8 +29,8 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.Result;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
-import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MPeriod;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.schedule.CronJob;
 import de.mhus.lib.errors.NotFoundException;
@@ -66,16 +67,16 @@ public class EngineUtil {
 //		return name + ":" + desc.version();
 //	}
 
-	public static PCase getCase(Engine engine, String id) throws NotFoundException, IOException {
+	public static PCaseLock getCaseLock(Engine engine, String id) throws NotFoundException, IOException {
 		if (MValidator.isUUID(id))
-			return engine.getCase(UUID.fromString(id));
+			return engine.getCaseLock(UUID.fromString(id));
 		SearchCriterias c = new SearchCriterias();
 		c.custom = id;
 		Result<PCaseInfo> res = engine.storageSearchCases(c);
 		for (PCaseInfo info : res) {
 			if (info.getState() != STATE_CASE.CLOSED && info.getState() != STATE_CASE.SUSPENDED) {
 				res.close();
-				return engine.getCase(info.getId());
+				return engine.getCaseLock(info.getId());
 			}
 		}
 		res.close();
@@ -83,13 +84,37 @@ public class EngineUtil {
 		res = engine.storageSearchCases(c);
 		for (PCaseInfo info : res) {
 			res.close();
-			return engine.getCase(info.getId());
+			return engine.getCaseLock(info.getId());
 		}
 		res.close();
 		
 		return null;
 	}
 	
+    public static PCase getCase(Engine engine, String id) throws NotFoundException, IOException {
+        if (MValidator.isUUID(id))
+            return engine.getCaseWithoutLock(UUID.fromString(id));
+        SearchCriterias c = new SearchCriterias();
+        c.custom = id;
+        Result<PCaseInfo> res = engine.storageSearchCases(c);
+        for (PCaseInfo info : res) {
+            if (info.getState() != STATE_CASE.CLOSED && info.getState() != STATE_CASE.SUSPENDED) {
+                res.close();
+                return engine.getCaseWithoutLock(info.getId());
+            }
+        }
+        res.close();
+        
+        res = engine.storageSearchCases(c);
+        for (PCaseInfo info : res) {
+            res.close();
+            return engine.getCaseWithoutLock(info.getId());
+        }
+        res.close();
+        
+        return null;
+    }
+    
 	public static PCaseInfo getCaseInfo(Engine engine, String id) throws Exception {
 		if (MValidator.isUUID(id))
 			return engine.storageGetCaseInfo(UUID.fromString(id));
@@ -117,14 +142,14 @@ public class EngineUtil {
 
 	public static PNode getFlowNode(Engine engine, String id) throws NotFoundException, IOException {
 		if (MValidator.isUUID(id))
-			return engine.getFlowNode(UUID.fromString(id));
+			return engine.getNodeWithoutLock(UUID.fromString(id));
 		SearchCriterias c = new SearchCriterias();
 		c.custom = id;
 		Result<PNodeInfo> res = engine.storageSearchFlowNodes(c);
 		for (PNodeInfo info : res) {
 			if (info.getState() != STATE_NODE.CLOSED && info.getState() != STATE_NODE.SUSPENDED && info.getState() != STATE_NODE.WAITING && info.getType() != TYPE_NODE.RUNTIME) {
 				res.close();
-				return engine.getFlowNode(info.getId());
+				return engine.getNodeWithoutLock(info.getId());
 			}
 		}
 		res.close();
@@ -133,7 +158,7 @@ public class EngineUtil {
 		for (PNodeInfo info : res) {
 			if (info.getState() != STATE_NODE.SUSPENDED && info.getType() != TYPE_NODE.RUNTIME) {
 				res.close();
-				return engine.getFlowNode(info.getId());
+				return engine.getNodeWithoutLock(info.getId());
 			}
 		}
 		res.close();
@@ -141,7 +166,7 @@ public class EngineUtil {
 		res = engine.storageSearchFlowNodes(c);
 		for (PNodeInfo info : res) {
 			res.close();
-			return engine.getFlowNode(info.getId());
+			return engine.getNodeWithoutLock(info.getId());
 		}
 		res.close();
 		

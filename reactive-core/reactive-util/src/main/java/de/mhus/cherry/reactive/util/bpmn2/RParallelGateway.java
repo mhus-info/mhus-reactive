@@ -20,7 +20,9 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AParallelGateway;
 import de.mhus.cherry.reactive.model.annotations.Output;
+import de.mhus.cherry.reactive.model.engine.CaseLock;
 import de.mhus.cherry.reactive.model.engine.EEngine;
+import de.mhus.cherry.reactive.model.engine.InternalEngine;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
@@ -61,9 +63,11 @@ public class RParallelGateway<P extends RPool<?>> extends RGateway<P> implements
 			// close all others, activate me !!!
 			context.getPNode().setState(STATE_NODE.RUNNING);
 			for (UUID id : current) {
-				PNode node = engine.getFlowNode(id);
-				node.setState(STATE_NODE.CLOSED);
-				engine.saveFlowNode(node);
+			    try (CaseLock lock = ((InternalEngine)engine).getCaseLockByNode(id)) {
+    				PNode node = lock.getFlowNode(id);
+    				node.setState(STATE_NODE.CLOSED);
+    				lock.saveFlowNode(node);
+			    }
 			}
 		}
 		

@@ -37,7 +37,7 @@ public abstract class RErrorEnd<P extends RPool<?>> extends RActivity<P> impleme
 		UUID closeActivity = getContext().getPCase().getCloseActivity();
 		if (closeActivity == null) return;
 		
-		PNode closeNode = getContext().getEEngine().getFlowNode(closeActivity);
+		PNode closeNode = getContext().getEEngine().getNodeWithoutLock(closeActivity);
 		if (closeNode.getState() != STATE_NODE.WAITING) {
 			getContext().getARuntime().doErrorMsg(getContext().getPNode(), "closeActivity is in wrong state",closeNode.getState());
 			return;

@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.engine;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.model.activity.AActivity;
@@ -39,6 +37,7 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
+import de.mhus.cherry.reactive.model.engine.CaseLock;
 import de.mhus.cherry.reactive.model.engine.ContextRecipient;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EEngine;
@@ -73,11 +72,10 @@ import de.mhus.cherry.reactive.model.util.ValidateParametersBeforeExecute;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
-import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
-import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
@@ -468,14 +466,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					lock.closeCase(true, EngineConst.ERROR_CODE_MAX_CREATE_ACTIVITY, "max activities reached");
 					return;
 				}
-				createActivity(context, lock, pNode, eNext);
+				lock.createActivity(context, pNode, eNext);
 				// close this
 				lock.closeFlowNode(context, pNode, STATE_NODE.CLOSED);
 				return;
 			}
 			
 			// do lifecycle
-			doNodeLifecycle(context, lock, pNode);
+			lock.doNodeLifecycle(context, pNode);
 		} catch (Throwable t) {
 			log().e(pNode,t);
 			fireEvent.error(pNode,t);
@@ -499,72 +497,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	@Override
 	public void doNodeErrorHandling(PNode closeNode, String error) throws Exception {
-		PCase caze = getCase(closeNode.getCaseId());
-		EngineContext context = createContext(caze, closeNode);
-		doNodeErrorHandling(context, closeNode, new TaskException(error, "syntetic"));
-	}
-
-	private void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
-		fireEvent.doNodeErrorHandling(context,pNode,t);
-		
-		if (t instanceof TechnicalException) {
-			try {
-				closeFlowNode(context, pNode, STATE_NODE.FAILED);
-			} catch (IOException e) {
-				log().e(pNode,e);
-				fireEvent.error(pNode,e);
-			}
-			return;
-		}
-		
-		if (t instanceof EngineException) {
-			try {
-				closeFlowNode(context, pNode, STATE_NODE.STOPPED);
-			} catch (IOException e) {
-				log().e(pNode,e);
-				fireEvent.error(pNode,e);
-			}
-			return;
-		}
-		
-		EElement eNode = context.getENode();
-		Trigger defaultError = null;
-		Trigger errorHandler = null;
-		for (Trigger trigger : eNode.getTriggers()) {
-			if (trigger.type() == TYPE.DEFAULT_ERROR)
-				defaultError = trigger;
-			else
-			if (trigger.type() == TYPE.ERROR) {
-				if (t instanceof TaskException){
-					if (trigger.name().equals(((TaskException)t).getTrigger()))
-						errorHandler = trigger;
-				}
-			}
-		}
-		if (errorHandler == null) errorHandler = defaultError;
-		if (errorHandler != null) {
-			// create new activity
-			EElement start = context.getEPool().getElement(errorHandler.activity().getCanonicalName());
-			try {
-				createActivity(context, pNode, start);
-				// close node
-				closeFlowNode(context,pNode,STATE_NODE.CLOSED);
-				return;
-			} catch (Exception e) {
-				log().e(e);
-				fireEvent.error(pNode,start,e);
-			}
-		} else {
-			// set node in error
-			pNode.setState(STATE_NODE.FAILED);
-			pNode.setExitMessage(t.toString());
-			try {
-				saveFlowNode(pNode);
-			} catch (NotFoundException | IOException e) {
-				log().e(pNode,e);
-			}
-		}
-		
+	    try (PCaseLock lock = getCaseLock(closeNode)) {
+    		EngineContext context = createContext(lock.getCase(), closeNode);
+    		lock.doNodeErrorHandling(context, closeNode, new TaskException(error, "syntetic"));
+	    }
 	}
 
 // ---
@@ -738,7 +674,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     			if (start == null)
     				throw new MException("start point not found",uri.getFragment());
     			
-    			return createStartPoint(context, lock, start);
+    			return lock.createStartPoint(context, start);
 			}
 		}
 		// case "bpmq": // not implemented use executeQuery()
@@ -885,7 +821,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			Throwable isError = null;
 			for (EElement start : startPoints) {
 				try {
-					createStartPoint(context, lock, start);
+					lock.createStartPoint(context, start);
 				} catch (Throwable t) {
 					log().w(start,t);
 					fireEvent.error(pCase,start,t);
@@ -937,195 +873,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		EProcess process = processProvider.getProcess(processName, processVersion);
 		return process;
 	}
-
-	public UUID createStartPoint(EngineContext context, PCaseLock lock, EElement start) throws Exception {
-		
-		// some checks
-		if (!start.is(AStartPoint.class))
-			throw new MException("activity is not a start point",context,start);
-		
-		if (!context.getEPool().isElementOfPool(start))
-			throw new MException("start point is not part of the pool",context,start);
-
-		// collect information
-		ActivityDescription desc = start.getActivityDescription();
-		Class<? extends RuntimeNode> runtimeClass = desc.runtime();
-		
-		UUID caseId = context.getPCase().getId();
-		fireEvent.createStartPoint(context.getPCase(),start);
-		
-		Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
-		
-		// create runtime
-		PNode runtime = new PNode(
-				UUID.randomUUID(), 
-				caseId,
-				"runtime",
-				runtimeClass.getCanonicalName(),
-				System.currentTimeMillis(),
-				0,
-				STATE_NODE.WAITING,
-				STATE_NODE.WAITING,
-				null,
-				null,
-				null,
-				false,
-				TYPE_NODE.RUNTIME,
-				null,
-				new HashMap<>(),
-				null,
-				null,
-				0,
-				null
-				);
-		fireEvent.createRuntime(context.getPCase(),start,runtime);
-//		synchronized (nodeCache) {
-		storage.saveFlowNode(runtime);
-//			nodeCache.put(runtime.getId(), runtime);
-//		}
-		context.setPRuntime(runtime);
-		UUID runtimeId = runtime.getId();
-		
-		// create flow node
-		PNode flow = new PNode(
-				UUID.randomUUID(), 
-				caseId, 
-				start.getName(),
-				start.getCanonicalName(),
-				System.currentTimeMillis(),
-				0,
-				STATE_NODE.NEW,
-				STATE_NODE.NEW, 
-				start.getSchedulerList(),
-				start.getSignalList(),
-				start.getMessageList(),
-				false, 
-				TYPE_NODE.NODE, 
-				null, 
-				null, 
-				null, 
-				runtimeId,
-				EngineConst.TRY_COUNT,
-				actor == null ? null : actor.getName()
-			);
-		flow.setScheduledNow();
-		fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(),start);
-		context = new EngineContext(context, flow);
-		doNodeLifecycle(context, lock, flow);
-		return flow.getId();
-	}
-	
-	public PNode createActivity(EngineContext context, PCaseLock lock, PNode previous, EElement start) throws Exception {
-		
-		UUID caseId = context.getPCase().getId();
-		UUID runtimeId = previous.getRuntimeId();
-		
-		Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
-
-		// create flow node
-		PNode flow = new PNode(
-				UUID.randomUUID(), 
-				caseId, 
-				start.getName(),
-				start.getCanonicalName(),
-				System.currentTimeMillis(),
-				0,
-				STATE_NODE.NEW,
-				STATE_NODE.NEW, 
-				start.getSchedulerList(),
-				start.getSignalList(),
-				start.getMessageList(),
-				false, 
-				TYPE_NODE.NODE, 
-				null, 
-				null, 
-				null, 
-				runtimeId,
-				EngineConst.TRY_COUNT,
-				actor == null ? null : actor.getName()
-			);
-		//flow.setScheduledNow();
-		fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);
-		context = new EngineContext(context, flow);
-		
-		doNodeLifecycle(context, lock, flow);
-		
-		return flow;
-	}
-	
-	protected void doNodeLifecycle(EngineContext context, PCaseLock lock, PNode flow) throws Exception {
-		
-		boolean init = flow.getStartState() == STATE_NODE.NEW; // this means the node is not executed!
-		context = new EngineContext(context, flow);
-		
-		// lifecycle flow node
-		EElement start = context.getENode();
-		AActivity<?> activity = (AActivity<?>) createActivityObject(start);
-		context.setANode(activity);
-		RuntimeNode runtime = context.getARuntime();
-		if (init)
-			fireEvent.initStart(runtime,flow,start,activity);
-		else
-			fireEvent.executeStart(runtime,flow,start,activity);
-		if (activity instanceof ContextRecipient)
-			((ContextRecipient)activity).setContext(context);
-		activity.importParameters(flow.getParameters());
-		
-		try {
-			if (init) {
-				activity.initializeActivity();
-
-				if (activity instanceof IndexValuesProvider) {
-					flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(true) );
-				} else {
-					flow.setIndexValues(null);
-				}
-
-			} else {
-				flow.setLastRunDate(System.currentTimeMillis());
-				try {
-					context.getPool().beforeExecute(activity);
-					activity.doExecuteActivity();
-				} finally {
-					context.getPool().afterExecute(activity);
-				}
-			}
-			// secure switch state away from NEW
-			if (flow.getState() == STATE_NODE.NEW) {
-				flow.setState(STATE_NODE.RUNNING);
-				flow.setScheduledNow();
-			} else
-			if (flow.getStartState() == STATE_NODE.RUNNING && flow.getState() == STATE_NODE.RUNNING) {
-				flow.setTryCount(flow.getTryCount()-1);
-				if (flow.getTryCount() <= 0) {
-					flow.setSuspendedState(STATE_NODE.RUNNING);
-					flow.setState(STATE_NODE.STOPPED);
-				} else {
-					flow.setScheduled(newScheduledTime(flow));
-				}
-			}
-		} catch (Throwable t) {
-			log().w(flow,t);
-			// remember
-			fireEvent.error(flow,t);
-			if (init)
-				fireEvent.initFailed(runtime,flow);
-			else
-				fireEvent.executeFailed(runtime,flow);
-			doNodeErrorHandling(context, flow, t);
-			return;
-		}
-		if (init)
-			flow.getParameters().clear();
-		
-		// save
-		lock.saveFlowNode(context, flow,activity);
-		
-		if (init)
-			fireEvent.initStop(runtime,flow);
-		else
-			fireEvent.executeStop(runtime,flow);
-	}
 	
 	private long newScheduledTime(PNode flow) {
 		return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS;
@@ -1172,7 +919,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	public PNode getRuntimeForPNode(EngineContext context, PNode pNode) {
 		if (pNode == null || pNode.getRuntimeId() == null) return null;
 		try {
-			return getFlowNode(pNode.getRuntimeId());
+			return getNodeWithoutLock(pNode.getRuntimeId());
 		} catch (NotFoundException | IOException e) {
 			log().w(pNode,e);
 			return null;
@@ -1201,28 +948,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 
 	/**
-	 * Save the runtime to storage. If runtme object is given, the
-	 * parameters will be stored.
-	 * 
-	 * @param pRuntime
-	 * @param aRuntime
-	 * @throws IOException
-	 */
-	public void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException {
-		if (aRuntime != null) {
-			Map<String, Object> parameters = aRuntime.exportParamters();
-			if (parameters != null) {
-				pRuntime.getParameters().putAll(parameters);
-			}
-		}
-		fireEvent.saveRuntime(pRuntime, aRuntime);
-		synchronized (nodeCache) {
-			storage.saveFlowNode(pRuntime);
-			nodeCache.put(pRuntime.getId(), pRuntime);
-		}
-	}
-
-	/**
 	 * Archive all closed cases.
 	 * 
 	 */
@@ -1230,13 +955,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		try {
 			archive.saveEngine(config.persistent);
 			for (PCaseInfo caseId : storage.getCases(STATE_CASE.CLOSED)) {
-				PCase caze = getCase(caseId.getId());
-				try (CaseLock lock = getCaseLock(caze)) {
+				try (CaseLock lock = getCaseLock(caseId)) {
+				    PCase caze = lock.getCase();
 					fireEvent.archiveCase(caze);
 					try {
 						archive.saveCase(caze);
 						for (PNodeInfo nodeId : storage.getFlowNodes(caze.getId(), null)) {
-							PNode node = getFlowNode(nodeId.getId());
+							PNode node = lock.getFlowNode(nodeId.getId());
 							archive.saveFlowNode(node);
 						}
 						storage.deleteCaseAndFlowNodes(caze.getId());
@@ -1281,12 +1006,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					return;
 				}
 			}
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log().d(caseId,e);
 		}
 		for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
 			try {
-				PNode node = getFlowNode(nodeId.getId());
+				PNode node = getNodeWithoutLock(nodeId.getId());
 				archive.saveFlowNode(node);
 			} catch (NotFoundException e) {
 				log().d(caseId,e);
@@ -1433,10 +1158,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		}
 		PCase caze = archive.loadCase(caseId);
 		fireEvent.restoreCase(caze);
-		try (CaseLock lock = getCaseLock(caze)) {
+		try (PCaseLock lock = getCaseLock(caseId)) {
 			caze.setState(STATE_CASE.SUSPENDED);
 			storage.saveCase(caze);
-			caze = lock.getCase();
+			lock.cazex = null; // reload
+			caze = lock.getCase(); // reload
 			for (PNodeInfo nodeId : archive.getFlowNodes(caseId, null)) {
 				PNode node = lock.getFlowNode(nodeId.getId());
 				// set to suspended
@@ -1590,10 +1316,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			try {
 				((CloseActivity)aNode).doClose(closedContext);
 			} catch (Exception e) {
-				doNodeErrorHandling(context, node, e);
+				lock.doNodeErrorHandling(context, node, e);
 				log().e("doCloseActivity",nodeId,e);
 			}
-			savePCase(lock, context);
+			lock.savePCase(context);
 		}
 	}
 
@@ -1746,8 +1472,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		
 		try {
 			// find actor
-			PNode node = getFlowNode(nodeId);
-			PCase caze = getCase(node.getCaseId());
+			PNode node = getNodeWithoutLock(nodeId);
+			PCase caze = getCaseWithoutLock(node.getCaseId());
 			String uri = caze.getUri();
 			
 			MUri muri = MUri.toUri(uri);
@@ -1785,32 +1511,32 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 
 	public void fireExternal(UUID nodeId, String taskName, Map<String, Object> parameters) throws IOException, MException {
-		fireEvent.fireExternal(nodeId, taskName, parameters);
-		PNode node = getFlowNode(nodeId);
-		if (taskName != null && !node.getName().equals(taskName)) {
-			fireEvent.error("Wrong task name",taskName,nodeId);
-			throw new NotFoundException("Wrong task name");
-		}
-
-		// check parameters
-		if (node.getState() == STATE_NODE.WAITING || node.getState() == STATE_NODE.SUSPENDED && node.getSuspendedState() == STATE_NODE.WAITING) {
-			try {
-				PCase caze = getCase(node.getCaseId());
-				EngineContext context = createContext(caze, node);
-				AActivity<?> aNode = context.getANode();
-				if (aNode instanceof ValidateParametersBeforeExecute)
-					((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
-			} catch (MException t) {
-				throw t;
-			} catch (MRuntimeException t) {
-				throw t;
-			} catch (Throwable t) {
-				throw new IOException(t);
-			}
-		}
+	    try (PCaseLock lock = getCaseLockByNode(nodeId)) {
+    		fireEvent.fireExternal(nodeId, taskName, parameters);
+    		PNode node = lock.getFlowNode(nodeId);
+    		if (taskName != null && !node.getName().equals(taskName)) {
+    			fireEvent.error("Wrong task name",taskName,nodeId);
+    			throw new NotFoundException("Wrong task name");
+    		}
+    
+    		// check parameters
+    		if (node.getState() == STATE_NODE.WAITING || node.getState() == STATE_NODE.SUSPENDED && node.getSuspendedState() == STATE_NODE.WAITING) {
+    			try {
+    				PCase caze = lock.getCase();
+    				EngineContext context = createContext(caze, node);
+    				AActivity<?> aNode = context.getANode();
+    				if (aNode instanceof ValidateParametersBeforeExecute)
+    					((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
+    			} catch (MException t) {
+    				throw t;
+    			} catch (MRuntimeException t) {
+    				throw t;
+    			} catch (Throwable t) {
+    				throw new IOException(t);
+    			}
+    		}
 		
-		// Set into running mode
-		try (CaseLock lock = getCaseLock(node)) {
+    		// Set into running mode
 			if (node.getType() != TYPE_NODE.EXTERN) throw new NotFoundException("not external",nodeId);
 			
 			if (node.getState() == STATE_NODE.SUSPENDED) {
@@ -1822,7 +1548,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				node.setScheduledNow();
 			}
 			node.setMessage(parameters);
-			saveFlowNode(node);
+			lock.saveFlowNode(node);
 		}
 	}
 	
@@ -1831,26 +1557,26 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		fireEvent.fireMessage(caseId,message,parameters);
 		Result<PNodeInfo> res = storage.getMessageFlowNodes(caseId, PNode.STATE_NODE.WAITING, message);
 		for (PNodeInfo nodeInfo : res ) {
-			PNode node = getFlowNode(nodeInfo.getId());
+		    try (PCaseLock lock = getCaseLock(nodeInfo)) {
+    			PNode node = lock.getFlowNode(nodeInfo.getId());
+    			
+    			// check parameters
+    			if (node.getState() == STATE_NODE.WAITING) {
+    				try {
+    					PCase caze = lock.getCase();
+    					EngineContext context = createContext(caze, node);
+    					AActivity<?> aNode = context.getANode();
+    					if (aNode instanceof ValidateParametersBeforeExecute)
+    						((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
+    				} catch (ValidationException | UsageException t) {
+    					log().d(node,t);
+    					continue;
+    				} catch (Throwable t) {
+    					log().w(node,t);
+    					continue;
+    				}
+    			}
 			
-			// check parameters
-			if (node.getState() == STATE_NODE.WAITING) {
-				try {
-					PCase caze = getCase(node.getCaseId());
-					EngineContext context = createContext(caze, node);
-					AActivity<?> aNode = context.getANode();
-					if (aNode instanceof ValidateParametersBeforeExecute)
-						((ValidateParametersBeforeExecute)aNode).validateParameters(parameters);
-				} catch (ValidationException | UsageException t) {
-					log().d(node,t);
-					continue;
-				} catch (Throwable t) {
-					log().w(node,t);
-					continue;
-				}
-			}
-			
-			try (CaseLock lock = getCaseLock(node)) {
 				if (node.getState() == STATE_NODE.SUSPENDED) {
 					log().w("message for suspended node will not be delivered",node,message);
 					continue;
@@ -1866,7 +1592,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					node.setState(STATE_NODE.RUNNING);
 					node.setScheduledNow();
 					node.setMessage(parameters);
-					saveFlowNode(node);
+					lock.saveFlowNode(node);
 					res.close();
 					// message delivered ... bye
 					return;
@@ -1874,16 +1600,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 				try {
 					// find a trigger with the event
-					PCase caze = getCase(caseId);
+					PCase caze = lock.getCase();
 					EngineContext context = createContext(caze, node);
 					for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
 						if (trigger.type() == TYPE.MESSAGE && trigger.event().equals(message)) {
 							// found one ... start new, close current
-							PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+							PNode nextNode = lock.createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
 							nextNode.setMessage(parameters);
-							saveFlowNode(context, nextNode, null);
+							lock.saveFlowNode(context, nextNode, null);
 							if (trigger.abord())
-								closeFlowNode(context, node, STATE_NODE.CLOSED);
+								lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
 							res.close();
 							return;
 						}
@@ -1893,9 +1619,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					log().e(node,e);
 					// should not happen, it's an internal engine problem
 					try {
-						PCase caze = getCase(node.getCaseId());
+						PCase caze = lock.getCase();
 						EngineContext context = createContext(caze, node);
-						closeFlowNode(context, node, STATE_NODE.SEVERE);
+						lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
 					} catch (Throwable e2) {
 						log().e(nodeInfo,e2);
 						fireEvent.error(nodeInfo,e2);
@@ -1913,68 +1639,67 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		fireEvent.fireSignal(signal,parameters);
 		int cnt = 0;
 		for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
-			try {
-				PNode node = getFlowNode(nodeInfo.getId());
-				try (CaseLock lock = getCaseLock(node)) {
-					if (node.getState() == STATE_NODE.SUSPENDED) { // should not happen ... searching for WAITING nodes
-						log().w("signal for suspended node will not be delivered",node,signal);
-						continue;
-					} else 
-					if (isExecuting(nodeInfo.getId())) {
-						// to late ... 
-						continue;
-					}
-					// is task listening ? check trigger list for ""
-					String taskEvent = node.getSignalTriggers().get("");
-					if (taskEvent != null && taskEvent.equals(signal) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.SIGNAL) {
-						// trigger not found - its the message
-						node.setState(STATE_NODE.RUNNING);
-						node.setScheduledNow();
-						node.setMessage(parameters);
-						saveFlowNode(node);
-						cnt++;
-					} else {
-						try {
-							// find a trigger with the name
-							PCase caze = getCase(node.getCaseId());
-							EngineContext context = createContext(caze, node);
-							for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-								if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
-									// found one ... start new, close current
-									PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
-									nextNode.setMessage(parameters);
-									saveFlowNode(context, nextNode, null);
-									if (trigger.abord())
-										closeFlowNode(context, node, STATE_NODE.CLOSED);
-									cnt++;
-									continue;
-								}
-							}
-						} catch(MException e) {
-							fireEvent.error(node,e);
-							log().e(node,e);
-							// should not happen, it's an internal engine problem
-							try {
-								PCase caze = getCase(node.getCaseId());
-								EngineContext context = createContext(caze, node);
-								closeFlowNode(context, node, STATE_NODE.SEVERE);
-							} catch (Throwable e2) {
-								log().e(nodeInfo,e2);
-								fireEvent.error(nodeInfo,e2);
-							}
-							continue;
-						}
-					}
-					
+			try (PCaseLock lock = getCaseLock(nodeInfo)){
+		        PNode node = lock.getFlowNode(nodeInfo.getId());
+				if (node.getState() == STATE_NODE.SUSPENDED) { // should not happen ... searching for WAITING nodes
+					log().w("signal for suspended node will not be delivered",node,signal);
+					continue;
+				} else 
+				if (isExecuting(nodeInfo.getId())) {
+					// to late ... 
+					continue;
 				}
+				// is task listening ? check trigger list for ""
+				String taskEvent = node.getSignalTriggers().get("");
+				if (taskEvent != null && taskEvent.equals(signal) && node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.SIGNAL) {
+					// trigger not found - its the message
+					node.setState(STATE_NODE.RUNNING);
+					node.setScheduledNow();
+					node.setMessage(parameters);
+					lock.saveFlowNode(node);
+					cnt++;
+				} else {
+					try {
+						// find a trigger with the name
+						PCase caze = lock.getCase();
+						EngineContext context = createContext(caze, node);
+						for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+							if (trigger.type() == TYPE.SIGNAL && trigger.event().equals(signal)) {
+								// found one ... start new, close current
+								PNode nextNode = lock.createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+								nextNode.setMessage(parameters);
+								lock.saveFlowNode(context, nextNode, null);
+								if (trigger.abord())
+									lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
+								cnt++;
+								continue;
+							}
+						}
+					} catch(MException e) {
+						fireEvent.error(node,e);
+						log().e(node,e);
+						// should not happen, it's an internal engine problem
+						try {
+							PCase caze = lock.getCase();
+							EngineContext context = createContext(caze, node);
+							lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
+						} catch (Throwable e2) {
+							log().e(nodeInfo,e2);
+							fireEvent.error(nodeInfo,e2);
+						}
+						continue;
+					}
+				}
+				
+			
 			} catch (Throwable t) {
 				log().d(nodeInfo.getId(),t);
 				// should not happen, it's an internal engine problem
-				try {
-					PNode node = getFlowNode(nodeInfo.getId());
-					PCase caze = getCase(node.getCaseId());
+				try (PCaseLock lock = getCaseLock(nodeInfo)){
+					PCase caze = lock.getCase();
+					PNode node = lock.getFlowNode(nodeInfo.getId());
 					EngineContext context = createContext(caze, node);
-					closeFlowNode(context, node, STATE_NODE.SEVERE);
+					lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
 				} catch (Throwable e) {
 					log().e(nodeInfo,e);
 					fireEvent.error(nodeInfo,e);
@@ -1986,67 +1711,66 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	
 	private void fireScheduledTrigger(PNodeInfo nodeInfo) {
 		if (nodeInfo.getState() != STATE_NODE.WAITING) return;
-		try {
-			PNode node = getFlowNode(nodeInfo.getId());
-			try (CaseLock lock = getCaseLock(node)) {
-				if (isExecuting(nodeInfo.getId())) {
-					// to late ... 
-					return;
-				}
-				Entry<String, Long> entry = node.getNextScheduled();
-				if (entry == null) {
-					// There is no need to be scheduled ....
-					node.setScheduled(EngineConst.END_OF_DAYS);
-					fireEvent.setScheduledToWaiting(node);
-					saveFlowNode(node);
-					return;
-				}
-				String triggerName = entry.getKey();
-				if (triggerName.equals("")) {
-					// for secure
-					node.setScheduled(-1);
-					saveFlowNode(node);
-					return;
-				}
-				if (entry.getValue() > System.currentTimeMillis()) {
-					// not reached ...
-					node.setScheduled(entry.getValue());
-					saveFlowNode(node);
-					return;
-				}
-				// find trigger
-				PCase caze = getCase(node.getCaseId());
-				EngineContext context = createContext(caze, node);
-				int cnt = 0;
-				for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
-					if (trigger.type() == TYPE.TIMER && (
-							trigger.name().equals(triggerName)
-							||
-							triggerName.startsWith("trigger.") && cnt == MCast.toint(triggerName.substring(8), -1)
-							)) {
-						// found one ... start new, close current
-						PNode nextNode = createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
-						saveFlowNode(context, nextNode, null);
-						if (trigger.abord())
-							closeFlowNode(context, node, STATE_NODE.CLOSED);
-						return;
-					}
-					cnt++;
-				}
-				// trigger not found
-				fireEvent.error("Trigger for timer not found",triggerName,node);
-				node.setSuspendedState(node.getState());
-				node.setState(STATE_NODE.STOPPED);
-				saveFlowNode(node);
+	    try (PCaseLock lock = getCaseLock(nodeInfo)) {
+			PNode node = lock.getFlowNode(nodeInfo.getId());
+			if (isExecuting(nodeInfo.getId())) {
+				// to late ... 
+				return;
 			}
+			Entry<String, Long> entry = node.getNextScheduled();
+			if (entry == null) {
+				// There is no need to be scheduled ....
+				node.setScheduled(EngineConst.END_OF_DAYS);
+				fireEvent.setScheduledToWaiting(node);
+				lock.saveFlowNode(node);
+				return;
+			}
+			String triggerName = entry.getKey();
+			if (triggerName.equals("")) {
+				// for secure
+				node.setScheduled(-1);
+				lock.saveFlowNode(node);
+				return;
+			}
+			if (entry.getValue() > System.currentTimeMillis()) {
+				// not reached ...
+				node.setScheduled(entry.getValue());
+				lock.saveFlowNode(node);
+				return;
+			}
+			// find trigger
+			PCase caze = lock.getCase();
+			EngineContext context = createContext(caze, node);
+			int cnt = 0;
+			for (Trigger trigger : ActivityUtil.getTriggers((AActivity<?>) context.getANode())) {
+				if (trigger.type() == TYPE.TIMER && (
+						trigger.name().equals(triggerName)
+						||
+						triggerName.startsWith("trigger.") && cnt == MCast.toint(triggerName.substring(8), -1)
+						)) {
+					// found one ... start new, close current
+					PNode nextNode = lock.createActivity(context, node, context.getEPool().getElement(trigger.activity().getCanonicalName()));
+					lock.saveFlowNode(context, nextNode, null);
+					if (trigger.abord())
+						lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
+					return;
+				}
+				cnt++;
+			}
+			// trigger not found
+			fireEvent.error("Trigger for timer not found",triggerName,node);
+			node.setSuspendedState(node.getState());
+			node.setState(STATE_NODE.STOPPED);
+			lock.saveFlowNode(node);
+			
 		} catch (Throwable t) {
 			log().e(nodeInfo.getId(),t);
 			// should not happen, it's an internal engine problem
-			try {
-				PNode node = getFlowNode(nodeInfo.getId());
-				PCase caze = getCase(node.getCaseId());
+			try (PCaseLock lock = getCaseLock(nodeInfo)) {
+				PNode node = lock.getFlowNode(nodeInfo.getId());
+				PCase caze = lock.getCase();
 				EngineContext context = createContext(caze, node);
-				closeFlowNode(context, node, STATE_NODE.SEVERE);
+				lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
 			} catch (Throwable e) {
 				log().e(nodeInfo,e);
 				fireEvent.error(nodeInfo,e);
@@ -2062,9 +1786,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 
 	public void assignUserTask(UUID nodeId, String user) throws IOException, MException {
-		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+	    try (PCaseLock lock = getCaseLockByNode(nodeId)) {
+    		PNode node = lock.getFlowNode(nodeId);
+    		// PCase caze = lock.getCase();
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
 			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() != null) throw new MException("node is already assigned",nodeId,node.getAssignedUser());
@@ -2074,9 +1798,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 
 	public void unassignUserTask(UUID nodeId) throws IOException, MException {
-		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+	    try (PCaseLock lock = getCaseLockByNode(nodeId)) {
+	        PNode node = lock.getFlowNode(nodeId);
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
 			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
@@ -2086,9 +1809,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 	
 	public void submitUserTask(UUID nodeId, IProperties values) throws IOException, MException {
-		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+	    try (PCaseLock lock = getCaseLockByNode(nodeId)) {
+	        PNode node = lock.getFlowNode(nodeId);
+	        PCase caze = lock.getCase();
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
 			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
@@ -2102,14 +1825,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			
 			node.setState(STATE_NODE.RUNNING);
 			node.setScheduledNow();
-			saveFlowNode(context, node, (AActivity<?>) aNode);
+			lock.saveFlowNode(context, node, (AActivity<?>) aNode);
 		}
 	}
 
 	public MProperties onUserTaskAction(UUID nodeId, IProperties values, String action) throws IOException, MException {
-		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
-		synchronized (caze) {
+        try (PCaseLock lock = getCaseLockByNode(nodeId)) {
+    		PNode node = lock.getFlowNode(nodeId);
+    		PCase caze = lock.getCase();
 			if (node.getState() != STATE_NODE.WAITING) throw new MException("node is not WAITING",nodeId);
 			if (node.getType() != TYPE_NODE.USER) throw new MException("node is not a user task",nodeId);
 			if (node.getAssignedUser() == null) throw new MException("node is not assigned",nodeId);
@@ -2121,28 +1844,28 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			
 			MProperties ret = ((AUserTask<?>)aNode).doAction(values, action);
 			
-			saveFlowNode(context, node, (AActivity<?>) aNode);
+			lock.saveFlowNode(context, node, (AActivity<?>) aNode);
 			
 			return ret;
 		}
 	}
 
 	public AElement<?> getANode(UUID nodeId) throws IOException, MException {
-		PNode node = getFlowNode(nodeId);
-		PCase caze = getCase(node.getCaseId());
+		PNode node = getNodeWithoutLock(nodeId);
+		PCase caze = getCaseWithoutLock(node.getCaseId());
 		EngineContext context = createContext(caze, node);
 		AElement<?> aNode = context.getANode();
 		return aNode;
 	}
 	
 	public PNodeInfo getFlowNodeInfo(UUID nodeId) throws Exception {
-		synchronized (nodeCache) {
-			PNode node = nodeCache.get(nodeId);
-			if (node != null) {
-				PCaseInfo caseInfo = getCaseInfo(node.getCaseId());
-				return new PNodeInfo(caseInfo, node);
-			}
-		}
+//		synchronized (nodeCache) {
+//			PNode node = nodeCache.get(nodeId);
+//			if (node != null) {
+//				PCaseInfo caseInfo = getCaseInfo(node.getCaseId());
+//				return new PNodeInfo(caseInfo, node);
+//			}
+//		}
 		return storage.loadFlowNodeInfo(nodeId);
 	}
 
@@ -2163,10 +1886,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		return storage.loadCaseInfo(caseId);
 	}
 	
-	public boolean isCaseLock(UUID caseId) {
-	    return false; //TODO implement
-	}
+//	public boolean isCaseLock(UUID caseId) {
+//	    return false; //TODO implement
+//	}
 	
+    @Override
     public PCaseLock getCaseLockByNode(UUID nodeId) throws MException {
         try {
             PNodeInfo nodeInfo = getFlowNodeInfo(nodeId);
@@ -2178,11 +1902,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
     }
     
+    @Override
     public PCaseLock getCaseLock(PNodeInfo nodeInfo) {
         return getCaseLock(nodeInfo.getCaseId());
     }
     
-	public PCaseLock getCaseLock(PCaseInfo caseInfo) {
+	@Override
+    public PCaseLock getCaseLock(PCaseInfo caseInfo) {
 		return getCaseLock(caseInfo.getId());
 	}
 	
@@ -2190,19 +1916,23 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 //		return getCaseLock(caze.getId());
 //	}
 	
-	public PCaseLock getCaseLock(PNode node) {
+	@Override
+    public PCaseLock getCaseLock(PNode node) {
 		return getCaseLock(node.getCaseId());
 	}
 	
+    @Override
     public PCaseLock getCaseLockOrNull(PNodeInfo nodeInfo) {
         return getCaseLockOrNull(nodeInfo.getCaseId());
     }
     
+    @Override
     public PCaseLock getCaseLockOrNull(UUID caseId) {
         return getCaseLock(caseId); // TODO implement
     }
     
-	public PCaseLock getCaseLock(UUID caseId) {
+	@Override
+    public PCaseLock getCaseLock(UUID caseId) {
 		PCaseLock lock = new PCaseLock(caseId);
 		return lock;
 	}
@@ -2214,8 +1944,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	@Override
 	public RuntimeNode doExecuteStartPoint(ProcessContext<?> context, EElement eMyStartPoint) throws Exception {
 		EngineContext eContext = (EngineContext)context;
-		try (PCaseLock lock = getCaseLock(context.getPCase())) {
-    		UUID flowId = createStartPoint(eContext, lock, eMyStartPoint);
+		try (PCaseLock lock = getCaseLock(context.getPCase().getId())) {
+    		UUID flowId = lock.createStartPoint(eContext, eMyStartPoint);
     		PNode pNode = lock.getFlowNode(flowId);
     		PCase caze = lock.getCase();
     		EngineContext newContext = createContext(caze, pNode);
@@ -2232,7 +1962,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		storage.updateFullFlowNode(node);
 	}
 	
-	private class PCaseLock implements CaseLock {
+    @Override
+    public PCase getCaseWithoutLock(UUID caseId) throws NotFoundException, IOException {
+        return storage.loadCase(caseId);
+    }
+
+    @Override
+    public PNode getNodeWithoutLock(UUID nodeId) throws NotFoundException, IOException {
+        return storage.loadFlowNode(nodeId);
+    }
+
+	public class PCaseLock implements CaseLock {
 
 	    private UUID caseId;
         private PCase cazex;
@@ -2281,7 +2021,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public void closeCase(boolean hard, int code, String msg) throws IOException {
+        public void closeCase(boolean hard, int code, String msg) throws IOException, NotFoundException {
             PCase caze = getCase();
             fireEvent.closeCase(caze,hard);
             EngineContext context = null;
@@ -2331,6 +2071,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             }
         }
 
+        @Override
         public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
             fireEvent.saveFlowNode(flow,null);
             try (CaseLock lock = getCaseLock(flow)) {
@@ -2340,38 +2081,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     flow.updateStartState();
 //                }
             }
-        }
-        
-        public void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException, NotFoundException {
-            fireEvent.saveFlowNode(flow,activity);
-            try (CaseLock lock = getCaseLock(flow)) {
-                if (activity != null) {
-                    try {
-                        Map<String, Object> newParameters = activity.exportParamters();
-                        flow.getParameters().putAll(newParameters);
-                        
-                        if (activity instanceof IndexValuesProvider) {
-                            flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(false) );
-                        } else {
-                            flow.setIndexValues(null);
-                        }
-                        
-                    } catch (Throwable t) {
-                        log().e(t);
-                        fireEvent.error(flow,activity,t);
-                        // set failed
-                        flow.setSuspendedState(flow.getState());
-                        flow.setState(STATE_NODE.STOPPED);
-                    }
-                }
-//                synchronized (nodeCache) {
-                    storage.saveFlowNode(flow);
-//                    nodeCache.put(flow.getId(), flow);
-                    flow.updateStartState();
-//                }
-            }
-            if (context != null)
-                savePCase(context);
         }
         
         public void closeRuntime(UUID nodeId) throws MException, IOException {
@@ -2411,7 +2120,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
 
-        public void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state) throws IOException {
+        public void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state) throws IOException, NotFoundException {
             fireEvent.closeFlowNode(pNode, state);
             
             if (context != null)
@@ -2424,7 +2133,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         storage.saveFlowNode(pNode);
 //                      nodeCache.put(pNode.getId(), pNode);
 //                  }
-                    // savePCase(context);
+                    savePCase(context);
 //                }
             } else {
                 pNode.setState(state);
@@ -2435,6 +2144,28 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             }
         }
 
+        /**
+         * Save the runtime to storage. If runtme object is given, the
+         * parameters will be stored.
+         * 
+         * @param pRuntime
+         * @param aRuntime
+         * @throws IOException
+         */
+        public void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException {
+            if (aRuntime != null) {
+                Map<String, Object> parameters = aRuntime.exportParamters();
+                if (parameters != null) {
+                    pRuntime.getParameters().putAll(parameters);
+                }
+            }
+            fireEvent.saveRuntime(pRuntime, aRuntime);
+            synchronized (nodeCache) {
+                storage.saveFlowNode(pRuntime);
+                nodeCache.put(pRuntime.getId(), pRuntime);
+            }
+        }
+        
         public void savePCase(EngineContext context) throws IOException, NotFoundException {
             savePCase(context.getPool(), false);
         }
@@ -2458,5 +2189,289 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 //              }
 //            }
 	    }
+        
+        public void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
+            fireEvent.doNodeErrorHandling(context,pNode,t);
+            
+            if (t instanceof TechnicalException) {
+                try {
+                    closeFlowNode(context, pNode, STATE_NODE.FAILED);
+                } catch (Exception e) {
+                    log().e(pNode,e);
+                    fireEvent.error(pNode,e);
+                }
+                return;
+            }
+            
+            if (t instanceof EngineException) {
+                try {
+                    closeFlowNode(context, pNode, STATE_NODE.STOPPED);
+                } catch (Exception e) {
+                    log().e(pNode,e);
+                    fireEvent.error(pNode,e);
+                }
+                return;
+            }
+            
+            EElement eNode = context.getENode();
+            Trigger defaultError = null;
+            Trigger errorHandler = null;
+            for (Trigger trigger : eNode.getTriggers()) {
+                if (trigger.type() == TYPE.DEFAULT_ERROR)
+                    defaultError = trigger;
+                else
+                if (trigger.type() == TYPE.ERROR) {
+                    if (t instanceof TaskException){
+                        if (trigger.name().equals(((TaskException)t).getTrigger()))
+                            errorHandler = trigger;
+                    }
+                }
+            }
+            if (errorHandler == null) errorHandler = defaultError;
+            if (errorHandler != null) {
+                // create new activity
+                EElement start = context.getEPool().getElement(errorHandler.activity().getCanonicalName());
+                try {
+                    createActivity(context, pNode, start);
+                    // close node
+                    closeFlowNode(context,pNode,STATE_NODE.CLOSED);
+                    return;
+                } catch (Exception e) {
+                    log().e(e);
+                    fireEvent.error(pNode,start,e);
+                }
+            } else {
+                // set node in error
+                pNode.setState(STATE_NODE.FAILED);
+                pNode.setExitMessage(t.toString());
+                try {
+                    saveFlowNode(pNode);
+                } catch (NotFoundException | IOException e) {
+                    log().e(pNode,e);
+                }
+            }
+            
+        }
+
+        public PNode createActivity(EngineContext context, PNode previous, EElement start) throws Exception {
+            
+            UUID caseId = context.getPCase().getId();
+            UUID runtimeId = previous.getRuntimeId();
+            
+            Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
+
+            // create flow node
+            PNode flow = new PNode(
+                    UUID.randomUUID(), 
+                    caseId, 
+                    start.getName(),
+                    start.getCanonicalName(),
+                    System.currentTimeMillis(),
+                    0,
+                    STATE_NODE.NEW,
+                    STATE_NODE.NEW, 
+                    start.getSchedulerList(),
+                    start.getSignalList(),
+                    start.getMessageList(),
+                    false, 
+                    TYPE_NODE.NODE, 
+                    null, 
+                    null, 
+                    null, 
+                    runtimeId,
+                    EngineConst.TRY_COUNT,
+                    actor == null ? null : actor.getName()
+                );
+            //flow.setScheduledNow();
+            fireEvent.createActivity(context.getARuntime(), flow, context.getPCase(),previous,start);
+            context = new EngineContext(context, flow);
+            
+            doNodeLifecycle(context, flow);
+            
+            return flow;
+        }
+
+        protected void doNodeLifecycle(EngineContext context, PNode flow) throws Exception {
+            
+            boolean init = flow.getStartState() == STATE_NODE.NEW; // this means the node is not executed!
+            context = new EngineContext(context, flow);
+            
+            // lifecycle flow node
+            EElement start = context.getENode();
+            AActivity<?> activity = (AActivity<?>) createActivityObject(start);
+            context.setANode(activity);
+            RuntimeNode runtime = context.getARuntime();
+            if (init)
+                fireEvent.initStart(runtime,flow,start,activity);
+            else
+                fireEvent.executeStart(runtime,flow,start,activity);
+            if (activity instanceof ContextRecipient)
+                ((ContextRecipient)activity).setContext(context);
+            activity.importParameters(flow.getParameters());
+            
+            try {
+                if (init) {
+                    activity.initializeActivity();
+
+                    if (activity instanceof IndexValuesProvider) {
+                        flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(true) );
+                    } else {
+                        flow.setIndexValues(null);
+                    }
+
+                } else {
+                    flow.setLastRunDate(System.currentTimeMillis());
+                    try {
+                        context.getPool().beforeExecute(activity);
+                        activity.doExecuteActivity();
+                    } finally {
+                        context.getPool().afterExecute(activity);
+                    }
+                }
+                // secure switch state away from NEW
+                if (flow.getState() == STATE_NODE.NEW) {
+                    flow.setState(STATE_NODE.RUNNING);
+                    flow.setScheduledNow();
+                } else
+                if (flow.getStartState() == STATE_NODE.RUNNING && flow.getState() == STATE_NODE.RUNNING) {
+                    flow.setTryCount(flow.getTryCount()-1);
+                    if (flow.getTryCount() <= 0) {
+                        flow.setSuspendedState(STATE_NODE.RUNNING);
+                        flow.setState(STATE_NODE.STOPPED);
+                    } else {
+                        flow.setScheduled(newScheduledTime(flow));
+                    }
+                }
+            } catch (Throwable t) {
+                log().w(flow,t);
+                // remember
+                fireEvent.error(flow,t);
+                if (init)
+                    fireEvent.initFailed(runtime,flow);
+                else
+                    fireEvent.executeFailed(runtime,flow);
+                doNodeErrorHandling(context, flow, t);
+                return;
+            }
+            if (init)
+                flow.getParameters().clear();
+            
+            // save
+            saveFlowNode(context, flow,activity);
+            
+            if (init)
+                fireEvent.initStop(runtime,flow);
+            else
+                fireEvent.executeStop(runtime,flow);
+        }
+        
+        public UUID createStartPoint(EngineContext context, EElement start) throws Exception {
+            
+            // some checks
+            if (!start.is(AStartPoint.class))
+                throw new MException("activity is not a start point",context,start);
+            
+            if (!context.getEPool().isElementOfPool(start))
+                throw new MException("start point is not part of the pool",context,start);
+
+            // collect information
+            ActivityDescription desc = start.getActivityDescription();
+            Class<? extends RuntimeNode> runtimeClass = desc.runtime();
+            
+            UUID caseId = context.getPCase().getId();
+            fireEvent.createStartPoint(context.getPCase(),start);
+            
+            Class<? extends AActor> actor = start.getAssignedActor(context.getEPool());
+            
+            // create runtime
+            PNode runtime = new PNode(
+                    UUID.randomUUID(), 
+                    caseId,
+                    "runtime",
+                    runtimeClass.getCanonicalName(),
+                    System.currentTimeMillis(),
+                    0,
+                    STATE_NODE.WAITING,
+                    STATE_NODE.WAITING,
+                    null,
+                    null,
+                    null,
+                    false,
+                    TYPE_NODE.RUNTIME,
+                    null,
+                    new HashMap<>(),
+                    null,
+                    null,
+                    0,
+                    null
+                    );
+            fireEvent.createRuntime(context.getPCase(),start,runtime);
+//          synchronized (nodeCache) {
+            storage.saveFlowNode(runtime);
+//              nodeCache.put(runtime.getId(), runtime);
+//          }
+            context.setPRuntime(runtime);
+            UUID runtimeId = runtime.getId();
+            
+            // create flow node
+            PNode flow = new PNode(
+                    UUID.randomUUID(), 
+                    caseId, 
+                    start.getName(),
+                    start.getCanonicalName(),
+                    System.currentTimeMillis(),
+                    0,
+                    STATE_NODE.NEW,
+                    STATE_NODE.NEW, 
+                    start.getSchedulerList(),
+                    start.getSignalList(),
+                    start.getMessageList(),
+                    false, 
+                    TYPE_NODE.NODE, 
+                    null, 
+                    null, 
+                    null, 
+                    runtimeId,
+                    EngineConst.TRY_COUNT,
+                    actor == null ? null : actor.getName()
+                );
+            flow.setScheduledNow();
+            fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(),start);
+            context = new EngineContext(context, flow);
+            doNodeLifecycle(context, flow);
+            return flow.getId();
+        }
+
+        public void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException, NotFoundException {
+            fireEvent.saveFlowNode(flow,activity);
+            if (activity != null) {
+                try {
+                    Map<String, Object> newParameters = activity.exportParamters();
+                    flow.getParameters().putAll(newParameters);
+                    
+                    if (activity instanceof IndexValuesProvider) {
+                        flow.setIndexValues( ((IndexValuesProvider)activity).createIndexValues(false) );
+                    } else {
+                        flow.setIndexValues(null);
+                    }
+                    
+                } catch (Throwable t) {
+                    log().e(t);
+                    fireEvent.error(flow,activity,t);
+                    // set failed
+                    flow.setSuspendedState(flow.getState());
+                    flow.setState(STATE_NODE.STOPPED);
+                }
+            }
+//                synchronized (nodeCache) {
+                storage.saveFlowNode(flow);
+//                    nodeCache.put(flow.getId(), flow);
+                flow.updateStartState();
+//                }
+            
+            if (context != null)
+                savePCase(context);
+        }
+
 	}
 }

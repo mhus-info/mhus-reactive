@@ -424,7 +424,7 @@ public class UiEngine extends MLog implements IEngine {
 			for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 				if (info.getIndexValue(i) != null)
 					properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
-			caze = engine.getCase(info.getId());
+			caze = engine.getCaseWithoutLock(info.getId());
 			for (Entry<String, Object> entry : caze.getParameters().entrySet())
 				properties.put(EngineConst.UI_CASE_PREFIX + entry.getKey(), String.valueOf(entry.getValue()));
 		} else {
@@ -467,7 +467,7 @@ public class UiEngine extends MLog implements IEngine {
 				} else
 				if (name.startsWith(EngineConst.UI_CASE_PREFIX)) {
 					if (caze == null) 
-						caze = engine.getCase(info.getId());
+						caze = engine.getCaseWithoutLock(info.getId());
 					Object v = caze.getParameters().get(name.substring(EngineConst.UI_CASE_PREFIX.length()));
 					if (v != null)
 						properties.put(name, String.valueOf(v));
@@ -492,10 +492,10 @@ public class UiEngine extends MLog implements IEngine {
 			for (int i = 0; i < EngineConst.MAX_INDEX_VALUES; i++)
 				if (info.getIndexValue(i) != null)
 					properties.put(EngineConst.UI_PNODE_PREFIX + "index" + i, info.getIndexValue(i));
-			caze = engine.getCase(info.getCaseId());
+			caze = engine.getCaseWithoutLock(info.getCaseId());
 			for (Entry<String, Object> entry : caze.getParameters().entrySet())
 				properties.put(EngineConst.UI_CASE_PREFIX + entry.getKey(), String.valueOf(entry.getValue()));
-			node = engine.getFlowNode(info.getId());
+			node = engine.getNodeWithoutLock(info.getId());
 			for (Entry<String, Object> entry : node.getParameters().entrySet())
 				properties.put(EngineConst.UI_NODE_PREFIX + entry.getKey(), String.valueOf(entry.getValue()));
 		} else {
@@ -538,14 +538,14 @@ public class UiEngine extends MLog implements IEngine {
 				} else
 				if (name.startsWith(EngineConst.UI_CASE_PREFIX)) {
 					if (caze == null) 
-						caze = engine.getCase(info.getCaseId());
+						caze = engine.getCaseWithoutLock(info.getCaseId());
 					Object v = caze.getParameters().get(name.substring(EngineConst.UI_CASE_PREFIX.length()));
 					if (v != null)
 						properties.put(name, String.valueOf(v));
 				} else
 				if (name.startsWith(EngineConst.UI_NODE_PREFIX)) {
 					if (node == null)
-						node = engine.getFlowNode(info.getId());
+						node = engine.getNodeWithoutLock(info.getId());
 					Object v = node.getParameters().get(name.substring(EngineConst.UI_NODE_PREFIX.length()));
 					if (v != null)
 						properties.put(name, String.valueOf(v));
@@ -658,8 +658,8 @@ public class UiEngine extends MLog implements IEngine {
 	    INodeDescription predecessor = null;
 	    INodeDescription node;
 
-        PNode pNode = engine.getFlowNode(nodeId);
-        PCase caze = engine.getCase(pNode.getCaseId());
+        PNode pNode = engine.getNodeWithoutLock(nodeId);
+        PCase caze = engine.getCaseWithoutLock(pNode.getCaseId());
         MUri uri = MUri.toUri(caze.getUri());
         EProcess process = engine.getProcess(uri);
         EPool pool = engine.getPool(process, uri);
@@ -728,8 +728,8 @@ public class UiEngine extends MLog implements IEngine {
 
     private synchronized AActivity<?> initANode(PNodeInfo info) {
         try {
-            PNode node = engine.getFlowNode(info.getId());
-            PCase caze = engine.getCase(node.getCaseId());
+            PNode node = engine.getNodeWithoutLock(info.getId());
+            PCase caze = engine.getCaseWithoutLock(node.getCaseId());
             EngineContext context = engine.createContext(caze, node);
             return context.getANode();
         } catch (Throwable t) {
@@ -782,14 +782,14 @@ public class UiEngine extends MLog implements IEngine {
             throw new NotFoundException("Case",id);
         
         LinkedList<EngineMessage[]> out = new LinkedList<>();
-        PCase caze = engine.getCase(info.getId());
+        PCase caze = engine.getCaseWithoutLock(info.getId());
         EngineContext context = engine.createContext(caze);
         
         for (PNodeInfo node : engine.storageGetFlowNodes(info.getId(), null)) {
             if (node.getType() == TYPE_NODE.RUNTIME) {
                 System.out.println(">>> RUNTIME " + node.getId() + " " + node.getState());
                 try {
-                    PNode pRuntime = engine.getFlowNode(node.getId());
+                    PNode pRuntime = engine.getNodeWithoutLock(node.getId());
                     RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);
                     List<EngineMessage> messages = aRuntime.getMessages();
                     out.add(messages.toArray(new EngineMessage[messages.size()]));
@@ -808,8 +808,8 @@ public class UiEngine extends MLog implements IEngine {
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user))
             throw new NotFoundException("Node",id);
-        PNode node = engine.getFlowNode(info.getId());
-        PCase caze = engine.getCase(info.getCaseId());
+        PNode node = engine.getNodeWithoutLock(info.getId());
+        PCase caze = engine.getCaseWithoutLock(info.getCaseId());
         EngineContext context = engine.createContext(caze, node);
         PNode pRuntime = engine.getRuntimeForPNode(context, node);
         RuntimeNode aRuntime = engine.createRuntimeObject(context, pRuntime);

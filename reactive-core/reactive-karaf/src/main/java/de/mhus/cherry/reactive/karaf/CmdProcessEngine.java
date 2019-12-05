@@ -190,7 +190,7 @@ public class CmdProcessEngine extends AbstractCmd {
 				ConsoleTable table = new ConsoleTable(tblOpt);
 				table.setHeaderValues("Id","CustomId","Uri","State","Close");
 				for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
-					PCase caze = api.getEngine().getCase(info.getId());
+					PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
 					table.addRowValues(info.getId(), caze.getCustomId(), caze.getUri(), caze.getState(), caze.getClosedCode() + " " + caze.getClosedMessage() );
 					severe++;
 				}
@@ -202,7 +202,7 @@ public class CmdProcessEngine extends AbstractCmd {
 				ConsoleTable table = new ConsoleTable(tblOpt);
 				table.setHeaderValues("Id","Custom","Name","State","Type","Scheduled","CaseId","Assigned","Uri");
 				for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
-					PNode node = api.getEngine().getFlowNode(info.getId());
+					PNode node = api.getEngine().getNodeWithoutLock(info.getId());
 					String scheduled = "-";
 					Entry<String, Long> scheduledEntry = node.getNextScheduled();
 					if (scheduledEntry != null) {

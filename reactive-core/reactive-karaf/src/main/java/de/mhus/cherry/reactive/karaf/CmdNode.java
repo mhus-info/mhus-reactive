@@ -86,7 +86,7 @@ public class CmdNode extends AbstractCmd {
 
 		if (cmd.equals("runtime")) {
 		    PNode node = EngineUtil.getFlowNode(api.getEngine(),parameters[0]);
-			PCase caze = api.getEngine().getCase(node.getCaseId());
+			PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
 			EngineContext context = api.getEngine().createContext(caze, node);
 			PNode pRuntime = api.getEngine().getRuntimeForPNode(context, node);
 			System.out.println(">>> RUNTIME " + pRuntime.getId() + " " + pRuntime.getState());
@@ -128,8 +128,8 @@ public class CmdNode extends AbstractCmd {
 			ConsoleTable table = new ConsoleTable(tblOpt);
 			table.setHeaderValues("Id","Case","Name","Time","State","Type","CaseId");
 			for (UUID nodeId : api.getEngine().getExecuting()) {
-				PNode node = api.getEngine().getFlowNode(nodeId);
-				PCase caze = api.getEngine().getCase(node.getCaseId());
+				PNode node = api.getEngine().getNodeWithoutLock(nodeId);
+				PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
 				String time = MPeriod.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
 				table.addRowValues(node.getId(),caze.getName(), node.getName(),time,node.getState(),node.getType(), node.getCaseId());
 			}
@@ -170,7 +170,7 @@ public class CmdNode extends AbstractCmd {
 			for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
 				if (all || (info.getState() != STATE_NODE.CLOSED && info.getType() != TYPE_NODE.RUNTIME) ) {
 				    try {
-    				    PNode node = api.getEngine().getFlowNode(info.getId());
+    				    PNode node = api.getEngine().getNodeWithoutLock(info.getId());
     					String scheduled = "-";
     					Entry<String, Long> scheduledEntry = node.getNextScheduled();
     					if (scheduledEntry != null) {
