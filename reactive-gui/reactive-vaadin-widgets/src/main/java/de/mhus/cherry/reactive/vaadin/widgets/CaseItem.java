@@ -15,6 +15,7 @@
  */
 package de.mhus.cherry.reactive.vaadin.widgets;
 
+import java.util.Date;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -139,6 +140,17 @@ public class CaseItem {
 	public UUID getId() {
 		return caze.getId();
 	}
+	
+    @Column(order=21,title="Created", editable=false, elapsed=false)
+    public Date getCreated() {
+        return new Date(caze.getCreated());
+    }
+
+    @Column(order=22,title="Modified", editable=false, elapsed=false)
+    public Date getModified() {
+        return new Date(caze.getModified());
+    }
+
 
 	@Override
 	public boolean equals(Object in) {

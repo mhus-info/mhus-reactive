@@ -15,6 +15,7 @@
  */
 package de.mhus.cherry.reactive.vaadin.widgets;
 
+import java.util.Date;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -166,6 +167,16 @@ public class NodeItem {
 		return node.getActor();
 	}
 	
+    @Column(order=25,title="Created", editable=false, elapsed=false)
+    public Date getCreated() {
+        return new Date(node.getCreated());
+    }
+
+    @Column(order=26,title="Modified", editable=false, elapsed=false)
+    public Date getModified() {
+        return new Date(node.getModified());
+    }
+
 	@Override
 	public boolean equals(Object in) {
 		if (in == null || !(in instanceof NodeItem)) return false;
