@@ -37,13 +37,20 @@ public class EngineMessage implements Externalizable {
 	private UUID toNode;
 	private String originalMsg;
 	private long ts;
+	private String ident;
 
 	public EngineMessage(String msg) {
 		originalMsg = msg;
 		int p = msg.indexOf('|');
 		if (p >= 0) {
-			ts = MCast.tolong(msg.substring(0, p), 0);
-			msg = msg.substring(p+1);
+		    String prefix = msg.substring(0, p);
+		    msg = msg.substring(p+1);
+		    p = prefix.indexOf(',');
+		    if (p > 0) {
+                ts = MCast.tolong(prefix.substring(0, p), 0);
+		        ident = prefix.substring(p+1);
+		    } else
+		        ts = MCast.tolong(prefix, 0);
 		}
 		p = msg.indexOf(':');
 		if (p >= 0) {
@@ -103,6 +110,10 @@ public class EngineMessage implements Externalizable {
 		return ts;
 	}
 	
+	public String getServerIdent() {
+	    return ident;
+	}
+	
 	@Override
 	public String toString() {
 		return originalMsg;
@@ -110,24 +121,29 @@ public class EngineMessage implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
         out.writeObject(type);
         out.writeObject(msg);
         out.writeObject(fromNode);
         out.writeObject(toNode);
         out.writeObject(originalMsg);
         out.writeLong(ts);
+        out.writeObject(ident);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        int v = in.readInt();
+        if (v < 1 || v > 2) throw new IOException("Wrong object version");
         type = (TYPE) in.readObject();
         msg = (String) in.readObject();
         fromNode = (UUID) in.readObject();
         toNode = (UUID) in.readObject();
         originalMsg = (String) in.readObject();
         ts = in.readLong();
+        if (v > 1) {
+            ident = (String) in.readObject();
+        }
     }
 	
 }

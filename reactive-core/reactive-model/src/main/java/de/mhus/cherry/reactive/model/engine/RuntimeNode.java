@@ -28,11 +28,13 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.base.service.ServerIdent;
 
 public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextRecipient {
 
 	private static final String CLOSE_ACTIVITY = "closeActivity";
 	private static final String MSG_PREFIX = "msg.";
+	private static final ServerIdent ident = M.l(ServerIdent.class);
 	
 	private Map<String, Object> parameters;
 
@@ -45,7 +47,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 	private synchronized void addMessage(String msg) {
 		if (parameters == null) parameters = new HashMap<>();
 		int next = getNetMessageId();
-		parameters.put(MSG_PREFIX + next, System.currentTimeMillis() + "|" + msg);
+		parameters.put(MSG_PREFIX + next, System.currentTimeMillis() + "," + ident.getIdent() + "|" + msg);
 		save();
 	}
 

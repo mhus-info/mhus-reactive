@@ -16,6 +16,8 @@
 package de.mhus.cherry.reactive.vaadin.core;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.vaadin.shared.ui.MarginInfo;
@@ -32,6 +34,7 @@ import com.vaadin.v7.ui.VerticalLayout;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
@@ -42,6 +45,7 @@ import de.mhus.cherry.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
+import de.mhus.cherry.reactive.vaadin.widgets.VRuntimeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
@@ -293,6 +297,20 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 					e.printStackTrace();
 				}
 			}
+			
+			@Override
+		    protected void doRuntime(NodeItem target) {
+                try {
+                    EngineMessage[] runtime = engine.getNodeRuntimeMessage(target.getId().toString());
+                    LinkedList<EngineMessage[]> list = new LinkedList<>();
+                    list.add(runtime);
+                    showRuntime(list);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+		    }
+			
 
 		};
 		list.configure(engine, criterias, properties);
@@ -360,7 +378,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 		
 		setContent(panel);
 	}
-	
+
 	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
 		initEngine();
 		if (engine == null) return null;
@@ -371,6 +389,18 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 			protected void doDetails(CaseItem caze) {
 				showCaseDetails(caze);
 			}
+			
+            @Override
+            protected void doRuntime(CaseItem caze) {
+                try {
+                    List<EngineMessage[]> runtime = engine.getCaseRuntimeMessages(caze.getId().toString());
+                    showRuntime(runtime);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            
 		};
 		
 		VerticalLayout l = new VerticalLayout();
@@ -416,6 +446,29 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 						context.getLocale());
 	}
 
+    protected void showRuntime(List<EngineMessage[]> runtime) throws Exception {
+
+        initEngine();
+        if (engine == null) return;
+        VRuntimeDetails list = new VRuntimeDetails() {
+            private static final long serialVersionUID = 1L;
+
+        };
+        
+        VerticalLayout l = new VerticalLayout();
+        
+        l.addComponent(list);
+        l.setExpandRatio(list, 1);
+        
+        list.configure(engine, runtime);
+        addComponent(l);
+        setExpandRatio(l, 1);
+        
+        l.setSizeFull();
+        
+        setContent(l);
+    }
+    
 	protected void showUserForm(NodeItem item) throws Exception {
 
 		INode node = engine.getNode(item.getId().toString());

@@ -34,7 +34,7 @@ public class Util {
 		
 		HashMap<UUID, String> cacheActivityNames = new HashMap<>();
 		ConsoleTable table = new ConsoleTable(tblOpt);
-		table.setHeaderValues("Time","Type","From","To","Msg");
+		table.setHeaderValues("Time","Type","From","To","Msg","Server");
 		table.getColumn(0).weight = 0;
 		table.getColumn(1).weight = 0;
 		table.getColumn(2).weight = 0;
@@ -60,7 +60,7 @@ public class Util {
 			
 			if (!first) table.addRowValues(ConsoleTable.SEPARATOR_LINE);
 			first = false;
-			table.addRowValues(MDate.toIso8601(msg.getTimestamp()), msg.getType(), fromMsg, toMsg, msg.getMessage().replace(',', '\n') ); 
+			table.addRowValues(MDate.toIso8601(msg.getTimestamp()), msg.getType(), fromMsg, toMsg, msg.getMessage().replace(',', '\n'), msg.getServerIdent() ); 
 		}
 		table.print(System.out);
 	}
