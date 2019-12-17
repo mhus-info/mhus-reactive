@@ -5,8 +5,7 @@ MAINTAINER Mike Hummel <mh@mhus.de>
 ENV JAVA_MAX_MEM 2048m
 
 COPY target/assembly.tar.gz /docker/assembly.tar.gz
-#COPY deploy /docker/deploy
-#COPY karaf /docker/profiles/default/
+COPY profiles /docker/profiles
 
 # Start once
 RUN /docker/environment.sh
