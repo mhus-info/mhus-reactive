@@ -3,6 +3,7 @@ package de.mhus.cherry.reactive.vaadin.widgets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import com.vaadin.event.Action;
 import com.vaadin.v7.event.ItemClickEvent;
@@ -10,9 +11,11 @@ import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.core.util.MNls;
 import de.mhus.lib.core.util.MNlsFactory;
+import de.mhus.lib.core.util.SoftHashMap;
 import de.mhus.lib.vaadin.MhuTable;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
@@ -22,6 +25,7 @@ public class VRuntimeDetails extends MhuTable {
     private Log log = Log.getLog(VRuntimeDetails.class);
     private static final long serialVersionUID = 1L;
     MhuBeanItemContainer<RuntimeItem> data = new MhuBeanItemContainer<>(RuntimeItem.class);
+    private SoftHashMap<UUID, INode> nodeCache = new SoftHashMap<>();
     
     private IEngine engine;
     private List<EngineMessage[]> messages;
@@ -95,9 +99,24 @@ public class VRuntimeDetails extends MhuTable {
                 out.addItem(new RuntimeItem());
             first = false;
             for (EngineMessage msg : runtime)
-                out.addItem(new RuntimeItem(engine, msg));
+                out.addItem(new RuntimeItem(this, msg));
         }
         return out;
+    }
+
+    public INode getNode(UUID nodeId) {
+        if (nodeId == null) return null;
+        try {
+            INode node = nodeCache.get(nodeId);
+            if (node == null) {
+                node = engine.getNode(nodeId.toString());
+                nodeCache.put(nodeId, node);
+            }
+            return node;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     
 }

@@ -47,7 +47,7 @@ public class VCaseList extends MhuTable {
 	protected static final Action ACTION_REFRESH = new Action("Refresh");
 	protected static final Action ACTION_ARCHIVE = new Action("Archive");
 	protected static final Action ACTION_DETAILS = new Action("Details");
-    protected static final Action ACTION_RUNTIME = new Action("Details");
+    protected static final Action ACTION_RUNTIME = new Action("Runtime");
 	private String sortByDefault = "duedate";
 	private boolean sortAscDefault = true;
 	MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);

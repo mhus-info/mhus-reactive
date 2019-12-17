@@ -5,20 +5,19 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.EngineMessage.TYPE;
-import de.mhus.cherry.reactive.model.ui.IEngine;
+import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.annotations.vaadin.Column;
 
 public class RuntimeItem {
 
-    @SuppressWarnings("unused")
-    private IEngine engine;
     private EngineMessage item;
+    private VRuntimeDetails details;
 
     public RuntimeItem() {
     }
     
-    public RuntimeItem(IEngine engine, EngineMessage item) {
-        this.engine = engine;
+    public RuntimeItem(VRuntimeDetails details, EngineMessage item) {
+        this.details = details;
         this.item = item;
     }
 
@@ -35,15 +34,17 @@ public class RuntimeItem {
     }
     
     @Column(order=3,title="From")
-    public UUID getFromNode() {
+    public String getFromNode() {
         if (item == null) return null;
-        return item.getFromNode();
+        INode node = details.getNode(item.getFromNode());
+        return node == null ? "" : node.getCanonicalName();
     }
     
     @Column(order=4,title="To")
-    public UUID getToNode() {
+    public String getToNode() {
         if (item == null) return null;
-        return item.getToNode();
+        INode node = details.getNode(item.getToNode());
+        return node == null ? "" : node.getCanonicalName();
     }
     
     @Column(order=5,title="Message")
@@ -56,6 +57,18 @@ public class RuntimeItem {
     public String getServerIdent() {
         if (item == null) return null;
         return item.getServerIdent();
+    }
+
+    @Column(order=7,title="From Id",elapsed=false)
+    public UUID getFromNodeId() {
+        if (item == null) return null;
+        return item.getFromNode();
+    }
+    
+    @Column(order=7,title="To Id",elapsed=false)
+    public UUID getToNodeId() {
+        if (item == null) return null;
+        return item.getToNode();
     }
 
 }
