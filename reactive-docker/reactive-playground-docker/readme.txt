@@ -18,7 +18,7 @@
 docker push "mhus/reactive-playground:1.6.3-SNAPSHOT"
 
 
-docker run -it --name reactive-playground -v ~/.m2:/home/user/.m2 -p 8181:8181 mhus/reactive-playground:1.6.3-SNAPSHOT
+docker run -it --name reactive-playground -h reactive -v ~/.m2:/home/user/.m2 -p 8181:8181 mhus/reactive-playground:1.6.3-SNAPSHOT
 
 docker rm reactive-playground
 
