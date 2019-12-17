@@ -85,6 +85,10 @@ public class EngineListenerUtil {
 		});
 	}
 
+    public static EngineListener createEngineCaseTraceListener() {
+        return new EngineCaseTraceListener(); 
+    }
+
 	public static EngineListener createLogInfoListener() {
 		return (EngineListener) Proxy.newProxyInstance(EngineListener.class.getClassLoader(), new Class[] {EngineListener.class} , new InvocationHandler() {
 			Log log = Log.getLog(Engine.class);

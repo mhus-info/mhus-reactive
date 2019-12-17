@@ -59,6 +59,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.cfg.CfgBoolean;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
@@ -96,7 +97,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private long nextCleanup;
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
-	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
+	private static CfgString CFG_ENGINE_LOG_LEVEL = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
+    private static CfgBoolean CFG_ENGINE_CASE_TRACE = new CfgBoolean(ReactiveAdmin.class, "logCaseTrace", false);
 	// --- Process list handling
 	
 	@Override
@@ -530,11 +532,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			config.processProvider = new DefaultProcessProvider();
 			
 			// listener
-			if (engineLogLevel.value().equals("INFO"))
+			if (CFG_ENGINE_LOG_LEVEL.value().equals("INFO"))
 			    config.listener.add(EngineListenerUtil.createLogInfoListener());
-            if (engineLogLevel.value().equals("DEBUG"))
+            if (CFG_ENGINE_LOG_LEVEL.value().equals("DEBUG"))
                 config.listener.add(EngineListenerUtil.createLogDebugListener());
-			
+			if (CFG_ENGINE_CASE_TRACE.value())
+                config.listener.add(EngineListenerUtil.createEngineCaseTraceListener());
+			    
 			engine = new Engine(config);
 			
 			// auto add process
