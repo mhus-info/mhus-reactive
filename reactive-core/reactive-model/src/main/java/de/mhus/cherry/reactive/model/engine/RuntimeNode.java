@@ -88,7 +88,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		this.parameters = parameters;
 	}
 
-	public void doEvent(String name, PNode flow, Object[] args) {
+	public void doEvent(String name, PNode flow, Object ... args) {
 		if (name.equals("createActivity")) {
 			PNode previous = (PNode) args[3];
 			addFlowMessage(flow, name, flow.getCanonicalName());

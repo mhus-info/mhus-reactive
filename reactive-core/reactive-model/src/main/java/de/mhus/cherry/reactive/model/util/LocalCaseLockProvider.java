@@ -16,7 +16,7 @@ public class LocalCaseLockProvider implements CaseLockProvider {
 
     @Override
     public Lock lock(UUID caseId) {
-        return M.l(LockManager.class).getLock(getClass().getCanonicalName() + "_" + caseId);
+        return M.l(LockManager.class).getLock(getClass().getCanonicalName() + "_" + caseId).lock();
     }
 
 }
