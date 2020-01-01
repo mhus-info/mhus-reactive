@@ -55,6 +55,10 @@
 		</developer>
 	</developers>
 
+	<properties>
+	   <cherry-reactive.version>${project.version}</cherry-reactive.version>
+	</properties>
+	
     <profiles>
         <profile>
             <id>default</id>
