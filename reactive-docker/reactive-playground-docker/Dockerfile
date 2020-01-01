@@ -8,5 +8,6 @@ COPY target/assembly.tar.gz /docker/assembly.tar.gz
 COPY profiles /docker/profiles
 
 # Start once
-RUN /docker/environment.sh
+RUN export CONFIG_PROFILE=none && /docker/environment.sh
 RUN export INSTALL_FORCE=1 && /docker/install.sh
+RUN rm /opt/karaf/environmentdone.mark

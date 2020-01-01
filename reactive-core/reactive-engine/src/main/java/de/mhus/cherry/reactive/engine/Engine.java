@@ -1952,6 +1952,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public PNode getNodeWithoutLock(UUID nodeId) throws NotFoundException, IOException {
         return storage.loadFlowNode(nodeId);
     }
+    
+    public List<EngineCaseLock> getCaseLocks() {
+        return new LinkedList<>( caseLocks.values() );
+    }
 
 	public class EngineCaseLock implements PCaseLock {
 
@@ -1960,12 +1964,24 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         private HashMap<UUID,PNode> nodeCache = new HashMap<>();
         private HashMap<UUID,RuntimeNode> runtimeCache = new HashMap<>();
         private Lock lock;
+        private String stacktrace;
 	    
         EngineCaseLock(UUID caseId) {
             fireEvent.lock(this,caseId);
             lock = lockProvider.lock(caseId);
 	        this.caseId = caseId;
+	        stacktrace = MCast.toString("Lock " + caseId, Thread.currentThread().getStackTrace());
 	    }
+        
+        @Override
+        public Lock getLock() {
+            return lock;
+        }
+        
+        @Override
+        public String getStartStacktrace() {
+            return stacktrace;
+        }
         
         @Override
         public void resetPCase() {

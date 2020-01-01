@@ -15,6 +15,7 @@
  */
 package de.mhus.cherry.reactive.karaf;
 
+import java.util.Date;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.Engine.EngineCaseLock;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PEngine;
@@ -34,6 +36,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -61,6 +64,9 @@ public class CmdProcessEngine extends AbstractCmd {
 			+ " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
 			+ " execute <uri>           - executes the uri, e.g. bpm://process/pool to start a case\n"
 			+ " health\n"
+			+ " locks\n"
+			+ " lock <case id>\n"
+			+ " unlock <case uuid>\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -72,6 +78,39 @@ public class CmdProcessEngine extends AbstractCmd {
 
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		
+		if (cmd.equals("lock")) {
+            UUID id = UUID.fromString(parameters[0]);
+            for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {
+                if (lock.getCaseId().equals(id)) {
+                    System.out.println(lock.getStartStacktrace());
+                    return null;
+                }
+            }
+		} else
+		if (cmd.equals("unlock")) {
+		    UUID id = UUID.fromString(parameters[0]);
+            for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {
+                if (lock.getCaseId().equals(id)) {
+                    lock.getLock().unlockHard();
+                    System.out.println("UNLOCKED");
+                    return null;
+                }
+            }
+		} else
+		if (cmd.equals("locks")) {
+		    ConsoleTable table = new ConsoleTable(tblOpt);
+		    table.setHeaderValues("Case Id","Owner","Time","Lock");
+		    for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {
+		        Lock l = lock.getLock();
+		        table.addRowValues(
+		                lock.getCaseId(),
+		                l == null ? null : l.getOwner(),
+                        l == null ? null : new Date(l.getLockTime()),
+                        l
+		        );
+		    }
+		    table.print();
+		} else
 		if (cmd.equals("execute")) {
 			System.out.println(api.getEngine().doExecute(parameters[0]));
 		} else

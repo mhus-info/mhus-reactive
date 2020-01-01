@@ -12,7 +12,9 @@ import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
+import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
@@ -21,12 +23,14 @@ public class CaseLockProxy implements PCaseLock {
     PCaseLock instance;
     private UUID caseId;
     private EngineListener fireEvent;
+    private String stacktrace;
     
     public CaseLockProxy(PCaseLock instance, EngineListener fireEvent) {
         caseId = instance.getCaseId();
         fireEvent.lock(this,caseId);
         this.instance = instance;
         this.fireEvent = fireEvent;
+        stacktrace = MCast.toString("Lock " + caseId, Thread.currentThread().getStackTrace());
     }
 
     @Override
@@ -144,4 +148,13 @@ public class CaseLockProxy implements PCaseLock {
         instance.putRuntime(id, runtime);
     }
 
+    @Override
+    public Lock getLock() {
+        return instance.getLock();
+    }
+
+    @Override
+    public String getStartStacktrace() {
+        return stacktrace;
+    }
 }

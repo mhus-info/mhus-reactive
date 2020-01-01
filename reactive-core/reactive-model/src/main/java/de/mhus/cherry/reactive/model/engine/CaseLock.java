@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.UUID;
 
+import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.errors.NotFoundException;
 
 public interface CaseLock extends Closeable {
@@ -26,5 +27,9 @@ public interface CaseLock extends Closeable {
     RuntimeNode getRuntime(UUID nodeId);
 
     void putRuntime(UUID id, RuntimeNode runtime);
+
+    Lock getLock();
+
+    String getStartStacktrace();
     
 }
