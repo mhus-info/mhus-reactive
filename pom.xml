@@ -27,7 +27,7 @@
     </parent>
 	<groupId>de.mhus.cherry.reactive</groupId>
 	<artifactId>cherry-reactive</artifactId>
-	<version>1.6.3-SNAPSHOT</version>
+	<version>7.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model</name>
 	<description>BPM Implementation base on a java class model. It allows to create more complex and refactorable models.</description>
