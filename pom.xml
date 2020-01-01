@@ -68,6 +68,7 @@
 				<module>reactive-tools</module>
 				<module>reactive-feature</module>
 				<module>cr-examples</module>
+                <module>reactive-docker</module>
 			</modules>
         </profile>
         <profile>
