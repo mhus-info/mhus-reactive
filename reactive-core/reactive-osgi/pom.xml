@@ -142,6 +142,10 @@
 			<groupId>de.mhus.cherry.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>de.mhus.osgi</groupId>
+            <artifactId>mhu-sop-api</artifactId>
+        </dependency>
 		
 		<dependency>
             <groupId>org.hsqldb</groupId>

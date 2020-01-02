@@ -24,3 +24,37 @@ docker rm reactive-playground
 
 
 bpm://de.mhus.cherry.reactive.examples.simple1.S1Process/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=form01
+
+---
+
+Multiple nodes:
+
+docker run --name reactive-db -e MYSQL_ROOT_PASSWORD=nein -d mariadb:10.3
+
+docker exec -it reactive-db mysql -pnein
+
+CREATE DATABASE db_bpm_stor;
+CREATE DATABASE db_bpm_arch;
+CREATE OR REPLACE USER 'db_bpm_arch'@'%' IDENTIFIED BY 'nein';
+CREATE OR REPLACE USER 'db_bpm_stor'@'%' IDENTIFIED BY 'nein';
+GRANT ALL PRIVILEGES ON db_bpm_arch.* TO 'db_bpm_arch'@'%';
+GRANT ALL PRIVILEGES ON db_bpm_stor.* TO 'db_bpm_stor'@'%';
+quit
+
+docker run --name='reactive-jms' -d \
+ -e 'ACTIVEMQ_CONFIG_NAME=amqp-srv1' \
+ -e 'ACTIVEMQ_CONFIG_DEFAULTACCOUNT=false' \
+ -e 'ACTIVEMQ_ADMIN_LOGIN=admin' -e 'ACTIVEMQ_ADMIN_PASSWORD=nein' \
+ -e 'ACTIVEMQ_CONFIG_MINMEMORY=1024' -e  'ACTIVEMQ_CONFIG_MAXMEMORY=4096' \
+ -e 'ACTIVEMQ_CONFIG_SCHEDULERENABLED=true' \
+ webcenter/activemq:5.14.3
+
+docker run -it --name reactive-playground1 -h reactive1 -p 8181:8181 --link reactive-db:dbserver --link reactive-jms:jmsserver -v ~/.m2:/home/user/.m2 -e CONFIG_PROFILE=sop -e ENV_DB_BPM_PASS=nein -e ENV_JMS_SOP_USER=admin -e ENV_JMS_SOP_PASS=nein mhus/reactive-playground:7.0.0-SNAPSHOT
+
+docker run -it --name reactive-playground2 -h reactive2 -p 8182:8181 --link reactive-db:dbserver --link reactive-jms:jmsserver -v ~/.m2:/home/user/.m2 -e CONFIG_PROFILE=sop -e ENV_DB_BPM_PASS=nein -e ENV_JMS_SOP_USER=admin -e ENV_JMS_SOP_PASS=nein mhus/reactive-playground:7.0.0-SNAPSHOT
+
+docker rm reactive-playground1 
+docker rm reactive-playground2
+
+
+

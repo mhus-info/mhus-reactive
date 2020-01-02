@@ -48,6 +48,7 @@ import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AProcess;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
+import de.mhus.cherry.reactive.model.engine.CaseLockProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PEngine;
@@ -55,6 +56,7 @@ import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
@@ -97,6 +99,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
 	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
+    private static CfgString cfgLockProvider = new CfgString(ReactiveAdmin.class, "lockProvider", "");
 	// --- Process list handling
 	
 	@Override
@@ -535,6 +538,16 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             if (engineLogLevel.value().equals("DEBUG"))
                 config.listener.add(EngineListenerUtil.createLogDebugListener());
 			
+            // lock provider
+            try {
+                config.lockProvider = M.l(CaseLockProvider.class);
+            } catch (Throwable t) {
+                log().w(t);
+            }
+            if (config.lockProvider == null) {
+                if (cfgLockProvider.value().startsWith("cluster:"))
+                    config.lockProvider = new ClusterLockProvider(cfgLockProvider.value().substring(8));
+            }
 			engine = new Engine(config);
 			
 			// auto add process

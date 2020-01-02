@@ -18,28 +18,7 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <bean id="account" class="de.mhus.osgi.sop.impl.aaa.util.AccountFromLdap">
-        <property name="url"            value="ldap://ldapserver:1389"/>
-        <property name="principal"      value="cn=Directory Manager"/>
-        <property name="password"       value="nein"/>
-        <property name="userSearchName" value="ou=people,dc=ngnetwork,dc=de"/>
-        <property name="userSearchFilter" value="(uid=$account$)"/>
-        <property name="userAttributeMapping" value="
-        firstName=Vorname;
-        lastName=Nachname;
-        company=Firma;
-        email=Email;
-        phone=telephoneNumber;
-        language=Sprache;
-        salutation=Anrede"
-        />
-        <property name="userAttributesDisplayName" value="$Vorname:$ $Nachname:$ $Firma:$"/>
-        <property name="userAttributesActive" value="Aktiviert"/>
-        <!-- automatic from fqdn
-        <property name="userAttributesUuid" value=""/>
-         -->
-        <property name="groupsSearchName" value="ou=groups,dc=ngnetwork,dc=de"/>
-        <property name="groupsSearchFilter" value="(uniqueMember=$fqdn$)"/>
+    <bean id="account" class="de.mhus.osgi.sop.impl.aaa.util.AccountFromFile">
     </bean>
 
     <bean id="auth" class="de.mhus.osgi.sop.impl.aaa.util.AuthFromFile">

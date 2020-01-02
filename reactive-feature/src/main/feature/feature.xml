@@ -26,6 +26,7 @@
 		<feature>jdbc</feature>
 		<feature>openjpa</feature>
 		<feature>jndi</feature>
+        <feature>activemq-client</feature>
 
 		<!-- mhu-lib -->
 		
@@ -43,6 +44,7 @@
 		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhus-lib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhus-lib.version}</bundle>
 		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/mhu-lib-jms/${mhus-lib.version}</bundle>
 
 		<!-- osgi tools -->
 		
@@ -52,6 +54,7 @@
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/mhu-osgi-jms/${mhus-osgi-tools.version}</bundle>
 
 		<bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
 				
@@ -59,6 +62,7 @@
 		
 		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/mhu-sop-jms/${mhus-sop.version}</bundle>
 		
 		<!-- reactive -->
 		

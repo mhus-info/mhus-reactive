@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import de.mhus.cherry.reactive.model.engine.AaaProvider;
+import de.mhus.cherry.reactive.model.engine.CaseLockProvider;
 import de.mhus.cherry.reactive.model.engine.EngineListener;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
@@ -33,5 +34,6 @@ public class EngineConfiguration {
 	public Map<String,Object> parameters;
 	public LinkedList<EngineListener> listener = new LinkedList<>();
 	public PEngine persistent;
+    public CaseLockProvider lockProvider;
 	
 }
