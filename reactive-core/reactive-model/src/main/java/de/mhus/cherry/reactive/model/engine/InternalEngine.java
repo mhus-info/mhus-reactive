@@ -20,6 +20,7 @@ import java.util.UUID;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.errors.TimeoutException;
 
 /**
  * Enhanced, not default engine features.
@@ -37,16 +38,16 @@ public interface InternalEngine {
 
 	CaseLock getCaseLockByNode(UUID nodeId) throws MException;
 	
-    CaseLock getCaseLock(PNodeInfo nodeInfo);
+    CaseLock getCaseLock(PNodeInfo nodeInfo) throws TimeoutException;
 
-    CaseLock getCaseLock(PCaseInfo caseInfo);
+    CaseLock getCaseLock(PCaseInfo caseInfo) throws TimeoutException;
 
-    CaseLock getCaseLock(PNode node);
+    CaseLock getCaseLock(PNode node) throws TimeoutException;
 
     CaseLock getCaseLockOrNull(PNodeInfo nodeInfo);
 
-    CaseLock getCaseLockOrNull(UUID caseId);
+    CaseLock getCaseLockOrNull(UUID caseId) throws TimeoutException;
 
-    CaseLock getCaseLock(UUID caseId);
+    CaseLock getCaseLock(UUID caseId) throws TimeoutException;
 
 }

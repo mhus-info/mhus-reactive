@@ -90,6 +90,7 @@ import de.mhus.lib.errors.AccessDeniedException;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.errors.TimeoutException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.errors.ValidationException;
@@ -292,43 +293,47 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		// scan for closeable cases and runtimes
 		fireEvent.doStep("cleanup");
 		for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
-		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
-		    if (lock == null) continue;
-            try (lock) {
-				boolean found = false;
-				HashSet<UUID> allRuntime = new HashSet<>();
-				HashSet<UUID> usedRuntime = new HashSet<>();
-				
-				for ( PNodeInfo nodeId : storage.getFlowNodes(caseInfo.getId(), null)) {
-					try {
-						PNode node = lock.getFlowNode(nodeId);
-						if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
-							allRuntime.add(node.getId());
-						} else
-						if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
-							found = true;
-							usedRuntime.add(node.getRuntimeId());
-						}
-					} catch (Throwable t) {
-						log().w(nodeId,t);
-					}
-				}
-				
-				// close unused runtimes
-				allRuntime.removeIf(u -> usedRuntime.contains(u));
-				for (UUID rId : allRuntime) {
-					try {
-						lock.closeRuntime(rId);
-					} catch (Throwable t) {
-						log().w(rId,t);
-						fireEvent.error(rId,t);
-					}
-				}
-				if (!found) {
-					// close case without active node
-					lock.closeCase(false, 0, "");
-				}
-			}
+//		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
+//		    if (lock == null) continue;
+		    try {
+                try (PCaseLock lock = getCaseLock(caseInfo)) {
+    				boolean found = false;
+    				HashSet<UUID> allRuntime = new HashSet<>();
+    				HashSet<UUID> usedRuntime = new HashSet<>();
+    				
+    				for ( PNodeInfo nodeId : storage.getFlowNodes(caseInfo.getId(), null)) {
+    					try {
+    						PNode node = lock.getFlowNode(nodeId);
+    						if (node.getType() == TYPE_NODE.RUNTIME && node.getState() == STATE_NODE.WAITING) {
+    							allRuntime.add(node.getId());
+    						} else
+    						if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
+    							found = true;
+    							usedRuntime.add(node.getRuntimeId());
+    						}
+    					} catch (Throwable t) {
+    						log().w(nodeId,t);
+    					}
+    				}
+    				
+    				// close unused runtimes
+    				allRuntime.removeIf(u -> usedRuntime.contains(u));
+    				for (UUID rId : allRuntime) {
+    					try {
+    						lock.closeRuntime(rId);
+    					} catch (Throwable t) {
+    						log().w(rId,t);
+    						fireEvent.error(rId,t);
+    					}
+    				}
+    				if (!found) {
+    					// close case without active node
+    					lock.closeCase(false, 0, "");
+    				}
+    			}
+		    } catch (TimeoutException te) {
+		        log().w(caseInfo,te);
+		    }
 		}
 		
 		fireEvent.doStep("cleanup finished");
@@ -419,7 +424,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	    }
 	}
 	
-	public void resaveCase(UUID caseId) throws IOException, NotFoundException {
+	public void resaveCase(UUID caseId) throws IOException, NotFoundException, TimeoutException {
 	    try (CaseLock lock = getCaseLock(caseId)){
     		PCase caze = lock.getCase();
     		storage.saveCase(caze);
@@ -1884,17 +1889,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     }
     
     @Override
-    public PCaseLock getCaseLock(PNodeInfo nodeInfo) {
+    public PCaseLock getCaseLock(PNodeInfo nodeInfo) throws TimeoutException {
         return getCaseLock(nodeInfo.getCaseId());
     }
     
 	@Override
-    public PCaseLock getCaseLock(PCaseInfo caseInfo) {
+    public PCaseLock getCaseLock(PCaseInfo caseInfo) throws TimeoutException {
 		return getCaseLock(caseInfo.getId());
 	}
 	
 	@Override
-    public PCaseLock getCaseLock(PNode node) {
+    public PCaseLock getCaseLock(PNode node) throws TimeoutException {
 		return getCaseLock(node.getCaseId());
 	}
 	
@@ -1907,12 +1912,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public PCaseLock getCaseLockOrNull(UUID caseId) {
         synchronized (caseLocks) {
             if(lockProvider.isCaseLocked(caseId)) return null;
-            return getCaseLock(caseId); // TODO there could be a gap
+            try {
+                return getCaseLock(caseId);
+            } catch (TimeoutException e) {
+                log().e(caseId,e);
+                return null;
+            }
         }
     }
     
 	@Override
-    public PCaseLock getCaseLock(UUID caseId) {
+    public PCaseLock getCaseLock(UUID caseId) throws TimeoutException {
 	    synchronized (caseLocks) {
 	        EngineCaseLock lock = caseLocks.get(caseId);
 	        if (lock != null) {
@@ -1976,7 +1986,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         private Lock lock;
         private String stacktrace;
 	    
-        EngineCaseLock(UUID caseId) {
+        EngineCaseLock(UUID caseId) throws TimeoutException {
             owner = Thread.currentThread();
             fireEvent.lock(this,caseId);
             lock = lockProvider.lock(caseId);
@@ -2107,12 +2117,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
             fireEvent.saveFlowNode(flow,null);
-            try (CaseLock lock = getCaseLock(flow)) {
-//                synchronized (nodeCache) {
-                    storage.saveFlowNode(flow);
-//                    nodeCache.put(flow.getId(), flow);
-                    flow.updateStartState();
-//                }
+            try {
+                try (CaseLock lock = getCaseLock(flow)) {
+    //                synchronized (nodeCache) {
+                        storage.saveFlowNode(flow);
+    //                    nodeCache.put(flow.getId(), flow);
+                        flow.updateStartState();
+    //                }
+                }
+            } catch (TimeoutException te) {
+                log().w(flow,te);
             }
         }
         

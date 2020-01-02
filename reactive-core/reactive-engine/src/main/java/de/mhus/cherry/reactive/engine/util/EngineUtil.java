@@ -33,6 +33,7 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.schedule.CronJob;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.errors.TimeoutException;
 
 public class EngineUtil {
 
@@ -66,7 +67,7 @@ public class EngineUtil {
 //		return name + ":" + desc.version();
 //	}
 
-	public static PCaseLock getCaseLock(Engine engine, String id) throws NotFoundException, IOException {
+	public static PCaseLock getCaseLock(Engine engine, String id) throws NotFoundException, IOException, TimeoutException {
 		if (MValidator.isUUID(id))
 			return engine.getCaseLock(UUID.fromString(id));
 		SearchCriterias c = new SearchCriterias();

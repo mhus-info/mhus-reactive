@@ -38,6 +38,7 @@ import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.errors.TimeoutException;
 
 public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 
@@ -268,8 +269,12 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 
 	@Override
 	public void saveRuntime() throws IOException {
-	    try (PCaseLock lock = engine.getCaseLock(getPRuntime())) {
-	        lock.saveRuntime(getPRuntime(), aRuntime);
+	    try {
+    	    try (PCaseLock lock = engine.getCaseLock(getPRuntime())) {
+    	        lock.saveRuntime(getPRuntime(), aRuntime);
+    	    }
+	    } catch (TimeoutException te) {
+	        throw new IOException(te);
 	    }
 	}
 
