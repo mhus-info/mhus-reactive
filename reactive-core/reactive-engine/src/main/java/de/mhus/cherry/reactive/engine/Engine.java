@@ -193,8 +193,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
 			for (PNodeInfo nodeInfo : result) {
 			    
-				PCaseLock lock = getCaseLockOrNull(nodeInfo);
-				if (lock == null) continue;
+				PCaseLock lockx = getCaseLockOrNull(nodeInfo);
+				if (lockx == null || !(lockx instanceof EngineCaseLock)) continue;
+				EngineCaseLock lock = (EngineCaseLock)lockx;
 				
 				try {
 					PNode node = lock.getFlowNode(nodeInfo);
@@ -291,7 +292,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		// scan for closeable cases and runtimes
 		fireEvent.doStep("cleanup");
 		for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
-            try (PCaseLock lock = getCaseLock(caseInfo)) {
+		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
+		    if (lock == null) continue;
+            try (lock) {
 				boolean found = false;
 				HashSet<UUID> allRuntime = new HashSet<>();
 				HashSet<UUID> usedRuntime = new HashSet<>();
@@ -340,9 +343,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		public Thread thread;
 		private PNode node;
 		long start = System.currentTimeMillis();
-        private PCaseLock lock;
+        private EngineCaseLock lock;
 
-		public FlowNodeExecutor(PCaseLock lock, PNode node) {
+		public FlowNodeExecutor(EngineCaseLock lock, PNode node) {
 		    this.lock = lock;
 			this.node = node;
 		}
@@ -363,6 +366,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 		@Override
 		public void run() {
+            lock.owner = Thread.currentThread();
 			start = System.currentTimeMillis();
 			try {
 				lock.doFlowNode(node);
@@ -1901,8 +1905,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     
     @Override
     public PCaseLock getCaseLockOrNull(UUID caseId) {
-        if(lockProvider.isCaseLocked(caseId)) return null;
-        return getCaseLock(caseId); // TODO there is a gap
+        synchronized (caseLocks) {
+            if(lockProvider.isCaseLocked(caseId)) return null;
+            return getCaseLock(caseId); // TODO there could be a gap
+        }
     }
     
 	@Override
@@ -1910,7 +1916,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	    synchronized (caseLocks) {
 	        EngineCaseLock lock = caseLocks.get(caseId);
 	        if (lock != null) {
-	            return new CaseLockProxy(lock,fireEvent);
+	            if (lock.owner == Thread.currentThread())
+	                return new CaseLockProxy(lock,fireEvent);
 	        }
 	        lock = new EngineCaseLock(caseId);
 	        caseLocks.put(caseId, lock);
@@ -1959,7 +1966,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 	public class EngineCaseLock implements PCaseLock {
 
-	    private UUID caseId;
+	    public Thread owner;
+        private UUID caseId;
         private PCase cazex;
         private HashMap<UUID,PNode> nodeCache = new HashMap<>();
         private HashMap<UUID,RuntimeNode> runtimeCache = new HashMap<>();
@@ -1967,6 +1975,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         private String stacktrace;
 	    
         EngineCaseLock(UUID caseId) {
+            owner = Thread.currentThread();
             fireEvent.lock(this,caseId);
             lock = lockProvider.lock(caseId);
 	        this.caseId = caseId;
