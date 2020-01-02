@@ -58,7 +58,7 @@ public class RParallelGateway<P extends RPool<?>> extends RGateway<P> implements
 			if (info.getCanonicalName().equals(myName) && !info.getId().equals(myId) /* paranoia */) 
 				current.add(info.getId());
 		}
-		context.getARuntime().doEvent("join_status", context.getPNode(), current.size(), size);
+		context.getARuntime().doEvent("join_status", context.getPNode(), 0, current.size(), size);
 		if (current.size() >= (size-1) ) { // decrease 1 for myself
 			// close all others, activate me !!!
 			context.getPNode().setState(STATE_NODE.RUNNING);

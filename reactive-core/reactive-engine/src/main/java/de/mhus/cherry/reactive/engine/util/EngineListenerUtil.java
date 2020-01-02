@@ -108,7 +108,7 @@ public class EngineListenerUtil {
 				// invoke runtime is necessary
 				if (args != null && args.length >= 2 && args[0] != null && args[0] instanceof RuntimeNode && args[1] != null && args[1] instanceof PNode) {
 					try {
-						((RuntimeNode)args[0]).doEvent(method.getName(), (PNode)args[1], args);
+						((RuntimeNode)args[0]).doEvent(method.getName(), (PNode)args[1], 2, args);
 					} catch (Throwable t) {
 						MLogUtil.log().e(method,args,t);
 					}

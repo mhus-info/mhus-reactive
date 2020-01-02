@@ -14,6 +14,7 @@
     limitations under the License.
 ====
 
+mvn dockerfile:build
 
 docker push "mhus/reactive-playground:1.6.3-SNAPSHOT"
 
@@ -53,8 +54,17 @@ docker run -it --name reactive-playground1 -h reactive1 -p 8181:8181 --link reac
 
 docker run -it --name reactive-playground2 -h reactive2 -p 8182:8181 --link reactive-db:dbserver --link reactive-jms:jmsserver -v ~/.m2:/home/user/.m2 -e CONFIG_PROFILE=sop -e ENV_DB_BPM_PASS=nein -e ENV_JMS_SOP_USER=admin -e ENV_JMS_SOP_PASS=nein mhus/reactive-playground:7.0.0-SNAPSHOT
 
+docker stop reactive-playground1 
+docker stop reactive-playground2
 docker rm reactive-playground1 
 docker rm reactive-playground2
+
+pstress -i 1 \
+'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
+'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
+'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \
+'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
+'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
 
 
 

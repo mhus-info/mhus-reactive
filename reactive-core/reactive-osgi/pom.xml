@@ -46,7 +46,10 @@
 						<!-- 
 						<Private-Package>de.mhus.cherry.reactive.osgi.impl.*</Private-Package>
 						 -->
-						<Import-Package>*</Import-Package>
+						<Import-Package>
+						  de.mhus.osgi.sop.*;resolution:=optional,
+						  *
+						</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
 						<Service-Component>de.mhus.cherry.reactive.osgi.*</Service-Component>
 						<Embed-Dependency>reactive-model,reactive-engine,reactive-util</Embed-Dependency>

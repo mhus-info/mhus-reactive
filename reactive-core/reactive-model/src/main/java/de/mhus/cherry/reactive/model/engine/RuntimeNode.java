@@ -88,7 +88,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 		this.parameters = parameters;
 	}
 
-	public void doEvent(String name, PNode flow, Object ... args) {
+	public void doEvent(String name, PNode flow, int offset, Object ... args) {
 		if (name.equals("createActivity")) {
 			PNode previous = (PNode) args[3];
 			addFlowMessage(flow, name, flow.getCanonicalName());
@@ -99,7 +99,7 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
 			addStartCreated(flow);
 		} else {
 			StringBuilder sb = new StringBuilder();
-			for (int i = 2; i < args.length; i++)
+			for (int i = offset; i < args.length; i++)
 				MString.serialize(sb, args[i], null);
 			addFlowMessage(	flow, name, sb.toString());
 		}
