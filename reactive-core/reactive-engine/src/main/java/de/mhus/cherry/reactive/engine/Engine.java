@@ -1919,10 +1919,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	            if (lock.owner == Thread.currentThread())
 	                return new CaseLockProxy(lock,fireEvent);
 	        }
-	        lock = new EngineCaseLock(caseId);
+	    }
+	    EngineCaseLock lock = new EngineCaseLock(caseId);
+        synchronized (caseLocks) {
 	        caseLocks.put(caseId, lock);
-	        return lock;
         }
+        return lock;
 	}
 
 	/* 
@@ -1979,7 +1981,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             fireEvent.lock(this,caseId);
             lock = lockProvider.lock(caseId);
 	        this.caseId = caseId;
-	        stacktrace = MCast.toString("Lock " + caseId, Thread.currentThread().getStackTrace());
+	        stacktrace = MCast.toString("Lock " + caseId + " " + Thread.currentThread().getId(), Thread.currentThread().getStackTrace());
 	    }
         
         @Override

@@ -30,7 +30,7 @@ public class CaseLockProxy implements PCaseLock {
         fireEvent.lock(this,caseId);
         this.instance = instance;
         this.fireEvent = fireEvent;
-        stacktrace = MCast.toString("Lock " + caseId, Thread.currentThread().getStackTrace());
+        stacktrace = MCast.toString("Proxy " + caseId + " " + Thread.currentThread().getId());
     }
 
     @Override
