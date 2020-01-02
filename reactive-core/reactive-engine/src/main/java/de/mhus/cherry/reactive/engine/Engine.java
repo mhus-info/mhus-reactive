@@ -2006,6 +2006,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 caseLocks.remove(caseId);
             }
         }
+        
+        @Override
+        protected void finalize() {
+            if (lock != null) {
+                log().w("did not close lock",caseId,stacktrace);
+                close();
+            }
+        }
 
         @Override
         public PCase getCase() throws NotFoundException, IOException {

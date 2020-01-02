@@ -30,6 +30,6 @@ public interface CaseLock extends Closeable {
 
     Lock getLock();
 
-    String getStartStacktrace();
+    String getStartStacktrace(); // TODO remove, is already in lock owner
     
 }
