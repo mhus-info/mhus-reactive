@@ -1976,7 +1976,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return new LinkedList<>( caseLocks.values() );
     }
 
-	public class EngineCaseLock implements PCaseLock {
+	public class EngineCaseLock extends MLog implements PCaseLock {
 
 	    public Thread owner;
         private UUID caseId;
@@ -2020,6 +2020,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public void close() {
             synchronized (caseLocks) {
                 if (lock != null) {
+                    if (owner != Thread.currentThread()) {
+                        log().w("closing by stranger",owner,Thread.currentThread());
+                    }
                     fireEvent.release(this,caseId);
                     if (!lock.unlock())
                         lock.unlockHard(); // need hard, another thread could call close
