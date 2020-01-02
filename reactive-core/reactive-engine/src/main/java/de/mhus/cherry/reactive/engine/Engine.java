@@ -2021,7 +2021,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             synchronized (caseLocks) {
                 if (lock != null) {
                     fireEvent.release(this,caseId);
-                    lock.close();
+                    if (!lock.unlock())
+                        lock.unlockHard(); // need hard, another thread could call close
                 }
                 lock = null;
                 caseLocks.remove(caseId);
