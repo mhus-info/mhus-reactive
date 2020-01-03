@@ -19,6 +19,7 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
     public ClusterLockProvider(String name) {
         this.name = name;
     }
+    
     @Override
     public boolean isCaseLocked(UUID caseId) {
         return M.l(ClusterApi.class).getLock("reactive_case_" + name + "_" + caseId).isLocked();
@@ -27,6 +28,11 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock lock(UUID caseId) throws TimeoutException {
         return M.l(ClusterApi.class).getLock("reactive_case_" + name + "_" + caseId).lockWithException(CFG_TIMEOUT.value());
+    }
+    
+    @Override
+    public boolean acquireCleanupMaster(long until) {
+        return M.l(ClusterApi.class).isMaster("reactive_cleanup_" + name);
     }
 
 }

@@ -2624,4 +2624,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
         
 	}
+
+    public boolean acquireCleanupMaster(long until) {
+        return lockProvider.acquireCleanupMaster(until);
+    }
 }

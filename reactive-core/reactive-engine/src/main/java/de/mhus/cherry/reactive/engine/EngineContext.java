@@ -283,6 +283,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 		return engine.getAaaProvider();
 	}
 
+    @Override
     public CaseLock getCaseLock() {
         return lock;
     }

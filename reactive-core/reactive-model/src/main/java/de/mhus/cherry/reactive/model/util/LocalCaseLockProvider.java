@@ -24,4 +24,9 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         return M.l(LockManager.class).getLock(getClass().getCanonicalName() + "_" + caseId).lockWithException(CFG_TIMEOUT.value());
     }
 
+    @Override
+    public boolean acquireCleanupMaster(long until) {
+        return true;
+    }
+
 }

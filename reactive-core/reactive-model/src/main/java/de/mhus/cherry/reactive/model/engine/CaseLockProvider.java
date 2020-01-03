@@ -11,4 +11,12 @@ public interface CaseLockProvider {
 
     Lock lock(UUID caseId) throws TimeoutException;
 
+    /**
+     * return true if the clean up master was acquired until the date in ms.
+     * 
+     * @param until system time in ms
+     * @return true if acquired, false if not
+     */
+    boolean acquireCleanupMaster(long until);
+
 }

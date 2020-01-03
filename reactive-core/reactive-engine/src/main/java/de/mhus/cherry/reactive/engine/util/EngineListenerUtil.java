@@ -91,7 +91,7 @@ public class EngineListenerUtil {
 			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				if (method.getName().equals("doStep"))
-					log.d(method.getName(), args);
+					log.i(method.getName(), args);
 				else
 					log.i(method.getName(), args);
 				return null;

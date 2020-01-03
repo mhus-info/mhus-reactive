@@ -61,6 +61,7 @@ import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
@@ -75,6 +76,10 @@ import de.mhus.lib.sql.Dialect;
 @Component(immediate=true)
 public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
+    public static CfgLong CFG_TIME_TROTTELING = new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
+    public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
+    public static CfgLong CFG_TIME_CLEANUP_DELAY = new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", MPeriod.MINUTE_IN_MILLISECOUNDS);
+    
 	public ReactiveAdminImpl instance;
 	private EngineConfiguration config;
 	private Engine engine;
@@ -94,8 +99,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private ServiceTracker<AProcess,AProcess> processTracker;
 	private TreeMap<String, ProcessInfo> availableProcesses = new TreeMap<>();
 	private boolean autoDeploy = true;
-	private Thread executor;
-	private long nextCleanup;
+	private Thread executorProcess;
+    private Thread executorCleanup;
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
 	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
@@ -371,52 +376,83 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		});
 		processTracker.open(true);
 		
-		executor = new Thread(new Runnable() {
+        stopExecutor = false;
+		executorProcess = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				stopExecutor = false;
-				log().i("Engine executor started");
+				log().i("Engine process executor started");
 				while (true) {
 					if (stopExecutor) return;
 					try {
-						if (doExecuteStep() == 0)
-							Thread.sleep(3000);
+						if (doExecuteProcess() == 0)
+							Thread.sleep(CFG_TIME_TROTTELING.value());
 						else
-							Thread.sleep(1000);
+							Thread.sleep(CFG_TIME_DELAY.value());
+                    } catch (InterruptedException e) {
+                        // ignore
 					} catch (Throwable t) {
 						log().e(t);
-						MThread.sleep(1000);
+						MThread.sleep(CFG_TIME_DELAY.value());
 					}
 				}
 			}
 			
-		},"reactive-engine-executor");
-		executor.setDaemon(true);
-		executor.start();
+		},"reactive-engine-process");
+		executorProcess.setDaemon(true);
+		executorProcess.start();
+		
+        executorCleanup = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                log().i("Engine cleanup executor started");
+                while (true) {
+                    if (stopExecutor) return;
+                    try {
+                        doExecuteCleanup();
+                        Thread.sleep(CFG_TIME_CLEANUP_DELAY.value());
+                    } catch (InterruptedException e) {
+                        // ignore
+                    } catch (Throwable t) {
+                        log().e(t);
+                        MThread.sleep(CFG_TIME_DELAY.value());
+                    }
+                }
+            }
+            
+        },"reactive-engine-cleanup");
+        executorCleanup.setDaemon(true);
+        executorCleanup.start();
+		
 	}
 	
-	protected int doExecuteStep() throws NotFoundException, IOException {
+	protected int doExecuteProcess() throws NotFoundException, IOException {
 		if (executionSuspended ) return 0;
 		Engine e = engine;
 		if (e == null) return 0;
 		int cnt = e.doProcessNodes();
 		e = engine;
 		if (e == null) return 0;
-		if (System.currentTimeMillis() > nextCleanup) {
-			nextCleanup = System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS / 2;
-			e.doCleanupCases();
-		}
 		return cnt;
 	}
 
+    protected void doExecuteCleanup() throws NotFoundException, IOException {
+        Engine e = engine;
+        long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
+        if (e.acquireCleanupMaster(nextCleanup))
+            e.doCleanupCases();
+    }
+	
 	@Deactivate
 	public void doDeactivate(ComponentContext ctx) {
 		stopExecutor  = true;
+		executorProcess.interrupt();
+		executorCleanup.interrupt();
 		int cnt = 60;
-		if (executor != null) {
+		if (executorProcess != null) {
     		log().i("Wait for engine to stop");
-    		while (executor.isAlive() && cnt > 0) {
+    		while ( (executorProcess.isAlive() || executorCleanup.isAlive()) && cnt > 0) {
     			MThread.sleep(1000);
     			cnt--;
     		}
