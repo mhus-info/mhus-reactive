@@ -17,25 +17,13 @@
 -->
 <mhus>
   <system
-    log.factory="de.mhus.lib.logging.JavaLoggerFactory"
+    include="mhus-config-*"
+    log.factory="de.mhus.lib.logging.Log4JFactory"
     level.mapper="de.mhus.lib.logging.level.ThreadBasedMapper"
     parameter.mapper="de.mhus.lib.logging.parameter.MutableParameterMapper"
     log.console.redirect="false"
   >
     <parameter.mapper name="javax.jms.Message" class="de.mhus.lib.jms.util.MessageParameterMapper" />
   </system>
-  <de.mhus.cherry.reactive.osgi.ReactiveAdmin 
-  	storageDsName="*"
-  	archiveDsName="*"
-  	logLevel="INFO"
-  >
-	  <engine>
-	    <parameter name="process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions" value="0.0.1"/>  
-	    <parameter name="process:de.mhus.cherry.reactive.examples.simple1.S1Process:active" value="0.0.1"/>  
-	  </engine>
-  </de.mhus.cherry.reactive.osgi.ReactiveAdmin>
-  <de.mhus.osgi.sop.impl.adb.SopDbManagerService
-    enabled="false"
-  />
 </mhus>
 
