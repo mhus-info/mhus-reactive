@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.dev;
 
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -23,13 +22,13 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
+import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(scope = "reactive", name = "pstress", description = "Execute cases all the time")
 @Service
-public class CmdStress extends MLog implements Action {
+public class CmdStress extends AbstractCmd {
 
 	@Argument(index=0, name="uris", required=false, description="URIs to execute", multiValued=true)
 	String[] uris;
@@ -41,7 +40,7 @@ public class CmdStress extends MLog implements Action {
 	private int cnt = 10000;
 	
 	@Override
-	public Object execute() throws Exception {
+	public Object execute2() throws Exception {
 		
 		Console console = Console.get();
 		
