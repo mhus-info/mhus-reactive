@@ -12,7 +12,7 @@
   <de.mhus.osgi.sop.impl.adb.SopDbManagerService
     enabled="false"
   />
-  <de.mhus.osgi.sop.jms.operation.RegistryProvider
+  <de.mhus.osgi.sop.jms.operation.JmsRegistryProvider
     enabled="false"
   />
 </mhus>

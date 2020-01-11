@@ -154,7 +154,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		long now = System.currentTimeMillis();
 
 		// SCHEDULED NODES
-		fireEvent.doStep("scheduled");
+	    fireEvent.doStep("scheduled");
 		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now)) {
 			try {
 			    PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
@@ -191,7 +191,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		}
 
 		// READY NODES
-		fireEvent.doStep("execute");
+        fireEvent.doStep("execute");
 		boolean parallel = MCast.toboolean(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_PARALLEL), true);
 		Result<PNodeInfo> result = storage.getScheduledFlowNodes(STATE_NODE.RUNNING, now);
 		if (parallel) {
@@ -276,7 +276,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		}
 		result.close();
 				
-		fireEvent.doStep("execute finished");
+        fireEvent.doStep("execute finished");
 		
 		return doneCnt;
 	}
@@ -296,7 +296,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	public void doCleanupCases() throws IOException, NotFoundException {
 				
 		// scan for closeable cases and runtimes
-		fireEvent.doStep("cleanup");
+        fireEvent.doStep("cleanup");
 		for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
 //		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
 //		    if (lock == null) continue;
@@ -341,7 +341,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		    }
 		}
 		
-		fireEvent.doStep("cleanup finished");
+        fireEvent.doStep("cleanup finished");
 				
 	}
 

@@ -46,6 +46,8 @@ Execute:
 
 bpm://de.mhus.cherry.reactive.examples.simple1.S1Process/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=form01
 
+pstart "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=test;customerId=alf?text1=second"
+
 ---
 
 Create multi node environment with mysql:
@@ -116,5 +118,11 @@ pstress -i 1 \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
 
+---
 
+Enable case logging:
+
+mhus:config set de.mhus.cherry.reactive.osgi.ReactiveAdmin logCases true
+ 
+ 
 

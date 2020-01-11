@@ -41,6 +41,7 @@ import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
+import de.mhus.cherry.reactive.engine.util.LogConfiguration;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.LEVEL;
@@ -58,9 +59,11 @@ import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MApi.SCOPE;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.cfg.CfgBoolean;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
@@ -80,7 +83,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
     public static CfgLong CFG_TIME_CLEANUP_DELAY = new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", MPeriod.MINUTE_IN_MILLISECOUNDS);
     
-	public ReactiveAdminImpl instance;
+	public static ReactiveAdminImpl instance;
 	private EngineConfiguration config;
 	private Engine engine;
 	private BundleContext context;
@@ -103,8 +106,16 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private Thread executorCleanup;
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
+    private LogConfiguration logConfig;
 	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
     private static CfgString cfgLockProvider = new CfgString(ReactiveAdmin.class, "lockProvider", "");
+    private static CfgBoolean CFG_LOG_STEPS = new CfgBoolean(ReactiveAdmin.class, "logSteps", false)
+            .updateAction(v -> instance.logConfig.traceSteps = v );
+    private static CfgBoolean CFG_LOG_STACKTRACE = new CfgBoolean(ReactiveAdmin.class, "logStackTrace", false)
+            .updateAction(v -> instance.logConfig.stackTrace = v );
+    private static CfgBoolean CFG_LOG_CASES = new CfgBoolean(ReactiveAdmin.class, "logCases", false)
+            .updateAction(v -> instance.logConfig.traceCases = v );
+    
 	// --- Process list handling
 	
 	@Override
@@ -480,6 +491,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		try {
 	 		// start engine
 			config = new EngineConfiguration();
+			logConfig = new LogConfiguration();
+			logConfig.traceSteps = CFG_LOG_STEPS.value();
+			logConfig.stackTrace = CFG_LOG_STACKTRACE.value();
+			logConfig.traceDir = MApi.getFile(SCOPE.LOG, ".").getAbsolutePath();
+			logConfig.traceCases = CFG_LOG_CASES.value();
+			
 			// storage
 			if (storageDsName.value().equals("*")) {
 				log().w("Engine: Using memory storage");
@@ -570,9 +587,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 			
 			// listener
 			if (engineLogLevel.value().equals("INFO"))
-			    config.listener.add(EngineListenerUtil.createLogInfoListener());
+			    config.listener.add(EngineListenerUtil.createLogInfoListener(logConfig));
             if (engineLogLevel.value().equals("DEBUG"))
-                config.listener.add(EngineListenerUtil.createLogDebugListener());
+                config.listener.add(EngineListenerUtil.createLogDebugListener(logConfig));
 			
             // lock provider
             try {
