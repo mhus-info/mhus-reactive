@@ -83,6 +83,7 @@ docker run -it --name reactive-playground \
  -e ENV_DB_BPM_PASS=nein \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
+ --oom-kill-disable \
  mhus/reactive-playground:7.0.0-SNAPSHOT debug
 
 deploy process:
@@ -116,6 +117,7 @@ docker run -it --name reactive-playground1 \
  -e ENV_DB_BPM_PASS=nein \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
+ --oom-kill-disable \
  mhus/reactive-playground:7.0.0-SNAPSHOT debug
 
 docker run -it --name reactive-playground2 \
@@ -129,6 +131,7 @@ docker run -it --name reactive-playground2 \
  -e ENV_DB_BPM_PASS=nein \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
+ --oom-kill-disable \
  mhus/reactive-playground:7.0.0-SNAPSHOT debug
 
 docker stop reactive-playground1 
