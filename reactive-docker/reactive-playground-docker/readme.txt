@@ -48,11 +48,15 @@ bpm://de.mhus.cherry.reactive.examples.simple1.S1Process/de.mhus.cherry.reactive
 
 pstart "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=test;customerId=alf?text1=second"
 
+
+Additional console:
+
+docker exec -it reactive-playground /opt/karaf/bin/client
+
 ---
 
-Create multi node environment with mysql:
+Create single with mysql:
 
-Multiple nodes:
 
 docker run -d --name reactive-db \
  -e MYSQL_ROOT_PASSWORD=nein \
@@ -68,6 +72,30 @@ GRANT ALL PRIVILEGES ON db_bpm_arch.* TO 'db_bpm_arch'@'%';
 GRANT ALL PRIVILEGES ON db_bpm_stor.* TO 'db_bpm_stor'@'%';
 quit
 
+
+docker run -it --name reactive-playground \
+ -h reactive \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ --link reactive-db:dbserver \
+ -v ~/.m2:/home/user/.m2 \
+ -e CONFIG_PROFILE=single \
+ -e ENV_DB_BPM_PASS=nein \
+ -e ENV_JMS_SOP_USER=admin \
+ -e ENV_JMS_SOP_PASS=nein \
+ mhus/reactive-playground:7.0.0-SNAPSHOT debug
+
+deploy process:
+
+pdeploy -a de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1
+
+---
+
+Create multi node environment with mysql:
+
+Create mysql from single node and ...
+
+
 docker run --name='reactive-jms' -d \
  -e 'ACTIVEMQ_CONFIG_NAME=amqp-srv1' \
  -e 'ACTIVEMQ_CONFIG_DEFAULTACCOUNT=false' \
@@ -76,6 +104,7 @@ docker run --name='reactive-jms' -d \
  -e 'ACTIVEMQ_CONFIG_SCHEDULERENABLED=true' \
  webcenter/activemq:5.14.3
 
+
 docker run -it --name reactive-playground1 \
  -h reactive1 \
  -p 8181:8181 \
@@ -83,7 +112,7 @@ docker run -it --name reactive-playground1 \
  --link reactive-db:dbserver \
  --link reactive-jms:jmsserver \
  -v ~/.m2:/home/user/.m2 \
- -e CONFIG_PROFILE=sop \
+ -e CONFIG_PROFILE=multi \
  -e ENV_DB_BPM_PASS=nein \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
@@ -96,7 +125,7 @@ docker run -it --name reactive-playground2 \
  --link reactive-db:dbserver \
  --link reactive-jms:jmsserver \
  -v ~/.m2:/home/user/.m2 \
- -e CONFIG_PROFILE=sop \
+ -e CONFIG_PROFILE=multi \
  -e ENV_DB_BPM_PASS=nein \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
@@ -111,7 +140,7 @@ docker rm reactive-playground2
 
 Start stress tool:
 
-pstress -i 5 \
+pstress -i 1 \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
 'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \
