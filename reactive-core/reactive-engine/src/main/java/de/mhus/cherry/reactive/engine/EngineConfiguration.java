@@ -24,6 +24,7 @@ import de.mhus.cherry.reactive.model.engine.EngineListener;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
+import de.mhus.lib.core.MPeriod;
 
 public class EngineConfiguration {
 
@@ -35,5 +36,9 @@ public class EngineConfiguration {
 	public LinkedList<EngineListener> listener = new LinkedList<>();
 	public PEngine persistent;
     public CaseLockProvider lockProvider;
+    public boolean executeParallel = true;
+    public int maxThreads = 10;
+    public long sleepBetweenProgress = 100;
+    public long progressTimeout = MPeriod.MINUTE_IN_MILLISECOUNDS * 5;
 	
 }

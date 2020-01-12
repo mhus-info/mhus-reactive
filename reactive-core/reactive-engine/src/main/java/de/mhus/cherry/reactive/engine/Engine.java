@@ -192,10 +192,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 		// READY NODES
         fireEvent.doStep("execute");
-		boolean parallel = MCast.toboolean(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_PARALLEL), true);
 		Result<PNodeInfo> result = storage.getScheduledFlowNodes(STATE_NODE.RUNNING, now);
-		if (parallel) {
-			int maxThreads = MCast.toint(config.persistent.getParameters().get(EngineConst.ENGINE_EXECUTE_MAX_THREADS), 10);
+		if (config.executeParallel) {
+			int maxThreads = config.maxThreads;
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
 			for (PNodeInfo nodeInfo : result) {
 			    
@@ -238,7 +237,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			}
 			
 			// sleep
-			MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+			MThread.sleep(config.sleepBetweenProgress);
 
 		} else {
 			for (PNodeInfo nodeInfo : result) {
@@ -259,7 +258,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 								executing.remove(nodeInfo);
 							}
 							// sleep
-							MThread.sleep(MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_SLEEP_BETWEEN_PROGRESS), 100));
+							MThread.sleep(config.sleepBetweenProgress);
 	
 						} else
 						if (caze.getState() == STATE_CASE.CLOSED) {
@@ -505,7 +504,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				if (options.getBoolean( EngineConst.PARAM_PROGRESS, false)) {
 					long waitTime = 300;
 					long start = System.currentTimeMillis();
-					long timeout = MCast.tolong(config.persistent.getParameters().get(EngineConst.ENGINE_PROGRESS_TIMEOUT), MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
 					while (true) {
 						PCaseInfo caze = getCaseInfo(id);
 						if (
@@ -516,7 +514,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 								caze.getState() == STATE_CASE.SUSPENDED
 							)
 							throw new MException("Progress not reached before close",id);
-						if (MPeriod.isTimeOut(start, timeout)) 
+						if (MPeriod.isTimeOut(start, config.progressTimeout)) 
 							throw new TimeoutRuntimeException("Wait for progress timeout",id);
 						Thread.sleep(waitTime);
 					}

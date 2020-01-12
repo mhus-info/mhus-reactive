@@ -78,7 +78,7 @@ public class PNode implements Externalizable {
 	protected UUID runtimeNode;
 	
 	protected int tryCount = EngineConst.DEFAULT_TRY_COUNT;
-	private long activityTimeout = EngineConst.DEFAULT_ACTIVITY_TIMEOUT.value();
+	private long activityTimeout =  EngineConst.DEFAULT_ACTIVITY_TIMEOUT.value();
 	private Map<String, Object> message;
 	// will not be stored
 	private String[] indexValues;

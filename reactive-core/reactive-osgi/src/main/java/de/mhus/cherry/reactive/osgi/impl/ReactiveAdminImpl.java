@@ -64,6 +64,7 @@ import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.cfg.CfgBoolean;
+import de.mhus.lib.core.cfg.CfgInt;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.config.IConfig;
@@ -115,6 +116,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             .updateAction(v -> instance.logConfig.stackTrace = v );
     private static CfgBoolean CFG_LOG_CASES = new CfgBoolean(ReactiveAdmin.class, "logCases", false)
             .updateAction(v -> instance.logConfig.traceCases = v );
+    private static CfgBoolean CFG_EXECUTE_PARALLEL = new CfgBoolean(ReactiveAdmin.class, "executeParallel", true)
+            .updateAction(v -> instance.config.executeParallel = v );
+    private static CfgInt CFG_MAX_THREADS = new CfgInt(ReactiveAdmin.class, "maxThreads", 10)
+            .updateAction(v -> instance.config.maxThreads = v );
+    private static CfgLong CFG_PROGRESS_TIMEOUT = new CfgLong(ReactiveAdmin.class, "progressTimeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5)
+            .updateAction(v -> instance.config.progressTimeout = v );
+    private static CfgLong CFG_SLEEP_BETWEEN_PROGRESS = new CfgLong(ReactiveAdmin.class, "sleepBetweenProgress", 100)
+            .updateAction(v -> instance.config.sleepBetweenProgress = v );
     
 	// --- Process list handling
 	
@@ -491,6 +500,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		try {
 	 		// start engine
 			config = new EngineConfiguration();
+			config.executeParallel = CFG_EXECUTE_PARALLEL.value();
+			config.maxThreads = CFG_MAX_THREADS.value();
+			config.progressTimeout = CFG_PROGRESS_TIMEOUT.value();
+			config.sleepBetweenProgress = CFG_SLEEP_BETWEEN_PROGRESS.value();
+			
 			logConfig = new LogConfiguration();
 			logConfig.traceSteps = CFG_LOG_STEPS.value();
 			logConfig.stackTrace = CFG_LOG_STACKTRACE.value();

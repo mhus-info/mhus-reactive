@@ -25,9 +25,6 @@ public class EngineConst {
 	public static final String OPTION_CUSTOMER_ID = "customerId";
 	public static CfgLong DEFAULT_ACTIVITY_TIMEOUT = new CfgLong(EEngine.class, "defaultActivityTimeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
 	public static final int TRY_COUNT = 3;
-	public static final String ENGINE_EXECUTE_PARALLEL = "engine.execute.parallel";
-	public static final String ENGINE_EXECUTE_MAX_THREADS = "engine.execute.max.threads";
-	public static final String ENGINE_SLEEP_BETWEEN_PROGRESS = "engine.sleep.between.progress";
 	public static final int DEFAULT_TRY_COUNT = 1;
 	public static final long END_OF_DAYS = Long.MAX_VALUE;
 	public static final int MAX_INDEX_VALUES = 10;
@@ -36,7 +33,6 @@ public class EngineConst {
 	public static final String UI_NODE_PREFIX = "node.";
 	public static final int MAX_CREATE_ACTIVITY = 1000;
 	public static final int ERROR_CODE_MAX_CREATE_ACTIVITY = -1000;
-	public static final String ENGINE_PROGRESS_TIMEOUT = "engine.progress.timeout";
 
 	public static final String MILESTONE_START = "NEW";
 	public static final String MILESTONE_PROGRESS = "PROGRESS";
