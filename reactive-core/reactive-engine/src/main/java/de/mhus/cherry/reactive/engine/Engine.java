@@ -155,7 +155,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 		// SCHEDULED NODES
 	    fireEvent.doStep("scheduled");
-		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now)) {
+		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now, false)) {
 			try {
 			    PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
 			    try (PCaseLock lock = getCaseLock(nodeInfo)) {
@@ -169,7 +169,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				log().e(nodeId, t);
 			}
 		}
-		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now)) {
+		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
 			try {
 			    try (PCaseLock lock = getCaseLock(nodeInfo)) {
     				PCase caze = lock.getCase();
@@ -192,7 +192,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 		// READY NODES
         fireEvent.doStep("execute");
-		Result<PNodeInfo> result = storage.getScheduledFlowNodes(STATE_NODE.RUNNING, now);
+		Result<PNodeInfo> result = storage.getScheduledFlowNodes(STATE_NODE.RUNNING, now, true);
 		if (config.executeParallel) {
 			int maxThreads = config.maxThreads;
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
@@ -1177,7 +1177,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	
 	@Override
 	public Result<PNodeInfo> storageGetScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
-		return storage.getScheduledFlowNodes(state, scheduled);
+		return storage.getScheduledFlowNodes(state, scheduled, false);
 	}
 
 	@Override
@@ -1225,7 +1225,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	}
 
 	public Result<PNodeInfo> archiveGetScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
-		return archive.getScheduledFlowNodes(state, scheduled);
+		return archive.getScheduledFlowNodes(state, scheduled, false);
 	}
 
 	public Result<PNodeInfo> archiveGetSignaledFlowNodes(STATE_NODE state, String signal) throws IOException {

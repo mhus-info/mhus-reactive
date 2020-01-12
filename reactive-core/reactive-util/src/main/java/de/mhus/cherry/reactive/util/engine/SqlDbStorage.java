@@ -662,7 +662,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 
 	@Override
-	public Result<PNodeInfo> getScheduledFlowNodes(STATE_NODE state, long scheduled) throws IOException {
+	public Result<PNodeInfo> getScheduledFlowNodes(STATE_NODE state, long scheduled, boolean order) throws IOException {
 		DbConnection con = null;
 		try {
 			con = pool.getConnection();
@@ -670,11 +670,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 			DbStatement sta = null;
 			if (state == null) {
 				prop.setLong("scheduled", scheduled);
-				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE scheduled_ <= $scheduled$" + (order ? " ORDER BY modified_ DESC" : "") );
 			} else {
 				prop.setLong("scheduled", scheduled);
 				prop.put("state", state);
-				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$");
+				sta = con.createStatement("SELECT "+NODE_COLUMNS+" FROM " + prefix + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$"  + (order ? " ORDER BY modified_ DESC" : ""));
 			}
 			DbResult res = sta.executeQuery(prop);
 			return new SqlResultNode(con,res);

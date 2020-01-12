@@ -110,10 +110,11 @@ public interface StorageProvider {
 	 * 
 	 * @param state The state or null
 	 * @param scheduled
+	 * @param order order modify date descending (true) or without order - used to process oldest first
 	 * @return List of results
 	 * @throws IOException
 	 */
-	Result<PNodeInfo> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled) throws IOException;
+	Result<PNodeInfo> getScheduledFlowNodes(PNode.STATE_NODE state, long scheduled, boolean order) throws IOException;
 	
 	Result<PNodeInfo> getSignalFlowNodes(PNode.STATE_NODE state, String signal) throws IOException;
 	

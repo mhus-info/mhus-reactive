@@ -34,7 +34,6 @@ import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.util.PCaseLock;
 import de.mhus.cherry.reactive.engine.util.RuntimeTrace;
-import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -731,7 +730,7 @@ public class S1ActivitiesTest  {
 		config.aaa = new SimpleAaaProvider();
 		config.parameters = new HashMap<>();
 		config.parameters.put("process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions", "0.0.1");
-		config.parameters.put(EngineConst.ENGINE_EXECUTE_PARALLEL, "false");
+		config.executeParallel = false;
 		
 		config.listener.add(EngineListenerUtil.createAnsiListener());
 		

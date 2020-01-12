@@ -458,6 +458,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	}
 
     protected void doExecuteCleanup() throws NotFoundException, IOException {
+        if (executionSuspended ) return;
         Engine e = engine;
         long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
         if (e.acquireCleanupMaster(nextCleanup))

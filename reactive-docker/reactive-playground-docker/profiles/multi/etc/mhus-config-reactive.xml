@@ -3,6 +3,7 @@
     storageDsName="reactive-storage"
     archiveDsName="reactive-archive"
     logLevel="INFO"
+    executeParallel="50"
     lockProvider="cluster:re"
   >
       <engine>
