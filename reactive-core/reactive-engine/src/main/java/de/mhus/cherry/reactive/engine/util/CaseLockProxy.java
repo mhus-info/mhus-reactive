@@ -157,4 +157,10 @@ public class CaseLockProxy implements PCaseLock {
     public String getStartStacktrace() {
         return stacktrace;
     }
+    
+    @Override
+    public long getOwnerThreadId() {
+        return instance.getOwnerThreadId();
+    }
+
 }

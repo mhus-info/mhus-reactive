@@ -18,7 +18,9 @@ package de.mhus.cherry.reactive.dev;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.Session;
 
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -48,13 +50,25 @@ public class CmdStress extends AbstractCmd {
     @Option(name="-s", aliases="--size", description="How much to create for each interval",required=false)
     private int size = 1;
     
+    @Reference
+    private Session session;
+
+    private static boolean running = false;
+    
 	@Override
 	public Object execute2() throws Exception {
 		
+	    if (uris == null) {
+	        running = false;
+	        System.out.println(">>> Stopping ...");
+	        return null;
+	    }
+	    
 		Console console = Console.get();
 		
+		running = true;
 		int pos = 0;
-		while (true) {
+		while (running) {
 		    for (int i = 0; i < size; i++) {
     			String uri = uris[pos];
     			uri = uri.replace("$cnt$", ""+cnt);
@@ -75,13 +89,16 @@ public class CmdStress extends AbstractCmd {
         			            cs++;
         			    if (cs < max) break;
         			    System.out.println("=== To much cases " + cs);
+        			    if (session.getKeyboard().available() > 0) return null;
         	            Thread.sleep(interval * 1000);
     			    }
     			}
 		    }
+		    if (session.getKeyboard().available() > 0) return null;
 			Thread.sleep(interval * 1000);
 		}
-		
+        System.out.println("### Stopped");
+		return null;
 	}
 
 }

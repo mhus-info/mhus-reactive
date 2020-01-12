@@ -34,4 +34,12 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         return true;
     }
 
+    @Override
+    public Lock lockOrNull(UUID caseId) {
+        try {
+            return M.l(LockManager.class).getLock(getClass().getCanonicalName() + "_" + caseId).lockWithException(10);
+        } catch (TimeoutException e) {}
+        return null;
+    }
+
 }

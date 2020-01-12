@@ -105,6 +105,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	private EngineListener fireEvent = null;
     private CaseLockProvider lockProvider = new LocalCaseLockProvider();
     private WeakHashMap<UUID, EngineCaseLock> caseLocks = new WeakHashMap<>();
+    private int statisticCaseClosed;
 
 	public Engine(EngineConfiguration config) {
 		this.config = config;
@@ -213,7 +214,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			    if (!isNodeActive(nodeInfo)) continue;
 			    
 				PCaseLock lockx = getCaseLockOrNull(nodeInfo);
-				if (lockx == null || !(lockx instanceof EngineCaseLock)) continue;
+				if (lockx == null || !(lockx instanceof EngineCaseLock)) {
+				    if (lockx != null) lockx.close();
+				    continue;
+				}
 				EngineCaseLock lock = (EngineCaseLock)lockx;
 				
 				try {
@@ -230,6 +234,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 							Thread thread = new Thread(executor);
 							executor.thread = thread;
 							thread.start();
+							lock = null;
 							if (threads.size() >= maxThreads) break;
 						} else
 						if (caze.getState() == STATE_CASE.CLOSED) {
@@ -242,6 +247,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 					} 
 				} catch (Throwable t) {
 					log().e(nodeInfo, t);
+				} finally {
+				    if (lock != null)
+				        lock.close();
 				}
 			}
 			
@@ -322,10 +330,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		// scan for closeable cases and runtimes
         fireEvent.doStep("cleanup");
 		for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
-//		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
-//		    if (lock == null) continue;
 		    try {
-		        PCaseLock lock = getCaseLock(caseInfo);
+		        PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
                 if (lock == null) continue;
                 try (lock) {
     				boolean found = false;
@@ -375,7 +381,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         }
     				}
     			}
-		    } catch (TimeoutException te) {
+		    } catch (Throwable te) {
 		        log().w(caseInfo,te);
 		    }
 		}
@@ -1954,14 +1960,19 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     @Override
     public PCaseLock getCaseLockOrNull(UUID caseId) {
         synchronized (caseLocks) {
-            if(lockProvider.isCaseLocked(caseId)) return null;
-            try {
-                return getCaseLock(caseId);
-            } catch (TimeoutException e) {
-                log().e(caseId,e);
-                return null;
+            EngineCaseLock lock = caseLocks.get(caseId);
+            if (lock != null) {
+                if (lock.owner == Thread.currentThread())
+                    return new CaseLockProxy(lock,fireEvent);
             }
         }
+        Lock systemLock = lockProvider.lockOrNull(caseId);
+        if (systemLock == null) return null;
+        EngineCaseLock lock = new EngineCaseLock(caseId, systemLock);
+        synchronized (caseLocks) {
+            caseLocks.put(caseId, lock);
+        }
+        return lock;
     }
     
 	@Override
@@ -1973,7 +1984,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 	                return new CaseLockProxy(lock,fireEvent);
 	        }
 	    }
-	    EngineCaseLock lock = new EngineCaseLock(caseId);
+        Lock systemLock = lockProvider.lock(caseId);
+        if (systemLock == null) throw new TimeoutException("lock is null",caseId);
+	    EngineCaseLock lock = new EngineCaseLock(caseId, systemLock);
         synchronized (caseLocks) {
 	        caseLocks.put(caseId, lock);
         }
@@ -2029,10 +2042,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         private Lock lock;
         private String stacktrace;
 	    
-        EngineCaseLock(UUID caseId) throws TimeoutException {
+        EngineCaseLock(UUID caseId, Lock lock) {
             owner = Thread.currentThread();
             fireEvent.lock(this,caseId);
-            lock = lockProvider.lock(caseId);
+            this.lock = lock;
 	        this.caseId = caseId;
 	        stacktrace = MCast.toString("Lock " + caseId + " " + Thread.currentThread().getId(), Thread.currentThread().getStackTrace());
 	    }
@@ -2067,8 +2080,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         log().w("closing by stranger",owner,Thread.currentThread());
                     }
                     fireEvent.release(this,caseId);
-                    if (!lock.unlock())
-                        lock.unlockHard(); // need hard, another thread could call close
+                    //XXX if (!lock.unlock())
+                    lock.unlockHard(); // need hard, another thread could call close
                 }
                 lock = null;
                 caseLocks.remove(caseId);
@@ -2113,6 +2126,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void closeCase(boolean hard, int code, String msg) throws IOException, NotFoundException {
             PCase caze = getCase();
+            statisticCaseClosed++;
             fireEvent.closeCase(caze,hard);
             EngineContext context = null;
             if (!hard) {
@@ -2660,6 +2674,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 runtimeCache.put(id, runtime);
             }
         }
+
+        @Override
+        public long getOwnerThreadId() {
+            return owner == null ? -1 : owner.getId();
+        }
         
 	}
 
@@ -2670,4 +2689,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public boolean acquirePrepareMaster(long until) {
         return lockProvider.acquirePrepareMaster(until);
     }
+
+    public int getStatisticCaseClosed() {
+        return statisticCaseClosed;
+    }
+
 }

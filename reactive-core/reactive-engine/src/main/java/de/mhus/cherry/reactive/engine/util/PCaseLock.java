@@ -44,5 +44,7 @@ public interface PCaseLock extends CaseLock {
     void resetPCase();
 
     UUID getCaseId();
+    
+    long getOwnerThreadId();
 
 }

@@ -9,6 +9,13 @@ public interface CaseLockProvider {
 
     boolean isCaseLocked(UUID caseId);
 
+    /**
+     * Return the lock if already locked. This must be an atomic operation.
+     * 
+     * @param caseId
+     * @return The acquired lock.
+     * @throws TimeoutException Thrown if it was not possible to acquire the lock.
+     */
     Lock lock(UUID caseId) throws TimeoutException;
 
     /**
@@ -26,5 +33,13 @@ public interface CaseLockProvider {
      * @return true if acquired, false if not
      */
     boolean acquirePrepareMaster(long until);
+
+    /**
+     * Return the lock or null if already locked. This must be an atomic operation.
+     * 
+     * @param caseId
+     * @return The acquired lock.
+     */
+    Lock lockOrNull(UUID caseId);
 
 }

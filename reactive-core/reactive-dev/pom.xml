@@ -92,6 +92,16 @@
 			<artifactId>mhu-osgi-services</artifactId>
 		</dependency>
 		
+        <dependency>
+            <groupId>de.mhus.osgi</groupId>
+            <artifactId>mhu-sop-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.mhus.osgi</groupId>
+            <artifactId>mhu-sop-core</artifactId>
+            <version>${mhus-sop.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
