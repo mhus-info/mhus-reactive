@@ -25,6 +25,9 @@ import de.mhus.cherry.reactive.engine.util.PCaseLock;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
+import de.mhus.cherry.reactive.model.engine.PNode;
+import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
@@ -35,7 +38,8 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 public class CmdDev extends AbstractCmd {
 
 	@Argument(index=0, name="cmd", required=true, description="Command:\n"
-			+ " cancelall - cancel all cases\n"
+			+ " cancelallcases [criterias] - cancel all cases\n"
+            + " cancelallnodes [criterias] - cancel all nodes\n"
 			+ "", multiValued=false)
     String cmd;
 
@@ -50,7 +54,7 @@ public class CmdDev extends AbstractCmd {
 
 		ReactiveAdmin api = M.l(ReactiveAdmin.class);
 		
-		if (cmd.equals("cancelall")) {
+		if (cmd.equals("cancelallcases")) {
 
             SearchCriterias criterias = new SearchCriterias(parameters);
             for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
@@ -59,6 +63,21 @@ public class CmdDev extends AbstractCmd {
                         PCase caze = lock.getCase();
                         System.out.println("Cancel: " + caze);
                         lock.closeCase(true, -1, "cancelled by cmd");
+                    } catch (Throwable t) {
+                        System.out.println("Error in " + info);
+                        t.printStackTrace();
+                    }
+                }
+            }
+		} else
+		if (cmd.equals("cancelallnodes")) {
+            SearchCriterias criterias = new SearchCriterias(parameters);
+            for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
+                if (info.getState() != STATE_NODE.CLOSED) {
+                    try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), info.getCaseId().toString())) {
+                        PNode node = lock.getFlowNode(info.getId());
+                        System.out.println("Cancel: " + node);
+                        lock.closeFlowNode(null, node, STATE_NODE.CLOSED);
                     } catch (Throwable t) {
                         System.out.println("Error in " + info);
                         t.printStackTrace();

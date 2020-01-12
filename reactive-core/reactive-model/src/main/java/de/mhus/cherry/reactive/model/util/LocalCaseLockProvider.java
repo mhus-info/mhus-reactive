@@ -29,4 +29,9 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         return true;
     }
 
+    @Override
+    public boolean acquirePrepareMaster(long until) {
+        return true;
+    }
+
 }

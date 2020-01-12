@@ -83,6 +83,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     public static CfgLong CFG_TIME_TROTTELING = new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
     public static CfgLong CFG_TIME_CLEANUP_DELAY = new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", MPeriod.MINUTE_IN_MILLISECOUNDS);
+    public static CfgLong CFG_TIME_PREPARE_DELAY = new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", 10000);
     
 	public static ReactiveAdminImpl instance;
 	private EngineConfiguration config;
@@ -108,6 +109,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	private boolean executionSuspended = false;
 	private boolean stopExecutor = false;
     private LogConfiguration logConfig;
+    private Thread executorPrepare;
 	private static CfgString engineLogLevel = new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
     private static CfgString cfgLockProvider = new CfgString(ReactiveAdmin.class, "lockProvider", "");
     private static CfgBoolean CFG_LOG_STEPS = new CfgBoolean(ReactiveAdmin.class, "logSteps", false)
@@ -422,6 +424,29 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		executorProcess.setDaemon(true);
 		executorProcess.start();
 		
+        executorPrepare = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                log().i("Engine prepare executor started");
+                while (true) {
+                    if (stopExecutor) return;
+                    try {
+                        doExecutePrepare();
+                        Thread.sleep(CFG_TIME_PREPARE_DELAY.value());
+                    } catch (InterruptedException e) {
+                        // ignore
+                    } catch (Throwable t) {
+                        log().e(t);
+                        MThread.sleep(CFG_TIME_DELAY.value());
+                    }
+                }
+            }
+            
+        },"reactive-engine-prepare");
+        executorPrepare.setDaemon(true);
+        executorPrepare.start();
+		
         executorCleanup = new Thread(new Runnable() {
 
             @Override
@@ -457,6 +482,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 		return cnt;
 	}
 
+    protected void doExecutePrepare() throws NotFoundException, IOException {
+        if (executionSuspended ) return;
+        Engine e = engine;
+        long nextPrepare = System.currentTimeMillis() + CFG_TIME_PREPARE_DELAY.value();
+        if (e.acquirePrepareMaster(nextPrepare))
+            e.doPrepareNodes();
+    }
+    
     protected void doExecuteCleanup() throws NotFoundException, IOException {
         if (executionSuspended ) return;
         Engine e = engine;
@@ -469,11 +502,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 	public void doDeactivate(ComponentContext ctx) {
 		stopExecutor  = true;
 		executorProcess.interrupt();
+		executorPrepare.interrupt();
 		executorCleanup.interrupt();
 		int cnt = 60;
 		if (executorProcess != null) {
     		log().i("Wait for engine to stop");
-    		while ( (executorProcess.isAlive() || executorCleanup.isAlive()) && cnt > 0) {
+    		while ( (executorProcess.isAlive() || executorCleanup.isAlive() || executorPrepare.isAlive()) && cnt > 0) {
     			MThread.sleep(1000);
     			cnt--;
     		}

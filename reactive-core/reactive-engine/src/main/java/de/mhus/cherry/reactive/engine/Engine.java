@@ -141,54 +141,66 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 // ---
 	
 	public void step() throws IOException, NotFoundException {
+	    doPrepareNodes();
 		doProcessNodes();
 		doCleanupCases();
+	}
+	
+	
+	public void doPrepareNodes() throws IOException, NotFoundException {
+
+        // Prepare
+        long now = System.currentTimeMillis();
+
+        // SCHEDULED NODES
+        fireEvent.doStep("scheduled");
+        for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now, false)) {
+            try {
+                PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
+                PCaseLock lock = getCaseLockOrNull(nodeInfo);
+                if (lock == null) continue;
+                try (lock) {
+                    PNode node = lock.getFlowNode(nodeId.getId());
+                    if (node.getState() != STATE_NODE.SCHEDULED) continue;
+                    // set state back to ready
+                    fireEvent.setScheduledToRunning(node);
+                    node.setState(STATE_NODE.RUNNING);
+                    lock.saveFlowNode(null, node, null);
+                }
+            } catch (Throwable t) {
+                log().e(nodeId, t);
+            }
+        }
+        for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
+            try {
+                PCaseLock lock = getCaseLockOrNull(nodeInfo);
+                if (lock == null) continue;
+                try (lock) {
+                    PCase caze = lock.getCase();
+                    PNode node = lock.getFlowNode(nodeInfo.getId());
+                    if (node.getState() != STATE_NODE.WAITING) continue;
+                    if (caze.getState() == STATE_CASE.RUNNING)
+                        fireScheduledTrigger(lock, nodeInfo);
+                    else
+                    if (caze.getState() == STATE_CASE.CLOSED) {
+                        // stop node also
+                        log().d("auto stop waiting node",nodeInfo);
+                        node.setSuspendedState(node.getState());
+                        node.setState(STATE_NODE.STOPPED);
+                        storage.saveFlowNode(node);
+                    }
+                }
+            } catch (Throwable t) {
+                log().e(nodeInfo, t);
+            }
+        }
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
 	public int doProcessNodes() throws IOException, NotFoundException {
 		
 		int doneCnt = 0;
-		
-		// Init
-		long now = System.currentTimeMillis();
-
-		// SCHEDULED NODES
-	    fireEvent.doStep("scheduled");
-		for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now, false)) {
-			try {
-			    PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
-			    try (PCaseLock lock = getCaseLock(nodeInfo)) {
-    				PNode node = lock.getFlowNode(nodeId.getId());
-    				// set state back to ready
-    				fireEvent.setScheduledToRunning(node);
-					node.setState(STATE_NODE.RUNNING);
-					lock.saveFlowNode(null, node, null);
-			    }
-			} catch (Throwable t) {
-				log().e(nodeId, t);
-			}
-		}
-		for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
-			try {
-			    try (PCaseLock lock = getCaseLock(nodeInfo)) {
-    				PCase caze = lock.getCase();
-    				if (caze.getState() == STATE_CASE.RUNNING)
-    					fireScheduledTrigger(lock, nodeInfo);
-    				else
-    				if (caze.getState() == STATE_CASE.CLOSED) {
-    					// stop node also
-    					log().d("auto stop waiting node",nodeInfo);
-    					PNode node = lock.getFlowNode(nodeInfo.getId());
-    					node.setSuspendedState(node.getState());
-    					node.setState(STATE_NODE.STOPPED);
-    					storage.saveFlowNode(node);
-    				}
-			    }
-			} catch (Throwable t) {
-				log().e(nodeInfo, t);
-			}
-		}
+        long now = System.currentTimeMillis();
 
 		// READY NODES
         fireEvent.doStep("execute");
@@ -198,6 +210,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			LinkedList<FlowNodeExecutor> threads = new LinkedList<>();
 			for (PNodeInfo nodeInfo : result) {
 			    
+			    if (!isNodeActive(nodeInfo)) continue;
+			    
 				PCaseLock lockx = getCaseLockOrNull(nodeInfo);
 				if (lockx == null || !(lockx instanceof EngineCaseLock)) continue;
 				EngineCaseLock lock = (EngineCaseLock)lockx;
@@ -205,7 +219,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				try {
 					PNode node = lock.getFlowNode(nodeInfo);
 					PCase caze = lock.getCase();
-					if (isProcessActive(caze)) {
+					if (isProcessHealthy(caze) && isNodeActive(node)) {
 						if (caze.getState() == STATE_CASE.RUNNING) {
 							doneCnt++;
 							FlowNodeExecutor executor = new FlowNodeExecutor(lock,node);
@@ -241,13 +255,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
 		} else {
 			for (PNodeInfo nodeInfo : result) {
+                
+			    if (!isNodeActive(nodeInfo)) continue;
+                
                 PCaseLock lock = getCaseLockOrNull(nodeInfo);
                 if (lock == null) continue;
                 
 				try (lock) {
 					PNode node = lock.getFlowNode(nodeInfo);
 					PCase caze = lock.getCase();
-					if (isProcessActive(caze)) {
+					if (isProcessHealthy(caze) && isNodeActive(node)) {
 						if (caze.getState() == STATE_CASE.RUNNING) {
 							synchronized (executing) {
 								executing.add(nodeInfo.getId());
@@ -280,7 +297,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		return doneCnt;
 	}
 	
-	public boolean isProcessActive(PCase caze) {
+	private boolean isNodeActive(PNode node) {
+        return node != null && node.getState() == STATE_NODE.RUNNING;
+    }
+
+    private boolean isNodeActive(PNodeInfo node) {
+        return node != null && node.getState() == STATE_NODE.RUNNING;
+    }
+    
+    public boolean isProcessHealthy(PCase caze) {
 		try {
 			MUri uri = MUri.toUri(caze.getUri());
 			EProcess process = getProcess(uri);
@@ -300,8 +325,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 //		    PCaseLock lock = getCaseLockOrNull(caseInfo.getId());
 //		    if (lock == null) continue;
 		    try {
-                try (PCaseLock lock = getCaseLock(caseInfo)) {
+		        PCaseLock lock = getCaseLock(caseInfo);
+                if (lock == null) continue;
+                try (lock) {
     				boolean found = false;
+    				boolean onlyStopped = true;
     				HashSet<UUID> allRuntime = new HashSet<>();
     				HashSet<UUID> usedRuntime = new HashSet<>();
     				
@@ -314,6 +342,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     						if (node.getState() != STATE_NODE.CLOSED && node.getState() != STATE_NODE.ZOMBIE) {
     							found = true;
     							usedRuntime.add(node.getRuntimeId());
+    							if (node.getState() != STATE_NODE.STOPPED)
+    							    onlyStopped = false;
     						}
     					} catch (Throwable t) {
     						log().w(nodeId,t);
@@ -333,6 +363,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     				if (!found) {
     					// close case without active node
     					lock.closeCase(false, 0, "");
+    				} else
+    				if (onlyStopped) {
+    				    try {
+    				        // severe case if only STOPPED nodes exists - this will stop execution of the node until resume.
+    				        PCase caze = lock.getCase();
+    				        caze.setState(STATE_CASE.SEVERE);
+    			            storage.saveCase(caze);
+                        } catch (MException e) {
+                            log().w(caseInfo,e);
+                        }
     				}
     			}
 		    } catch (TimeoutException te) {
@@ -2625,5 +2665,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
     public boolean acquireCleanupMaster(long until) {
         return lockProvider.acquireCleanupMaster(until);
+    }
+
+    public boolean acquirePrepareMaster(long until) {
+        return lockProvider.acquirePrepareMaster(until);
     }
 }

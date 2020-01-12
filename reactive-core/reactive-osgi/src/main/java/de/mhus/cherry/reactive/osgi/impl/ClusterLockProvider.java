@@ -35,4 +35,9 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
         return M.l(ClusterApi.class).isMaster("reactive_cleanup_" + name);
     }
 
+    @Override
+    public boolean acquirePrepareMaster(long until) {
+        return M.l(ClusterApi.class).isMaster("reactive_prepare_" + name);
+    }
+
 }

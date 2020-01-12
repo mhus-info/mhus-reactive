@@ -19,4 +19,12 @@ public interface CaseLockProvider {
      */
     boolean acquireCleanupMaster(long until);
 
+    /**
+     * return true if the prepare master was acquired until the date in ms.
+     * 
+     * @param until system time in ms
+     * @return true if acquired, false if not
+     */
+    boolean acquirePrepareMaster(long until);
+
 }
