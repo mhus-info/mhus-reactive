@@ -21,12 +21,13 @@ import java.util.Set;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
+import de.mhus.lib.errors.MException;
 
 public interface EPool {
 
 	List<EElement> getStartPoints();
 
-	Class<? extends APool<?>> getPoolClass();
+//	Class<? extends APool<?>> getPoolClass();
 
 	EElement getElement(String name);
 
@@ -43,4 +44,9 @@ public interface EPool {
 	boolean isElementOfPool(EElement element);
 
 	PoolDescription getPoolDescription();
+
+    APool<?> newInstance() throws MException;
+
+    Set<EAttribute> getAttributes();
+    
 }

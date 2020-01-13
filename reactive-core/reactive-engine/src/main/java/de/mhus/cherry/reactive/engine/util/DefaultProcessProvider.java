@@ -15,10 +15,12 @@
  */
 package de.mhus.cherry.reactive.engine.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AActor;
@@ -32,20 +34,25 @@ import de.mhus.cherry.reactive.model.annotations.ActorAssign;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
+import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
 import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
+import de.mhus.cherry.reactive.model.engine.EAttribute;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.model.engine.ProcessProvider;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.model.util.DefaultSwimlane;
 import de.mhus.cherry.reactive.model.util.InactiveStartPoint;
 import de.mhus.cherry.reactive.model.util.NobodyActor;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.pojo.PojoAttribute;
+import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
 
 public class DefaultProcessProvider extends MLog implements ProcessProvider {
@@ -212,6 +219,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		private PoolDescription poolDescription;
 		private String name;
 		private ProcessContainer process;
+        private TreeSet<EAttribute> attributes;
 
 		public PoolContainer(Class<? extends APool<?>> pool) throws MException {
 			this.pool = pool;
@@ -237,14 +245,14 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		
 		@Override
 		public boolean isElementOfPool(EElement element) {
-			Class<? extends AElement<?>> clazz = element.getElementClass();
+			Class<? extends AElement<?>> clazz = ((ElementContainer)element).getElementClass();
 			String elementPool = MSystem.getTemplateCanonicalName(clazz, 0);
 			// for direct check
 			// if (pool.getCanonicalName().equals(elementPool))
 			// with this check also pool subclasses are possible
 			EElement poolContainer = process.elements.get(elementPool);
 			if (poolContainer == null) return false;
-			Class<? extends AElement<?>> poolClass = poolContainer.getElementClass();
+			Class<? extends AElement<?>> poolClass = ((ElementContainer)poolContainer).getElementClass();
 			return (pool.isAssignableFrom(poolClass));
 		}
 
@@ -257,15 +265,14 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public List<EElement> getStartPoints() {
 			LinkedList<EElement> out = new LinkedList<>();
 			for (EElement element : poolElements.values()) {
-				Class<? extends AElement<?>> clazz = element.getElementClass();
+				Class<? extends AElement<?>> clazz = ((ElementContainer)element).getElementClass();
 				if (element.is(AStartPoint.class) && !InactiveStartPoint.class.isAssignableFrom(clazz))
 					out.add(element);
 			}
 			return out;
 		}
 		
-		@Override
-		public Class<? extends APool<?>> getPoolClass() {
+		protected Class<? extends APool<?>> getPoolClass() {
 			return pool;
 		}
 				
@@ -283,7 +290,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public List<EElement> getElements(Class<? extends AElement<?>> ifc) {
 			LinkedList<EElement> out = new LinkedList<>();
 			for (EElement element : poolElements.values())
-				if (ifc.isAssignableFrom(element.getElementClass()))
+				if (ifc.isAssignableFrom(((ElementContainer)element).getElementClass()))
 					out.add(element);
 			return out;
 		}
@@ -314,6 +321,54 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			return getCanonicalName();
 		}
 
+        @Override
+        public APool<?> newInstance() throws MException {
+            try {
+                return getPoolClass().getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                throw new MException(getName(),e);
+            }
+        }
+
+        @Override
+        public Set<EAttribute> getAttributes() {
+            if (attributes == null) {
+                attributes = new TreeSet<>();
+                PojoModel pojoModel = ActivityUtil.createPojoModel(getPoolClass());
+                for( PojoAttribute<?> attr : pojoModel) {
+                    String name = attr.getName();
+                    PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+                    if (desc != null) {
+                        attributes.add(new AttributeContainer(name, desc));
+                    }
+                }
+            }
+            return attributes;
+        }
+
+	}
+	
+	public class AttributeContainer implements EAttribute {
+
+        private String name;
+        private PropertyDescription desc;
+
+        public AttributeContainer(String name, PropertyDescription desc) {
+            this.name = name;
+            this.desc = desc;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public PropertyDescription getDescription() {
+            return desc;
+        }
+
 	}
 	
 	public class ElementContainer implements EElement {
@@ -321,6 +376,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		private Class<? extends AElement<?>> element;
 		private String name;
 		private ActivityDescription actDescription;
+        private TreeSet<EAttribute> attributes;
 		
 		public ElementContainer(Class<? extends AElement<?>> element) throws MException {
 			this.element = element;
@@ -336,8 +392,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 			return element.getCanonicalName();
 		}
 
-		@Override
-		public Class<? extends AElement<?>> getElementClass() {
+		protected Class<? extends AElement<?>> getElementClass() {
 			return element;
 		}
 
@@ -452,6 +507,33 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
 		public SubDescription getSubDescription() {
 			return element.getAnnotation(SubDescription.class);
 		}
+
+        @Override
+        public AElement<?> newInstance() throws MException {
+            try {
+                return getElementClass().getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                throw new MException(getName(),e);
+            }        
+        }
+        
+        @Override
+        public Set<EAttribute> getAttributes() {
+            if (attributes == null) {
+                attributes = new TreeSet<>();
+                PojoModel pojoModel = ActivityUtil.createPojoModel(getElementClass());
+                for( PojoAttribute<?> attr : pojoModel) {
+                    String name = attr.getName();
+                    PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
+                    if (desc != null) {
+                        attributes.add(new AttributeContainer(name, desc));
+                    }
+                }
+            }
+            return attributes;
+        }
+
 	}
 
 	public Set<String> getProcessNames() {

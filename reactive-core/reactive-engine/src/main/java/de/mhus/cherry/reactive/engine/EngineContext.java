@@ -38,6 +38,7 @@ import de.mhus.cherry.reactive.model.engine.ProcessContext;
 import de.mhus.cherry.reactive.model.engine.RuntimeNode;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.TimeoutException;
 
 public class EngineContext extends MLog implements ProcessContext<APool<?>>{
@@ -106,7 +107,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 				if (aPool instanceof ContextRecipient)
 					((ContextRecipient)aPool).setContext(this);
 				aPool.importParameters(getPCase().getParameters());
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (MException e) {
 				log().e(e);
 			}
 		return aPool;
@@ -174,7 +175,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>>{
 				if (aNode instanceof ContextRecipient)
 					((ContextRecipient)aNode).setContext(this);
 				((AActivity<?>)aNode).importParameters(getPNode().getParameters());
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (MException e) {
 				log().w(e);
 			}
 		}

@@ -31,6 +31,7 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.PoolDescription;
 import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
+import de.mhus.cherry.reactive.model.engine.EAttribute;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
@@ -62,12 +63,9 @@ import de.mhus.cherry.reactive.model.uimp.UiNode;
 import de.mhus.cherry.reactive.model.uimp.UiNodeDescription;
 import de.mhus.cherry.reactive.model.uimp.UiPool;
 import de.mhus.cherry.reactive.model.uimp.UiProcess;
-import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.pojo.PojoAttribute;
-import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.core.util.SoftHashMap;
@@ -317,21 +315,17 @@ public class UiEngine extends MLog implements IEngine {
                         if (index[i] != null)
                             properties.setString(pUri + "#pnode.index" + i, index[i]);
                     }
-                    PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
-                    for( PojoAttribute<?> attr : pojoModel) {
+                    for (EAttribute attr : pool.getAttributes()) {
                         String name = attr.getName();
-                        PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
-                        if (desc != null) {
-                            if (desc.displayName().length() != 0)
-                                name = desc.displayName();
-                            else
-                            if (desc.name().length() != 0)
-                                name = desc.name();
-                        }
+                        PropertyDescription desc = attr.getDescription();
+                        if (desc.displayName().length() != 0)
+                            name = desc.displayName();
+                        else
+                        if (desc.name().length() != 0)
+                            name = desc.name();
                         properties.setString(pUri + "#case." + attr.getName(), name);
                     }
                 }
-                    
                 
                 for (String eleName : pool.getElementNames()) {
                     EElement ele = pool.getElement(eleName);
@@ -346,20 +340,16 @@ public class UiEngine extends MLog implements IEngine {
                         if (index[i] != null)
                             properties.setString(eUri + "#pnode.index" + i, index[i]);
                     }
-                    PojoModel pojoModel = ActivityUtil.createPojoModel(ele.getElementClass());
-                    for( PojoAttribute<?> attr : pojoModel) {
+                    for (EAttribute attr : ele.getAttributes()) {
                         String name = attr.getName();
-                        PropertyDescription pdesc = attr.getAnnotation(PropertyDescription.class);
-                        if (pdesc != null) {
-                            if (pdesc.displayName().length() != 0)
-                                name = pdesc.displayName();
-                            else
-                            if (pdesc.name().length() != 0)
-                                name = pdesc.name();
-                        }
+                        PropertyDescription pdesc = attr.getDescription();
+                        if (pdesc.displayName().length() != 0)
+                            name = pdesc.displayName();
+                        else
+                        if (pdesc.name().length() != 0)
+                            name = pdesc.name();
                         properties.setString(pUri + "#node." + attr.getName(), name);
                     }
-                    
                 }
         }
         properties.putAll(defaultProcessProperties);
@@ -389,17 +379,14 @@ public class UiEngine extends MLog implements IEngine {
                 if (index[i] != null)
                     properties.setString(pUri + "#pnode.index" + i, index[i]);
             }
-            PojoModel pojoModel = ActivityUtil.createPojoModel(pool.getPoolClass());
-            for( PojoAttribute<?> attr : pojoModel) {
+            for (EAttribute attr : pool.getAttributes()) {
                 String name = attr.getName();
-                PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
-                if (desc != null) {
-                    if (desc.displayName().length() != 0)
-                        name = desc.displayName();
-                    else
-                    if (desc.name().length() != 0)
-                        name = desc.name();
-                }
+                PropertyDescription desc = attr.getDescription();
+                if (desc.displayName().length() != 0)
+                    name = desc.displayName();
+                else
+                if (desc.name().length() != 0)
+                    name = desc.name();
                 properties.setString(pUri + "#case." + attr.getName(), name);
             }
         }

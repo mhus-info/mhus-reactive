@@ -15,7 +15,6 @@
  */
 package de.mhus.cherry.reactive.engine.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,8 +62,8 @@ public class PoolValidator {
 				
 		// test object instantiation
 		try {
-			elem.getElementClass().getDeclaredConstructor().newInstance();
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			elem.newInstance();
+		} catch (Throwable e) {
 			e.printStackTrace();
 			findings.add(new Finding(LEVEL.FATAL, name, "Can't initialize: " + e.toString()));
 			return;

@@ -185,11 +185,9 @@ Second line]]></bpmn2:documentation>
 	}
 
 	protected String getType() {
-		Class<?> clazz = element.getElementClass();
-		while (clazz != null && !clazz.getCanonicalName().startsWith("de.mhus.cherry.reactive."))
-			clazz = clazz.getSuperclass();
+		String clazz = element.getCanonicalName();
 		if (clazz != null)
-			return MString.afterLastIndex(clazz.getCanonicalName(), '.');
+			return MString.afterLastIndex(clazz, '.');
 		return MString.afterLastIndex(element.getCanonicalName(), '.');
 	}
 

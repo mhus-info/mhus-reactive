@@ -320,7 +320,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 			if (process == null) return false;
 			EPool pool = getPool(process, uri);
 			if (pool == null) return false;
-			return pool.getPoolClass() != null;
+			return pool.getCanonicalName() != null;
 		} catch (Throwable t) {}
 		return false;
 	}
@@ -878,12 +878,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 		return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS;
 	}
 
-	public APool<?> createPoolObject(EPool pool) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return pool.getPoolClass().getDeclaredConstructor().newInstance();		
+	public APool<?> createPoolObject(EPool pool) throws MException {
+	    return pool.newInstance();
 	}
 
-	public AElement<?> createActivityObject(EElement element) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return element.getElementClass().getDeclaredConstructor().newInstance();		
+	public AElement<?> createActivityObject(EElement element) throws MException {
+	    return element.newInstance();
 	}
 
 	/**

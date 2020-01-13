@@ -28,7 +28,6 @@ import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AEndPoint;
 import de.mhus.cherry.reactive.model.activity.AExclusiveGateway;
 import de.mhus.cherry.reactive.model.activity.AInclusiveGateway;
@@ -271,43 +270,42 @@ public class XmlModel extends MLog {
 	}
 
 	private Class<? extends XElement> findClass(EElement element) {
-		Class<? extends AElement<?>> clazz = element.getElementClass();
-		if (ASwimlane.class.isAssignableFrom(clazz))
+		if (element.is(ASwimlane.class))
 			return XLane.class;
-		if (AEndPoint.class.isAssignableFrom(clazz))
+		if (element.is(AEndPoint.class))
 			return XEndEvent.class;
-		if (AStartPoint.class.isAssignableFrom(clazz))
+		if (element.is(AStartPoint.class))
 			return XStartEvent.class;
-		if (AUserTask.class.isAssignableFrom(clazz))
+		if (element.is(AUserTask.class))
 			return XUserTask.class;
-		if (ATask.class.isAssignableFrom(clazz))
+		if (element.is(ATask.class))
 			return XScriptTask.class;
-		if (AExclusiveGateway.class.isAssignableFrom(clazz))
+		if (element.is(AExclusiveGateway.class))
 			return XExclusiveGateway.class;
-		if (AParallelGateway.class.isAssignableFrom(clazz))
+		if (element.is(AParallelGateway.class))
 			return XParallelGateway.class;
-		if (AInclusiveGateway.class.isAssignableFrom(clazz))
+		if (element.is(AInclusiveGateway.class))
 			return XInclusiveGateway.class;
-		if (APool.class.isAssignableFrom(clazz))
+		if (element.is(APool.class))
 			return null; // ignore pool
-		if (RSubStart.class.isAssignableFrom(clazz))
+		if (element.is(RSubStart.class))
 			return XSubProcessTask.class;
-		if (RSubProcess.class.isAssignableFrom(clazz))
+		if (element.is(RSubProcess.class))
 			return XSubProcessTask.class;
-		if (RExternalEvent.class.isAssignableFrom(clazz))
+		if (element.is(RExternalEvent.class))
 			return XReceiveTask.class;
-		if (RReceiveMessageEvent.class.isAssignableFrom(clazz))
+		if (element.is(RReceiveMessageEvent.class))
 			return XReceiveTask.class;
-		if (RReceiveSignalEvent.class.isAssignableFrom(clazz))
+		if (element.is(RReceiveSignalEvent.class))
 			return XReceiveTask.class;
-		if (RSendMessageEvent.class.isAssignableFrom(clazz))
+		if (element.is(RSendMessageEvent.class))
 			return XSendTask.class;
-		if (RSendSignalEvent.class.isAssignableFrom(clazz))
+		if (element.is(RSendSignalEvent.class))
 			return XSendTask.class;
-		if (RSendExternalEvent.class.isAssignableFrom(clazz))
+		if (element.is(RSendExternalEvent.class))
 			return XSendTask.class;
 		
-		log().w("Unknown",element.getCanonicalName(),element.getElementClass());
+		log().w("Unknown",element.getCanonicalName());
 		return XUnknown.class;
 	}
 

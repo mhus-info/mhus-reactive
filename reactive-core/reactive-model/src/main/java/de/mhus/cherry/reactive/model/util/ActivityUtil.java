@@ -18,7 +18,6 @@ package de.mhus.cherry.reactive.model.util;
 import java.util.LinkedList;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
-import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.APool;
 import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
@@ -85,13 +84,12 @@ public class ActivityUtil {
 		return desc.outputs();
 	}
 	
-	public static Class<? extends AElement<?>>[] getInputs(AActivity<?> element) {
+	public static EElement[] getInputs(AActivity<?> element) {
 		return getInputs(element.getContext(), element.getClass());
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Class<? extends AElement<?>>[] getInputs(ProcessContext<?> context, Class<? extends AActivity> element) {
-		LinkedList<Class<? extends AElement<?>>> out = new LinkedList<>();
+	public static EElement[] getInputs(ProcessContext<?> context, @SuppressWarnings("rawtypes") Class<? extends AActivity> element) {
+		LinkedList<EElement> out = new LinkedList<>();
 		
 		EPool pool = context.getEPool();
 		for (String name : pool.getElementNames()) {
@@ -100,16 +98,16 @@ public class ActivityUtil {
 			if (desc != null) {
 				for (Output output : desc.outputs()) {
 					if (output.activity() == element)
-						out.add(item.getElementClass());
+						out.add(item);
 				}
 				for (Trigger trigger : desc.triggers()) {
 					if (trigger.activity() == element)
-						out.add(item.getElementClass());
+						out.add(item);
 				}
 			}
 		}
 		
-		return (Class<? extends AActivity<?>>[]) out.toArray(new Class<?>[out.size()]);
+		return (EElement[]) out.toArray(new EElement[out.size()]);
 	}
 
 	@SuppressWarnings("unchecked")

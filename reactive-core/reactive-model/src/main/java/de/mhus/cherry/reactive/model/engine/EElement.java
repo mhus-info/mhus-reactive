@@ -16,6 +16,7 @@
 package de.mhus.cherry.reactive.model.engine;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import de.mhus.cherry.reactive.model.activity.AActor;
 import de.mhus.cherry.reactive.model.activity.AElement;
@@ -24,10 +25,11 @@ import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
 import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.model.annotations.SubDescription;
 import de.mhus.cherry.reactive.model.annotations.Trigger;
+import de.mhus.lib.errors.MException;
 
 public interface EElement {
 
-	Class<? extends AElement<?>> getElementClass();
+//	Class<? extends AElement<?>> getElementClass();
 
 	String getCanonicalName();
 
@@ -55,5 +57,9 @@ public interface EElement {
 	Class<? extends AActor> getAssignedActor(EPool pool);
 
 	SubDescription getSubDescription();
+
+    AElement<?> newInstance() throws MException;
+
+    Set<EAttribute> getAttributes();
 
 }
