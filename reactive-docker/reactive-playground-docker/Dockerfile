@@ -9,4 +9,4 @@ COPY profiles /docker/profiles
 
 # Start once - prepare for a faster start
 RUN /docker/assembly.sh
-RUN export DEPLOY_FORCE=1 && /docker/install.sh
+RUN export DEPLOY_FORCE=1 && /docker/deploy.sh

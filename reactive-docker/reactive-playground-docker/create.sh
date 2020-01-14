@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker build . -t reactive-playground-docker:latest
+docker build . -t mhus/reactive-playground:7.0.0-SNAPSHOT
 
