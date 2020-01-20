@@ -44,6 +44,7 @@ import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.config.XmlConfigFile;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MRuntimeException;
@@ -69,16 +70,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 	}
 	
 	public void init() {
-		try {
-			URL url = MSystem.locateResource(this, "SqlDbStorage.xml");
-			DbConnection con = pool.getConnection();
-			XmlConfigFile data = new XmlConfigFile(url.openStream());
-			data.setString("prefix", prefix);
-			pool.getDialect().createStructure(data, con, null, false);
-			con.close();
-		} catch (Exception e) {
-			log().e(e);
-		}
+	    while (true) {
+    		try {
+    			URL url = MSystem.locateResource(this, "SqlDbStorage.xml");
+    			DbConnection con = pool.getConnection();
+    			XmlConfigFile data = new XmlConfigFile(url.openStream());
+    			data.setString("prefix", prefix);
+    			pool.getDialect().createStructure(data, con, null, false);
+    			con.close();
+    			return;
+    		} catch (Exception e) {
+    			log().e(e);
+    		}
+    		log().i(this,"Retry init of DB in 30sec");
+    		MThread.sleep(30000);
+	    }
 	}
 
 	@Override
