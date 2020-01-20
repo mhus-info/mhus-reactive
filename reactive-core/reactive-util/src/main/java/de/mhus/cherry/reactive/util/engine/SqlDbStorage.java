@@ -45,6 +45,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.cfg.CfgInt;
 import de.mhus.lib.core.config.XmlConfigFile;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MRuntimeException;
@@ -56,6 +57,8 @@ import de.mhus.lib.sql.DbStatement;
 
 public class SqlDbStorage extends MLog implements StorageProvider {
 
+    private static final CfgInt CFG_INIT_RETRY_SEC = new CfgInt(SqlDbStorage.class, "initRetrySec", 30);
+    
 	private static final int MAX_INDEX_VALUES = Math.min( 10, EngineConst.MAX_INDEX_VALUES);
 	private static final String INDEX_COLUMNS = ",index0_,index1_,index2_,index3_,index4_,index5_,index6_,index7_,index8_,index9_";
 	private static final String CASE_COLUMNS = "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_,milestone_" + INDEX_COLUMNS;
@@ -82,8 +85,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     		} catch (Exception e) {
     			log().e(e);
     		}
-    		log().i(this,"Retry init of DB in 30sec");
-    		MThread.sleep(30000);
+    		log().i(this,"Retry init of DB in "+CFG_INIT_RETRY_SEC.value()+" sec");
+    		MThread.sleep(CFG_INIT_RETRY_SEC.value()*1000);
 	    }
 	}
 
