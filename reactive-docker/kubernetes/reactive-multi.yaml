@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reactive-multi
+
+---
+
+apiVersion: v1
+data:
+  reactive-init.sql: |
+    CREATE DATABASE db_bpm_stor;
+    CREATE DATABASE db_bpm_arch;
+    CREATE OR REPLACE USER 'db_bpm_arch'@'%' IDENTIFIED BY 'nein';
+    CREATE OR REPLACE USER 'db_bpm_stor'@'%' IDENTIFIED BY 'nein';
+    GRANT ALL PRIVILEGES ON db_bpm_arch.* TO 'db_bpm_arch'@'%';
+    GRANT ALL PRIVILEGES ON db_bpm_stor.* TO 'db_bpm_stor'@'%';
+
+kind: ConfigMap
+metadata:
+  name: reactive-init-sql
+  namespace: reactive-multi
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: dbserver
+  namespace: reactive-multi
+  labels:
+    app: reactive-db
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: reactive-db
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mariadb-deployment
+  namespace: reactive-multi
+  labels:
+    app: reactive-db
+spec:
+  selector:
+    matchLabels:
+      app: reactive-db
+      tier: mariadb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reactive-db
+        tier: mariadb
+    spec:
+      containers:
+      - image: mariadb:10.3
+        name: mariadb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "nein"
+        ports:
+        - containerPort: 3306
+          name: mariadb
+        volumeMounts:
+        - name: reactive-init-sql-file
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: reactive-init-sql-file
+        configMap:
+          name: reactive-init-sql
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: jmsserver
+  namespace: reactive-multi
+  labels:
+    app: reactive-jms
+spec:
+  ports:
+  - port: 61616
+    targetPort: 61616
+  selector:
+    app: reactive-jms
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mariadb-deployment
+  namespace: reactive-multi
+  labels:
+    app: reactive-jms
+spec:
+  selector:
+    matchLabels:
+      app: reactive-jms
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reactive-jms
+    spec:
+      containers:
+      - image: webcenter/activemq:5.14.3
+        name: activemq
+        env:
+        - name: ACTIVEMQ_CONFIG_NAME
+          value: "amqp-srv1"
+        - name: ACTIVEMQ_CONFIG_DEFAULTACCOUNT
+          value: "false"
+        - name: ACTIVEMQ_ADMIN_LOGIN
+          value: "admin"
+        - name: ACTIVEMQ_ADMIN_PASSWORD
+          value: "nein"
+        - name: ACTIVEMQ_CONFIG_MINMEMORY
+          value: "1024"
+        - name: ACTIVEMQ_CONFIG_MAXMEMORY
+          value: "4096"
+        - name: ACTIVEMQ_CONFIG_SCHEDULERENABLED
+          value: "true"
+        ports:
+        - containerPort: 61616
+        - containerPort: 61613
+        - containerPort: 8161
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: reactive
+  name: reactive-ui
+  namespace: reactive-multi
+spec:
+  type: LoadBalancer
+  sessionAffinity: ClientIP
+  ports:
+    - port: 8181
+      targetPort: 8181
+  selector:
+    app: reactive
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactive
+  namespace: reactive-multi
+spec:
+  selector:
+    matchLabels:
+      app: reactive
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: reactive
+    spec:
+      hostname: reactive
+      containers:
+      - name: reactive
+        image: mhus/reactive-playground:7.0.0-SNAPSHOT
+        ports:
+        - containerPort: 8181
+        env:
+        - name: SET_K8S_HOSTS
+          value: "1"
+        - name: CONFIG_PROFILE
+          value: "multi"
+        - name: ENV_DB_BPM_PASS
+          value: "nein"
+        - name: ENV_JMS_SOP_USER
+          value: "admin"
+        - name: ENV_JMS_SOP_PASS
+          value: "nein"
+        - name: ENV_JMS_SOP_USER
+          value: "admin"
+        - name: ENV_JMS_SOP_PASS
+          value: "nein"
+        stdin: true
+        tty: true
