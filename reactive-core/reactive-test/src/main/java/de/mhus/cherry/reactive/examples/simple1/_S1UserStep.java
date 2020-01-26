@@ -37,7 +37,7 @@ public class _S1UserStep extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"de.mhus.cherry.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"7.0.0");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"7.1.0-SNAPSHOT");
   public static final Identifier _ACTION_HANDLER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"ActionHandler");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1UserStep.class,"createIndexValues");
