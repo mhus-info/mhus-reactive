@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.mhus.cherry.reactive</groupId>
-        <version>6.3.0</version>
+        <version>6.3.1-SNAPSHOT</version>
         <artifactId>cherry-reactive</artifactId>
     </parent>
     <artifactId>reactive-docker</artifactId>
