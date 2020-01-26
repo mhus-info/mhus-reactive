@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.reactive.model.ui;
@@ -23,34 +21,33 @@ import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
 
 public interface INode {
 
-	String getUri();
+    String getUri();
 
-	String getCanonicalName();
+    String getCanonicalName();
 
-	STATE_NODE getNodeState();
+    STATE_NODE getNodeState();
 
-	UUID getId();
+    UUID getId();
 
-	String getCustomId();
+    String getCustomId();
 
-	String getCustomerId();
+    String getCustomerId();
 
-	TYPE_NODE getType();
+    TYPE_NODE getType();
 
-	UUID getCaseId();
+    UUID getCaseId();
 
-	Map<String,String> getProperties();
+    Map<String, String> getProperties();
 
-	long getCreated();
+    long getCreated();
 
-	long getModified();
+    long getModified();
 
-	int getPriority();
+    int getPriority();
 
-	int getScore();
+    int getScore();
 
-	String getAssigned();
-	
-	String getActor();
-	
+    String getAssigned();
+
+    String getActor();
 }

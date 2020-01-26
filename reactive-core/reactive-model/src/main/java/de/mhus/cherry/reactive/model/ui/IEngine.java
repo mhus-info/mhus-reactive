@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.reactive.model.ui;
@@ -32,21 +30,23 @@ import de.mhus.lib.form.IFormInformation;
 // for serialization and remote access reasons - do not implement methods with the same name
 public interface IEngine {
 
-	List<INode> searchNodes(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException;
-	
-	List<ICase> searchCases(SearchCriterias criterias, int page, int size, String ... propertyNames) throws NotFoundException, IOException;
+    List<INode> searchNodes(SearchCriterias criterias, int page, int size, String... propertyNames)
+            throws NotFoundException, IOException;
 
-	IProcess getProcess(String uri) throws MException;
+    List<ICase> searchCases(SearchCriterias criterias, int page, int size, String... propertyNames)
+            throws NotFoundException, IOException;
 
-	IPool getPool(String uri) throws MException;
-	
-	ICase getCase(String id, String ... propertyNames) throws Exception;
+    IProcess getProcess(String uri) throws MException;
 
-	// node
-	
-	INode getNode(String id, String ... propertyNames) throws Exception;
+    IPool getPool(String uri) throws MException;
 
-	IFormInformation getNodeUserForm(String id) throws Exception;
+    ICase getCase(String id, String... propertyNames) throws Exception;
+
+    // node
+
+    INode getNode(String id, String... propertyNames) throws Exception;
+
+    IFormInformation getNodeUserForm(String id) throws Exception;
 
     IProperties getNodeUserFormValues(String id) throws MException, Exception;
 
@@ -60,72 +60,71 @@ public interface IEngine {
 
     MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception;
 
-    // case 
-    
-	default ICaseDescription getCaseDescription2(ICase caze) throws Exception {
-		return getCaseDescription(caze.getUri());
-	}
+    // case
 
-	default INodeDescription getNodeDescription2(INode node) throws Exception {
-		return getNodeDescription(node.getUri(), node.getCanonicalName());
-	}
+    default ICaseDescription getCaseDescription2(ICase caze) throws Exception {
+        return getCaseDescription(caze.getUri());
+    }
 
-	ICaseDescription getCaseDescription(String uri) throws Exception;
+    default INodeDescription getNodeDescription2(INode node) throws Exception {
+        return getNodeDescription(node.getUri(), node.getCanonicalName());
+    }
 
-	INodeDescription getNodeDescription(String uri, String name) throws Exception;
+    ICaseDescription getCaseDescription(String uri) throws Exception;
 
-	Locale getLocale();
+    INodeDescription getNodeDescription(String uri, String name) throws Exception;
 
-	String getUser();
+    Locale getLocale();
 
-	Object doExecute(String uri) throws Exception;
+    String getUser();
 
-	Object doExecute2(String uri, IProperties properties) throws Exception;
-	
-	void doArchive(UUID caseId) throws Exception;
-	
-	/**
-	 * Return the surrounding model for the node.
-	 * 
-	 * @param nodeId
-	 * @return The model
-	 * @throws Exception 
-	 */
-	IModel getModel(UUID nodeId) throws Exception;
+    Object doExecute(String uri) throws Exception;
 
-	/**
-	 * Return all node models for the running case.
-	 * 
-	 * @param caseId
-	 * @return all node models
-	 * @throws Exception 
-	 */
-	IModel[] getCaseModels(UUID caseId) throws Exception;
+    Object doExecute2(String uri, IProperties properties) throws Exception;
 
-	/**
-	 * Return all runtime messages of a case.
-	 * 
-	 * @param caseId
-	 * @return List of message trails.
-	 * @throws Exception
-	 */
-	List<EngineMessage[]> getCaseRuntimeMessages(String caseId) throws Exception;
-	
-	/**
-	 * Return the runtime trail of a node.
-	 * 
-	 * @param nodeId
-	 * @return Message trail of the runtime
-	 * @throws Exception
-	 */
+    void doArchive(UUID caseId) throws Exception;
+
+    /**
+     * Return the surrounding model for the node.
+     *
+     * @param nodeId
+     * @return The model
+     * @throws Exception
+     */
+    IModel getModel(UUID nodeId) throws Exception;
+
+    /**
+     * Return all node models for the running case.
+     *
+     * @param caseId
+     * @return all node models
+     * @throws Exception
+     */
+    IModel[] getCaseModels(UUID caseId) throws Exception;
+
+    /**
+     * Return all runtime messages of a case.
+     *
+     * @param caseId
+     * @return List of message trails.
+     * @throws Exception
+     */
+    List<EngineMessage[]> getCaseRuntimeMessages(String caseId) throws Exception;
+
+    /**
+     * Return the runtime trail of a node.
+     *
+     * @param nodeId
+     * @return Message trail of the runtime
+     * @throws Exception
+     */
     EngineMessage[] getNodeRuntimeMessage(String nodeId) throws Exception;
-    
-	/**
-	 * Will close this UI engine instance. Not the central engine. For some
-	 * implementations this will be helpful to release resources.
-	 * 
-	 */
-	void close();
 
-	boolean isClosed();
+    /**
+     * Will close this UI engine instance. Not the central engine. For some implementations this
+     * will be helpful to release resources.
+     */
+    void close();
+
+    boolean isClosed();
 }

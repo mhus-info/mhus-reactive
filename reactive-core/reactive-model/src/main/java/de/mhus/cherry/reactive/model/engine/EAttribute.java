@@ -5,7 +5,6 @@ import de.mhus.cherry.reactive.model.annotations.PropertyDescription;
 public interface EAttribute {
 
     String getName();
-    
+
     PropertyDescription getDescription();
-    
 }

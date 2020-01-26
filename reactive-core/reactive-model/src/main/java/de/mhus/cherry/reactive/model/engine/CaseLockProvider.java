@@ -11,7 +11,7 @@ public interface CaseLockProvider {
 
     /**
      * Return the lock if already locked. This must be an atomic operation.
-     * 
+     *
      * @param caseId
      * @return The acquired lock.
      * @throws TimeoutException Thrown if it was not possible to acquire the lock.
@@ -20,7 +20,7 @@ public interface CaseLockProvider {
 
     /**
      * return true if the clean up master was acquired until the date in ms.
-     * 
+     *
      * @param until system time in ms
      * @return true if acquired, false if not
      */
@@ -28,7 +28,7 @@ public interface CaseLockProvider {
 
     /**
      * return true if the prepare master was acquired until the date in ms.
-     * 
+     *
      * @param until system time in ms
      * @return true if acquired, false if not
      */
@@ -36,10 +36,9 @@ public interface CaseLockProvider {
 
     /**
      * Return the lock or null if already locked. This must be an atomic operation.
-     * 
+     *
      * @param caseId
      * @return The acquired lock.
      */
     Lock lockOrNull(UUID caseId);
-
 }

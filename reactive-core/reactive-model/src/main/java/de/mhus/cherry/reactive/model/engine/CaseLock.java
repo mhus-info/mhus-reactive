@@ -10,13 +10,13 @@ import de.mhus.lib.errors.NotFoundException;
 public interface CaseLock extends Closeable {
 
     PCase getCase() throws NotFoundException, IOException;
-    
+
     PNode getFlowNode(UUID id) throws NotFoundException, IOException;
-    
+
     default PNode getFlowNode(PNodeInfo nodeInfo) throws NotFoundException, IOException {
         return getFlowNode(nodeInfo.getId());
     }
-    
+
     void closeCase(boolean hard, int code, String msg) throws IOException, NotFoundException;
 
     @Override
@@ -31,5 +31,4 @@ public interface CaseLock extends Closeable {
     Lock getLock();
 
     String getStartStacktrace(); // TODO remove, is already in lock owner
-    
 }

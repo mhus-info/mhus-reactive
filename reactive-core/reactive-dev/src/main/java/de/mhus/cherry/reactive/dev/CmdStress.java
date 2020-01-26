@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.reactive.dev;
@@ -35,70 +33,83 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Service
 public class CmdStress extends AbstractCmd {
 
-	@Argument(index=0, name="uris", required=false, description="URIs to execute", multiValued=true)
-	String[] uris;
+    @Argument(
+            index = 0,
+            name = "uris",
+            required = false,
+            description = "URIs to execute",
+            multiValued = true)
+    String[] uris;
 
-	@Option(name="-i", aliases="--interval", description="Interval in seconds (default 5)",required=false)
-	private int interval = 5;
+    @Option(
+            name = "-i",
+            aliases = "--interval",
+            description = "Interval in seconds (default 5)",
+            required = false)
+    private int interval = 5;
 
-	@Option(name="-c", aliases="--cnt", description="Start counter for $cnt$",required=false)
-	private int cnt = 10000;
-	
-    @Option(name="-m", aliases="--max", description="Max active processes",required=false)
+    @Option(
+            name = "-c",
+            aliases = "--cnt",
+            description = "Start counter for $cnt$",
+            required = false)
+    private int cnt = 10000;
+
+    @Option(name = "-m", aliases = "--max", description = "Max active processes", required = false)
     private int max = 0;
-    
-    @Option(name="-s", aliases="--size", description="How much to create for each interval",required=false)
+
+    @Option(
+            name = "-s",
+            aliases = "--size",
+            description = "How much to create for each interval",
+            required = false)
     private int size = 1;
-    
-    @Reference
-    private Session session;
+
+    @Reference private Session session;
 
     private static boolean running = false;
-    
-	@Override
-	public Object execute2() throws Exception {
-		
-	    if (uris == null) {
-	        running = false;
-	        System.out.println(">>> Stopping ...");
-	        return null;
-	    }
-	    
-		Console console = Console.get();
-		
-		running = true;
-		int pos = 0;
-		while (running) {
-		    for (int i = 0; i < size; i++) {
-    			String uri = uris[pos];
-    			uri = uri.replace("$cnt$", ""+cnt);
-    			console.setColor(COLOR.RED, null);
-    			System.out.println(">>> " + cnt + ": " + uri);
-    			console.cleanup();
-    			ReactiveAdmin api = M.l(ReactiveAdmin.class);
-    			api.getEngine().start(uri);
-    			pos = (pos+1) % uris.length;
-    			cnt++;
-    			
-    			if (max > 0) {
-    			    while (true) {
-        			    Result<PCaseInfo> cases = api.getEngine().storageGetCases(null);
-        			    int cs = 0;
-        			    for (PCaseInfo caze : cases)
-        			        if (caze.getState() != STATE_CASE.CLOSED)
-        			            cs++;
-        			    if (cs < max) break;
-        			    System.out.println("=== To much cases " + cs);
-        			    if (session.getKeyboard().available() > 0) return null;
-        	            Thread.sleep(interval * 1000);
-    			    }
-    			}
-		    }
-		    if (session.getKeyboard().available() > 0) return null;
-			Thread.sleep(interval * 1000);
-		}
-        System.out.println("### Stopped");
-		return null;
-	}
 
+    @Override
+    public Object execute2() throws Exception {
+
+        if (uris == null) {
+            running = false;
+            System.out.println(">>> Stopping ...");
+            return null;
+        }
+
+        Console console = Console.get();
+
+        running = true;
+        int pos = 0;
+        while (running) {
+            for (int i = 0; i < size; i++) {
+                String uri = uris[pos];
+                uri = uri.replace("$cnt$", "" + cnt);
+                console.setColor(COLOR.RED, null);
+                System.out.println(">>> " + cnt + ": " + uri);
+                console.cleanup();
+                ReactiveAdmin api = M.l(ReactiveAdmin.class);
+                api.getEngine().start(uri);
+                pos = (pos + 1) % uris.length;
+                cnt++;
+
+                if (max > 0) {
+                    while (true) {
+                        Result<PCaseInfo> cases = api.getEngine().storageGetCases(null);
+                        int cs = 0;
+                        for (PCaseInfo caze : cases) if (caze.getState() != STATE_CASE.CLOSED) cs++;
+                        if (cs < max) break;
+                        System.out.println("=== To much cases " + cs);
+                        if (session.getKeyboard().available() > 0) return null;
+                        Thread.sleep(interval * 1000);
+                    }
+                }
+            }
+            if (session.getKeyboard().available() > 0) return null;
+            Thread.sleep(interval * 1000);
+        }
+        System.out.println("### Stopped");
+        return null;
+    }
 }

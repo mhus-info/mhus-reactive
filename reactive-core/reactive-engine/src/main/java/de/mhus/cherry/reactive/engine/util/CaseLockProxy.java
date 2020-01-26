@@ -24,10 +24,10 @@ public class CaseLockProxy implements PCaseLock {
     private UUID caseId;
     private EngineListener fireEvent;
     private String stacktrace;
-    
+
     public CaseLockProxy(PCaseLock instance, EngineListener fireEvent) {
         caseId = instance.getCaseId();
-        fireEvent.lock(this,caseId);
+        fireEvent.lock(this, caseId);
         this.instance = instance;
         this.fireEvent = fireEvent;
         stacktrace = MCast.toString("Proxy " + caseId + " " + Thread.currentThread().getId());
@@ -44,14 +44,15 @@ public class CaseLockProxy implements PCaseLock {
     }
 
     @Override
-    public void closeCase(boolean hard, int code, String msg) throws IOException, NotFoundException {
+    public void closeCase(boolean hard, int code, String msg)
+            throws IOException, NotFoundException {
         instance.closeCase(hard, code, msg);
     }
 
     @Override
     public void close() {
         if (instance == null) return;
-        fireEvent.release(this,caseId);
+        fireEvent.release(this, caseId);
         instance = null;
         fireEvent = null;
     }
@@ -93,7 +94,8 @@ public class CaseLockProxy implements PCaseLock {
     }
 
     @Override
-    public PNode createActivity(EngineContext context, PNode previous, EElement start) throws Exception {
+    public PNode createActivity(EngineContext context, PNode previous, EElement start)
+            throws Exception {
         return instance.createActivity(context, previous, start);
     }
 
@@ -132,7 +134,7 @@ public class CaseLockProxy implements PCaseLock {
     public UUID getCaseId() {
         return caseId;
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, caseId);
@@ -157,10 +159,9 @@ public class CaseLockProxy implements PCaseLock {
     public String getStartStacktrace() {
         return stacktrace;
     }
-    
+
     @Override
     public long getOwnerThreadId() {
         return instance.getOwnerThreadId();
     }
-
 }

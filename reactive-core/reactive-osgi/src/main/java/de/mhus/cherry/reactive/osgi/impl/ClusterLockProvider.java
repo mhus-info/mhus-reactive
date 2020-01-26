@@ -12,13 +12,13 @@ import de.mhus.osgi.sop.api.cluster.ClusterApi;
 
 public class ClusterLockProvider extends MLog implements CaseLockProvider {
 
-    private static CfgLong CFG_TIMEOUT = new CfgLong(ClusterLockProvider.class,"timeout",10000);
+    private static CfgLong CFG_TIMEOUT = new CfgLong(ClusterLockProvider.class, "timeout", 10000);
     private String name;
 
     public ClusterLockProvider(String name) {
         this.name = name;
     }
-    
+
     @Override
     public boolean isCaseLocked(UUID caseId) {
         return M.l(ClusterApi.class).getLock("reactive_case_" + name + "_" + caseId).isLocked();
@@ -26,9 +26,11 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
 
     @Override
     public Lock lock(UUID caseId) throws TimeoutException {
-        return M.l(ClusterApi.class).getLock("reactive_case_" + name + "_" + caseId).lockWithException(CFG_TIMEOUT.value());
+        return M.l(ClusterApi.class)
+                .getLock("reactive_case_" + name + "_" + caseId)
+                .lockWithException(CFG_TIMEOUT.value());
     }
-    
+
     @Override
     public boolean acquireCleanupMaster(long until) {
         return M.l(ClusterApi.class).isMaster("reactive_cleanup_" + name);
@@ -42,9 +44,11 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock lockOrNull(UUID caseId) {
         try {
-            return M.l(ClusterApi.class).getLock("reactive_case_" + name + "_" + caseId).lockWithException(10);
-        } catch (TimeoutException e) {}
+            return M.l(ClusterApi.class)
+                    .getLock("reactive_case_" + name + "_" + caseId)
+                    .lockWithException(10);
+        } catch (TimeoutException e) {
+        }
         return null;
     }
-
 }

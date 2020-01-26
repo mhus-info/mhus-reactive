@@ -19,7 +19,8 @@ public interface PCaseLock extends CaseLock {
 
     void closeRuntime(UUID nodeId) throws MException, IOException;
 
-    void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state) throws IOException, NotFoundException;
+    void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state)
+            throws IOException, NotFoundException;
 
     void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException;
 
@@ -35,7 +36,8 @@ public interface PCaseLock extends CaseLock {
 
     UUID createStartPoint(EngineContext context, EElement start) throws Exception;
 
-    void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity) throws IOException, NotFoundException;
+    void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity)
+            throws IOException, NotFoundException;
 
     void doFlowNode(PNode pNode);
 
@@ -44,7 +46,6 @@ public interface PCaseLock extends CaseLock {
     void resetPCase();
 
     UUID getCaseId();
-    
-    long getOwnerThreadId();
 
+    long getOwnerThreadId();
 }

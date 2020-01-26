@@ -6,5 +6,4 @@ public class LogConfiguration {
     public boolean stackTrace = false;
     public boolean traceCases;
     public String traceDir;
-
 }
