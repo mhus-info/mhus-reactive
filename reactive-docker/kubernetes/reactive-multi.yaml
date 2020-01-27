@@ -95,7 +95,7 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: mariadb-deployment
+  name: jms-deployment
   namespace: reactive-multi
   labels:
     app: reactive-jms
