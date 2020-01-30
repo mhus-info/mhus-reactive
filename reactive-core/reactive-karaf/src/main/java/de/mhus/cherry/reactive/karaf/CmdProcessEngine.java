@@ -59,7 +59,8 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " step                    - execute engine next step\n"
                             + " save                    - save engine configuration\n"
                             + " load                    - load engine configuration\n"
-                            + " state                   - print current engine state\n"
+                            + " status                  - print current engine status\n"
+                            + " statistic               - print statistic informtion\n"
                             + " suspend                 - suspent automatic engine steps\n"
                             + " resume                  - resume automatic engine steps\n"
                             + " start                   - start engine\n"
@@ -89,6 +90,13 @@ public class CmdProcessEngine extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
+        if (cmd.equals("statistic")) {
+            System.out.println("Started     : " + api.getStartDate());
+            System.out.println("Status      : " + api.getEngineStatus());
+            System.out.println("Rounds      : " + api.getEngine().getStatisticRounds());
+            System.out.println("Case Closed :" + api.getEngine().getStatisticCaseClosed());
+            System.out.println("Case Started: " + api.getEngine().getStatisticCaseStarted());
+        } else
         if (cmd.equals("area.release")) {
             api.getEnginePersistence().set(EngineConst.AREA_PREFIX + parameters[0], null);
             System.out.println("OK");
@@ -202,8 +210,8 @@ public class CmdProcessEngine extends AbstractCmd {
             api.getEngine().loadEnginePersistence();
             PEngine persistent = api.getEnginePersistence();
             System.out.println(persistent);
-        } else if (cmd.equals("state")) {
-            System.out.println(api.getEngineState());
+        } else if (cmd.equals("status")) {
+            System.out.println(api.getEngineStatus());
         } else if (cmd.equals("suspend")) {
             api.setExecutionSuspended(true);
             System.out.println("OK");

@@ -24,7 +24,7 @@ public class ReactiveHealthCheck implements HealthCheck {
             if (engine == null) {
                 log.critical("engine not found");
             } else {
-                log.debug("Status {} Rounds {}", admin.getEngineState(), engine.getStatisticRounds() );
+                log.debug("Status {} Rounds {}", admin.getEngineStatus(), engine.getStatisticRounds() );
             }
         }
           

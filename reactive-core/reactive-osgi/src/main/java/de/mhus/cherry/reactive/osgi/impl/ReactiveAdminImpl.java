@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -113,6 +114,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private boolean stopExecutor = false;
     private LogConfiguration logConfig;
     private Thread executorPrepare;
+    private Date startDate;
     private static CfgString engineLogLevel =
             new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
     private static CfgString cfgLockProvider =
@@ -689,7 +691,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                             new ClusterLockProvider(cfgLockProvider.value().substring(8));
             }
             engine = new Engine(config);
-
+            
             // auto add process
             for (String key : config.persistent.getParameters().keySet()) {
                 if (key.startsWith("osgi.process.path:")) {
@@ -719,10 +721,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                         }
                 }
             }
-            
+
             if (isExecutionSuspended())
                 log().w("Engine execution is suspended");
-            
+
+            startDate = new Date();
+
         } catch (Throwable t) {
             engine = null;
             config = null;
@@ -741,7 +745,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     @Override
-    public STATE_ENGINE getEngineState() {
+    public STATE_ENGINE getEngineStatus() {
         if (engine == null) return STATE_ENGINE.STOPPED;
         if (isExecutionSuspended()) return STATE_ENGINE.SUSPENDED;
         return STATE_ENGINE.RUNNING;
@@ -799,5 +803,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             if (info == null) throw new NotFoundException("process unknown", name);
             return info.loader;
         }
+    }
+
+    @Override
+    public Date getStartDate() {
+        return startDate;
     }
 }

@@ -105,6 +105,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     private WeakHashMap<UUID, EngineCaseLock> caseLocks = new WeakHashMap<>();
     private long statisticCaseClosed;
     private long statisticRounds;
+    private long statisticCaseStarted;
 
     public Engine(EngineConfiguration config) throws IOException {
         this.config = config;
@@ -814,6 +815,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             pCase.setState(STATE_CASE.RUNNING);
             lock.savePCase(aPool, false);
         }
+        statisticCaseStarted++;
         return pCase.getId();
     }
 
@@ -2792,5 +2794,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             if (entry.getKey().startsWith(EngineConst.AREA_PREFIX) && entry.getValue().equals(runtimeId))
                 out.add(entry.getKey().substring(EngineConst.AREA_PREFIX.length()));
         return out;
+    }
+
+    public long getStatisticCaseStarted() {
+        return statisticCaseStarted;
     }
 }

@@ -15,6 +15,7 @@ package de.mhus.cherry.reactive.osgi;
 
 import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import de.mhus.cherry.reactive.engine.Engine;
@@ -54,7 +55,7 @@ public interface ReactiveAdmin {
 
     void setExecutionSuspended(boolean suspend);
 
-    STATE_ENGINE getEngineState();
+    STATE_ENGINE getEngineStatus();
 
     String getProcessInfo(String name);
 
@@ -63,4 +64,6 @@ public interface ReactiveAdmin {
     ProcessLoader getProcessLoader(String name) throws NotFoundException;
 
     long getProcessDeployTime(String name);
+
+    Date getStartDate();
 }
