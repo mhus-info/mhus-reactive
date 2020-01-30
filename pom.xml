@@ -67,7 +67,7 @@
             </activation>
 			<modules>
 				<module>reactive-core</module>
-				<module>reactive-sop</module>
+				<module>reactive-sop-rest</module>
 				<module>reactive-gui</module>
 				<module>reactive-tools</module>
 				<module>cr-examples</module>
@@ -84,7 +84,7 @@
             </activation>
             <modules>
                 <module>reactive-core</module>
-                <module>reactive-sop</module>
+                <module>reactive-sop-rest</module>
                 <module>reactive-gui</module>
                 <module>reactive-tools</module>
                 <module>reactive-feature</module>
