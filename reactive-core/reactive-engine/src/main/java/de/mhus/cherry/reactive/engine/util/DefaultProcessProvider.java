@@ -357,7 +357,7 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
         }
     }
 
-    public class AttributeContainer implements EAttribute {
+    public class AttributeContainer implements EAttribute, Comparable<AttributeContainer> {
 
         private String name;
         private PropertyDescription desc;
@@ -376,9 +376,16 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
         public PropertyDescription getDescription() {
             return desc;
         }
+
+        @Override
+        public int compareTo(AttributeContainer o) {
+            if (o == null || o.name == null) return -1;
+            if (name == null) return 1; // paranoia
+            return name.compareTo(o.name);
+        }
     }
 
-    public class ElementContainer implements EElement {
+    public class ElementContainer implements EElement, Comparable<ElementContainer> {
 
         private Class<? extends AElement<?>> element;
         private String name;
@@ -547,6 +554,13 @@ public class DefaultProcessProvider extends MLog implements ProcessProvider {
                 }
             }
             return attributes;
+        }
+
+        @Override
+        public int compareTo(ElementContainer o) {
+            if (o == null || o.name == null) return -1;
+            if (name == null) return 1; // paranoia
+            return name.compareTo(o.name);
         }
     }
 

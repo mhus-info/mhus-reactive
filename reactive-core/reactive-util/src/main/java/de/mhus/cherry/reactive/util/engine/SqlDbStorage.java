@@ -980,7 +980,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         } else {
                             sql.append("OR ");
                         }
-                        prop.setString("index" + i, search.index[i]);
+                        //prop.setString("index" + i, search.index[i]);
                         addFilter("index" + i, search.index[i], prop, sql);
                         first = false;
                     }
@@ -1111,14 +1111,22 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
 
             if (search.index != null) {
+                boolean first = true;
                 for (int i = 0; i < MAX_INDEX_VALUES; i++) {
                     if (search.index.length > i && search.index[i] != null) {
-                        if (whereAdded) sql.append("AND ");
-                        else sql.append("WHERE ");
-                        whereAdded = true;
+                        if (first) {
+                            if (whereAdded) sql.append("AND (");
+                            else sql.append("WHERE (");
+                            whereAdded = true;
+                        } else {
+                            sql.append("OR ");
+                        }
+                        // prop.setString("index" + i, search.index[i]);
                         addFilter("index" + i, search.index[i], prop, sql);
+                        first = false;
                     }
                 }
+                sql.append(") ");
             }
 
             // after where: order
@@ -1144,9 +1152,14 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
         prop.put(name, value);
 
-        if (value.startsWith("*") || value.endsWith("*"))
+        if (value.startsWith("*") || value.endsWith("*")) {
             sql.append(name + "_ like $" + name + "$ ");
-        else sql.append(name + "_=$" + name + "$ ");
+            if (value.startsWith("*"))
+                value = "%" + value.substring(1);
+            if (value.endsWith("*"))
+                value = value.substring(0, value.length()-1) + "%";
+            prop.put(name, value);
+        } else sql.append(name + "_=$" + name + "$ ");
     }
 
     @Override

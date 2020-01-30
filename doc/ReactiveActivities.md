@@ -79,4 +79,15 @@ REndPoint:
 * Every start point of the pool will be executed if a case will be started
 * Mark a start point with 'InactiveStartPoint' to prevent automatic starting on case creation
 
+Restricted Areas - REnterRestrictedArea and RLeaveRestrictedArea
 
+This implements a singleton which can be entered by single cases/runtimes. To implement it start the restricted are with a
+REnterRestrictedArea node. Set the name of the area in the @Description::event. Internal the restricted area is handled like 
+a message event. To leave the area implement the RLeaveRestrictedArea. You also have to define the same @Description::event or 
+if you leave empty all areas will be released.
+
+Inside the both notes only one case will be active. This is also possible over several processes (the area is a engine wide lock).
+You can administrate is with the 'pengine areas' commands.
+
+Be aware of dead locks if you lock more then one area at once (https://en.wikipedia.org/wiki/Dining_philosophers_problem). This 
+will not be handled by the engine.
