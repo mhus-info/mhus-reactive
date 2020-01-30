@@ -48,6 +48,7 @@ public class VNodeList extends MhuTable {
     protected static final Action ACTION_EXECUTE = new Action("Do it");
     protected static final Action ACTION_REFRESH = new Action("Refresh");
     protected static final Action ACTION_DETAILS = new Action("Details");
+    protected static final Action ACTION_RUNTIME = new Action("Runtime");
     private String sortByDefault = "duedate";
     private boolean sortAscDefault = true;
     MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
@@ -115,17 +116,7 @@ public class VNodeList extends MhuTable {
 
                         if (target != null) {
                             NodeItem node = (NodeItem) target;
-                            if (node.getState() == STATE_NODE.WAITING
-                                    && node.getType() == TYPE_NODE.USER) {
-                                if (node.getAssigned() == null) {
-                                    list.add(ACTION_ASSIGN);
-                                } else {
-                                    list.add(ACTION_UNASSIGN);
-                                }
-                                list.add(ACTION_EXECUTE);
-                            }
-                            list.add(ACTION_DETAILS);
-                            list.add(ACTION_REFRESH);
+                            showActions(list, node);
                         }
                         return list.toArray(new Action[list.size()]);
                     }
@@ -134,22 +125,7 @@ public class VNodeList extends MhuTable {
                     public void handleAction(
                             final Action action, final Object sender, final Object target) {
                         try {
-
-                            if (action == ACTION_UNASSIGN) {
-                                INode node = engine.getNode(((NodeItem) target).getId().toString());
-                                engine.doUnassignUserTask(node.getId().toString());
-                                doReload();
-                            } else if (action == ACTION_ASSIGN) {
-                                INode node = engine.getNode(((NodeItem) target).getId().toString());
-                                engine.doAssignUserTask(node.getId().toString());
-                                doReload();
-                            } else if (action == ACTION_EXECUTE) {
-                                doOpenUserForm((NodeItem) target);
-                            } else if (action == ACTION_REFRESH) {
-                                doReload();
-                            } else if (action == ACTION_DETAILS) {
-                                doDetails((NodeItem) target);
-                            }
+                            doAction(action, (NodeItem)target);
                         } catch (Throwable t) {
                             log.e(t);
                         }
@@ -178,6 +154,41 @@ public class VNodeList extends MhuTable {
         setImmediate(true);
     }
 
+    protected void doAction(Action action, NodeItem target) throws Exception {
+        if (action == ACTION_UNASSIGN) {
+            INode node = engine.getNode(((NodeItem) target).getId().toString());
+            engine.doUnassignUserTask(node.getId().toString());
+            doReload();
+        } else if (action == ACTION_ASSIGN) {
+            INode node = engine.getNode(((NodeItem) target).getId().toString());
+            engine.doAssignUserTask(node.getId().toString());
+            doReload();
+        } else if (action == ACTION_EXECUTE) {
+            doOpenUserForm(target);
+        } else if (action == ACTION_REFRESH) {
+            doReload();
+        } else if (action == ACTION_RUNTIME) {
+            doRuntime(target);
+        } else if (action == ACTION_DETAILS) {
+            doDetails(target);
+        }
+    }
+
+    protected void showActions(LinkedList<Action> list, NodeItem node) {
+        if (node.getState() == STATE_NODE.WAITING
+                && node.getType() == TYPE_NODE.USER) {
+            if (node.getAssigned() == null) {
+                list.add(ACTION_ASSIGN);
+            } else {
+                list.add(ACTION_UNASSIGN);
+            }
+            list.add(ACTION_EXECUTE);
+        }
+        list.add(ACTION_DETAILS);
+        list.add(ACTION_RUNTIME);
+        list.add(ACTION_REFRESH);
+    }
+
     protected void doDetails(NodeItem target) {}
 
     public void doReload() {
@@ -187,6 +198,8 @@ public class VNodeList extends MhuTable {
 
     protected void doOpenUserForm(NodeItem selected) {}
 
+    protected void doRuntime(NodeItem selected) {}
+    
     public SearchCriterias getSearchCriterias() {
         return criterias;
     }

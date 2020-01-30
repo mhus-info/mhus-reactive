@@ -45,6 +45,7 @@ public class VCaseList extends MhuTable {
     protected static final Action ACTION_REFRESH = new Action("Refresh");
     protected static final Action ACTION_ARCHIVE = new Action("Archive");
     protected static final Action ACTION_DETAILS = new Action("Details");
+    protected static final Action ACTION_RUNTIME = new Action("Runtime");
     private String sortByDefault = "duedate";
     private boolean sortAscDefault = true;
     MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
@@ -108,9 +109,7 @@ public class VCaseList extends MhuTable {
 
                         if (target != null) {
                             CaseItem caze = (CaseItem) target;
-                            list.add(ACTION_DETAILS);
-                            list.add(ACTION_REFRESH);
-                            if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
+                            showActions(list, caze);
                         }
                         return list.toArray(new Action[list.size()]);
                     }
@@ -121,18 +120,8 @@ public class VCaseList extends MhuTable {
                         try {
                             //					INode node =
                             // engine.getNode(((NodeItem)target).getId().toString(),null);
-
-                            if (action == ACTION_REFRESH) {
-                                doReload();
-                            }
-                            if (action == ACTION_ARCHIVE) {
-                                CaseItem caze = (CaseItem) target;
-                                doArchive(caze);
-                            }
-                            if (action == ACTION_DETAILS) {
-                                CaseItem caze = (CaseItem) target;
-                                doDetails(caze);
-                            }
+                            CaseItem caze = (CaseItem) target;
+                            doAction(action, caze);
                         } catch (Throwable t) {
                             log.e(t);
                         }
@@ -161,6 +150,30 @@ public class VCaseList extends MhuTable {
         setImmediate(true);
     }
 
+    protected void doAction(Action action, CaseItem caze) throws Exception {
+        if (action == ACTION_REFRESH) {
+            doReload();
+        } else
+        if (action == ACTION_ARCHIVE) {
+            doArchive(caze);
+        } else
+        if (action == ACTION_DETAILS) {
+            doDetails(caze);
+        } else
+        if (action == ACTION_RUNTIME) {
+            doRuntime(caze);
+        }
+    }
+
+    protected void showActions(LinkedList<Action> list, CaseItem caze) {
+        list.add(ACTION_DETAILS);
+        list.add(ACTION_REFRESH);
+        list.add(ACTION_RUNTIME);
+        if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
+    }
+
+    protected void doRuntime(CaseItem caze) {}
+    
     protected void doDetails(CaseItem caze) {}
 
     protected void doArchive(CaseItem caze) {
