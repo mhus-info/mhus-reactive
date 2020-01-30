@@ -114,8 +114,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         processProvider = config.processProvider;
 
         try {
-            config.persistent = storage.loadEngine();
-        } catch (NotFoundException | IOException e) {
+            config.persistent = new PEngine(storage);
+        } catch (IOException e) {
             log().w(e.toString());
         }
         if (config.persistent == null) {
@@ -125,7 +125,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         if (config.parameters != null) {
             config.persistent.getParameters().putAll(config.parameters);
             try {
-                storage.saveEngine(config.persistent);
+                config.persistent.save();
             } catch (IOException e) {
                 log().e(e);
             }
@@ -955,7 +955,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     /** Archive all closed cases. */
     public void archiveAll() {
         try {
-            archive.saveEngine(config.persistent);
+            config.persistent.save(archive);
             for (PCaseInfo caseId : storage.getCases(STATE_CASE.CLOSED)) {
                 try (CaseLock lock = getCaseLock(caseId)) {
                     PCase caze = lock.getCase();
@@ -1351,7 +1351,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
     public void saveEnginePersistence() {
         try {
-            storage.saveEngine(config.persistent);
+            config.persistent.save();
         } catch (IOException e) {
             log().e(e);
         }
@@ -1359,8 +1359,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
     public void loadEnginePersistence() {
         try {
-            config.persistent = storage.loadEngine();
-        } catch (NotFoundException | IOException e) {
+            config.persistent = new PEngine(storage);
+        } catch ( IOException e) {
             log().e(e);
         }
     }
@@ -1594,6 +1594,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     try {
                         PCase caze = lock.getCase();
                         EngineContext context = createContext(lock, caze, node);
+                        if (caze instanceof ContextRecipient)
+                            ((ContextRecipient) caze).setContext(context);
                         AActivity<?> aNode = context.getANode();
                         if (aNode instanceof ValidateParametersBeforeExecute)
                             ((ValidateParametersBeforeExecute) aNode)
@@ -2257,6 +2259,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             pNode.setState(STATE_NODE.CLOSED);
             saveRuntime(pNode, aNode);
 
+            // close pending activities
             UUID closeId = aNode.getCloseActivity();
             if (closeId != null) {
                 try {
@@ -2265,6 +2268,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     log().e(closeId, t);
                 }
             }
+            
+            // cleanup locks
+            releaseEngineLock(null, pNode);
         }
 
         @Override
@@ -2732,5 +2738,64 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
     public long getStatisticRounds() {
         return statisticRounds;
+    }
+
+    @Override
+    public boolean aquireEngineLock(String resource, ProcessContext<?> context) {
+        
+        String runtimeId = context.getPRuntime().getId().toString();
+        
+        lockProvider.acquireEngineMaster();
+        try {
+            String lock = config.persistent.get(EngineConst.LOCK_PREFIX + resource);
+            if (lock == null) {
+                config.persistent.set(EngineConst.LOCK_PREFIX + resource, runtimeId);
+                return true;
+            } else
+                return false;
+        } catch (Throwable t) {
+            fireEvent.error(context.getANode(), t);
+        } finally {
+            lockProvider.releaseEngineMaster();
+        }
+        return false;
+    }
+
+    @Override
+    public void releaseEngineLock(String resource, ProcessContext<?> context) {
+        releaseEngineLock(resource, context == null ? null : context.getPRuntime());
+    }
+    
+    public void releaseEngineLock(String resource, PNode runtime) {
+        
+        lockProvider.acquireEngineMaster();
+        try {
+            if (MString.isEmpty(resource)) {
+                String runtimeId = runtime.getId().toString();
+                for (String lock : findLocksForRuntime(runtimeId)) {
+                    config.persistent.set("lock:" + lock, null);
+                    fireMessage(null, EngineConst.LOCK_PREFIX + lock, null);
+                }
+            } else {
+                config.persistent.set(EngineConst.LOCK_PREFIX + resource, null);
+                fireMessage(null, EngineConst.LOCK_PREFIX + resource, null);
+            }
+        } catch (Throwable t) {
+            // TODO
+            t.printStackTrace();
+//            if (context != null)
+//                fireEvent.error(context.getCase, t);
+        } finally {
+            lockProvider.releaseEngineMaster();
+        }
+    }
+
+    private List<String> findLocksForRuntime(String runtimeId) throws IOException {
+        LinkedList<String> out = new LinkedList<>();
+        config.persistent.reload();
+        for (Entry<String, String> entry : config.persistent.getParameters().entrySet())
+            if (entry.getKey().startsWith("lock:") && entry.getValue().equals(runtimeId))
+                out.add(entry.getKey().substring(5));
+        return out;
     }
 }

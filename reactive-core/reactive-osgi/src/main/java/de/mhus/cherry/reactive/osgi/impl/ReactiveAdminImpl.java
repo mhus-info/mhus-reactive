@@ -588,7 +588,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                         }
                     }
                 }
-                config.storage.saveEngine(e);
+                e.save();
             } else {
                 storageDsProvider = new DataSourceProvider();
                 updateStorageDataSource();

@@ -51,4 +51,15 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
         }
         return null;
     }
+
+    @Override
+    public void acquireEngineMaster() {
+        M.l(ClusterApi.class).getLock("reactive_engine_" + name).lock();
+    }
+
+    @Override
+    public void releaseEngineMaster() {
+        M.l(ClusterApi.class).getLock("reactive_engine_" + name).unlockHard();
+    }
+    
 }

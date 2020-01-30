@@ -35,6 +35,18 @@ public interface CaseLockProvider {
     boolean acquirePrepareMaster(long until);
 
     /**
+     * acquired the engine lock
+     *
+     * @param until system time in ms
+     */
+    void acquireEngineMaster();
+    
+    /**
+     * release a aquired lock.
+     */
+    void releaseEngineMaster();
+    
+    /**
      * Return the lock or null if already locked. This must be an atomic operation.
      *
      * @param caseId

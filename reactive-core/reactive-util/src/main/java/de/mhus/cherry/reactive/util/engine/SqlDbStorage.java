@@ -21,7 +21,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -29,7 +31,6 @@ import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
-import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
@@ -1149,77 +1150,95 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     }
 
     @Override
-    public PEngine loadEngine() throws IOException, NotFoundException {
-        PEngine engine = null;
+    public Map<String, String> loadEngine() throws IOException {
         try {
+            HashMap<String, String> out = new HashMap<>();
+    
             DbConnection con = pool.getConnection();
             MProperties prop = new MProperties();
-            prop.put("id", "engine");
+            DbStatement sta =
+                    con.createStatement(
+                            "SELECT id_,content_ FROM " + prefix + "_engine_");
+            DbResult res = sta.executeQuery(prop);
+            while (res.next()) {
+                out.put(res.getString("id_"), res.getString("content_"));
+            }
+            res.close();
+            con.close();
+            return out;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public String getEngineValue(String key) throws IOException {
+        try {
+            String value = null;
+            DbConnection con = pool.getConnection();
+            MProperties prop = new MProperties();
+            prop.put("id", key);
             DbStatement sta =
                     con.createStatement(
                             "SELECT content_ FROM " + prefix + "_engine_ WHERE id_=$id$");
             DbResult res = sta.executeQuery(prop);
-            if (res.next()) {
-                InputStream in = res.getBinaryStream("content_");
-                engine = new PEngine();
-                engine.readExternal(new ObjectInputStream(in));
-            }
+            if (res.next()) 
+                value = res.getString("content_");
             res.close();
             con.close();
+            return value;
         } catch (Exception e) {
             throw new IOException(e);
         }
-        if (engine == null) throw new NotFoundException("engine");
-        return engine;
     }
 
     @Override
-    public void saveEngine(PEngine engine) throws IOException {
+    public void setEngineValue(String key, String value) throws IOException {
+        String currentValue = getEngineValue(key); // TODO could be optimized
         try {
             DbConnection con = pool.getConnection();
-            boolean exists = false;
             MProperties prop = new MProperties();
-            prop.put("id", "engine");
-            {
-                DbStatement sta =
-                        con.createStatement(
-                                "SELECT id_ FROM " + prefix + "_engine_ WHERE id_=$id$");
-                DbResult res = sta.executeQuery(prop);
-                exists = res.next();
-                res.close();
-                sta.close();
-            }
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            engine.writeExternal(new ObjectOutputStream(outStream));
-            ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
-            prop.put("content", inStream);
-            prop.put("created", new Date());
-            prop.put("modified", new Date());
-            if (exists) {
-                DbStatement sta =
-                        con.createStatement(
-                                "UPDATE "
-                                        + prefix
-                                        + "_engine_ SET content_=$content$,modified_=$modified$ WHERE id_=$id$");
-                sta.executeUpdate(prop);
-                sta.close();
-
-            } else {
-                DbStatement sta =
-                        con.createStatement(
-                                "INSERT INTO "
-                                        + prefix
-                                        + "_engine_ (id_,content_,created_,modified_) VALUES ($id$,$content$,$created$,$modified$)");
-                sta.executeUpdate(prop);
-                sta.close();
-            }
+            prop.put("id", key);
+            prop.put("value", value);
+            prop.put("now", new Date());
+            DbStatement sta =
+                    con.createStatement(
+                            currentValue == null ?
+                                    "INSERT INTO " + prefix + "_engine_ (id_,content_,created_,modified_) VALUES ($id$,$value$,$now$,$now$)"
+                                    :
+                                    "UPDATE " + prefix + "_engine_ SET content_=$value$,modified_=$now$ WHERE id_=$id$"
+                            );
+            int res = sta.executeUpdate(prop);
+            if (res != 1) throw new Exception("Not Updated");
+            
             con.commit();
             con.close();
+            
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
 
+    @Override
+    public void deleteEngineValue(String key) throws IOException {
+        try {
+            DbConnection con = pool.getConnection();
+            MProperties prop = new MProperties();
+            prop.put("id", key);
+            DbStatement sta =
+                    con.createStatement(
+                                    "DELETE FROM " + prefix + "_engine_ WHERE id_=$id$"
+                            );
+            sta.executeUpdate(prop);
+            
+            con.commit();
+            con.close();
+            
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+    
     private static class SqlResultCase implements Result<PCaseInfo>, Iterator<PCaseInfo> {
 
         private DbResult res;
@@ -1565,4 +1584,5 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         }
     }
+    
 }

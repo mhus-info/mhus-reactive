@@ -30,7 +30,7 @@ public class EngineConfiguration {
     public StorageProvider archive;
     public ProcessProvider processProvider;
     public AaaProvider aaa;
-    public Map<String, Object> parameters;
+    public Map<String, String> parameters;
     public LinkedList<EngineListener> listener = new LinkedList<>();
     public PEngine persistent;
     public CaseLockProvider lockProvider;

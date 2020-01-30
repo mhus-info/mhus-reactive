@@ -94,8 +94,8 @@
     <index name="$/prefix$_node_i9" table="$/prefix$_node" fields="index9" unique="false" />
     
 	<table name="$/prefix$_engine" primary_key="id">
-	  <field name="id" type="string" size="36" />
-	  <field name="content" type="blob" />
+	  <field name="id" type="string" size="300" />
+	  <field name="content" type="string" size="300" />
 	  <field name="created" type="DATETIME" />
 	  <field name="modified" type="DATETIME" />
 	</table>

@@ -43,6 +43,12 @@ public interface EEngine {
 
     PCase getCaseWithoutLock(UUID caseId) throws NotFoundException, IOException;
 
+    boolean aquireEngineLock(String resource, ProcessContext<?> context);
+
+    void releaseEngineLock(String resource, ProcessContext<?> context);
+    
+    // PEngine getEnginePersistence();
+
     // void saveFlowNode(PNode flow) throws IOException, NotFoundException;
 
 }

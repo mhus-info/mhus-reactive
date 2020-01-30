@@ -57,9 +57,48 @@ public class S1ActivitiesTest {
     private Console console;
 
     @Test
+    public void testLock() throws Exception {
+
+        createEngine();
+
+        try { // lock
+            EngineMockUp mockup =
+                    new EngineMockUp(config.storage, engine, new File("mockup/s1_lock.xml"));
+            mockup.setWarn(false);
+            mockup.setVerbose(false);
+            String uri =
+                    "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=lock";
+            System.out.println("URI: " + uri);
+            System.out.println(
+                    "------------------------------------------------------------------------");
+            UUID caseId = engine.start(uri);
+
+            printStorage();
+            mockup.step();
+
+            int i = 0;
+            for (i = 1; i <= 10; i++) {
+                step(i);
+                mockup.step();
+
+                PCase caze = engine.getCaseWithoutLock(caseId);
+                if (caze.getState() == STATE_CASE.CLOSED) break;
+                
+            }
+            assertTrue(i < 10);
+            mockup.close();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
+
+        archiveEngine(engine, config);
+    }
+    
+    @Test
     public void testSubStart() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // exclusive kirk
             EngineMockUp mockup =
@@ -100,9 +139,9 @@ public class S1ActivitiesTest {
     @Test
     public void testParallel2() throws Exception {
 
-        createEnigne();
+        createEngine();
 
-        try { // step second
+        try { // step parallel
             EngineMockUp mockup =
                     new EngineMockUp(config.storage, engine, new File("mockup/s1_parallel2.xml"));
             mockup.setWarn(false);
@@ -138,7 +177,7 @@ public class S1ActivitiesTest {
     @Test
     public void testParallel1() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // step second
             EngineMockUp mockup =
@@ -176,7 +215,7 @@ public class S1ActivitiesTest {
     @Test
     public void testTriggerTimer() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try {
             EngineMockUp mockup =
@@ -223,7 +262,7 @@ public class S1ActivitiesTest {
     @Test
     public void testTriggerMessage() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try {
             EngineMockUp mockup =
@@ -270,7 +309,7 @@ public class S1ActivitiesTest {
     @Test
     public void testTriggerSignal() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try {
             EngineMockUp mockup =
@@ -317,7 +356,7 @@ public class S1ActivitiesTest {
     @Test
     public void testSecond() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // step second
             EngineMockUp mockup =
@@ -355,7 +394,7 @@ public class S1ActivitiesTest {
     @Test
     public void testThird() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // step third
             EngineMockUp mockup =
@@ -393,7 +432,7 @@ public class S1ActivitiesTest {
     @Test
     public void testError1() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // error1
             EngineMockUp mockup =
@@ -431,7 +470,7 @@ public class S1ActivitiesTest {
     @Test
     public void testFatal() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // fatal
             EngineMockUp mockup =
@@ -469,7 +508,7 @@ public class S1ActivitiesTest {
     @Test
     public void testNone() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // none - try stopped after retry
             EngineMockUp mockup =
@@ -516,7 +555,7 @@ public class S1ActivitiesTest {
     @Test
     public void testStartpoint() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // custom startpoint
             EngineMockUp mockup =
@@ -554,7 +593,7 @@ public class S1ActivitiesTest {
     @Test
     public void testExternal() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // fire external
             EngineMockUp mockup =
@@ -604,7 +643,7 @@ public class S1ActivitiesTest {
     @Test
     public void testSignal() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // fire signal
             EngineMockUp mockup =
@@ -657,7 +696,7 @@ public class S1ActivitiesTest {
     @Test
     public void testMessage() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // fire message
             EngineMockUp mockup =
@@ -718,7 +757,7 @@ public class S1ActivitiesTest {
     @Test
     public void testExclusiveGateway() throws Exception {
 
-        createEnigne();
+        createEngine();
 
         try { // exclusive kirk
             EngineMockUp mockup =
@@ -757,7 +796,7 @@ public class S1ActivitiesTest {
         archiveEngine(engine, config);
     }
 
-    private void createEnigne() throws MException {
+    private void createEngine() throws MException {
 
         console = Console.get();
         console.setBold(true);

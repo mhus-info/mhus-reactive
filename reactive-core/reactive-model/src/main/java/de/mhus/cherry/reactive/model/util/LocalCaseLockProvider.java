@@ -50,4 +50,15 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         }
         return null;
     }
+
+    @Override
+    public void acquireEngineMaster() {
+        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").lock();
+    }
+
+    @Override
+    public void releaseEngineMaster() {
+        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").unlockHard();
+    }
+    
 }

@@ -14,6 +14,7 @@
 package de.mhus.cherry.reactive.model.engine;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 import de.mhus.lib.errors.NotFoundException;
@@ -120,16 +121,37 @@ public interface StorageProvider {
     Result<PNodeInfo> searchFlowNodes(SearchCriterias criterias) throws IOException;
 
     /**
-     * Return new engine persistence status. If no engine status is stored return null.
+     * Return all current engine values.
      *
      * @return List of results
      * @throws IOException
-     * @throws NotFoundException
      */
-    PEngine loadEngine() throws IOException, NotFoundException;
-
-    void saveEngine(PEngine engine) throws IOException;
-
+    Map<String,String> loadEngine() throws IOException;
+    
+    /**
+     * Return the current value of the key.
+     * 
+     * @param key
+     * @return the value or null
+     * @throws IOException
+     */
+    String getEngineValue(String key) throws IOException;
+    
+    /**
+     * Update or Insert the key-value pair.
+     * @param key
+     * @param value
+     * @throws IOException
+     */
+    void setEngineValue(String key, String value) throws IOException;
+    
+    /**
+     * Remove the key of exists.
+     * @param key
+     * @throws IOException
+     */
+    void deleteEngineValue(String key) throws IOException;
+    
     PNodeInfo loadFlowNodeInfo(UUID nodeId) throws IOException;
 
     PCaseInfo loadCaseInfo(UUID caseId) throws IOException;

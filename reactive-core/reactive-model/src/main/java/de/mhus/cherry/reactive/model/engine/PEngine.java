@@ -19,21 +19,35 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MString;
 
 public class PEngine implements Externalizable {
 
-    protected Map<String, Object> parameters;
+    protected Map<String, String> parameters;
+    private StorageProvider storage;
 
-    public PEngine() {}
-
-    public PEngine(PEngine clone) {
-        parameters = new HashMap<>(clone.getParameters());
+    public PEngine() {
+        parameters = new HashMap<>();
+    }
+    
+    public PEngine(StorageProvider storage) throws IOException {
+        this.storage = storage;
+        reload();
     }
 
-    public Map<String, Object> getParameters() {
+    public void reload() throws IOException {
+        if (storage != null)
+            parameters = storage.loadEngine();
+    }
+
+//    public PEngine(PEngine clone) {
+//        parameters = new HashMap<>(clone.getParameters());
+//    }
+
+    public Map<String, String> getParameters() {
         if (parameters == null) parameters = new HashMap<>();
         return parameters;
     }
@@ -55,7 +69,7 @@ public class PEngine implements Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int version = in.readInt();
         if (version != 1) throw new IOException("Wrong version: " + version);
-        parameters = (Map<String, Object>) in.readObject();
+        parameters = (Map<String, String>) in.readObject();
     }
 
     /**
@@ -113,5 +127,39 @@ public class PEngine implements Externalizable {
         String v = MString.afterIndex(deployedName, ':');
         String n = MString.beforeIndex(deployedName, ':');
         return v.equals(String.valueOf(getParameters().get("process:" + n + ":active")));
+    }
+    
+    public String get(String key) throws IOException {
+        String value = storage.getEngineValue(key);
+        if (value == null)
+            parameters.remove(key);
+        else
+            parameters.put(key, value);
+        return value;
+    }
+
+    public String set(String key, String value) throws IOException {
+        if (value == null) {
+            storage.deleteEngineValue(key);
+            parameters.remove(key);
+        } else {
+            storage.setEngineValue(key, value);
+            parameters.put(key, value);
+        }
+        return value;
+    }
+    
+    public void save() throws IOException {
+        save(storage);
+    }
+    
+    public void save(StorageProvider storage) throws IOException {
+        for (Entry<String, String> entry : parameters.entrySet()) {
+            storage.setEngineValue(entry.getKey(), entry.getValue());
+        }
+        for (String key : storage.loadEngine().keySet()) {
+            if (!parameters.containsKey(key))
+                storage.deleteEngineValue(key);
+        }
     }
 }

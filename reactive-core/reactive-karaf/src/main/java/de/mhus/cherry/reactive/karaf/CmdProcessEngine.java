@@ -169,9 +169,12 @@ public class CmdProcessEngine extends AbstractCmd {
             System.out.println("OK");
         } else if (cmd.equals("parameters")) {
             PEngine persistent = api.getEnginePersistence();
+            persistent.reload();
             if (parameters != null) {
                 MProperties properties = MProperties.explodeToMProperties(parameters);
-                persistent.getParameters().putAll(properties);
+                for (Entry<String, Object> entry : properties.entrySet())
+                    persistent.getParameters().put(entry.getKey(), String.valueOf(entry.getValue()));
+                persistent.save();
             }
             System.out.println(persistent);
         } else if (cmd.equals("save")) {
