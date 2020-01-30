@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.APool;
+import de.mhus.cherry.reactive.model.engine.CaseLock;
 import de.mhus.cherry.reactive.model.engine.EElement;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
@@ -72,18 +73,6 @@ public class EngineCaseTraceListener implements EngineListener {
     public void closeCase(PCase caze, boolean hard) {
         Log log = getLog(caze);
         log.i("closeCase",caze,hard);
-    }
-
-    @Override
-    public void doNodeErrorHandling(ProcessContext<?> context, PNode node, Throwable t) {
-        Log log = getLog(node);
-        log.i("doNodeErrorHandling",node,context,t);
-    }
-
-    @Override
-    public void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) {
-        Log log = getLog(pRuntime);
-        log.i("saveRuntime",pRuntime,aRuntime);
     }
 
     @Override
@@ -246,6 +235,30 @@ public class EngineCaseTraceListener implements EngineListener {
     public void initStop(RuntimeNode runtime, PNode flow) {
         Log log = getLog(flow);
         log.i("initStop",runtime,flow);
+    }
+
+    @Override
+    public void doNodeErrorHandling(CaseLock lock, ProcessContext<?> context, PNode node, Throwable t) {
+        Log log = getLog(node);
+        log.i("doNodeErrorHandling",node,context,t);
+    }
+
+    @Override
+    public void saveRuntime(CaseLock lock, PNode pRuntime, RuntimeNode aRuntime) {
+        Log log = getLog(pRuntime);
+        log.i("saveRuntime",pRuntime,aRuntime);
+    }
+
+    @Override
+    public void lock(CaseLock pCaseLock, UUID caseId) {
+        Log log = getLog(caseId);
+        log.i("lock");
+    }
+
+    @Override
+    public void release(CaseLock pCaseLock, UUID caseId) {
+        Log log = getLog(caseId);
+        log.i("release");
     }
 
 }
