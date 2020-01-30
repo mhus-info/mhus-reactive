@@ -78,6 +78,7 @@ import de.mhus.lib.sql.Dialect;
 @Component(immediate = true)
 public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
+    private static final String SUSPENDED = "suspended";
     public static CfgLong CFG_TIME_TROTTELING =
             new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
@@ -109,7 +110,6 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private boolean autoDeploy = true;
     private Thread executorProcess;
     private Thread executorCleanup;
-    private boolean executionSuspended = false;
     private boolean stopExecutor = false;
     private LogConfiguration logConfig;
     private Thread executorPrepare;
@@ -501,7 +501,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     protected int doExecuteProcess() throws NotFoundException, IOException {
-        if (executionSuspended) return 0;
+        if (isExecutionSuspended()) return 0;
         Engine e = engine;
         if (e == null) return 0;
         int cnt = e.doProcessNodes();
@@ -510,15 +510,24 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         return cnt;
     }
 
+    private boolean isExecutionSuspended() {
+        try {
+            return "1".equals(getEnginePersistence().get(SUSPENDED));
+        } catch (IOException e) {
+            log().w(e);
+        }
+        return true;
+    }
+
     protected void doExecutePrepare() throws NotFoundException, IOException {
-        if (executionSuspended) return;
+        if (isExecutionSuspended()) return;
         Engine e = engine;
         long nextPrepare = System.currentTimeMillis() + CFG_TIME_PREPARE_DELAY.value();
         if (e.acquirePrepareMaster(nextPrepare)) e.doPrepareNodes();
     }
 
     protected void doExecuteCleanup() throws NotFoundException, IOException {
-        if (executionSuspended) return;
+        if (isExecutionSuspended()) return;
         Engine e = engine;
         long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
         if (e.acquireCleanupMaster(nextCleanup)) e.doCleanupCases();
@@ -710,6 +719,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                         }
                 }
             }
+            
+            if (isExecutionSuspended())
+                log().w("Engine execution is suspended");
+            
         } catch (Throwable t) {
             engine = null;
             config = null;
@@ -730,7 +743,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     @Override
     public STATE_ENGINE getEngineState() {
         if (engine == null) return STATE_ENGINE.STOPPED;
-        if (executionSuspended) return STATE_ENGINE.SUSPENDED;
+        if (isExecutionSuspended()) return STATE_ENGINE.SUSPENDED;
         return STATE_ENGINE.RUNNING;
     }
 
@@ -772,7 +785,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
     @Override
     public void setExecutionSuspended(boolean suspend) {
-        executionSuspended = suspend;
+        try {
+            getEnginePersistence().set(SUSPENDED, suspend ? "1" : null);
+        } catch (IOException e) {
+            log().w(e);
+        }
     }
 
     @Override
