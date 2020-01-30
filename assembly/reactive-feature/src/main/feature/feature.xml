@@ -28,6 +28,11 @@
 		<feature>jndi</feature>
         <feature>activemq-client</feature>
 
+        <!-- felix -->
+        
+        <bundle> mvn:org.apache.felix/org.apache.felix.healthcheck.api/${felix.healthcheck.version}</bundle>
+        
+        
 		<!-- mhu-lib -->
 		
         <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
@@ -93,6 +98,12 @@
 
 	</feature>
 	
+    <feature name='cherry-reactive-kube' description='User Interface' version='${project.version}'>
+        <feature>http</feature>
+        <feature>http-whiteboard</feature>
+        <bundle>mvn:de.mhus.osgi/kube-health-servlet/${mhus-osgi-servlets.version}</bundle>
+    </feature>
+    
 	<feature name='cherry-reactive-ui' description='User Interface' version='${project.version}'>
 		
 		<feature>http</feature>
@@ -133,6 +144,7 @@
 	<feature name='cherry-reactive-all' description='Install all expect dev' version='${project.version}'>
 		<feature>cherry-reactive-core</feature>
 		<feature>cherry-reactive-rest</feature>
+        <feature>cherry-reactive-kube</feature>
 		<feature>cherry-reactive-ui</feature>
 	</feature>
 	

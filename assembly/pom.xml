@@ -28,10 +28,6 @@
     <artifactId>assembly</artifactId>
     <packaging>pom</packaging>
     
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
     <modules>
         <module>reactive-feature</module>
         <module>reactive-playground-assembly</module>

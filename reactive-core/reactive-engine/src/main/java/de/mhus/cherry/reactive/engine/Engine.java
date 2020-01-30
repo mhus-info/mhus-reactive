@@ -103,7 +103,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     private EngineListener fireEvent = null;
     private CaseLockProvider lockProvider = new LocalCaseLockProvider();
     private WeakHashMap<UUID, EngineCaseLock> caseLocks = new WeakHashMap<>();
-    private int statisticCaseClosed;
+    private long statisticCaseClosed;
+    private long statisticRounds;
 
     public Engine(EngineConfiguration config) {
         this.config = config;
@@ -194,6 +195,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         int doneCnt = 0;
         long now = System.currentTimeMillis();
+        statisticRounds++;
 
         // READY NODES
         fireEvent.doStep("execute");
@@ -2724,7 +2726,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return lockProvider.acquirePrepareMaster(until);
     }
 
-    public int getStatisticCaseClosed() {
+    public long getStatisticCaseClosed() {
         return statisticCaseClosed;
+    }
+
+    public long getStatisticRounds() {
+        return statisticRounds;
     }
 }
