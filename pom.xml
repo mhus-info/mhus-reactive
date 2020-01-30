@@ -70,9 +70,8 @@
 				<module>reactive-sop</module>
 				<module>reactive-gui</module>
 				<module>reactive-tools</module>
-				<module>reactive-feature</module>
 				<module>cr-examples</module>
-                <module>reactive-docker</module>
+                <module>assembly</module>
 			</modules>
         </profile>
         <profile>
