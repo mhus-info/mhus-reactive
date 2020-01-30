@@ -8,7 +8,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     <parent>
         <groupId>de.mhus.cherry.reactive</groupId>
         <artifactId>reactive-docker</artifactId>
-        <version>6.3.1-SNAPSHOT</version>
+        <version>7.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>reactive-playground-assembly</artifactId>
     <packaging>karaf-assembly</packaging>
@@ -31,6 +31,14 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
             <artifactId>enterprise</artifactId>
+            <version>${karaf.version}</version>
+            <classifier>features</classifier>
+            <scope>runtime</scope>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>spring-legacy</artifactId>
             <version>${karaf.version}</version>
             <classifier>features</classifier>
             <scope>runtime</scope>
@@ -109,6 +117,20 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                     <targetFile>assembly</targetFile>
                     
 				    <blacklistedRepositories>
+                        <repository>mvn:org.apache.karaf.features/framework/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/standard/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring/4.2.8/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.8/xml/features</repository>
+
+                        <repository>mvn:org.apache.karaf.features/framework/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/standard/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/enterprise-legacy/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring/4.2.7/xml/features</repository>
+                        <repository>mvn:org.apache.karaf.features/spring-legacy/4.2.7/xml/features</repository>
+				    
 				        <repository>mvn:org.apache.karaf.features/framework/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/standard/4.3.0-SNAPSHOT/xml/features</repository>
 				        <repository>mvn:org.apache.karaf.features/enterprise/4.3.0-SNAPSHOT/xml/features</repository>

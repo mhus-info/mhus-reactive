@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.reactive.model.uimp;
@@ -40,10 +38,11 @@ public class UiFormInformation implements IFormInformation, Externalizable {
     private Class<? extends ActionHandler> actionHandler;
     private Class<? extends FormControl> formControl;
 
-    
     public UiFormInformation() {}
-    
-    public UiFormInformation(DefRoot form, Class<? extends ActionHandler> actionHandler,
+
+    public UiFormInformation(
+            DefRoot form,
+            Class<? extends ActionHandler> actionHandler,
             Class<? extends FormControl> formControl) {
         this.form = form;
         this.actionHandler = actionHandler;
@@ -72,34 +71,32 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             if (form != null) {
                 form.build();
                 String formXml = MXml.toString(ModelUtil.toXml(form), false);
-                out.writeObject(formXml); 
+                out.writeObject(formXml);
             } else {
                 out.writeObject(null);
             }
         } catch (Exception e) {
-            MLogUtil.log().e(getClass(),e);
+            MLogUtil.log().e(getClass(), e);
             out.writeObject(null);
         }
         if (actionHandler != null) {
             out.writeObject(actionHandler.getCanonicalName());
             out.writeObject(MSystem.getBytes(actionHandler));
-        } else
-            out.writeObject(null);
+        } else out.writeObject(null);
         if (formControl != null) {
             out.writeObject(formControl.getCanonicalName());
             out.writeObject(MSystem.getBytes(formControl));
-        } else
-            out.writeObject(null);
+        } else out.writeObject(null);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if ( in.readInt() != 1) throw new IOException("Wrong object version");
+        if (in.readInt() != 1) throw new IOException("Wrong object version");
         String formXml = (String) in.readObject();
         if (formXml != null) {
             try {
-                form = ModelUtil.toModel( MXml.loadXml(formXml).getDocumentElement() );
+                form = ModelUtil.toModel(MXml.loadXml(formXml).getDocumentElement());
             } catch (Exception e) {
                 throw new IOException("Form: " + formXml, e);
             }
@@ -109,7 +106,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             if (name != null) {
                 byte[] code = (byte[]) in.readObject();
                 try {
-                    LocalClassLoader cl = new LocalClassLoader( M.l(MActivator.class) );
+                    LocalClassLoader cl = new LocalClassLoader(M.l(MActivator.class));
                     cl.addClassCode(name, code);
                     actionHandler = (Class<? extends ActionHandler>) cl.loadClass(name);
                 } catch (AlreadyBoundException e) {
@@ -122,8 +119,8 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             if (name != null) {
                 byte[] code = (byte[]) in.readObject();
                 try {
-                    
-                    LocalClassLoader cl = new LocalClassLoader( M.l(MActivator.class) );
+
+                    LocalClassLoader cl = new LocalClassLoader(M.l(MActivator.class));
                     cl.addClassCode(name, code);
                     formControl = (Class<? extends FormControl>) cl.loadClass(name);
                 } catch (AlreadyBoundException e) {
@@ -132,5 +129,4 @@ public class UiFormInformation implements IFormInformation, Externalizable {
             }
         }
     }
-
 }

@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>de.mhus.cherry.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
-		<version>6.3.1-SNAPSHOT</version>
+		<version>7.1.0-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -92,6 +92,16 @@
 			<artifactId>mhu-osgi-services</artifactId>
 		</dependency>
 		
+        <dependency>
+            <groupId>de.mhus.osgi</groupId>
+            <artifactId>mhu-sop-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.mhus.osgi</groupId>
+            <artifactId>mhu-sop-core</artifactId>
+            <version>${mhus-sop.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>

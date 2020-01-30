@@ -1,3 +1,0 @@
-feature:repo-add cxf 3.3.1
-
-feature:install deployer/4.2.3 aries-blueprint/4.2.3 cxf-core/3.3.1 openjpa3/3.0.0

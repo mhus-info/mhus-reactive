@@ -38,7 +38,7 @@ public class _S1UserForm02 extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"de.mhus.cherry.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"6.3.1-SNAPSHOT");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"7.1.0-SNAPSHOT");
   public static final Identifier _ACTION_HANDLER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"ActionHandler");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm02.class,"createIndexValues");

@@ -1,16 +1,14 @@
 /**
  * Copyright 2018 Mike Hummel
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * <p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
+ * <p>Unless required by applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package de.mhus.cherry.reactive.model.engine;
@@ -24,40 +22,40 @@ import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
 
 public interface EProcess {
 
-	/**
-	 * Return the simple name of the process.
-	 * 
-	 * @return Simple name
-	 */
-	String getName();
+    /**
+     * Return the simple name of the process.
+     *
+     * @return Simple name
+     */
+    String getName();
 
-	String getVersion();
+    String getVersion();
 
-	List<Class<? extends AElement<?>>> getElements();
+    List<Class<? extends AElement<?>>> getElements();
 
-	EPool getPool(String name);
+    EPool getPool(String name);
 
-	EElement getElement(String name);
+    EElement getElement(String name);
 
-	Set<String> getPoolNames();
+    Set<String> getPoolNames();
 
-	Set<String> getElementNames();
-	
-	ProcessDescription getProcessDescription();
+    Set<String> getElementNames();
 
-	/**
-	 * Return processName : processVersion
-	 * @return The unique name processName : processVersion
-	 */
-	String getProcessName();
+    ProcessDescription getProcessDescription();
 
-	Class<? extends AProcess> getProcessClass();
+    /**
+     * Return processName : processVersion
+     *
+     * @return The unique name processName : processVersion
+     */
+    String getProcessName();
 
-	/**
-	 * Return the canonical name of the process class only.
-	 * 
-	 * @return canonical class name
-	 */
-	String getCanonicalName();
+    Class<? extends AProcess> getProcessClass();
 
+    /**
+     * Return the canonical name of the process class only.
+     *
+     * @return canonical class name
+     */
+    String getCanonicalName();
 }
