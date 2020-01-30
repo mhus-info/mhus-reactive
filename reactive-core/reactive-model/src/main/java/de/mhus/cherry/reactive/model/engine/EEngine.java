@@ -43,9 +43,9 @@ public interface EEngine {
 
     PCase getCaseWithoutLock(UUID caseId) throws NotFoundException, IOException;
 
-    boolean aquireEngineLock(String resource, ProcessContext<?> context);
+    boolean enterRestrictedArea(String resource, ProcessContext<?> context);
 
-    void releaseEngineLock(String resource, ProcessContext<?> context);
+    void leaveRestrictedArea(String resource, ProcessContext<?> context);
     
     // PEngine getEnginePersistence();
 

@@ -42,5 +42,5 @@ public class EngineConst {
 
     public static final String OPTION_UUID = "uuid";
     public static final String OPTION_CLOSE_ACTIVITY = "closeActivity";
-    public static final String LOCK_PREFIX = "lock:";
+    public static final String AREA_PREFIX = "area:";
 }

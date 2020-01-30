@@ -29,9 +29,9 @@ public class PEngine implements Externalizable {
     protected Map<String, String> parameters;
     private StorageProvider storage;
 
-    public PEngine() {
-        parameters = new HashMap<>();
-    }
+//    public PEngine() {
+//        parameters = new HashMap<>();
+//    }
     
     public PEngine(StorageProvider storage) throws IOException {
         this.storage = storage;

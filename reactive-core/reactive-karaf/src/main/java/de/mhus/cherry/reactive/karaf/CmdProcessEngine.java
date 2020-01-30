@@ -22,6 +22,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.engine.Engine.EngineCaseLock;
+import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PEngine;
@@ -66,9 +67,11 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
                             + " execute <uri>           - executes the uri, e.g. bpm://process/pool to start a case\n"
                             + " health\n"
-                            + " locks\n"
-                            + " lock <case id>\n"
-                            + " unlock <case uuid>\n"
+                            + " locks                   - Print case locks (cluster lock)\n"
+                            + " lock <case id>          - Get lock information\n"
+                            + " unlock <case uuid>      - Unlock a case lock\n"
+                            + " areas                   - Print restricted areas\n"
+                            + " area.release <name>     - Release a restricted area\n"
                             + "",
             multiValued = false)
     String cmd;
@@ -86,6 +89,21 @@ public class CmdProcessEngine extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
+        if (cmd.equals("area.release")) {
+            api.getEnginePersistence().set(EngineConst.AREA_PREFIX + parameters[0], null);
+            System.out.println("OK");
+        } else
+        if (cmd.equals("areas")) {
+            ConsoleTable table = new ConsoleTable(tblOpt);
+            table.setHeaderValues("Area","LockId","State");
+            for (Entry<String, String> entry : api.getEnginePersistence().getParameters().entrySet()) {
+                if (entry.getKey().startsWith(EngineConst.AREA_PREFIX)) {
+                    PNodeInfo runtime = api.getEngine().getFlowNodeInfo(UUID.fromString(entry.getValue()));
+                    table.addRowValues(entry.getKey().substring(EngineConst.AREA_PREFIX.length()), entry.getValue(), runtime.getState());
+                }
+            }
+            table.print();
+        } else
         if (cmd.equals("lock")) {
             UUID id = UUID.fromString(parameters[0]);
             for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {

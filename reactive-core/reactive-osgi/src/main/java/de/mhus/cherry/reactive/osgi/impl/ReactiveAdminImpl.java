@@ -361,6 +361,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                         return;
                                     } catch (Throwable t) {
                                         log().i("Can't start engine", t.toString());
+                                        log().d(t);
                                     }
                                     MThread.sleep(10000);
                                 }
@@ -577,7 +578,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             if (storageDsName.value().equals("*")) {
                 log().w("Engine: Using memory storage");
                 config.storage = new MemoryStorage();
-                PEngine e = new PEngine();
+                PEngine e = new PEngine(config.storage);
                 IConfig cfg = MApi.getCfg(ReactiveAdmin.class);
                 if (cfg != null) {
                     IConfig cfgEngine = cfg.getNode("engine");

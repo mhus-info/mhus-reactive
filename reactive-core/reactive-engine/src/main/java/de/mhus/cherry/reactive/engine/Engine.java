@@ -106,22 +106,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     private long statisticCaseClosed;
     private long statisticRounds;
 
-    public Engine(EngineConfiguration config) {
+    public Engine(EngineConfiguration config) throws IOException {
         this.config = config;
         fireEvent = EngineListenerUtil.createEngineEventProcessor(config);
         storage = config.storage;
         archive = config.archive;
         processProvider = config.processProvider;
 
-        try {
-            config.persistent = new PEngine(storage);
-        } catch (IOException e) {
-            log().w(e.toString());
-        }
-        if (config.persistent == null) {
-            log().i("Initial new engine persistence");
-            config.persistent = new PEngine();
-        }
+        config.persistent = new PEngine(storage);
         if (config.parameters != null) {
             config.persistent.getParameters().putAll(config.parameters);
             try {
@@ -247,7 +239,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
             while (threads.size() > 0) {
                 threads.removeIf(e -> e.isFinished());
-                MThread.sleep(200);
+            //    MThread.sleep(200);
             }
 
             // sleep
@@ -534,7 +526,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     if (uriParams != null && uriParams.length > 0) {
                         MProperties options = MProperties.explodeToMProperties(uriParams);
                         if (options.getBoolean(EngineConst.PARAM_PROGRESS, false)) {
-                            long waitTime = 300;
+                            long waitTime = 200;
                             long start = System.currentTimeMillis();
                             while (true) {
                                 PCaseInfo caze = getCaseInfo(id);
@@ -1594,6 +1586,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     try {
                         PCase caze = lock.getCase();
                         EngineContext context = createContext(lock, caze, node);
+                        PNode runtime = getRuntimeForPNode(context, node);
+                        context.setPRuntime(runtime);
                         if (caze instanceof ContextRecipient)
                             ((ContextRecipient) caze).setContext(context);
                         AActivity<?> aNode = context.getANode();
@@ -2270,7 +2264,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             }
             
             // cleanup locks
-            releaseEngineLock(null, pNode);
+            leaveRestrictedArea(null, pNode);
         }
 
         @Override
@@ -2741,15 +2735,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     }
 
     @Override
-    public boolean aquireEngineLock(String resource, ProcessContext<?> context) {
+    public boolean enterRestrictedArea(String resource, ProcessContext<?> context) {
         
         String runtimeId = context.getPRuntime().getId().toString();
         
         lockProvider.acquireEngineMaster();
         try {
-            String lock = config.persistent.get(EngineConst.LOCK_PREFIX + resource);
+            String lock = config.persistent.get(EngineConst.AREA_PREFIX + resource);
             if (lock == null) {
-                config.persistent.set(EngineConst.LOCK_PREFIX + resource, runtimeId);
+                config.persistent.set(EngineConst.AREA_PREFIX + resource, runtimeId);
                 return true;
             } else
                 return false;
@@ -2762,31 +2756,32 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     }
 
     @Override
-    public void releaseEngineLock(String resource, ProcessContext<?> context) {
-        releaseEngineLock(resource, context == null ? null : context.getPRuntime());
+    public void leaveRestrictedArea(String resource, ProcessContext<?> context) {
+        leaveRestrictedArea(resource, context == null ? null : context.getPRuntime());
     }
     
-    public void releaseEngineLock(String resource, PNode runtime) {
+    public void leaveRestrictedArea(String resource, PNode runtime) {
         
-        lockProvider.acquireEngineMaster();
+        // lockProvider.acquireEngineMaster(); // this will cause a dead lock - it's no deed to lock in this moment
         try {
             if (MString.isEmpty(resource)) {
                 String runtimeId = runtime.getId().toString();
                 for (String lock : findLocksForRuntime(runtimeId)) {
-                    config.persistent.set("lock:" + lock, null);
-                    fireMessage(null, EngineConst.LOCK_PREFIX + lock, null);
+                    config.persistent.set(EngineConst.AREA_PREFIX + lock, null);
+                    try {
+                        fireMessage(null, EngineConst.AREA_PREFIX + lock, null);
+                    } catch (NotFoundException e) {}
                 }
             } else {
-                config.persistent.set(EngineConst.LOCK_PREFIX + resource, null);
-                fireMessage(null, EngineConst.LOCK_PREFIX + resource, null);
+                config.persistent.set(EngineConst.AREA_PREFIX + resource, null);
+                try {
+                    fireMessage(null, EngineConst.AREA_PREFIX + resource, null);
+                } catch (NotFoundException e) {}
             }
         } catch (Throwable t) {
-            // TODO
-            t.printStackTrace();
-//            if (context != null)
-//                fireEvent.error(context.getCase, t);
+            log().e(t);
         } finally {
-            lockProvider.releaseEngineMaster();
+            // lockProvider.releaseEngineMaster();
         }
     }
 
@@ -2794,8 +2789,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         LinkedList<String> out = new LinkedList<>();
         config.persistent.reload();
         for (Entry<String, String> entry : config.persistent.getParameters().entrySet())
-            if (entry.getKey().startsWith("lock:") && entry.getValue().equals(runtimeId))
-                out.add(entry.getKey().substring(5));
+            if (entry.getKey().startsWith(EngineConst.AREA_PREFIX) && entry.getValue().equals(runtimeId))
+                out.add(entry.getKey().substring(EngineConst.AREA_PREFIX.length()));
         return out;
     }
 }

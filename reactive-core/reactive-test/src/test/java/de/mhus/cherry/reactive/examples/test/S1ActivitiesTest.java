@@ -61,13 +61,13 @@ public class S1ActivitiesTest {
 
         createEngine();
 
-        try { // lock
+        try { // area lock
             EngineMockUp mockup =
-                    new EngineMockUp(config.storage, engine, new File("mockup/s1_lock.xml"));
+                    new EngineMockUp(config.storage, engine, new File("mockup/s1_area.xml"));
             mockup.setWarn(false);
             mockup.setVerbose(false);
             String uri =
-                    "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=lock";
+                    "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=area";
             System.out.println("URI: " + uri);
             System.out.println(
                     "------------------------------------------------------------------------");
@@ -796,7 +796,7 @@ public class S1ActivitiesTest {
         archiveEngine(engine, config);
     }
 
-    private void createEngine() throws MException {
+    private void createEngine() throws MException, IOException {
 
         console = Console.get();
         console.setBold(true);

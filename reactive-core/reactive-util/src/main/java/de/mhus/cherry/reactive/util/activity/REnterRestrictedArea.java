@@ -10,7 +10,7 @@ import de.mhus.cherry.reactive.model.util.ValidateParametersBeforeExecute;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.errors.ValidationException;
 
-public class RAquireLock<P extends RPool<?>> extends REvent<P> implements ValidateParametersBeforeExecute {
+public class REnterRestrictedArea<P extends RPool<?>> extends REvent<P> implements ValidateParametersBeforeExecute {
 
     
     @Override
@@ -18,12 +18,12 @@ public class RAquireLock<P extends RPool<?>> extends REvent<P> implements Valida
         
         String resource = getResourceName();
         
-        if (getContext().getEEngine().aquireEngineLock(resource, getContext())) {
+        if (getContext().getEEngine().enterRestrictedArea(resource, getContext())) {
             getContext().getPNode().setState(STATE_NODE.RUNNING);
         } else {
             getContext().getPNode().setState(STATE_NODE.WAITING);
             getContext().getPNode().setType(TYPE_NODE.MESSAGE);
-            getContext().getPNode().setMessageEvent(EngineConst.LOCK_PREFIX + resource);
+            getContext().getPNode().setMessageEvent(EngineConst.AREA_PREFIX + resource);
         }
     }
     
@@ -39,7 +39,7 @@ public class RAquireLock<P extends RPool<?>> extends REvent<P> implements Valida
     @Override
     public void validateParameters(Map<String, Object> parameters) throws ValidationException {
         String resource = getResourceName();
-        if (!getContext().getEEngine().aquireEngineLock(resource, getContext())) {
+        if (!getContext().getEEngine().enterRestrictedArea(resource, getContext())) {
             throw new ValidationException("can't aquire lock",resource);
         }
     }
