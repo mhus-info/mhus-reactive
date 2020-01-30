@@ -14,8 +14,6 @@
 package de.mhus.cherry.reactive.vaadin.core;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import com.vaadin.shared.ui.MarginInfo;
@@ -32,7 +30,6 @@ import com.vaadin.v7.ui.VerticalLayout;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
@@ -43,7 +40,6 @@ import de.mhus.cherry.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeList;
-import de.mhus.cherry.reactive.vaadin.widgets.VRuntimeDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VUserForm;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
@@ -274,523 +270,239 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         tree.expandItemsRecursively(I_DEFAULT);
         menu.addComponent(tree);
         menu.setExpandRatio(tree, 1);
-        
-		return menu;
-	}
 
-	private Component getNodeListView(SearchCriterias criterias, String[] properties) {
-		initEngine();
-		if (engine == null) return null;
-		
+        return menu;
+    }
 
-		VNodeList list = new VNodeList() {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void doOpenUserForm(NodeItem node) {
-				try {
-					showUserForm(node);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			@Override
-			protected void doDetails(NodeItem node) {
-				try {
-					showNodeDetails(node);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			@Override
-		    protected void doRuntime(NodeItem target) {
-                try {
-                    EngineMessage[] runtime = engine.getNodeRuntimeMessage(target.getId().toString());
-                    LinkedList<EngineMessage[]> list = new LinkedList<>();
-                    list.add(runtime);
-                    showRuntime(list);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-		    }
-			
-
-		};
-		list.configure(engine, criterias, properties);
-
-		VerticalLayout l = new VerticalLayout();
-		SearchField searchText = new SearchField(null);
-		searchText.addKnownFacetName("search");
-		for (String id : list.getColumnHeaders())
-			searchText.addKnownFacetName(id);
-		searchText.setWidth("100%");
-		searchText.setListener(new SearchField.Listener() {
-
-			@Override
-			public void doFilter(SearchField searchField) {
-				SearchCriterias c = criterias;
-				IProperties s = searchField.createFilterRequest().toProperties();
-				c.parse(s);
-				// System.out.println("Search: " + c);
-				list.setSearchCriterias(c);
-			}
-			
-		});
-
-		l.addComponent(searchText);
-		l.setExpandRatio(searchText, 0);
-				
-		l.addComponent(list);
-		l.setExpandRatio(list, 1);
-		
-        addComponent(l);
-        setExpandRatio(l, 1);
-        
-        l.setSizeFull();
-        return l;
-	}
-
-	protected void showNodeDetails(NodeItem item) {
-		VNodeDetails panel = new VNodeDetails() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onCancel() {
-				System.out.println("Cancel");
-				showNodeList();
-			}
-		};
-		
-		panel.configure(engine, item);
-		
-		setContent(panel);
-	}
-
-	protected void showCaseDetails(CaseItem item) {
-		VCaseDetails panel = new VCaseDetails() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void onCancel() {
-				System.out.println("Cancel");
-				showNodeList();
-			}
-		};
-		
-		panel.configure(engine, item);
-		
-		setContent(panel);
-	}
-
-	private Component getCaseListView(SearchCriterias criterias, String[] properties) {
-		initEngine();
-		if (engine == null) return null;
-		VCaseList list = new VCaseList() {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			protected void doDetails(CaseItem caze) {
-				showCaseDetails(caze);
-			}
-			
-            @Override
-            protected void doRuntime(CaseItem caze) {
-                try {
-                    List<EngineMessage[]> runtime = engine.getCaseRuntimeMessages(caze.getId().toString());
-                    showRuntime(runtime);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            
-		};
-		
-		VerticalLayout l = new VerticalLayout();
-		SearchField searchText = new SearchField(null);
-		searchText.addKnownFacetName("search");
-		for (String id : list.getColumnHeaders())
-				searchText.addKnownFacetName(id);
-		searchText.setWidth("100%");
-		searchText.setListener(new SearchField.Listener() {
-
-			@Override
-			public void doFilter(SearchField searchField) {
-				SearchCriterias c = criterias;
-				IProperties s = searchField.createFilterRequest().toProperties();
-				c.parse(s);
-				// System.out.println("Search: " + c);
-				list.setSearchCriterias(c);
-			}
-			
-		});
-		
-		l.addComponent(searchText);
-		l.setExpandRatio(searchText, 0);
-				
-		l.addComponent(list);
-		l.setExpandRatio(list, 1);
-		
-		list.configure(engine, criterias, properties);
-        addComponent(l);
-        setExpandRatio(l, 1);
-        
-        l.setSizeFull();
-        return l;
-	}
-	
-	private void initEngine() {
-		AccessApi aaa = M.l(AccessApi.class);
-		AaaContext context = aaa.getCurrent();
-		if (context == null) return;
-		engine = M.l(IEngineFactory.class)
-				.create(
-						context.getAccountId(), 
-						context.getLocale());
-	}
-
-    protected void showRuntime(List<EngineMessage[]> runtime) throws Exception {
-
+    private Component getNodeListView(SearchCriterias criterias, String[] properties) {
         initEngine();
-        if (engine == null) return;
-        VRuntimeDetails list = new VRuntimeDetails() {
-            private static final long serialVersionUID = 1L;
+        if (engine == null) return null;
 
-        };
-        
+        VNodeList list =
+                new VNodeList() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void doOpenUserForm(NodeItem node) {
+                        try {
+                            showUserForm(node);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected void doDetails(NodeItem node) {
+                        try {
+                            showNodeDetails(node);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                };
+        list.configure(engine, criterias, properties);
+
         VerticalLayout l = new VerticalLayout();
-        
+        SearchField searchText = new SearchField(null);
+        searchText.addKnownFacetName("search");
+        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
+        searchText.setWidth("100%");
+        searchText.setListener(
+                new SearchField.Listener() {
+
+                    @Override
+                    public void doFilter(SearchField searchField) {
+                        SearchCriterias c = criterias;
+                        IProperties s = searchField.createFilterRequest().toProperties();
+                        c.parse(s);
+                        // System.out.println("Search: " + c);
+                        list.setSearchCriterias(c);
+                    }
+                });
+
+        l.addComponent(searchText);
+        l.setExpandRatio(searchText, 0);
+
         l.addComponent(list);
         l.setExpandRatio(list, 1);
-        
-        list.configure(engine, runtime);
+
         addComponent(l);
         setExpandRatio(l, 1);
-        
+
         l.setSizeFull();
-        
-        setContent(l);
+        return l;
     }
-    
-	protected void showUserForm(NodeItem item) throws Exception {
 
-		INode node = engine.getNode(item.getId().toString());
+    protected void showNodeDetails(NodeItem item) {
+        VNodeDetails panel =
+                new VNodeDetails() {
+                    private static final long serialVersionUID = 1L;
 
-		VUserForm form = new VUserForm(engine,node) {
-			private static final long serialVersionUID = 1L;
-			@Override
-			protected void onFormCancel() {
-				System.out.println("Cancel");
-				showNodeList();
-			}
-			@Override
-			protected void onFormSubmit(INode node, MProperties properties) {
-				System.out.println("Submit");
-				try {
-					engine.submitUserTask(node.getId().toString(), properties);
-					showNodeList();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-			@Override
-			protected MProperties onAction(INode node, MProperties properties, String action) {
-				System.out.println("Action");
-				try {
-					MProperties res = engine.onUserTaskAction(node.getId().toString(),properties, action);
-					return res;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			}
+                    @Override
+                    protected void onCancel() {
+                        System.out.println("Cancel");
+                        showNodeList();
+                    }
+                };
 
-		};
-		
-		setContent(form);
-	}
+        panel.configure(engine, item);
 
-	public void showNodeList() {
-		if (currentSelection != null)
-			navigateTo(currentSelection, currentFilter);
-		else
-			setContent(new Label(""));
-	}
+        setContent(panel);
+    }
 
-	@Override
-	public void doDestroy() {
-		contentCache = null;
-		page.detach();
-		page = null;
-	}
+    protected void showCaseDetails(CaseItem item) {
+        VCaseDetails panel =
+                new VCaseDetails() {
+                    private static final long serialVersionUID = 1L;
 
-	public void createMenu(MenuItem[] menu) {
-		menu[0].setEnabled(true);
-		menu[0].setText("Engine");
-		menu[0].setVisible(true);
-		
-		menu[0].addItem("Execute ...", new MenuBar.Command() {
-			private static final long serialVersionUID = 1L;
+                    @Override
+                    protected void onCancel() {
+                        System.out.println("Cancel");
+                        showNodeList();
+                    }
+                };
 
-			@Override
-			public void menuSelected(MenuItem selectedItem) {
-				doExecute(null);
-			}
-			
-		});
-		
-	}
+        panel.configure(engine, item);
 
-	protected void doExecute(String uri) {
-		ExecuteProcessForm form = new ExecuteProcessForm(this,uri);
-		setContent(form);
-	}
+        setContent(panel);
+    }
 
-	public IEngine getEngine() {
-		if (engine == null)
-			initEngine();
-		return engine;
-	}
-	
+    private Component getCaseListView(SearchCriterias criterias, String[] properties) {
+        initEngine();
+        if (engine == null) return null;
+        VCaseList list =
+                new VCaseList() {
+                    private static final long serialVersionUID = 1L;
 
-//        return menu;
-//    }
+                    @Override
+                    protected void doDetails(CaseItem caze) {
+                        showCaseDetails(caze);
+                    }
+                };
 
-//    private Component getNodeListView(SearchCriterias criterias, String[] properties) {
-//        initEngine();
-//        if (engine == null) return null;
-//
-//        VNodeList list =
-//                new VNodeList() {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    protected void doOpenUserForm(NodeItem node) {
-//                        try {
-//                            showUserForm(node);
-//                        } catch (Exception e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    protected void doDetails(NodeItem node) {
-//                        try {
-//                            showNodeDetails(node);
-//                        } catch (Exception e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                };
-//        list.configure(engine, criterias, properties);
-//
-//        VerticalLayout l = new VerticalLayout();
-//        SearchField searchText = new SearchField(null);
-//        searchText.addKnownFacetName("search");
-//        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
-//        searchText.setWidth("100%");
-//        searchText.setListener(
-//                new SearchField.Listener() {
-//
-//                    @Override
-//                    public void doFilter(SearchField searchField) {
-//                        SearchCriterias c = criterias;
-//                        IProperties s = searchField.createFilterRequest().toProperties();
-//                        c.parse(s);
-//                        // System.out.println("Search: " + c);
-//                        list.setSearchCriterias(c);
-//                    }
-//                });
-//
-//        l.addComponent(searchText);
-//        l.setExpandRatio(searchText, 0);
-//
-//        l.addComponent(list);
-//        l.setExpandRatio(list, 1);
-//
-//        addComponent(l);
-//        setExpandRatio(l, 1);
-//
-//        l.setSizeFull();
-//        return l;
-//    }
-//
-//    protected void showNodeDetails(NodeItem item) {
-//        VNodeDetails panel =
-//                new VNodeDetails() {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    protected void onCancel() {
-//                        System.out.println("Cancel");
-//                        showNodeList();
-//                    }
-//                };
-//
-//        panel.configure(engine, item);
-//
-//        setContent(panel);
-//    }
-//
-//    protected void showCaseDetails(CaseItem item) {
-//        VCaseDetails panel =
-//                new VCaseDetails() {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    protected void onCancel() {
-//                        System.out.println("Cancel");
-//                        showNodeList();
-//                    }
-//                };
-//
-//        panel.configure(engine, item);
-//
-//        setContent(panel);
-//    }
-//
-//    private Component getCaseListView(SearchCriterias criterias, String[] properties) {
-//        initEngine();
-//        if (engine == null) return null;
-//        VCaseList list =
-//                new VCaseList() {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    protected void doDetails(CaseItem caze) {
-//                        showCaseDetails(caze);
-//                    }
-//                };
-//
-//        VerticalLayout l = new VerticalLayout();
-//        SearchField searchText = new SearchField(null);
-//        searchText.addKnownFacetName("search");
-//        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
-//        searchText.setWidth("100%");
-//        searchText.setListener(
-//                new SearchField.Listener() {
-//
-//                    @Override
-//                    public void doFilter(SearchField searchField) {
-//                        SearchCriterias c = criterias;
-//                        IProperties s = searchField.createFilterRequest().toProperties();
-//                        c.parse(s);
-//                        // System.out.println("Search: " + c);
-//                        list.setSearchCriterias(c);
-//                    }
-//                });
-//
-//        l.addComponent(searchText);
-//        l.setExpandRatio(searchText, 0);
-//
-//        l.addComponent(list);
-//        l.setExpandRatio(list, 1);
-//
-//        list.configure(engine, criterias, properties);
-//        addComponent(l);
-//        setExpandRatio(l, 1);
-//
-//        l.setSizeFull();
-//        return l;
-//    }
-//
-//    private void initEngine() {
-//        AccessApi aaa = M.l(AccessApi.class);
-//        AaaContext context = aaa.getCurrent();
-//        if (context == null) return;
-//        engine = M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
-//    }
-//
-//    protected void showUserForm(NodeItem item) throws Exception {
-//
-//        INode node = engine.getNode(item.getId().toString());
-//
-//        VUserForm form =
-//                new VUserForm(engine, node) {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    protected void onFormCancel() {
-//                        System.out.println("Cancel");
-//                        showNodeList();
-//                    }
-//
-//                    @Override
-//                    protected void onFormSubmit(INode node, MProperties properties) {
-//                        System.out.println("Submit");
-//                        try {
-//                            engine.submitUserTask(node.getId().toString(), properties);
-//                            showNodeList();
-//                        } catch (Exception e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//                    }
-//
-//                    @Override
-//                    protected MProperties onAction(
-//                            INode node, MProperties properties, String action) {
-//                        System.out.println("Action");
-//                        try {
-//                            MProperties res =
-//                                    engine.onUserTaskAction(
-//                                            node.getId().toString(), properties, action);
-//                            return res;
-//                        } catch (Exception e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                        }
-//                        return null;
-//                    }
-//                };
-//
-//        setContent(form);
-//    }
-//
-//    public void showNodeList() {
-//        if (currentSelection != null) navigateTo(currentSelection, currentFilter);
-//        else setContent(new Label(""));
-//    }
-//
-//    @Override
-//    public void doDestroy() {
-//        contentCache = null;
-//        page.detach();
-//        page = null;
-//    }
-//
-//    public void createMenu(MenuItem[] menu) {
-//        menu[0].setEnabled(true);
-//        menu[0].setText("Engine");
-//        menu[0].setVisible(true);
-//
-//        menu[0].addItem(
-//                "Execute ...",
-//                new MenuBar.Command() {
-//                    private static final long serialVersionUID = 1L;
-//
-//                    @Override
-//                    public void menuSelected(MenuItem selectedItem) {
-//                        doExecute(null);
-//                    }
-//                });
-//    }
-//
-//    protected void doExecute(String uri) {
-//        ExecuteProcessForm form = new ExecuteProcessForm(this, uri);
-//        setContent(form);
-//    }
-//
-//    public IEngine getEngine() {
-//        if (engine == null) initEngine();
-//        return engine;
-//    }
+        VerticalLayout l = new VerticalLayout();
+        SearchField searchText = new SearchField(null);
+        searchText.addKnownFacetName("search");
+        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
+        searchText.setWidth("100%");
+        searchText.setListener(
+                new SearchField.Listener() {
+
+                    @Override
+                    public void doFilter(SearchField searchField) {
+                        SearchCriterias c = criterias;
+                        IProperties s = searchField.createFilterRequest().toProperties();
+                        c.parse(s);
+                        // System.out.println("Search: " + c);
+                        list.setSearchCriterias(c);
+                    }
+                });
+
+        l.addComponent(searchText);
+        l.setExpandRatio(searchText, 0);
+
+        l.addComponent(list);
+        l.setExpandRatio(list, 1);
+
+        list.configure(engine, criterias, properties);
+        addComponent(l);
+        setExpandRatio(l, 1);
+
+        l.setSizeFull();
+        return l;
+    }
+
+    private void initEngine() {
+        AccessApi aaa = M.l(AccessApi.class);
+        AaaContext context = aaa.getCurrent();
+        if (context == null) return;
+        engine = M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+    }
+
+    protected void showUserForm(NodeItem item) throws Exception {
+
+        INode node = engine.getNode(item.getId().toString());
+
+        VUserForm form =
+                new VUserForm(engine, node) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void onFormCancel() {
+                        System.out.println("Cancel");
+                        showNodeList();
+                    }
+
+                    @Override
+                    protected void onFormSubmit(INode node, MProperties properties) {
+                        System.out.println("Submit");
+                        try {
+                            engine.submitUserTask(node.getId().toString(), properties);
+                            showNodeList();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    protected MProperties onAction(
+                            INode node, MProperties properties, String action) {
+                        System.out.println("Action");
+                        try {
+                            MProperties res =
+                                    engine.onUserTaskAction(
+                                            node.getId().toString(), properties, action);
+                            return res;
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                };
+
+        setContent(form);
+    }
+
+    public void showNodeList() {
+        if (currentSelection != null) navigateTo(currentSelection, currentFilter);
+        else setContent(new Label(""));
+    }
+
+    @Override
+    public void doDestroy() {
+        contentCache = null;
+        page.detach();
+        page = null;
+    }
+
+    public void createMenu(MenuItem[] menu) {
+        menu[0].setEnabled(true);
+        menu[0].setText("Engine");
+        menu[0].setVisible(true);
+
+        menu[0].addItem(
+                "Execute ...",
+                new MenuBar.Command() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void menuSelected(MenuItem selectedItem) {
+                        doExecute(null);
+                    }
+                });
+    }
+
+    protected void doExecute(String uri) {
+        ExecuteProcessForm form = new ExecuteProcessForm(this, uri);
+        setContent(form);
+    }
+
+    public IEngine getEngine() {
+        if (engine == null) initEngine();
+        return engine;
+    }
 }
