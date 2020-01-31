@@ -60,7 +60,7 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " save                    - save engine configuration\n"
                             + " load                    - load engine configuration\n"
                             + " status                  - print current engine status\n"
-                            + " statistic               - print statistic informtion\n"
+                            + " statistics              - print statistic informtion\n"
                             + " suspend                 - suspent automatic engine steps\n"
                             + " resume                  - resume automatic engine steps\n"
                             + " start                   - start engine\n"
@@ -90,11 +90,11 @@ public class CmdProcessEngine extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
-        if (cmd.equals("statistic")) {
+        if (cmd.equals("statistics")) {
             System.out.println("Started     : " + api.getStartDate());
             System.out.println("Status      : " + api.getEngineStatus());
             System.out.println("Rounds      : " + api.getEngine().getStatisticRounds());
-            System.out.println("Case Closed :" + api.getEngine().getStatisticCaseClosed());
+            System.out.println("Case Closed : " + api.getEngine().getStatisticCaseClosed());
             System.out.println("Case Started: " + api.getEngine().getStatisticCaseStarted());
         } else
         if (cmd.equals("area.release")) {
