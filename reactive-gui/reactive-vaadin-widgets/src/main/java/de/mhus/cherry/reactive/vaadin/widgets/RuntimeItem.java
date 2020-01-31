@@ -1,12 +1,12 @@
 package de.mhus.cherry.reactive.vaadin.widgets;
 
-import java.util.Date;
 import java.util.UUID;
 
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.EngineMessage.TYPE;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.annotations.vaadin.Column;
+import de.mhus.lib.core.lang.DateTime;
 
 public class RuntimeItem {
 
@@ -22,9 +22,9 @@ public class RuntimeItem {
     }
 
     @Column(order=1,title="Date")
-    public Date getDate() {
+    public DateTime getDate() {
         if (item == null) return null;
-        return new Date(item.getTimestamp());
+        return new DateTime(item.getTimestamp());
     }
     
     @Column(order=2,title="Type")
