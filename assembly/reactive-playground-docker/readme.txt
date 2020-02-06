@@ -36,6 +36,17 @@ docker run -it --name reactive-playground \
 
 docker rm reactive-playground
 
+With filebeat:
+
+docker run -it --name reactive-playground \
+ -h reactive \
+ -e "START_FILEBEAT=1" \
+ -v ~/.m2:/home/user/.m2 \
+ --link log-logstash:logstash \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ mhus/reactive-playground:7.0.0-SNAPSHOT debug
+
 ---
 
 Execute sample prrocess:
@@ -81,8 +92,6 @@ docker run -it --name reactive-playground \
  -v ~/.m2:/home/user/.m2 \
  -e CONFIG_PROFILE=single \
  -e ENV_DB_BPM_PASS=nein \
- -e ENV_JMS_SOP_USER=admin \
- -e ENV_JMS_SOP_PASS=nein \
  --oom-kill-disable \
  mhus/reactive-playground:7.0.0-SNAPSHOT debug
 
