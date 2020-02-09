@@ -198,6 +198,28 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             log().e(e);
         }
         
+        synchronized (availableProcesses) {
+            for (Entry<String, ProcessInfo> process : availableProcesses.entrySet()) {
+                boolean isDeployed = process.getValue().deployedName != null;
+                boolean shouldDeployed = isProcessActivated(process.getKey());
+                if (isDeployed == shouldDeployed) continue;
+                
+                if (shouldDeployed)
+                    try {
+                        deploy(process.getKey(), false, true);
+                    } catch (MException e) {
+                        log().e(process.getKey(), e);
+                    }
+                else
+                    try {
+                        undeploy(process.getKey());
+                    } catch (MException e) {
+                        log().e(process.getKey(), e);
+                    }
+            }
+        }
+        
+        
     }
     
     @Override
