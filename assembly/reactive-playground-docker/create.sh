@@ -8,9 +8,9 @@ if [  ! -f Dockerfile ]; then
   return 1
 fi
 
-docker rmi $REPOSITORY:$VERSION
 
 if [ "$1" = "clean" ]; then
+    docker rmi $REPOSITORY:$VERSION
     docker build --no-cache -t $REPOSITORY:$VERSION .
 else
     docker build -t $REPOSITORY:$VERSION .
