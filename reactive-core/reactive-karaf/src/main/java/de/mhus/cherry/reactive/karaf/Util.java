@@ -33,7 +33,7 @@ public class Util {
 
         HashMap<UUID, String> cacheActivityNames = new HashMap<>();
         ConsoleTable table = new ConsoleTable(tblOpt);
-        table.setHeaderValues("Time", "Type", "From", "To", "Msg");
+        table.setHeaderValues("Time", "Type", "From", "To", "Msg","Node");
         table.getColumn(0).weight = 0;
         table.getColumn(1).weight = 0;
         table.getColumn(2).weight = 0;
@@ -64,7 +64,9 @@ public class Util {
                     msg.getType(),
                     fromMsg,
                     toMsg,
-                    msg.getMessage().replace(',', '\n'));
+                    msg.getMessage().replace(',', '\n'),
+                    msg.getServerIdent()
+                    );
         }
         table.print(System.out);
     }
