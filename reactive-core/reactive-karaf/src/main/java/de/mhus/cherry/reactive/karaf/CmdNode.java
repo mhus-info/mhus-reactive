@@ -71,11 +71,12 @@ public class CmdNode extends AbstractCmd {
                             + " runtime <id>             - print runtime for this node\n"
                             + " assign <id> <user>       - assign a user task to a user\n"
                             + " unassign <id>            - unassign a user task\n"
+                            + " skip <id> [next step]    - skip a node and start the next one\n"
                             + "Experimental:\n"
                             + " erase <uuid>\n"
                             + " submit <id> [key=value]* - submit a user form\n"
                             + " resave <id>              - load and save node again\n"
-                            + " skip <id> [next step]    - skip a node and start the next one\n",
+                            ,
             multiValued = false)
     String cmd;
 
