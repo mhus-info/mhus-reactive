@@ -16,7 +16,7 @@ package de.mhus.cherry.reactive.examples.simple1;
 import java.io.File;
 
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.ProcessTrace;
 import de.mhus.cherry.reactive.model.engine.EPool;
@@ -29,7 +29,7 @@ public class S1EngineTest {
 
         DefaultProcessLoader loader =
                 new DefaultProcessLoader(new File[] {new File("target/classes")});
-        DefaultProcessProvider provider = new DefaultProcessProvider();
+        JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
         provider.addProcess(loader);
 
         for (String processName : provider.getProcessNames()) {

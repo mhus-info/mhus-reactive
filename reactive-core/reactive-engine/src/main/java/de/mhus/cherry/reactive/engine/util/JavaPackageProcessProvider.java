@@ -53,7 +53,7 @@ import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.lib.errors.MException;
 
-public class DefaultProcessProvider extends MLog implements ProcessProvider {
+public class JavaPackageProcessProvider extends MLog implements ProcessProvider {
 
     protected HashMap<String, ProcessContainer> processes = new HashMap<>();
     protected LinkedList<String> warnings = new LinkedList<>();

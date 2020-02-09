@@ -24,7 +24,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.lib.core.util.MMaven;
 import de.mhus.lib.errors.MException;
 
@@ -33,7 +33,7 @@ public abstract class AbstractReactiveMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-    public DefaultProcessProvider createProvider()
+    public JavaPackageProcessProvider createProvider()
             throws DependencyResolutionRequiredException, MException {
 
         LinkedList<File> files = new LinkedList<>();
@@ -56,7 +56,7 @@ public abstract class AbstractReactiveMojo extends AbstractMojo {
                         files.toArray(new File[files.size()]),
                         search.toArray(new File[search.size()]),
                         null);
-        DefaultProcessProvider provider = new DefaultProcessProvider();
+        JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
         provider.addProcess(loader);
 
         return provider;

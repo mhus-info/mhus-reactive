@@ -21,7 +21,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.model.engine.EPool;
 import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.util.designer.DesignerUtil;
@@ -40,7 +40,7 @@ public class ReactiveDesignerMojo extends AbstractReactiveMojo {
             File dir = new File(target);
             if (!dir.exists()) dir.mkdirs();
 
-            DefaultProcessProvider provider = createProvider();
+            JavaPackageProcessProvider provider = createProvider();
 
             for (String processName : provider.getProcessNames()) {
                 getLog().info(">>> Process: " + processName);

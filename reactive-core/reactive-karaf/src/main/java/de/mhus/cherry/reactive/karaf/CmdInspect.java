@@ -17,7 +17,7 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.PoolValidator.Finding;
 import de.mhus.cherry.reactive.engine.util.ProcessTrace;
@@ -207,7 +207,7 @@ public class CmdInspect extends AbstractCmd {
         }
         if (process == null) {
             ProcessLoader loader = api.getProcessLoader(uri.getLocation());
-            DefaultProcessProvider provider = new DefaultProcessProvider();
+            JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
             provider.addProcess(loader);
             process = provider.getProcess(uri.getLocation());
         }

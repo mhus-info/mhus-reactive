@@ -19,7 +19,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.ProcessTrace;
 import de.mhus.cherry.reactive.model.engine.EPool;
@@ -39,7 +39,7 @@ public class ReactiveValidateMojo extends AbstractReactiveMojo {
 
         try {
 
-            DefaultProcessProvider provider = createProvider();
+            JavaPackageProcessProvider provider = createProvider();
 
             for (String processName : provider.getProcessNames()) {
                 getLog().info(">>> Process: " + processName);

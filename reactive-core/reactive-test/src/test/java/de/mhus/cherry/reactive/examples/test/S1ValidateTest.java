@@ -18,7 +18,7 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
 import de.mhus.cherry.reactive.engine.util.ProcessTrace;
 import de.mhus.cherry.reactive.model.engine.EPool;
@@ -32,7 +32,7 @@ public class S1ValidateTest {
         File f = new File("target/classes");
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
-        DefaultProcessProvider provider = new DefaultProcessProvider();
+        JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
         provider.addProcess(loader);
 
         for (String processName : provider.getProcessNames()) {

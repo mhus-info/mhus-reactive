@@ -28,7 +28,7 @@ import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.mockup.EngineMockUp;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.util.PCaseLock;
 import de.mhus.cherry.reactive.engine.util.RuntimeTrace;
@@ -810,7 +810,7 @@ public class S1ActivitiesTest {
         File f = new File("target/classes");
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
-        DefaultProcessProvider provider = new DefaultProcessProvider();
+        JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
         provider.addProcess(loader);
 
         config = new EngineConfiguration();

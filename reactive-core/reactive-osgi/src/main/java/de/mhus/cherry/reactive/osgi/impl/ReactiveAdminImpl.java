@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.sql.DataSource;
@@ -38,7 +39,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.engine.util.LogConfiguration;
 import de.mhus.cherry.reactive.engine.util.PoolValidator;
@@ -58,6 +59,7 @@ import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MApi;
+import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MApi.SCOPE;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
@@ -80,6 +82,8 @@ import de.mhus.lib.sql.Dialect;
 public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
     private static final String SUSPENDED = "suspended";
+    private static final String LAST_ENGINE_ACTIVATION_CHANGE = "lastEngineActivationChange";
+
     public static CfgLong CFG_TIME_TROTTELING =
             new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
@@ -115,6 +119,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private LogConfiguration logConfig;
     private Thread executorPrepare;
     private Date startDate;
+    private long lastEngineActivationChange;
     private static CfgString engineLogLevel =
             new CfgString(ReactiveAdmin.class, "logLevel", "DEBUG");
     private static CfgString cfgLockProvider =
@@ -175,6 +180,26 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         config.persistent.getParameters().remove("osgi.process.path:" + name);
     }
 
+    public void updateProcessActivationInformation(boolean force) {
+        // check if update is needed
+        long lastChange = 0;
+        try {
+            lastChange = MCast.tolong(getEnginePersistence().get(LAST_ENGINE_ACTIVATION_CHANGE), 0);
+        } catch (IOException e) {
+            log().e(e);
+        }
+        if (!force && lastChange == lastEngineActivationChange) return;
+        lastEngineActivationChange = lastChange;
+        
+        log().i("reload process activation");
+        try {
+            getEnginePersistence().reload();
+        } catch (IOException e) {
+            log().e(e);
+        }
+        
+    }
+    
     @Override
     public boolean addProcess(String info, ProcessLoader loader) {
         if (info == null) {
@@ -250,7 +275,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
 
         info.deployedName =
-                ((DefaultProcessProvider) config.processProvider).addProcess(info.loader);
+                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader);
         info.time = System.currentTimeMillis();
 
         EProcess process = config.processProvider.getProcess(info.deployedName);
@@ -270,7 +295,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
         if (foundError) {
             log().w("Found errors, undeploy process");
-            ((DefaultProcessProvider) config.processProvider).removeProcess(info.deployedName);
+            ((JavaPackageProcessProvider) config.processProvider).removeProcess(info.deployedName);
             return validator.getFindings();
         }
 
@@ -281,6 +306,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
         if (addVersion || activate) engine.saveEnginePersistence();
 
+        // send event to cluster
+        lastEngineActivationChange = System.currentTimeMillis();
+        try {
+            getEnginePersistence().set(LAST_ENGINE_ACTIVATION_CHANGE, String.valueOf(lastEngineActivationChange));
+        } catch (IOException e) {
+            log().e(e);
+        }
         return null;
     }
 
@@ -321,7 +353,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
         if (info == null) throw new MException("Process not found", name);
         if (info.deployedName == null) throw new MException("Process is not deployed", name);
-        ((DefaultProcessProvider) config.processProvider).removeProcess(info.deployedName);
+        ((JavaPackageProcessProvider) config.processProvider).removeProcess(info.deployedName);
         info.deployedName = null;
     }
 
@@ -373,6 +405,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     private void activate() {
+        
+        // get current engine stamp
+        try {
+            lastEngineActivationChange = MCast.tolong(getEnginePersistence().get(LAST_ENGINE_ACTIVATION_CHANGE), 0);
+        } catch (IOException e) {
+            log().e(e);
+        }
+        
         processTracker =
                 new ServiceTracker<>(
                         context,
@@ -434,6 +474,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                 log().i("Engine process executor started");
                                 while (true) {
                                     if (stopExecutor) return;
+                                    
+                                    updateProcessActivationInformation(false);
+                                    
                                     try {
                                         if (doExecuteProcess() == 0)
                                             Thread.sleep(CFG_TIME_TROTTELING.value());
@@ -444,6 +487,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                         log().e(t);
                                         MThread.sleep(CFG_TIME_DELAY.value());
                                     }
+                                    
                                 }
                             }
                         },
@@ -671,7 +715,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             // TODO default config?
 
             // process provider
-            config.processProvider = new DefaultProcessProvider();
+            config.processProvider = new JavaPackageProcessProvider();
 
             // listener
             if (engineLogLevel.value().equals("INFO"))

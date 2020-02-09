@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.engine.util.DefaultProcessLoader;
-import de.mhus.cherry.reactive.engine.util.DefaultProcessProvider;
+import de.mhus.cherry.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.cherry.reactive.engine.util.EngineListenerUtil;
 import de.mhus.cherry.reactive.examples.simple1.area.S2DoSomething;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
@@ -89,7 +89,7 @@ public class LockTest {
         File f = new File("target/classes");
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
-        DefaultProcessProvider provider = new DefaultProcessProvider();
+        JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
         provider.addProcess(loader);
 
         config = new EngineConfiguration();

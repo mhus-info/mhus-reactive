@@ -31,6 +31,7 @@ import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.cherry.reactive.osgi.impl.ReactiveAdminImpl;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
@@ -73,6 +74,7 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " unlock <case uuid>      - Unlock a case lock\n"
                             + " areas                   - Print restricted areas\n"
                             + " area.release <name>     - Release a restricted area\n"
+                            + " updateProcessActivationInformation - update only the activation from engine properties\n"
                             + "",
             multiValued = false)
     String cmd;
@@ -90,6 +92,10 @@ public class CmdProcessEngine extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
+        if (cmd.equals("updateProcessActivationInformation")) {
+            ReactiveAdminImpl.instance.updateProcessActivationInformation(true);
+            System.out.println("OK");
+        } else
         if (cmd.equals("statistics")) {
             System.out.println("Started     : " + api.getStartDate());
             System.out.println("Status      : " + api.getEngineStatus());
