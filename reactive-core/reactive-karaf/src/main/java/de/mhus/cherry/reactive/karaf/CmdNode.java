@@ -26,12 +26,15 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.engine.EngineContext;
 import de.mhus.cherry.reactive.engine.util.EngineUtil;
+import de.mhus.cherry.reactive.engine.util.PCaseLock;
+import de.mhus.cherry.reactive.model.activity.AActivity;
 import de.mhus.cherry.reactive.model.activity.AElement;
 import de.mhus.cherry.reactive.model.activity.AUserTask;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
@@ -39,6 +42,7 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.model.ui.INodeDescription;
 import de.mhus.cherry.reactive.model.uimp.UiProcess;
+import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
@@ -70,8 +74,8 @@ public class CmdNode extends AbstractCmd {
                             + "Experimental:\n"
                             + " erase <uuid>\n"
                             + " submit <id> [key=value]* - submit a user form\n"
-                            + " resave <id>              - load and save node again"
-                            + "",
+                            + " resave <id>              - load and save node again\n"
+                            + " skip <id> [next step]    - skip a node and start the next one\n",
             multiValued = false)
     String cmd;
 
@@ -91,6 +95,35 @@ public class CmdNode extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
+        if (cmd.equals("skip")) {
+            
+            String nextName = parameters.length < 2 ? null : parameters[1];
+            PNode node = EngineUtil.getFlowNode(api.getEngine(), parameters[0]);
+
+            try (PCaseLock lock = api.getEngine().getCaseLock(node.getCaseId())) {
+
+                PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
+                node = lock.getFlowNode(node.getId()); // reload node
+                EngineContext context = api.getEngine().createContext(lock, caze, node);
+                AActivity<?> aNode = context.getANode();
+
+                Class<? extends AActivity<?>> next = ActivityUtil.getOutputByName(aNode, nextName);
+                if (next == null) {
+                    System.out.println("Output Activity not found: "
+                                    + nextName
+                                    + " in "
+                                    + getClass().getCanonicalName());
+                    return null;
+                }
+                // create new node
+                context.createActivity(next);
+                
+                // close old
+                node.setState(STATE_NODE.CLOSED);
+                lock.saveFlowNode(node);
+            }
+
+        } else
         if (cmd.equals("runtime")) {
             PNode node = EngineUtil.getFlowNode(api.getEngine(), parameters[0]);
             PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
