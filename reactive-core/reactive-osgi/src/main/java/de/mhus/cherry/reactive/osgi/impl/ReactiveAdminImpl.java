@@ -322,12 +322,53 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
 
         // add version
-        if (addVersion) config.persistent.enableProcessVersion(info.deployedName);
+        if (addVersion)
+            try {
+                config.persistent.enableProcessVersion(info.deployedName);
+            } catch (IOException e1) {
+                log().e(info.deployedName,e1);
+            }
 
-        if (activate) config.persistent.activateProcessVersion(info.deployedName);
+        if (activate)
+            try {
+                config.persistent.activateProcessVersion(info.deployedName);
+            } catch (IOException e1) {
+                log().e(info.deployedName,e1);
+            }
 
         if (addVersion || activate) engine.saveEnginePersistence();
 
+        deploymentUpdated();
+        return null;
+    }
+
+    @Override
+    public void undeploy(String name) throws MException {
+        startEngine();
+        // TODO stop cases before ?
+        ProcessInfo info = null;
+        synchronized (availableProcesses) {
+            info = availableProcesses.get(name);
+        }
+        if (info == null) throw new MException("Process not found", name);
+        if (info.deployedName == null) throw new MException("Process is not deployed", name);
+        log().i("<<< Pool", info.deployedName);
+        ((JavaPackageProcessProvider) config.processProvider).removeProcess(info.deployedName);
+        try {
+            config.persistent.deactivateProcessVersion(info.deployedName);
+        } catch (IOException e1) {
+            log().e(info.deployedName,e1);
+        }
+        try {
+            config.persistent.disableProcessVersion(info.deployedName);
+        } catch (IOException e1) {
+            log().e(info.deployedName,e1);
+        }
+        info.deployedName = null;
+        deploymentUpdated();
+    }
+
+    private void deploymentUpdated() {
         // send event to cluster
         lastEngineActivationChange = System.currentTimeMillis();
         try {
@@ -335,7 +376,6 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         } catch (IOException e) {
             log().e(e);
         }
-        return null;
     }
 
     @Override
@@ -363,20 +403,6 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             if (info == null) return 0;
             return info.time;
         }
-    }
-
-    @Override
-    public void undeploy(String name) throws MException {
-        startEngine();
-        // TODO stop cases before ?
-        ProcessInfo info = null;
-        synchronized (availableProcesses) {
-            info = availableProcesses.get(name);
-        }
-        if (info == null) throw new MException("Process not found", name);
-        if (info.deployedName == null) throw new MException("Process is not deployed", name);
-        ((JavaPackageProcessProvider) config.processProvider).removeProcess(info.deployedName);
-        info.deployedName = null;
     }
 
     private class ProcessInfo {
