@@ -34,7 +34,6 @@ import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.cherry.reactive.model.engine.PNode.TYPE_NODE;
-import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.IEngine;
