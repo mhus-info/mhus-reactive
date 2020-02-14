@@ -21,31 +21,24 @@ public interface CaseLockProvider {
     /**
      * return true if the clean up master was acquired until the date in ms.
      *
-     * @param until system time in ms
-     * @return true if acquired, false if not
+     * @return The lock or null
      */
-    boolean acquireCleanupMaster(long until);
+    Lock acquireCleanupMaster();
 
     /**
      * return true if the prepare master was acquired until the date in ms.
      *
-     * @param until system time in ms
-     * @return true if acquired, false if not
+     * @return The lock or null
      */
-    boolean acquirePrepareMaster(long until);
+    Lock acquirePrepareMaster();
 
     /**
      * acquired the engine lock
      *
-     * @param until system time in ms
+     * @return The lock or null
      */
-    void acquireEngineMaster();
-    
-    /**
-     * release a aquired lock.
-     */
-    void releaseEngineMaster();
-    
+    Lock acquireEngineMaster();
+
     /**
      * Return the lock or null if already locked. This must be an atomic operation.
      *
@@ -53,4 +46,12 @@ public interface CaseLockProvider {
      * @return The acquired lock.
      */
     Lock lockOrNull(UUID caseId);
+    
+    
+    /**
+     * Return true if the lock engine is ready to lock. If not the engine will wait until it's ready.
+     * 
+     * @return true if locking is possible
+     */
+    boolean isReady();
 }

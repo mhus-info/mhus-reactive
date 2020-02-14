@@ -55,6 +55,7 @@ import de.mhus.cherry.reactive.model.engine.EProcess;
 import de.mhus.cherry.reactive.model.engine.PEngine;
 import de.mhus.cherry.reactive.model.engine.ProcessLoader;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.cherry.reactive.util.engine.DatabaseLockProvider;
 import de.mhus.cherry.reactive.util.engine.MemoryStorage;
 import de.mhus.cherry.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.core.M;
@@ -68,6 +69,7 @@ import de.mhus.lib.core.cfg.CfgBoolean;
 import de.mhus.lib.core.cfg.CfgInt;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.cfg.CfgString;
+import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.core.config.IConfig;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
@@ -190,6 +192,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
         if (!force && lastChange == lastEngineActivationChange) return;
         lastEngineActivationChange = lastChange;
+        
+        if (!engine.isReady()) {
+            log().i("updateProcessActivationInformation","Engine is not ready");
+            return;
+        }
         
         log().i("reload process activation");
         try {
@@ -615,16 +622,42 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
 
     protected void doExecutePrepare() throws NotFoundException, IOException {
         if (isExecutionSuspended()) return;
+        
+        if (!engine.isReady()) {
+            log().i("doExecutePrepare","Engine is not ready");
+            return;
+        }
+
         Engine e = engine;
-        long nextPrepare = System.currentTimeMillis() + CFG_TIME_PREPARE_DELAY.value();
-        if (e.acquirePrepareMaster(nextPrepare)) e.doPrepareNodes();
+        // long nextPrepare = System.currentTimeMillis() + CFG_TIME_PREPARE_DELAY.value();
+        Lock lock = e.acquirePrepareMaster();
+        if (lock != null) {
+            try {
+                e.doPrepareNodes();
+            } finally {
+                lock.close();
+            }
+        }
     }
 
     protected void doExecuteCleanup() throws NotFoundException, IOException {
         if (isExecutionSuspended()) return;
+        
+        if (!engine.isReady()) {
+            log().i("doExecuteCleanup","Engine is not ready");
+            return;
+        }
+
         Engine e = engine;
-        long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
-        if (e.acquireCleanupMaster(nextCleanup)) e.doCleanupCases();
+        // long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
+        Lock lock = e.acquireCleanupMaster();
+        if (lock != null) {
+            try {
+                e.doCleanupCases();
+            } finally {
+                lock.close();
+            }
+        }
     }
 
     @Deactivate
@@ -781,6 +814,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                 if (cfgLockProvider.value().startsWith("cluster:"))
                     config.lockProvider =
                             new ClusterLockProvider(cfgLockProvider.value().substring(8));
+                if (cfgLockProvider.value().startsWith("db")) {
+                    config.lockProvider = new DatabaseLockProvider(storageDsProvider, "storage_lock", "id_");
+                }
             }
             engine = new Engine(config);
             

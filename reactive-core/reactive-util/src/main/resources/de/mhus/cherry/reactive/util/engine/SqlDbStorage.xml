@@ -75,6 +75,9 @@
 	  <field name="index9" type="string" size="300" />
 	  <field name="actor" type="string" size="100" />
 	</table>
+	<table name="$/prefix$_lock" primary_key="id">
+      <field name="id" type="string" size="300" />
+	</table>
     <index name="$/prefix$_node_ss" table="$/prefix$_node" fields="state,scheduled" unique="false" />
     <index name="$/prefix$_node_ssm" table="$/prefix$_node" fields="state,scheduled,modified" unique="false" />
     <index name="$/prefix$_node_st" table="$/prefix$_node" fields="state" unique="false" />

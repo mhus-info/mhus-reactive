@@ -32,13 +32,17 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
     }
 
     @Override
-    public boolean acquireCleanupMaster(long until) {
-        return M.l(ClusterApi.class).isMaster("reactive_cleanup_" + name);
+    public Lock acquireCleanupMaster() {
+        if (M.l(ClusterApi.class).isMaster("reactive_cleanup_" + name))
+            return new MasterLock("reactive_cleanup_" + name);
+        return null;
     }
 
     @Override
-    public boolean acquirePrepareMaster(long until) {
-        return M.l(ClusterApi.class).isMaster("reactive_prepare_" + name);
+    public Lock acquirePrepareMaster() {
+        if (M.l(ClusterApi.class).isMaster("reactive_prepare_" + name))
+            return new MasterLock("reactive_prepare_" + name);
+        return null;
     }
 
     @Override
@@ -53,13 +57,83 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
     }
 
     @Override
-    public void acquireEngineMaster() {
-        M.l(ClusterApi.class).getLock("reactive_engine_" + name).lock();
+    public Lock acquireEngineMaster() {
+        return M.l(ClusterApi.class).getLock("reactive_engine_" + name).lock();
     }
 
+//    @Override
+//    public void releaseEngineMaster() {
+//        M.l(ClusterApi.class).getLock("reactive_engine_" + name).unlockHard();
+//    }
+
     @Override
-    public void releaseEngineMaster() {
-        M.l(ClusterApi.class).getLock("reactive_engine_" + name).unlockHard();
+    public boolean isReady() {
+        //TODO
+        return true;
     }
     
+    private class MasterLock implements Lock {
+
+        private String name;
+
+        public MasterLock(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public Lock lock() {
+            return this;
+        }
+
+        @Override
+        public boolean lock(long timeout) {
+            return true;
+        }
+
+        @Override
+        public boolean unlock() {
+            return true;
+        }
+
+        @Override
+        public void unlockHard() {
+            
+        }
+
+        @Override
+        public boolean isLocked() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getOwner() {
+            return null;
+        }
+
+        @Override
+        public long getLockTime() {
+            return 0;
+        }
+
+        @Override
+        public boolean refresh() {
+            return true;
+        }
+
+        @Override
+        public long getCnt() {
+            return 0;
+        }
+
+        @Override
+        public String getStartStackTrace() {
+            return null;
+        }
+        
+    }
 }

@@ -31,13 +31,13 @@ public class LocalCaseLockProvider implements CaseLockProvider {
     }
 
     @Override
-    public boolean acquireCleanupMaster(long until) {
-        return true;
+    public Lock acquireCleanupMaster() {
+        return new DummyLock();
     }
 
     @Override
-    public boolean acquirePrepareMaster(long until) {
-        return true;
+    public Lock acquirePrepareMaster() {
+        return new DummyLock();
     }
 
     @Override
@@ -52,13 +52,76 @@ public class LocalCaseLockProvider implements CaseLockProvider {
     }
 
     @Override
-    public void acquireEngineMaster() {
-        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").lock();
+    public Lock acquireEngineMaster() {
+        return M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").lock();
     }
 
+//    @Override
+//    public void releaseEngineMaster() {
+//        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").unlockHard();
+//    }
+
     @Override
-    public void releaseEngineMaster() {
-        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").unlockHard();
+    public boolean isReady() {
+        return true;
     }
     
+    private class DummyLock implements Lock {
+
+        @Override
+        public Lock lock() {
+            return this;
+        }
+
+        @Override
+        public boolean lock(long timeout) {
+            return true;
+        }
+
+        @Override
+        public boolean unlock() {
+            return true;
+        }
+
+        @Override
+        public void unlockHard() {
+            
+        }
+
+        @Override
+        public boolean isLocked() {
+            return true;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public String getOwner() {
+            return null;
+        }
+
+        @Override
+        public long getLockTime() {
+            return 0;
+        }
+
+        @Override
+        public boolean refresh() {
+            return true;
+        }
+
+        @Override
+        public long getCnt() {
+            return 0;
+        }
+
+        @Override
+        public String getStartStackTrace() {
+            return null;
+        }
+        
+    }
 }

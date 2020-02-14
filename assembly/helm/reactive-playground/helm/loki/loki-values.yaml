@@ -1,0 +1,15 @@
+loki:
+  serviceMonitor:
+    enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+promtail:
+  serviceMonitor:
+    enabled: true
+

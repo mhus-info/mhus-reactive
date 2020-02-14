@@ -51,4 +51,9 @@ public interface EEngine {
 
     // void saveFlowNode(PNode flow) throws IOException, NotFoundException;
 
+    /**
+     * Return true if the engine is ready to work.
+     * @return true if ready.
+     */
+    boolean isReady();
 }

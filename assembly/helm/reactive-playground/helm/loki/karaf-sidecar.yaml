@@ -1,0 +1,27 @@
+apiVersion: apps/v1  
+kind: Deployment  
+metadata:
+  name: my-app
+spec:
+  template:
+    metadata:
+      name: my-app
+spec:
+  containers:        
+  - name: simple-logger         
+    image: giantswarm/simple-logger:latest
+    volumeMounts:
+      - name: shared-data
+        mountPath: /home/slog
+  - name: promtail          
+    image: grafana/promtail:master          
+    args:
+      - "-config.file=/etc/promtail/promtail.yaml"            
+      - "-client.url=http://loki:3100/api/prom/push"
+    volumeMounts:
+    - name: shared-data
+      mountPath: /home/slog
+    volumes:
+    - name: shared-data
+      emptyDir: {}
+  

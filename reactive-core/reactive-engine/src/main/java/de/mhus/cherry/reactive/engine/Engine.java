@@ -128,6 +128,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         else lockProvider = config.lockProvider;
     }
 
+    @Override
+    public boolean isReady() {
+        return lockProvider != null && lockProvider.isReady();
+    }
+
     // ---
 
     public void step() throws IOException, NotFoundException {
@@ -2720,12 +2725,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
     }
 
-    public boolean acquireCleanupMaster(long until) {
-        return lockProvider.acquireCleanupMaster(until);
+    public Lock acquireCleanupMaster() {
+        return lockProvider.acquireCleanupMaster();
     }
 
-    public boolean acquirePrepareMaster(long until) {
-        return lockProvider.acquirePrepareMaster(until);
+    public Lock acquirePrepareMaster() {
+        return lockProvider.acquirePrepareMaster();
     }
 
     public long getStatisticCaseClosed() {
@@ -2741,7 +2746,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         
         String runtimeId = context.getPRuntime().getId().toString();
         
-        lockProvider.acquireEngineMaster();
+        Lock engineLock = lockProvider.acquireEngineMaster();
         try {
             String lock = config.persistent.get(EngineConst.AREA_PREFIX + resource);
             if (lock == null) {
@@ -2752,7 +2757,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         } catch (Throwable t) {
             fireEvent.error(context.getANode(), t);
         } finally {
-            lockProvider.releaseEngineMaster();
+            // lockProvider.releaseEngineMaster();
+            if (engineLock != null)
+                engineLock.unlockHard();
         }
         return false;
     }
@@ -2799,4 +2806,5 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public long getStatisticCaseStarted() {
         return statisticCaseStarted;
     }
+
 }
