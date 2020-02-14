@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "reactive-playground.fullname" . }}-test-connection"
+  labels:
+    {{- include "reactive-playground.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "reactive-playground.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

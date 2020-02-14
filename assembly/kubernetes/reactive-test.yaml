@@ -1,0 +1,168 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: reactive-test
+
+---
+
+apiVersion: v1
+data:
+  reactive-init.sql: |
+    CREATE DATABASE db_bpm_stor;
+    CREATE DATABASE db_bpm_arch;
+    CREATE OR REPLACE USER 'db_bpm_arch'@'%' IDENTIFIED BY 'nein';
+    CREATE OR REPLACE USER 'db_bpm_stor'@'%' IDENTIFIED BY 'nein';
+    GRANT ALL PRIVILEGES ON db_bpm_arch.* TO 'db_bpm_arch'@'%';
+    GRANT ALL PRIVILEGES ON db_bpm_stor.* TO 'db_bpm_stor'@'%';
+
+kind: ConfigMap
+metadata:
+  name: reactive-init-sql
+  namespace: reactive-test
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: dbserver
+  namespace: reactive-test
+  labels:
+    app: reactive-db
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: reactive-db
+
+---
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mariadb-deployment
+  namespace: reactive-test
+  labels:
+    app: reactive-db
+spec:
+  selector:
+    matchLabels:
+      app: reactive-db
+      tier: mariadb
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reactive-db
+        tier: mariadb
+    spec:
+      containers:
+      - image: mariadb:10.3
+        name: mariadb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "nein"
+        ports:
+        - containerPort: 3306
+          name: mariadb
+        volumeMounts:
+        - name: reactive-init-sql-file
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: reactive-init-sql-file
+        configMap:
+          name: reactive-init-sql
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: reactive
+  name: reactive-ui
+  namespace: reactive-test
+spec:
+  type: LoadBalancer
+  sessionAffinity: ClientIP
+  ports:
+    - port: 8181
+      targetPort: 8181
+  selector:
+    app: reactive
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail-configmap
+  namespace: reactive-test
+  labels:
+    grafana_datasource: "1"
+data:
+  promtail.yaml: |-
+    scrape_configs:
+      - job_name: system          
+        entry_parser: raw          
+        static_configs:
+          - targets:
+              - localhost
+            labels:
+              job: karaf
+              __path__: /home/slog/karaf.log
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactive
+  namespace: reactive-test
+spec:
+  selector:
+    matchLabels:
+      app: reactive
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: reactive
+    spec:
+      hostname: reactive
+      containers:
+      - name: reactive
+        image: mhus/reactive-playground:7.0.0-SNAPSHOT
+        ports:
+        - containerPort: 8181
+        env:
+        - name: CONFIG_PROFILE
+          value: "single"
+        - name: ENV_DB_BPM_PASS
+          value: "nein"
+        - name: ENV_JMS_SOP_USER
+          value: "admin"
+        - name: ENV_JMS_SOP_PASS
+          value: "nein"
+        stdin: true
+        tty: true
+        volumeMounts:
+        - name: shared-logs
+          mountPath: /opt/karaf/data/log
+      - name: promtail-container
+        image: grafana/promtail
+        args:
+          - "-config.file=/etc/promtail/promtail.yaml"            
+          - "-client.url=http://loki.monitoring.svc.cluster.local:3100/api/prom/push"
+        volumeMounts:
+        - name: shared-logs
+          mountPath: /home/slog
+        - name: promtail-config
+          mountPath: /etc/promtail
+      volumes:
+      - name: shared-logs
+        emptyDir: {}
+      - name: promtail-config
+        configMap:
+          name: promtail-configmap
+        

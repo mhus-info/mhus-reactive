@@ -7,8 +7,8 @@ spec:
     metadata:
       name: my-app
 spec:
-  containers:        
-  - name: simple-logger         
+  containers:
+  - name: simple-logger
     image: giantswarm/simple-logger:latest
     volumeMounts:
       - name: shared-data
