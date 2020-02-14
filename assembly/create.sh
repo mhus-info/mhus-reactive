@@ -1,8 +1,17 @@
 #!/bin/bash
 
-mvn install
+mvn install || exit 1
 
 cd reactive-playground-docker
-./create.sh $@
+./create.sh $@ || exit 1
 cd ..
+
+docker rm reactive-playground
+
+docker run -it --name reactive-playground \
+ -h reactive \
+ -v ~/.m2:/home/user/.m2 \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ mhus/reactive-playground:7.0.0-SNAPSHOT debug
 

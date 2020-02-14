@@ -51,7 +51,7 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode", description = "Node modifiations")
+@Command(scope = "reactive", name = "pnode", description = "Node modifications")
 @Service
 public class CmdNode extends AbstractCmd {
 

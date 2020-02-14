@@ -49,7 +49,7 @@ import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase", description = "Case modifiations")
+@Command(scope = "reactive", name = "pcase", description = "Case modifications")
 @Service
 public class CmdCase extends AbstractCmd {
 
