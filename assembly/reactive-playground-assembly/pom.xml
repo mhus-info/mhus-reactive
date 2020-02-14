@@ -153,16 +153,6 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
 				        <repository>mvn:org.ops4j.pax.web/pax-web-features/7.2.12/xml/features</repository>
 				    </blacklistedRepositories>
                     <bootFeatures>
-                        <feature>standard</feature>
-                        
-                        <feature>scr</feature>
-                        <feature>http-whiteboard</feature>
-                         <feature>deployer/${karaf.version}</feature>
-                         <feature>aries-blueprint/${karaf.version}</feature>
-                         <feature>cxf-core/${cxf.version}</feature>
-                         <feature>openjpa3/3.0.0</feature>
-                         <feature>activemq-client/${activemq.version}</feature>
-                         
                         <feature>bundle</feature>
                         <feature>config</feature>
                         <feature>diagnostic</feature>
@@ -172,17 +162,25 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>log</feature>
                         <feature>management</feature>
                         <feature>package</feature>
-                        <feature>shell-compat</feature>
                         <feature>ssh</feature>
                         <feature>system</feature>
                         <feature>wrap</feature>
-                        <feature>wrapper</feature>
+                        <feature>scr</feature>
+                        <feature>http-whiteboard</feature>
+                        <feature>deployer</feature>
+                        
+                        <feature>cxf-core/${cxf.version}</feature>
+                        <feature>openjpa3/3.0.0</feature>
+                        <feature>activemq-client/${activemq.version}</feature>
 
                         <feature>cherry-reactive-all</feature>
                         <feature>cherry-reactive-dev</feature>
                          
                     </bootFeatures>
                     <installedFeatures>
+                        <feature>wrapper</feature>
+                        <feature>aries-blueprint</feature>
+                        <feature>shell-compat</feature>
                     </installedFeatures>
                     <javase>11</javase>
                 </configuration>
