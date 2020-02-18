@@ -110,6 +110,7 @@ data:
               - localhost
             labels:
               job: karaf
+              namespace: reactive-test
               __path__: /home/slog/karaf.log
 
 ---
