@@ -150,27 +150,6 @@ spec:
         - containerPort: 61613
         - containerPort: 8161
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: promtail-configmap
-  namespace: reactive-test
-  labels:
-    grafana_datasource: "1"
-data:
-  promtail.yaml: |-
-    scrape_configs:
-      - job_name: system          
-        entry_parser: raw          
-        static_configs:
-          - targets:
-              - localhost
-            labels:
-              job: karaf
-              namespace: reactive-test
-              __path__: /home/slog/karaf.log
-
----
 
 apiVersion: apps/v1
 kind: Deployment
@@ -221,19 +200,20 @@ spec:
           timeoutSeconds: 3
           failureThreshold: 1
       - name: promtail-container
-        image: grafana/promtail
-        args:
-          - "-config.file=/etc/promtail/promtail.yaml"            
-          - "-client.url=http://loki.monitoring.svc.cluster.local:3100/api/prom/push"
+        image: mhus/promtail-sidecar:1.0.0
+        env:
+        - name: LOG_NS
+          value: "reactive-test"
+        - name: LOG_JOB
+          value: "karaf"
+        - name: LOG_FILE_PATH
+          value: "/home/slog/karaf.log"
+        - name: LOG_URL
+          value: "http://loki.monitoring.svc.cluster.local:3100/api/prom/push"
         volumeMounts:
         - name: shared-logs
           mountPath: /home/slog
-        - name: promtail-config
-          mountPath: /etc/promtail
       volumes:
       - name: shared-logs
         emptyDir: {}
-      - name: promtail-config
-        configMap:
-          name: promtail-configmap
         
