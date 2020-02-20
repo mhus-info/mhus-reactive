@@ -6,6 +6,7 @@ import org.apache.felix.hc.api.Result;
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.reactive.engine.Engine;
+import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 
 // https://github.com/apache/felix/tree/trunk/healthcheck
 
@@ -24,7 +25,10 @@ public class ReactiveHealthCheck implements HealthCheck {
             if (engine == null) {
                 log.critical("engine not found");
             } else {
-                log.debug("Status {} Rounds {}", admin.getEngineStatus(), engine.getStatisticRounds() );
+                if (admin.getEngineStatus() !=  ReactiveAdmin.STATE_ENGINE.RUNNING)
+                    log.warn("Engine is not Running, Status {}", admin.getEngineStatus());
+                else
+                    log.debug("Status {} Rounds {}", admin.getEngineStatus(), engine.getStatisticRounds() );
             }
         }
           

@@ -68,8 +68,7 @@ public class ClusterLockProvider extends MLog implements CaseLockProvider {
 
     @Override
     public boolean isReady() {
-        //TODO
-        return true;
+        return M.l(ClusterApi.class).isReady();
     }
     
     private class MasterLock implements Lock {

@@ -30,6 +30,7 @@ public interface ReactiveAdmin {
     enum STATE_ENGINE {
         STOPPED,
         SUSPENDED,
+        WAITING,
         RUNNING
     }
 
