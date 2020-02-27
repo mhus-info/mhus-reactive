@@ -33,8 +33,17 @@
 
     <modules>
         <module>reactive-feature</module>
-        <module>reactive-playground-assembly</module>
-        <module>reactive-playground-docker</module>
     </modules>
+    
+    <profiles>
+        <profile>
+            <id>assembly</id>
+		    <modules>
+		        <module>reactive-feature</module>
+		        <module>reactive-playground-assembly</module>
+		        <module>reactive-playground-docker</module>
+		    </modules>
+        </profile>
+    </profiles>
     
 </project>
