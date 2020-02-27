@@ -1,5 +1,7 @@
 package de.mhus.cherry.reactive.util.engine;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,37 +53,65 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     }
     
     private Con tryLock(String value) {
+        log().t("Try Lock", value);
         DbConnection con = null;
         try {
             con = ds.createConnection();
             DbStatement sth = con.createStatement("SELECT "+key+" FROM " + table + " WHERE " + key + "=$key$ FOR UPDATE NOWAIT");
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("key", value);
-            DbResult res = sth.executeQuery(attributes);
-            if (res.next()) {
+            try {
+                DbResult res = sth.executeQuery(attributes);
+                if (res.next()) {
+                    res.close();
+                    log().t("=== Lock1", value);
+                    return new Con(con,sth);
+                }
                 res.close();
-                return new Con(con,sth);
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("timeout"))
+                    throw e;
+                sth.close();
+                con.close();
+                log().t("--- No0", value, e);
+                return null;
             }
-            res.close();
-            
             DbStatement sthSet = con.createStatement("INSERT INTO " + table + "(" + key+") VALUES ($key$)");
-            boolean done = sthSet.execute(attributes);
+            boolean done = false;
+            try {
+                sthSet.execute(attributes);
+                done = true;
+            } catch (SQLIntegrityConstraintViolationException e) {
+            }
             if (!done) {
                 con.close();
+                log().t("--- No1", value);
                 return null;
             }
             sthSet.close();
             con.commit();
             
-            res = sth.executeQuery(attributes);
-            if (res.next()) {
+            try {
+                DbResult res = sth.executeQuery(attributes);
+                if (res.next()) {
+                    res.close();
+                    log().t("=== Lock2", value);
+                    return new Con(con,sth);
+                }
                 res.close();
-                return new Con(con,sth);
+            } catch (SQLException e) {
+                if (!e.getMessage().contains("timeout"))
+                    throw e;
+                sth.close();
+                con.commit();
+                con.close();
+                log().t("--- No2", value, e);
+                return null;
             }
-            res.close();
             sth.close();
             con.commit();
             con.close();
+            log().t("--- No3", value);
             return null;
         } catch (Exception e) {
             log().d(e);
@@ -93,6 +123,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
                 }
                 con.close();
             }
+            log().t("--- No3", value);
             return null;
         }
 
@@ -101,7 +132,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock acquireCleanupMaster() {
         synchronized (this) {
-            Con masterCleanup = tryLock("master_cleaup");
+            Con masterCleanup = tryLock("master_cleanup");
             if (masterCleanup == null) return null;
             return new DbLock(masterCleanup,"master_cleanup");
         }
@@ -110,7 +141,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock acquirePrepareMaster() {
         synchronized (this) {
-            Con masterPrepare = tryLock("master_cleaup");
+            Con masterPrepare = tryLock("master_cleanup");
             if (masterPrepare == null) return null;
             return new DbLock(masterPrepare, "master_cleanup");
         }
@@ -120,7 +151,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     public Lock acquireEngineMaster() {
         synchronized (this) {
             while (true) {
-                Con masterEngine = tryLock("master_cleaup");
+                Con masterEngine = tryLock("master_cleanup");
                 if (masterEngine != null)
                     return new DbLock(masterEngine, "master_cleanup");
                 MThread.sleep(300);

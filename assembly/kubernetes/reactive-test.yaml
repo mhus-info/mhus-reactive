@@ -160,7 +160,7 @@ spec:
   selector:
     matchLabels:
       app: reactive
-  replicas: 2
+  replicas: 4
   template:
     metadata:
       labels:
