@@ -165,6 +165,7 @@ spec:
     metadata:
       labels:
         app: reactive
+        update: "1"
     spec:
       hostname: reactive
       containers:
@@ -172,6 +173,10 @@ spec:
         image: mhus/reactive-playground:7.0.0-SNAPSHOT
         ports:
         - containerPort: 8181
+          name: http
+        - containerPort: 5005
+          name: debug
+        args: ["debug"]
         env:
         - name: CONFIG_PROFILE
           value: "multi"
@@ -186,6 +191,8 @@ spec:
         volumeMounts:
         - name: shared-logs
           mountPath: /opt/karaf/data/log
+        - name: local-m2
+          mountPath: /home/user/.m2
         livenessProbe:
           httpGet:
              path: /health
@@ -216,4 +223,7 @@ spec:
       volumes:
       - name: shared-logs
         emptyDir: {}
+      - name: local-m2
+        hostPath: 
+           path: /Users/mikehummel/.m2
         

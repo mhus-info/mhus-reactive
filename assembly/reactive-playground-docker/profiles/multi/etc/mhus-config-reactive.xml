@@ -4,7 +4,8 @@
     archiveDsName="reactive-archive"
     logLevel="INFO"
     executeParallel="10"
-    lockProvider="cluster:re"
+    _lockProvider="cluster:re"
+    lockProvider="db"
   >
       <engine>
         <parameter name="process:de.mhus.cherry.reactive.examples.simple1.S1Process:versions" value="0.0.1"/>  

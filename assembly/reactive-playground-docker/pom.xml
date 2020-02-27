@@ -7,7 +7,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.mhus.cherry.reactive</groupId>
-        <artifactId>reactive-docker</artifactId>
+        <artifactId>assembly</artifactId>
         <version>7.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>reactive-playground-docker</artifactId>

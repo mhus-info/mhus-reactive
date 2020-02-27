@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=7.0.0-SNAPSHOT
+VERSION=7.1.0-SNAPSHOT
 REPOSITORY=mhus/reactive-playground
 
 if [  ! -f Dockerfile ]; then
@@ -10,6 +10,7 @@ fi
 
 
 if [ "$1" = "clean" ]; then
+    shift
     docker rmi $REPOSITORY:$VERSION
     docker build --no-cache -t $REPOSITORY:$VERSION .
 else

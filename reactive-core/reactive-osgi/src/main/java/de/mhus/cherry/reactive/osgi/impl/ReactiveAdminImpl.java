@@ -815,7 +815,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                     config.lockProvider =
                             new ClusterLockProvider(cfgLockProvider.value().substring(8));
                 if (cfgLockProvider.value().startsWith("db")) {
-                    config.lockProvider = new DatabaseLockProvider(storageDsProvider, "storage_lock", "id_");
+                    config.lockProvider = new DatabaseLockProvider(storageDsProvider, "storage_lock_", "id_");
                 }
             }
             engine = new Engine(config);

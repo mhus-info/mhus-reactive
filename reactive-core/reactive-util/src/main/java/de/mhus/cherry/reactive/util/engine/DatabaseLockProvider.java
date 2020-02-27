@@ -43,14 +43,14 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock lock(UUID caseId) throws TimeoutException {
         while (true) {
-            DbConnection con = tryLock("case_" + caseId);
+            Con con = tryLock("case_" + caseId);
             if (con != null)
                 return new DbLock(con, caseId.toString());
             MThread.sleep(200);
         }
     }
     
-    private DbConnection tryLock(String value) {
+    private Con tryLock(String value) {
         DbConnection con = null;
         try {
             con = ds.createConnection();
@@ -60,25 +60,39 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
             DbResult res = sth.executeQuery(attributes);
             if (res.next()) {
                 res.close();
-                return con;
+                return new Con(con,sth);
             }
+            res.close();
+            
             DbStatement sthSet = con.createStatement("INSERT INTO " + table + "(" + key+") VALUES ($key$)");
             boolean done = sthSet.execute(attributes);
             if (!done) {
                 con.close();
                 return null;
             }
+            sthSet.close();
+            con.commit();
+            
             res = sth.executeQuery(attributes);
             if (res.next()) {
                 res.close();
-                return con;
+                return new Con(con,sth);
             }
+            res.close();
+            sth.close();
+            con.commit();
             con.close();
             return null;
         } catch (Exception e) {
             log().d(e);
-            if (con != null)
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (Exception e1) {
+                    log().e(e1);
+                }
                 con.close();
+            }
             return null;
         }
 
@@ -87,18 +101,18 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     @Override
     public Lock acquireCleanupMaster() {
         synchronized (this) {
-            DbConnection masterCleanup = tryLock("master_cleaup");
+            Con masterCleanup = tryLock("master_cleaup");
             if (masterCleanup == null) return null;
-            return new DbLock(masterCleanup,"master_cleaup");
+            return new DbLock(masterCleanup,"master_cleanup");
         }
     }
 
     @Override
     public Lock acquirePrepareMaster() {
         synchronized (this) {
-            DbConnection masterPrepare = tryLock("master_cleaup");
+            Con masterPrepare = tryLock("master_cleaup");
             if (masterPrepare == null) return null;
-            return new DbLock(masterPrepare, "master_cleaup");
+            return new DbLock(masterPrepare, "master_cleanup");
         }
     }
 
@@ -106,9 +120,9 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     public Lock acquireEngineMaster() {
         synchronized (this) {
             while (true) {
-                DbConnection masterEngine = tryLock("master_cleaup");
+                Con masterEngine = tryLock("master_cleaup");
                 if (masterEngine != null)
-                    return new DbLock(masterEngine, "master_cleaup");
+                    return new DbLock(masterEngine, "master_cleanup");
                 MThread.sleep(300);
             }
         }
@@ -125,7 +139,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
 
     @Override
     public Lock lockOrNull(UUID caseId) {
-        DbConnection con = tryLock("case_" + caseId);
+        Con con = tryLock("case_" + caseId);
         if (con == null) return null;
         return new DbLock(con, caseId.toString());
     }
@@ -135,12 +149,35 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
         return true; // ?
     }
 
+    private class Con {
+        DbConnection con;
+        DbStatement sth;
+        
+        public Con(DbConnection con, DbStatement sth) {
+            this.con = con;
+            this.sth = sth;
+        }
+
+        public void close() {
+            if (sth == null) return;
+            sth.close();
+            try {
+                con.commit();
+            } catch (Exception e) {
+                log().e(e);
+            }
+            con.close();
+            sth = null;
+            con = null;
+        }
+    }
+    
     private class DbLock implements Lock {
 
-        private DbConnection con;
+        private Con con;
         private String name;
 
-        public DbLock(DbConnection con, String name) {
+        public DbLock(Con con, String name) {
             this.con = con;
             this.name = name;
         }
