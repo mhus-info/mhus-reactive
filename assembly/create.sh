@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mvn install || exit 1
+mvn install -P assembly || exit 1
 
 cd reactive-playground-docker
 ./create.sh $@ || exit 1

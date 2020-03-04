@@ -54,6 +54,8 @@
 		<!-- osgi tools -->
 		
 		<bundle>mvn:org.bouncycastle/bcprov-jdk16/${bouncycastle.version}</bundle>
+        <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcomponents.httpcore.version}</bundle>
+        <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/${httpcomponents.httpclient.version}</bundle>
 		
         <bundle>mvn:de.mhus.osgi/mhu-osgi-api/${mhus-osgi-tools.version}</bundle>
 		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
