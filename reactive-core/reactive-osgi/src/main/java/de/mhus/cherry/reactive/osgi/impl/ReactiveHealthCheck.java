@@ -1,5 +1,6 @@
 package de.mhus.cherry.reactive.osgi.impl;
 
+import org.apache.felix.hc.annotation.HealthCheckService;
 import org.apache.felix.hc.api.FormattingResultLog;
 import org.apache.felix.hc.api.HealthCheck;
 import org.apache.felix.hc.api.Result;
@@ -10,7 +11,8 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 
 // https://github.com/apache/felix/tree/trunk/healthcheck
 
-@Component
+@HealthCheckService(name = "ReactiveHealthCheck", tags = {"systemalive"})
+@Component(immediate = true)
 public class ReactiveHealthCheck implements HealthCheck {
 
     @Override

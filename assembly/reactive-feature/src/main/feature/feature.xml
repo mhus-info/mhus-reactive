@@ -29,9 +29,13 @@
         <feature>activemq-client</feature>
 
         <!-- felix -->
-        
-        <bundle> mvn:org.apache.felix/org.apache.felix.healthcheck.api/${felix.healthcheck.version}</bundle>
-        
+        <bundle>mvn:org.apache.commons/commons-lang3/${commons-lang3.version}</bundle>
+        <!-- 
+        <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.annotation/${felix.healthcheck.annotation.version}</bundle>
+         -->
+        <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.api/${felix.healthcheck.api.version}</bundle>
+        <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.core/${felix.healthcheck.core.version}</bundle>
+        <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.generalchecks/${felix.healthcheck.generalchecks.version}</bundle>
         
 		<!-- mhu-lib -->
 		
@@ -89,7 +93,7 @@
 	</feature>
 	
 	<feature name='cherry-reactive-dev' description='Development tools' version='${project.version}'>
-		
+		<feature>webconsole</feature>
 		<bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
 		
 		<feature>cherry-reactive-core</feature>
@@ -98,6 +102,8 @@
 		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${cherry-reactive.version}</bundle>
 		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${cherry-reactive.version}</bundle>
 
+        <bundle> mvn:org.apache.felix/org.apache.felix.healthcheck.webconsoleplugin/${felix.healthcheck.webconsoleplugin.version}</bundle>
+        
 	</feature>
 	
     <feature name='cherry-reactive-kube' description='User Interface' version='${project.version}'>

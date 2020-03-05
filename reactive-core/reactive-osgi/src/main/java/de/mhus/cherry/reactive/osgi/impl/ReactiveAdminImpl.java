@@ -876,7 +876,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     public STATE_ENGINE getEngineStatus() {
         if (engine == null) return STATE_ENGINE.STOPPED;
         if (isExecutionSuspended()) return STATE_ENGINE.SUSPENDED;
-        if (!config.lockProvider.isReady() ) return STATE_ENGINE.WAITING;
+        if (config == null || config.lockProvider == null || !config.lockProvider.isReady() ) return STATE_ENGINE.WAITING;
         return STATE_ENGINE.RUNNING;
     }
 

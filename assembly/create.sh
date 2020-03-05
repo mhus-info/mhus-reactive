@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VERSION=7.1.0-SNAPSHOT
+
 mvn install -P assembly || exit 1
 
 cd reactive-playground-docker
@@ -16,7 +18,7 @@ if [ "$1" = "test" ]; then
      -v ~/.m2:/home/user/.m2 \
      -p 8181:8181 \
      -p 15005:5005 \
-     mhus/reactive-playground:7.0.0-SNAPSHOT debug
+     mhus/reactive-playground:$VERSION debug
 fi
 
 if [ "$1" = "k8s" ]; then

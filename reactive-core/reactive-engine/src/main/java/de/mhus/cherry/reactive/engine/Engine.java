@@ -124,8 +124,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             }
         }
 
-        if (config.lockProvider == null) lockProvider = new LocalCaseLockProvider();
-        else lockProvider = config.lockProvider;
+        if (config.lockProvider == null) config.lockProvider = new LocalCaseLockProvider();
+        lockProvider = config.lockProvider;
     }
 
     @Override
