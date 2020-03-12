@@ -47,10 +47,10 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
+				<groupId>de.mhus.apache.karaf.tooling</groupId>
 				<artifactId>karaf-services-maven-plugin</artifactId>
 				<configuration>
-					<artifactInclude>.*mhu.*</artifactInclude>
+					<artifactInclude>de\.mhu.*</artifactInclude>
 				</configuration>
 			</plugin>
 			
