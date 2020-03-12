@@ -70,7 +70,7 @@
 
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
+			<artifactId>lib-core</artifactId>
 		</dependency>
         <dependency>
            <groupId>de.mhus.vaadin</groupId>
@@ -88,17 +88,6 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>de.mhus.ports</groupId>
-			<artifactId>vaadin-refresher</artifactId>
-			<version>${ports.vaadin.version}</version>
-        </dependency>
-		 -->
-		<dependency>
-			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-sop-api</artifactId>
 		</dependency>
 		
 	</dependencies>

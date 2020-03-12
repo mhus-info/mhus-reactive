@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	    <parent>
         <groupId>de.mhus.lib</groupId>
-        <version>6.5.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
         <artifactId>mhus-karaf</artifactId>
     </parent>
 	<groupId>de.mhus.cherry.reactive</groupId>
@@ -67,7 +67,7 @@
             </activation>
 			<modules>
 				<module>reactive-core</module>
-				<module>reactive-sop-rest</module>
+				<module>reactive-rest</module>
 				<module>reactive-gui</module>
 				<module>reactive-tools</module>
 				<module>cr-examples</module>
@@ -84,7 +84,7 @@
             </activation>
             <modules>
                 <module>reactive-core</module>
-                <module>reactive-sop-rest</module>
+                <module>reactive-rest</module>
                 <module>reactive-gui</module>
                 <module>reactive-tools</module>
                 <module>reactive-feature</module>

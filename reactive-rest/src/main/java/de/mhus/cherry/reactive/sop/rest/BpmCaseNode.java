@@ -19,20 +19,20 @@ import java.util.List;
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
+import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
-import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.security.AaaContext;
+import de.mhus.lib.core.security.AccessApi;
 import de.mhus.lib.errors.MException;
-import de.mhus.osgi.sop.api.aaa.AaaContext;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
-import de.mhus.osgi.sop.api.rest.CallContext;
-import de.mhus.osgi.sop.api.rest.ObjectListNode;
-import de.mhus.osgi.sop.api.rest.RestNodeService;
+import de.mhus.rest.core.CallContext;
+import de.mhus.rest.core.api.RestNodeService;
+import de.mhus.rest.core.node.ObjectListNode;
 
 @Component(service = RestNodeService.class)
-public class BpmNodeNode extends ObjectListNode<INode, INode> {
+public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
 
     @Override
     public String[] getParentNodeCanonicalClassNames() {
@@ -41,11 +41,11 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
 
     @Override
     public String getNodeId() {
-        return "bpmnode";
+        return "bpmcase";
     }
 
     @Override
-    protected List<INode> getObjectList(CallContext callContext) throws MException {
+    protected List<ICase> getObjectList(CallContext callContext) throws MException {
 
         AccessApi aaa = M.l(AccessApi.class);
         AaaContext context = aaa.getCurrent();
@@ -59,7 +59,7 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
         int page = M.c(callContext.getParameter("page"), 0);
         int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
         try {
-            return engine.searchNodes(
+            return engine.searchCases(
                     criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
         } catch (IOException e) {
             throw new MException(e);
@@ -67,20 +67,20 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
     }
 
     //	@Override
-    //	public Class<INode> getManagedClass() {
-    //		return INode.class;
+    //	public Class<ICase> getManagedClass() {
+    //		return ICase.class;
     //	}
 
     @Override
-    protected INode getObjectForId(CallContext context, String id) throws Exception {
+    protected ICase getObjectForId(CallContext context, String id) throws Exception {
 
         AccessApi aaa = M.l(AccessApi.class);
         AaaContext acontext = aaa.getCurrent();
         IEngine engine =
                 M.l(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
 
-        String propertyNames = context.getParameter("_names");
+        String propertyNames = context.getParameter("names");
 
-        return engine.getNode(id, propertyNames == null ? null : propertyNames.split(","));
+        return engine.getCase(id, propertyNames == null ? null : propertyNames.split(","));
     }
 }

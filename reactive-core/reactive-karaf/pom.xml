@@ -52,15 +52,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
+			<artifactId>lib-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-persistence</artifactId>
+			<artifactId>lib-persistence</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-osgi-api</artifactId>
+			<artifactId>osgi-api</artifactId>
 		</dependency>
 		
 		<dependency>

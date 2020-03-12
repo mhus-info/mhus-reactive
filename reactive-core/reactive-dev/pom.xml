@@ -55,52 +55,22 @@
 			</plugin>
 			
 		</plugins>
-		<pluginManagement>
-			<plugins>
-                <plugin>
-                    <groupId>org.apache.karaf.tooling</groupId>
-                    <artifactId>karaf-services-maven-plugin</artifactId>
-                    <version>${karaf.tool.version}</version>
-                    <executions>
-                        <execution>
-                            <id>service-metadata-generate</id>
-                            <phase>process-classes</phase>
-                            <goals>
-                                <goal>service-metadata-generate</goal>
-                            </goals>
-                            <configuration>
-                                <artifactInclude>.*mhu.*</artifactInclude>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-			</plugins>
-		</pluginManagement>		
 	</build>
 
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
+			<artifactId>lib-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-persistence</artifactId>
+			<artifactId>lib-persistence</artifactId>
 		</dependency>
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
-			<artifactId>mhu-osgi-services</artifactId>
+			<artifactId>osgi-services</artifactId>
 		</dependency>
 		
-        <dependency>
-            <groupId>de.mhus.osgi</groupId>
-            <artifactId>mhu-sop-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.mhus.osgi</groupId>
-            <artifactId>mhu-sop-core</artifactId>
-            <version>${mhus-sop.version}</version>
-        </dependency>
 
 		<dependency>
 			<groupId>org.osgi</groupId>

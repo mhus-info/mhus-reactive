@@ -50,10 +50,10 @@
 		<bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.asl.version}</bundle>
 		<bundle><![CDATA[wrap:mvn:org.apache.commons/commons-io/${commons-io.version}/$Bundle-SymbolicName=commons-io&Bundle-Version=${commons-io.version}&Export-Package=org.apache.commons.io;version="${commons-io.version}",!*]]></bundle>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-annotations/${mhus-lib.version}</bundle>
-		<bundle>mvn:de.mhus.lib/mhu-lib-core/${mhus-lib.version}</bundle>
-		<bundle>mvn:de.mhus.lib/mhu-lib-persistence/${mhus-lib.version}</bundle>
-        <bundle>mvn:de.mhus.lib/mhu-lib-jms/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/lib-annotations/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/lib-core/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/lib-persistence/${mhus-lib.version}</bundle>
+        <bundle>mvn:de.mhus.lib/lib-jms/${mhus-lib.version}</bundle>
 
 		<!-- osgi tools -->
 		
@@ -61,19 +61,18 @@
         <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcomponents.httpcore.version}</bundle>
         <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/${httpcomponents.httpclient.version}</bundle>
 		
-        <bundle>mvn:de.mhus.osgi/mhu-osgi-api/${mhus-osgi-tools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-osgi-services/${mhus-osgi-tools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-commands/${mhus-osgi-tools.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-karaf-xdb/${mhus-osgi-tools.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/mhu-osgi-jms/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/osgi-api/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/osgi-services/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/karaf-commands/${mhus-osgi-tools.version}</bundle>
+		<bundle>mvn:de.mhus.osgi/karaf-xdb/${mhus-osgi-tools.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/osgi-jms/${mhus-osgi-tools.version}</bundle>
 
 		<bundle>mvn:javax.xml.rpc/javax.xml.rpc-api/${javax.xml.rpc.version}</bundle>
 				
-		<!-- sop -->
+		<!-- rest -->
 		
-		<bundle>mvn:de.mhus.osgi/mhu-sop-api/${mhus-sop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-core/${mhus-sop.version}</bundle>
-        <bundle>mvn:de.mhus.osgi/mhu-sop-jms/${mhus-sop.version}</bundle>
+		<bundle>mvn:de.mhus.rest/rest-osgi/${mhus-rest.version}</bundle>
+        <bundle>mvn:de.mhus.rest/rest-karaf/${mhus-rest.version}</bundle>
 		
 		<!-- reactive -->
 		
@@ -86,9 +85,12 @@
 		<feature>http</feature>
 		<feature>http-whiteboard</feature>
 
-		<!-- sop -->
+		<!-- rest -->
 		
-		<bundle>mvn:de.mhus.osgi/mhu-sop-rest/${mhus-sop.version}</bundle>
+        <bundle>mvn:de.mhus.rest/rest-osgi/${mhus-rest.version}</bundle>
+        <bundle>mvn:de.mhus.rest/rest-karaf/${mhus-rest.version}</bundle>
+
+        <bundle>mvn:de.mhus.cherry.reactive/reactive-rest/${cherry-reactive.version}</bundle>
 
 	</feature>
 	
@@ -109,7 +111,7 @@
     <feature name='cherry-reactive-kube' description='User Interface' version='${project.version}'>
         <feature>http</feature>
         <feature>http-whiteboard</feature>
-        <bundle>mvn:de.mhus.osgi/kube-health-servlet/${mhus-osgi-servlets.version}</bundle>
+        <bundle>mvn:de.mhus.osgi/health-servlet/${mhus-osgi-servlets.version}</bundle>
     </feature>
     
 	<feature name='cherry-reactive-ui' description='User Interface' version='${project.version}'>
@@ -117,7 +119,7 @@
 		<feature>http</feature>
 		<feature>http-whiteboard</feature>
 
-		<bundle>mvn:de.mhus.lib/mhu-lib-j2ee/${mhus-lib.version}</bundle>
+		<bundle>mvn:de.mhus.lib/lib-j2ee/${mhus-lib.version}</bundle>
 		
         <bundle><![CDATA[wrap:mvn:com.googlecode.gentyref/gentyref/1.2.0/$Bundle-SymbolicName=gentyref&Bundle-Version=1.2.0&Export-Package=com.googlecode.gentyref;version="1.2.0",!*]]></bundle>
         <bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
@@ -141,8 +143,8 @@
         <bundle>mvn:de.mhus.vaadin/vaadin-osgi-bridge/${mhus-vaadin.version}</bundle>
         <bundle>mvn:de.mhus.vaadin/vaadin-karaf-bridge/${mhus-vaadin.version}</bundle>
 
-		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-theme/${mhus-sop.version}</bundle>
-		<bundle>mvn:de.mhus.osgi/mhu-sop-vaadin-desktop/${mhus-sop.version}</bundle>
+		<bundle>mvn:de.mhus.vaadin/vaadin-osgi-theme/${mhus-vaadin.version}</bundle>
+		<bundle>mvn:de.mhus.vaadin/vaadin-osgi-desktop/${mhus-vaadin.version}</bundle>
 
 		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${cherry-reactive.version}</bundle>
 		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${cherry-reactive.version}</bundle>

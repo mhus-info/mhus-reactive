@@ -39,7 +39,6 @@ import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
-import de.mhus.osgi.sop.impl.cluster.RegistryLock;
 
 @Command(scope = "reactive", name = "pdev", description = "reactive development tool")
 @Service
@@ -139,30 +138,14 @@ public class CmdDev extends AbstractCmd {
             for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {
                 try {
                     Lock systemLock = lock.getLock();
-                    if (systemLock instanceof RegistryLock) {
-                        RegistryLock registryLock = (RegistryLock) systemLock;
-                        System.out.println(
-                                lock.getCaseId()
-                                        + " "
-                                        + registryLock.isLocked()
-                                        + " "
-                                        + MPeriod.getIntervalAsString(
-                                                System.currentTimeMillis()
-                                                        - systemLock.getLockTime())
-                                        + " Local: "
-                                        + registryLock.isLocalLocked()
-                                        + " Remote: "
-                                        + registryLock.isRemoteLocked());
-                    } else {
-                        System.out.println(
-                                lock.getCaseId()
-                                        + " "
-                                        + systemLock.isLocked()
-                                        + " "
-                                        + MPeriod.getIntervalAsString(
-                                                System.currentTimeMillis()
-                                                        - systemLock.getLockTime()));
-                    }
+                    System.out.println(
+                            lock.getCaseId()
+                                    + " "
+                                    + systemLock.isLocked()
+                                    + " "
+                                    + MPeriod.getIntervalAsString(
+                                            System.currentTimeMillis()
+                                                    - systemLock.getLockTime()));
                     System.out.println("   Current Thread: " + lock.getOwnerThreadId());
                     System.out.println("   " + systemLock.getStartStackTrace());
                 } catch (Throwable t) {

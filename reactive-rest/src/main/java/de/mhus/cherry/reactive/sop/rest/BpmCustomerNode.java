@@ -22,17 +22,18 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.model.ui.ICase;
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
+import de.mhus.cherry.reactive.model.util.RootActor;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.security.AaaContext;
+import de.mhus.lib.core.security.AccessApi;
 import de.mhus.lib.errors.MException;
-import de.mhus.osgi.sop.api.aaa.AaaContext;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
-import de.mhus.osgi.sop.api.rest.CallContext;
-import de.mhus.osgi.sop.api.rest.ObjectListNode;
-import de.mhus.osgi.sop.api.rest.RestNodeService;
+import de.mhus.rest.core.CallContext;
+import de.mhus.rest.core.api.RestNodeService;
+import de.mhus.rest.core.node.ObjectListNode;
 
 @Component(service = RestNodeService.class)
-public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
+public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
 
     @Override
     public String[] getParentNodeCanonicalClassNames() {
@@ -41,7 +42,7 @@ public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
 
     @Override
     public String getNodeId() {
-        return "bpmcase";
+        return "bpmcustomer";
     }
 
     @Override
@@ -49,8 +50,7 @@ public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
 
         AccessApi aaa = M.l(AccessApi.class);
         AaaContext context = aaa.getCurrent();
-        IEngine engine =
-                M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+        IEngine engine = M.l(IEngineFactory.class).create(RootActor.USERNAME, context.getLocale());
 
         String propertyNames = callContext.getParameter("names");
 
@@ -58,6 +58,7 @@ public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
                 new SearchCriterias(new MProperties(callContext.getParameters()));
         int page = M.c(callContext.getParameter("page"), 0);
         int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
+        criterias.customer = context.getAccountId();
         try {
             return engine.searchCases(
                     criterias, page, size, propertyNames == null ? null : propertyNames.split(","));

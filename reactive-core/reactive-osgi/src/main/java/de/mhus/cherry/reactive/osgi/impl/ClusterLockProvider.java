@@ -5,10 +5,10 @@ import java.util.UUID;
 import de.mhus.cherry.reactive.model.engine.CaseLockProvider;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.base.service.ClusterApi;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.errors.TimeoutException;
-import de.mhus.osgi.sop.api.cluster.ClusterApi;
 
 public class ClusterLockProvider extends MLog implements CaseLockProvider {
 

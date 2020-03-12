@@ -50,11 +50,11 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
+import de.mhus.lib.core.security.AaaContext;
+import de.mhus.lib.core.security.AccessApi;
 import de.mhus.lib.vaadin.SearchField;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
-import de.mhus.osgi.sop.api.aaa.AaaContext;
-import de.mhus.osgi.sop.api.aaa.AccessApi;
 
 @SuppressWarnings("deprecation")
 public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable {

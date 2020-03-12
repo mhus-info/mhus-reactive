@@ -35,15 +35,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-annotations</artifactId>
+			<artifactId>lib-annotations</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-core</artifactId>
+			<artifactId>lib-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>de.mhus.lib</groupId>
-			<artifactId>mhu-lib-persistence</artifactId>
+			<artifactId>lib-persistence</artifactId>
 		</dependency>
 		
 		<dependency>
