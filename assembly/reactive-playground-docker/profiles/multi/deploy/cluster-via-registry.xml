@@ -18,10 +18,10 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <bean id="cluster" class="de.mhus.osgi.sop.impl.cluster.ClusterApiViaRegistry">
+    <bean id="cluster" class="de.mhus.osgi.services.cluster.ClusterApiViaRegistry">
     </bean>
 
-    <service interface="de.mhus.osgi.sop.api.cluster.ClusterApi" ref="cluster">
+    <service interface="de.mhus.lib.core.base.service.ClusterApi" ref="cluster">
     </service>
 
 </blueprint>
