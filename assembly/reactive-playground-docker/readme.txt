@@ -36,22 +36,13 @@ docker run -it --name reactive-playground \
 
 docker rm reactive-playground
 
-With filebeat:
-
-docker run -it --name reactive-playground \
- -h reactive \
- -e "START_FILEBEAT=1" \
- -v ~/.m2:/home/user/.m2 \
- --link log-logstash:logstash \
- -p 8181:8181 \
- -p 15005:5005 \
- mhus/reactive-playground:7.0.0-SNAPSHOT debug
+docker start -ia reactive-playground
 
 ---
 
 Execute sample prrocess:
 
-http://localhost:8181/sop
+http://localhost:8181/ui
 
 Execute:
 
