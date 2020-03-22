@@ -16,7 +16,10 @@ package de.mhus.cherry.reactive.vaadin.core;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import org.apache.shiro.subject.Subject;
 
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.Component;
@@ -50,8 +53,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.vaadin.SearchField;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
@@ -445,10 +447,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     }
 
     private void initEngine() {
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext context = aaa.getCurrent();
-        if (context == null) return;
-        engine = M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
+        engine = M.l(IEngineFactory.class).create(username, locale);
     }
 
     protected void showRuntime(List<EngineMessage[]> runtime) throws Exception {

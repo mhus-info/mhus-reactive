@@ -14,14 +14,15 @@
 package de.mhus.cherry.reactive.sop.rest;
 
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.shiro.subject.Subject;
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotSupportedException;
 import de.mhus.rest.core.CallContext;
@@ -64,10 +65,11 @@ public class BpmNode extends ObjectListNode<Object, Object> {
 
     @Override
     protected void doCreate(JsonResult result, CallContext callContext) throws Exception {
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext context = aaa.getCurrent();
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
         IEngine engine =
-                M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+                M.l(IEngineFactory.class).create(username, locale);
 
         String uri = callContext.getParameter("uri");
         String res = String.valueOf(engine.doExecute(uri));

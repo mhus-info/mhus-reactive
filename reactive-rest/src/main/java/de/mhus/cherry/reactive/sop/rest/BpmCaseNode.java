@@ -15,7 +15,9 @@ package de.mhus.cherry.reactive.sop.rest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.shiro.subject.Subject;
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
@@ -24,8 +26,7 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.rest.core.CallContext;
 import de.mhus.rest.core.api.RestNodeService;
@@ -47,10 +48,12 @@ public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
     @Override
     protected List<ICase> getObjectList(CallContext callContext) throws MException {
 
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext context = aaa.getCurrent();
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
+        
         IEngine engine =
-                M.l(IEngineFactory.class).create(context.getAccountId(), context.getLocale());
+                M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = callContext.getParameter("names");
 
@@ -74,10 +77,12 @@ public class BpmCaseNode extends ObjectListNode<ICase, ICase> {
     @Override
     protected ICase getObjectForId(CallContext context, String id) throws Exception {
 
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext acontext = aaa.getCurrent();
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
+        
         IEngine engine =
-                M.l(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
+                M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = context.getParameter("names");
 

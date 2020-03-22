@@ -15,7 +15,9 @@ package de.mhus.cherry.reactive.sop.rest;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
+import org.apache.shiro.subject.Subject;
 import org.osgi.service.component.annotations.Component;
 
 import de.mhus.cherry.reactive.model.engine.SearchCriterias;
@@ -25,8 +27,7 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.util.RootActor;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.security.AaaContext;
-import de.mhus.lib.core.security.AccessApi;
+import de.mhus.lib.core.shiro.ShiroUtil;
 import de.mhus.lib.errors.MException;
 import de.mhus.rest.core.CallContext;
 import de.mhus.rest.core.api.RestNodeService;
@@ -48,9 +49,10 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
     @Override
     protected List<ICase> getObjectList(CallContext callContext) throws MException {
 
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext context = aaa.getCurrent();
-        IEngine engine = M.l(IEngineFactory.class).create(RootActor.USERNAME, context.getLocale());
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
+        IEngine engine = M.l(IEngineFactory.class).create(RootActor.USERNAME, locale);
 
         String propertyNames = callContext.getParameter("names");
 
@@ -58,7 +60,7 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
                 new SearchCriterias(new MProperties(callContext.getParameters()));
         int page = M.c(callContext.getParameter("page"), 0);
         int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
-        criterias.customer = context.getAccountId();
+        criterias.customer = username;
         try {
             return engine.searchCases(
                     criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
@@ -75,10 +77,11 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
     @Override
     protected ICase getObjectForId(CallContext context, String id) throws Exception {
 
-        AccessApi aaa = M.l(AccessApi.class);
-        AaaContext acontext = aaa.getCurrent();
+        Subject subject = ShiroUtil.getSubject();
+        String username = ShiroUtil.getPrincipal(subject);
+        Locale locale = ShiroUtil.getLocale(subject);
         IEngine engine =
-                M.l(IEngineFactory.class).create(acontext.getAccountId(), acontext.getLocale());
+                M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = context.getParameter("names");
 
