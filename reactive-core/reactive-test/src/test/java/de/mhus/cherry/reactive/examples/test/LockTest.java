@@ -82,7 +82,7 @@ public class LockTest {
         console.setColor(COLOR.RED, null);
         System.out.println(
                 "========================================================================================");
-        System.out.println(MSystem.findSourceMethod(3));
+        System.out.println(MSystem.findCallingMethod(3));
         System.out.println(
                 "========================================================================================");
         console.cleanup();
