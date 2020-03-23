@@ -27,6 +27,7 @@
 		<feature>openjpa</feature>
 		<feature>jndi</feature>
         <feature>activemq-client</feature>
+        <feature>shiro-core</feature>
 
         <!-- felix -->
         <bundle>mvn:org.apache.commons/commons-lang3/${commons-lang3.version}</bundle>
@@ -38,7 +39,8 @@
         <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.generalchecks/${felix.healthcheck.generalchecks.version}</bundle>
         
 		<!-- mhu-lib -->
-		
+
+        <bundle>mvn:commons-beanutils/commons-beanutils/${commons-beanutils.version}</bundle><!-- shiro -->
         <bundle>mvn:commons-codec/commons-codec/${commons-codec.version}</bundle>
 		<bundle>mvn:org.jsoup/jsoup/${org.jsoup.version}</bundle>
 		<bundle>mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
