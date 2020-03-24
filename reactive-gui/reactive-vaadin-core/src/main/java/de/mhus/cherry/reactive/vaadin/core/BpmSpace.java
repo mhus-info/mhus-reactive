@@ -53,7 +53,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.logging.Log;
-import de.mhus.lib.core.shiro.ShiroUtil;
+import de.mhus.lib.core.shiro.AccessUtil;
 import de.mhus.lib.vaadin.SearchField;
 import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
@@ -447,9 +447,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     }
 
     private void initEngine() {
-        Subject subject = ShiroUtil.getSubject();
-        String username = ShiroUtil.getPrincipal(subject);
-        Locale locale = ShiroUtil.getLocale(subject);
+        Subject subject = AccessUtil.getSubject();
+        String username = AccessUtil.getPrincipal(subject);
+        Locale locale = AccessUtil.getLocale(subject);
         engine = M.l(IEngineFactory.class).create(username, locale);
     }
 
