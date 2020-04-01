@@ -29,7 +29,7 @@ Download karaf 4.0.10 from karaf.apache.org start it and install the engine:
 version=1.3.4
 feature:repo-add activemq 5.12.1
 feature:repo-add cxf 3.1.5
-feature:repo-add mvn:de.mhus.osgi/mhu-karaf-feature/$version/xml/features
+feature:repo-add mvn:de.mhus.osgi/mhus-features/$version/xml/features
 
 feature:install mhu-osgi-base
 

@@ -63,8 +63,8 @@
 			<artifactId>lib-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.lib</groupId>
-			<artifactId>lib-persistence</artifactId>
+			<groupId>de.mhus.db</groupId>
+			<artifactId>db-core</artifactId>
 		</dependency>
        	<dependency>
 			<groupId>de.mhus.osgi</groupId>
