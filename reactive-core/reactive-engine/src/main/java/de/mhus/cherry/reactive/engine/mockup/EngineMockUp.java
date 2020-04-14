@@ -24,10 +24,10 @@ import de.mhus.cherry.reactive.model.engine.PCaseInfo;
 import de.mhus.cherry.reactive.model.engine.PNode;
 import de.mhus.cherry.reactive.model.engine.PNodeInfo;
 import de.mhus.cherry.reactive.model.engine.StorageProvider;
-import de.mhus.lib.core.MXml;
+import de.mhus.lib.core.M;
+import de.mhus.lib.core.config.ConfigList;
 import de.mhus.lib.core.config.IConfig;
-import de.mhus.lib.core.config.XmlConfig;
-import de.mhus.lib.core.config.XmlConfigFile;
+import de.mhus.lib.core.config.IConfigFactory;
 import de.mhus.lib.errors.NotFoundException;
 
 public class EngineMockUp {
@@ -91,9 +91,9 @@ public class EngineMockUp {
     }
 
     protected void load() throws FileNotFoundException, Exception {
-        XmlConfigFile config = new XmlConfigFile(file);
+        IConfig config = M.l(IConfigFactory.class).read(file);
         steps.clear();
-        for (IConfig nstep : config.getNodes("step")) {
+        for (IConfig nstep : config.getArray("step")) {
             Step step = new Step(nstep);
             steps.add(step);
         }
@@ -101,13 +101,14 @@ public class EngineMockUp {
 
     protected void save() throws Exception {
         cnt = 0;
-        XmlConfig config = new XmlConfig();
+        IConfig config = M.l(IConfigFactory.class).create();
+        ConfigList array = config.createArray("step");
         for (Step step : steps) {
             cnt++;
-            IConfig child = config.createConfig("step");
+            IConfig child = array.createObject();
             step.save(cnt, child);
         }
-        MXml.saveXml(config.getXmlElement(), file);
+        M.l(IConfigFactory.class).write(config, file);
     }
 
     public boolean isWarn() {

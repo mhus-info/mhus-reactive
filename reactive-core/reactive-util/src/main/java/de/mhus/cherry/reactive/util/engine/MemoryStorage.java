@@ -15,7 +15,9 @@ package de.mhus.cherry.reactive.util.engine;
 
 import java.util.UUID;
 
-import de.mhus.lib.core.config.NodeConfig;
+import de.mhus.lib.core.M;
+import de.mhus.lib.core.config.IConfig;
+import de.mhus.lib.core.config.IConfigFactory;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.sql.DbPool;
 import de.mhus.lib.sql.DbPoolBundle;
@@ -41,15 +43,14 @@ public class MemoryStorage extends SqlDbStorage {
             throw new MException("HSQLDB driver not found", jdbcDriver);
         }
 
-        NodeConfig cdb = new NodeConfig();
-        NodeConfig cconfig = new NodeConfig();
+        IConfig cconfig = M.l(IConfigFactory.class).create();
+        IConfig cdb = cconfig.createObject("db");
 
-        cdb.setProperty("driver", jdbcDriver);
-        cdb.setProperty("url", jdbcUrl);
-        cdb.setProperty("user", jdbcUser);
-        cdb.setProperty("pass", jdbcPass);
+        cdb.setString("driver", jdbcDriver);
+        cdb.setString("url", jdbcUrl);
+        cdb.setString("user", jdbcUser);
+        cdb.setString("pass", jdbcPass);
 
-        cconfig.setConfig("db", cdb);
         //		MActivator activator = new DefaultActivator(MemoryStorage.class.getClassLoader());
         DbPoolBundle bundle = new DbPoolBundle(cconfig, null);
 

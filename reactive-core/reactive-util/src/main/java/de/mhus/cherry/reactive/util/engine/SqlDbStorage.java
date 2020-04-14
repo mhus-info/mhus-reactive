@@ -45,7 +45,8 @@ import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.cfg.CfgInt;
-import de.mhus.lib.core.config.XmlConfigFile;
+import de.mhus.lib.core.config.IConfig;
+import de.mhus.lib.core.config.IConfigFactory;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
@@ -82,7 +83,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 URL url = MSystem.locateResource(this, "SqlDbStorage.xml");
                 DbConnection con = pool.getConnection();
-                XmlConfigFile data = new XmlConfigFile(url.openStream());
+                IConfig data = M.l(IConfigFactory.class).read(url);
                 data.setString("prefix", prefix);
                 pool.getDialect().createStructure(data, con, null, false);
                 con.close();

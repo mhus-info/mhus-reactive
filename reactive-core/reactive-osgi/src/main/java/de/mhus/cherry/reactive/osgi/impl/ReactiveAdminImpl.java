@@ -717,9 +717,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                 PEngine e = new PEngine(config.storage);
                 IConfig cfg = MApi.getCfg(ReactiveAdmin.class);
                 if (cfg != null) {
-                    IConfig cfgEngine = cfg.getNode("engine");
+                    IConfig cfgEngine = cfg.getObject("engine");
                     if (cfgEngine != null) {
-                        for (IConfig cfgPa : cfgEngine.getNodes("parameter")) {
+                        for (IConfig cfgPa : cfgEngine.getArray("parameter")) {
                             e.getParameters()
                                     .put(cfgPa.getString("name"), cfgPa.getString("value"));
                         }
