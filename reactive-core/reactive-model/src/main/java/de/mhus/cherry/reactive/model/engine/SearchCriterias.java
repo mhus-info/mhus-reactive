@@ -112,16 +112,16 @@ public class SearchCriterias implements Externalizable {
                     type = TYPE_NODE.valueOf(v.toUpperCase());
                     break;
                 case "priority":
-                    priority = M.c(v, priority);
+                    priority = M.to(v, priority);
                     break;
                 case "score":
-                    score = M.c(v, score);
+                    score = M.to(v, score);
                     break;
                 case "order":
                     order = ORDER.valueOf(v.toUpperCase());
                     break;
                 case "ascending":
-                    orderAscending = M.c(v, true);
+                    orderAscending = M.to(v, true);
                     break;
                 case "uri":
                     uri = v;
@@ -148,7 +148,7 @@ public class SearchCriterias implements Externalizable {
                     caseId = UUID.fromString(v);
                     break;
                 case "unassigned":
-                    unassigned = M.c(v, false);
+                    unassigned = M.to(v, false);
                     break;
                 case "assigned":
                     assigned = v;
@@ -240,7 +240,7 @@ public class SearchCriterias implements Externalizable {
                     milestone = v;
                     break;
                 case "limit":
-                    limit = M.c(v, 0);
+                    limit = M.to(v, 0);
                 default:
             }
         }

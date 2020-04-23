@@ -74,12 +74,12 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
     }
 
     private void addFlowConnect(UUID previousId, UUID id) {
-        parameters.put("connectCount", M.c(parameters.get("connectCount"), 0) + 1);
+        parameters.put("connectCount", M.to(parameters.get("connectCount"), 0) + 1);
         addMessage(EngineMessage.CONNECT_PREFIX + previousId + "," + id);
     }
 
     public int getConnectCount() {
-        return M.c(parameters.get("connectCount"), 0);
+        return M.to(parameters.get("connectCount"), 0);
     }
 
     private void addStartCreated(PNode flow) {

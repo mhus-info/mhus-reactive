@@ -58,8 +58,8 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
 
         SearchCriterias criterias =
                 new SearchCriterias(new MProperties(callContext.getParameters()));
-        int page = M.c(callContext.getParameter("page"), 0);
-        int size = Math.min(M.c(callContext.getParameter("size"), 100), 1000);
+        int page = M.to(callContext.getParameter("page"), 0);
+        int size = Math.min(M.to(callContext.getParameter("size"), 100), 1000);
         criterias.customer = username;
         try {
             return engine.searchCases(
