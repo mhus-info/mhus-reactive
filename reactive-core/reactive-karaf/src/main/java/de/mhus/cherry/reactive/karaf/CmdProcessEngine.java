@@ -32,6 +32,7 @@ import de.mhus.cherry.reactive.model.engine.SearchCriterias;
 import de.mhus.cherry.reactive.osgi.IEngineAdmin;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.cherry.reactive.osgi.impl.ReactiveAdminImpl;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
@@ -203,7 +204,7 @@ public class CmdProcessEngine extends AbstractCmd {
             PEngine persistent = api.getEnginePersistence();
             persistent.reload();
             if (parameters != null) {
-                MProperties properties = MProperties.explodeToMProperties(parameters);
+                MProperties properties = IProperties.explodeToMProperties(parameters);
                 for (Entry<String, Object> entry : properties.entrySet())
                     persistent.getParameters().put(entry.getKey(), String.valueOf(entry.getValue()));
                 persistent.save();

@@ -42,10 +42,10 @@ import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.uimp.UiProcess;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MPeriod;
-import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -116,7 +116,7 @@ public class CmdCase extends AbstractCmd {
                 Map<String, Object> p = (Map<String, Object>) field.get(caze);
                 for (int i = 1; i < parameters.length; i++) {
                     String x = parameters[i];
-                    MProperties.appendToMap(p, x);
+                    IProperties.appendToMap(p, x);
                 }
                 lock.savePCase(null, false);
                 api.getEngine().storageUpdateFull(caze);
@@ -128,7 +128,7 @@ public class CmdCase extends AbstractCmd {
                 Map<String, Object> p = caze.getParameters();
                 for (int i = 1; i < parameters.length; i++) {
                     String x = parameters[i];
-                    MProperties.appendToMap(p, x);
+                    IProperties.appendToMap(p, x);
                 }
                 lock.savePCase(null, false);
                 System.out.println("SAVED");

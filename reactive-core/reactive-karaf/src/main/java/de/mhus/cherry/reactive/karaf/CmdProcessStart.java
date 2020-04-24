@@ -19,6 +19,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.osgi.api.karaf.AbstractCmd;
@@ -47,7 +48,7 @@ public class CmdProcessStart extends AbstractCmd {
     public Object execute2() throws Exception {
 
         if (uri.startsWith(EngineConst.SCHEME_REACTIVE + ":")) {
-            MProperties properties = MProperties.explodeToMProperties(parameters);
+            MProperties properties = IProperties.explodeToMProperties(parameters);
 
             ReactiveAdmin api = M.l(ReactiveAdmin.class);
             api.getEngine().start(uri, properties);

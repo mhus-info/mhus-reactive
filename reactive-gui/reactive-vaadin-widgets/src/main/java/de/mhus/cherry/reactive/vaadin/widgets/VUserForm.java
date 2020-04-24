@@ -20,6 +20,7 @@ import com.vaadin.v7.ui.VerticalLayout;
 
 import de.mhus.cherry.reactive.model.ui.IEngine;
 import de.mhus.cherry.reactive.model.ui.INode;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.logging.Log;
@@ -130,7 +131,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
         if (action.startsWith("submit:")) {
             action = action.substring(7);
             MProperties p = dataSource.getProperties();
-            p.putAll(MProperties.explodeToMProperties(action));
+            p.putAll(IProperties.explodeToMProperties(action));
             onFormSubmit(node, p);
         } else if (action.startsWith("action:")) {
             action = action.substring(7);

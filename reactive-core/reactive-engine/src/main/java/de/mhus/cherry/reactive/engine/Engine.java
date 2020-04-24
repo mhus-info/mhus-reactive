@@ -530,7 +530,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                     String[] uriParams = uri.getParams();
                     if (uriParams != null && uriParams.length > 0) {
-                        MProperties options = MProperties.explodeToMProperties(uriParams);
+                        MProperties options = IProperties.explodeToMProperties(uriParams);
                         if (options.getBoolean(EngineConst.PARAM_PROGRESS, false)) {
                             long waitTime = 200;
                             long start = System.currentTimeMillis();
@@ -707,7 +707,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         String[] uriParams = uri.getParams();
         MProperties options = null;
         if (uriParams != null && uriParams.length > 0) {
-            options = MProperties.explodeToMProperties(uriParams);
+            options = IProperties.explodeToMProperties(uriParams);
         } else {
             options = new MProperties();
         }

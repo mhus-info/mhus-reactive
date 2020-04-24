@@ -86,7 +86,7 @@ public class SearchCriterias implements Externalizable {
     public SearchCriterias() {}
 
     public SearchCriterias(String[] parameters) {
-        this(parameters == null ? new MProperties() : MProperties.explodeToMProperties(parameters));
+        this(parameters == null ? new MProperties() : IProperties.explodeToMProperties(parameters));
     }
 
     public SearchCriterias(MProperties parameters) {
