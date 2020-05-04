@@ -22,8 +22,8 @@ import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.util.Migrator;
 import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.strategy.DefaultMonitor;
-import de.mhus.lib.core.strategy.Monitor;
+import de.mhus.lib.core.operation.DefaultMonitor;
+import de.mhus.lib.core.operation.Monitor;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 

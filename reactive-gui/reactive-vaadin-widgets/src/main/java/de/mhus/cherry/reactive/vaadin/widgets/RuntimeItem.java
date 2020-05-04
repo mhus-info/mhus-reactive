@@ -6,7 +6,7 @@ import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.EngineMessage.TYPE;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.lib.annotations.vaadin.Column;
-import de.mhus.lib.core.lang.DateTime;
+import de.mhus.lib.core.util.DateTime;
 
 public class RuntimeItem {
 
