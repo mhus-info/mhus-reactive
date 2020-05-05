@@ -96,6 +96,16 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
             <type>xml</type>
             <scope>runtime</scope>
 	    </dependency>
+
+        <dependency>
+           <groupId>de.mhus.osgi</groupId>
+           <artifactId>mhus-features</artifactId>
+           <version>${mhus-parent.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+	    
         <dependency>
 	        <groupId>de.mhus.cherry.reactive</groupId>
 	        <artifactId>reactive-feature</artifactId>
@@ -176,6 +186,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>scr</feature>
                         <feature>http-whiteboard</feature>
                         <feature>deployer</feature>
+                        <feature>eventadmin</feature>
                         
                         <feature>cxf-core/${cxf.version}</feature>
                         <feature>openjpa3/3.0.0</feature>
