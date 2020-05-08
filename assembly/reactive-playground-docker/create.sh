@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=7.1.0-SNAPSHOT
+VERSION=7.1.0
 REPOSITORY=mhus/reactive-playground
 
 if [  ! -f Dockerfile ]; then
@@ -19,4 +19,4 @@ fi
 
 if [ "$1" = "push" ]; then
     docker push "$REPOSITORY:$VERSION"
-fi 
+fi

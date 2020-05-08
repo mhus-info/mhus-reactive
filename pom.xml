@@ -84,7 +84,6 @@
                 <module>reactive-rest</module>
                 <module>reactive-gui</module>
                 <module>reactive-tools</module>
-                <module>reactive-feature</module>
                 <!-- do not deploy examples
                 <module>cr-examples</module>
                  -->

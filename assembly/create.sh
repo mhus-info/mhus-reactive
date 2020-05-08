@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=7.1.0-SNAPSHOT
+VERSION=7.1.0
 
 mvn install -P assembly || exit 1
 
