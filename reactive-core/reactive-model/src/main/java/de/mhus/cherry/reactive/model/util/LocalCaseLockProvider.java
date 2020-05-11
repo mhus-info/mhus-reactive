@@ -5,9 +5,9 @@ import java.util.UUID;
 import de.mhus.cherry.reactive.model.engine.CaseLockProvider;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MPeriod;
-import de.mhus.lib.core.base.service.LockManager;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.concurrent.Lock;
+import de.mhus.lib.core.service.LockManager;
 import de.mhus.lib.errors.TimeoutException;
 
 public class LocalCaseLockProvider implements CaseLockProvider {

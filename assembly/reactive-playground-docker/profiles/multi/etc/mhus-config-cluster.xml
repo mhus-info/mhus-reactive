@@ -1,5 +1,5 @@
 <mhus>
-<de.mhus.lib.core.base.service.ClusterApi
+<de.mhus.lib.core.service.ClusterApi
    enabled="true"
    lockValidate="false"
 />

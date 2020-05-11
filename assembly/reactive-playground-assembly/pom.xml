@@ -186,7 +186,9 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>scr</feature>
                         <feature>http-whiteboard</feature>
                         <feature>deployer</feature>
+                        <!-- eventadmin generates suspect problems
                         <feature>eventadmin</feature>
+                         -->
                         
                         <feature>cxf-core/${cxf.version}</feature>
                         <feature>openjpa3/3.0.0</feature>

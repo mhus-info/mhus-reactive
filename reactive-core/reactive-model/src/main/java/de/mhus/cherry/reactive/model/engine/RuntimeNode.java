@@ -26,7 +26,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.base.service.ServerIdent;
+import de.mhus.lib.core.service.ServerIdent;
 
 public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextRecipient {
 
