@@ -44,7 +44,7 @@ public class _Address extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"de.mhus.cherry.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"7.1.0");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"7.2.0-SNAPSHOT");
   public static final Identifier _COUNTRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"country");
   public static final Identifier _COUNTRY_CODE = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"CountryCode");
   public static final Identifier _COUNTRY__CODE__DE = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.Address.class,"COUNTRY_CODE_DE");

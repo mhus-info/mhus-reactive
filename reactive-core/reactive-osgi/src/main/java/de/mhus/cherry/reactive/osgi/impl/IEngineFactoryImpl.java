@@ -17,7 +17,6 @@ import java.io.File;
 import java.util.Locale;
 
 import org.osgi.service.component.ComponentContext;
-
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 
