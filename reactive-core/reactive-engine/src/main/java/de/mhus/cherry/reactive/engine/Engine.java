@@ -414,7 +414,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-        	try (Scope scope = ITracer.get().start("flownode", true,  // XXX use span for case and use child span for node execution
+        	try (Scope scope = ITracer.get().start("flownode", "flownode",  // XXX use span for case and use child span for node execution
         			"node_name", node.getName(), 
         			"node_id", node.getId().toString(),
         			"case_id", node.getCaseId().toString()
