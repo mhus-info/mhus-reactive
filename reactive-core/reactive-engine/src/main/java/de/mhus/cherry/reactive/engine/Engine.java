@@ -82,6 +82,7 @@ import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.concurrent.Lock;
+import de.mhus.lib.core.logging.ITracer;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.core.util.MutableUri;
 import de.mhus.lib.errors.AccessDeniedException;
@@ -92,6 +93,7 @@ import de.mhus.lib.errors.TimeoutException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.errors.ValidationException;
+import io.opentracing.Scope;
 
 public class Engine extends MLog implements EEngine, InternalEngine {
 
@@ -381,7 +383,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
     private class FlowNodeExecutor implements Runnable {
 
-        public boolean finished = false;
+        public volatile boolean finished = false;
         public boolean outtimed = false;
 
         @SuppressWarnings("unused")
@@ -412,21 +414,27 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-            lock.owner = Thread.currentThread();
-            start = System.currentTimeMillis();
-            try {
-                lock.doFlowNode(node);
-            } catch (Throwable t) {
-                try {
-                    log().e(node, t);
-                    fireEvent.error(node, t);
-                } catch (Throwable t2) {
-                }
-            }
-            lock.close();
-            synchronized (executing) {
-                executing.remove(node.getId());
-            }
+        	try (Scope scope = ITracer.get().start("flownode", true,  // XXX use span for case and use child span for node execution
+        			"node_name", node.getName(), 
+        			"node_id", node.getId().toString(),
+        			"case_id", node.getCaseId().toString()
+        			)) {
+	            lock.owner = Thread.currentThread();
+	            start = System.currentTimeMillis();
+	            try {
+	                lock.doFlowNode(node);
+	            } catch (Throwable t) {
+	                try {
+	                    log().e(node, t);
+	                    fireEvent.error(node, t);
+	                } catch (Throwable t2) {
+	                }
+	            }
+	            lock.close();
+	            synchronized (executing) {
+	                executing.remove(node.getId());
+	            }
+        	}
             finished = true;
         }
     }
