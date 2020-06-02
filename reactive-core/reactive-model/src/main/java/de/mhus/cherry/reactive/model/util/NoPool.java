@@ -23,7 +23,7 @@ import de.mhus.lib.errors.NotSupportedException;
 public class NoPool implements APool<NoPool> {
 
     @Override
-    public Map<String, Object> exportParamters() {
+    public Map<String, Object> exportParameters() {
         throw new NotSupportedException();
     }
 

@@ -2193,7 +2193,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                     APool<?> aPool = context.getPool();
                     aPool.closeCase();
-                    Map<String, Object> newParameters = aPool.exportParamters();
+                    Map<String, Object> newParameters = aPool.exportParameters();
                     caze.getParameters().putAll(newParameters);
 
                     if (aPool instanceof IndexValuesProvider) {
@@ -2338,7 +2338,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public void savePCase(APool<?> aPool, boolean init) throws IOException, NotFoundException {
             PCase pCase = getCase();
             if (aPool != null) {
-                Map<String, Object> newParameters = aPool.exportParamters();
+                Map<String, Object> newParameters = aPool.exportParameters();
                 pCase.getParameters().putAll(newParameters);
 
                 if (aPool instanceof IndexValuesProvider) {

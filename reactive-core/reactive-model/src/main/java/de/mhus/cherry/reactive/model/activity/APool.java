@@ -25,7 +25,7 @@ import de.mhus.cherry.reactive.model.util.IndexValuesProvider;
  */
 public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvider {
 
-    Map<String, Object> exportParamters();
+    Map<String, Object> exportParameters();
 
     void importParameters(Map<String, Object> parameters);
 

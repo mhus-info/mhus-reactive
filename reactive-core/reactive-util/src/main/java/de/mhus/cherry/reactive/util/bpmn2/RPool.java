@@ -41,7 +41,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
     protected ProcessContext<?> context;
 
     @Override
-    public Map<String, Object> exportParamters() {
+    public Map<String, Object> exportParameters() {
         HashMap<String, Object> out = new HashMap<>();
         for (PojoAttribute<?> attr : getPojoModel()) {
             try {
