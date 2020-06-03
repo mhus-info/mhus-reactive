@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=7.1.0
+VERSION=7.2.0
 REPOSITORY=mhus/reactive-playground
 
 if [  ! -f Dockerfile ]; then

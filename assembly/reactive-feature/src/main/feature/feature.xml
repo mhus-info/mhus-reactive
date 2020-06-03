@@ -23,6 +23,7 @@
 		<details>${project.description}</details>
 		
         <feature>mhu-base</feature>
+        <feature>mhu-base-jaeger</feature>
 
 		<!-- reactive -->
 		

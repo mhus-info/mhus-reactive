@@ -27,12 +27,22 @@ docker push "mhus/reactive-playground:7.0.0-SNAPSHOT"
 
 Create Docker playground as single node with in memory db:
 
+docker run -d --name jaeger \
+  -p 5775:5775/udp \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  jaegertracing/all-in-one:latest
+
 docker run -it --name reactive-playground \
  -h reactive \
  -v ~/.m2:/home/user/.m2 \
+ --link jaeger:jaeger \
  -p 8181:8181 \
  -p 15005:5005 \
- mhus/reactive-playground:7.0.0-SNAPSHOT debug
+ mhus/reactive-playground:7.2.0 debug
 
 docker rm reactive-playground
 

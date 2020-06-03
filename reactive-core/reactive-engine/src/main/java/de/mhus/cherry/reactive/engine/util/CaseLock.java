@@ -34,7 +34,7 @@ public class CaseLock extends MLog implements Closeable {
 			@Override
 			public Iterator<Entry<String, String>> iterator() {
 				HashMap<String,String> out = new HashMap<>();
-				caze.getParameters().forEach((k,v) -> {if (k.startsWith("__trace.")) out.put(k.substring(8), v.toString()); } );
+				caze.getParameters().forEach((k,v) -> {if (k.startsWith("__tracer.")) out.put(k.substring(9), v.toString()); } );
 				return out.entrySet().iterator();
 			}
 
