@@ -86,7 +86,7 @@ public class Migrator {
                     && filter(info)) {
                 monitor.println("*** Suspend " + info);
                 if (!test) {
-                    try (CaseLock lock = engine.getCaseLock(info)) {
+                    try (CaseLock lock = engine.getCaseLock(info, "migrator.suspend")) {
                         monitor.incrementStep();
                         engine.suspendCase(info.getId());
                         engine.prepareMigrateCase(lock);

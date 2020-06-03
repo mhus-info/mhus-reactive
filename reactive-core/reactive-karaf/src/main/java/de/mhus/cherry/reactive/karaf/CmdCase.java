@@ -95,7 +95,7 @@ public class CmdCase extends AbstractCmd {
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         if (cmd.equals("updatefull")) {
-            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0], "cmdcase.updatefull")) {
                 PCase caze = lock.getCase();
                 System.out.println("CASE " + caze.getId());
                 api.getEngine().storageUpdateFull(caze);
@@ -108,7 +108,7 @@ public class CmdCase extends AbstractCmd {
             }
         } else if (cmd.equals("setoption")) {
 
-            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0], "cmdcase.setoption")) {
                 PCase caze = lock.getCase();
                 Field field = caze.getClass().getDeclaredField("options");
                 field.setAccessible(true);
@@ -123,7 +123,7 @@ public class CmdCase extends AbstractCmd {
                 System.out.println("SAVED");
             }
         } else if (cmd.equals("setparam")) {
-            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0], "cmdcase.setparam")) {
                 PCase caze = lock.getCase();
                 Map<String, Object> p = caze.getParameters();
                 for (int i = 1; i < parameters.length; i++) {
@@ -330,7 +330,7 @@ public class CmdCase extends AbstractCmd {
             api.getEngine().storageDeleteCaseAndFlowNodes(UUID.fromString(parameters[0]));
         } else if (cmd.equals("cancel")) {
             for (String id : parameters) {
-                try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0])) {
+                try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), parameters[0], "cmdcase.cancel")) {
                     PCase caze = lock.getCase();
                     System.out.println("Cancel: " + caze);
                     lock.closeCase(true, -1, "cancelled by cmd");

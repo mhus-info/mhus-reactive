@@ -541,7 +541,7 @@ public class S1ActivitiesTest {
             }
             assertTrue(i < 10);
             mockup.close();
-            try (PCaseLock lock = engine.getCaseLock(caseId)) {
+            try (PCaseLock lock = engine.getCaseLock(caseId, "testNone")) {
                 lock.closeCase(true, -1, "test");
             }
         } catch (Throwable t) {

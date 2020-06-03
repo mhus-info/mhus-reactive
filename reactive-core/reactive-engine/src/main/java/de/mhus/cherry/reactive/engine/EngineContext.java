@@ -261,7 +261,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>> {
 
         EElement start = getEPool().getElement(next.getCanonicalName());
         PNode node = getPNode();
-        try (PCaseLock lock = engine.getCaseLock(node)) {
+        try (PCaseLock lock = engine.getCaseLock(node, "createActivity")) {
             return lock.createActivity(this, node, start);
         }
     }
@@ -269,7 +269,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>> {
     @Override
     public void saveRuntime() throws IOException {
         try {
-            try (PCaseLock lock = engine.getCaseLock(getPRuntime())) {
+            try (PCaseLock lock = engine.getCaseLock(getPRuntime(), "saveRuntime")) {
                 lock.saveRuntime(getPRuntime(), aRuntime);
             }
         } catch (TimeoutException te) {

@@ -100,7 +100,7 @@ public class CmdNode extends AbstractCmd {
             String nextName = parameters.length < 2 ? "" : parameters[1];
             PNode node = EngineUtil.getFlowNode(api.getEngine(), parameters[0]);
 
-            try (PCaseLock lock = api.getEngine().getCaseLock(node.getCaseId())) {
+            try (PCaseLock lock = api.getEngine().getCaseLock(node.getCaseId(), "cmdnode.skip")) {
 
                 PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
                 node = lock.getFlowNode(node.getId()); // reload node

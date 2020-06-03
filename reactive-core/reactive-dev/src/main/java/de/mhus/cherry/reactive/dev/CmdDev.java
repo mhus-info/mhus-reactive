@@ -158,7 +158,7 @@ public class CmdDev extends AbstractCmd {
             for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
                 if (info.getState() != STATE_CASE.CLOSED) {
                     try (PCaseLock lock =
-                            EngineUtil.getCaseLock(api.getEngine(), info.getId().toString())) {
+                            EngineUtil.getCaseLock(api.getEngine(), info.getId().toString(), "cmddev.cancelallcases") ) {
                         PCase caze = lock.getCase();
                         System.out.println("Cancel: " + caze);
                         lock.closeCase(true, -1, "cancelled by cmd");
@@ -173,7 +173,7 @@ public class CmdDev extends AbstractCmd {
             for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
                 if (info.getState() != STATE_NODE.CLOSED) {
                     try (PCaseLock lock =
-                            EngineUtil.getCaseLock(api.getEngine(), info.getCaseId().toString())) {
+                            EngineUtil.getCaseLock(api.getEngine(), info.getCaseId().toString(), "cmddev.cancelallnodes")) {
                         PNode node = lock.getFlowNode(info.getId());
                         System.out.println("Cancel: " + node);
                         lock.closeFlowNode(null, node, STATE_NODE.CLOSED);

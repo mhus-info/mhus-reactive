@@ -12,11 +12,12 @@ public class _S1Pool extends ConstBase {
   public static final Identifier CLASS_EXTENDS = new Identifier(Identifier.TYPE.CLASS, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"de.mhus.cherry.reactive.util.bpmn2.RPool");
   public static final Identifier CLASS_NAME = new Identifier(Identifier.TYPE.CLASS, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"de.mhus.cherry.reactive.examples.simple1.S1Pool");
   public static final Identifier CLASS_PATH = new Identifier(Identifier.TYPE.CLASS, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"de.mhus.cherry.reactive.examples.simple1.S1Pool");
+  public static final Identifier FIELD_LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"LOG_LEVEL_MAPPING");
   public static final Identifier METHOD_AFTER_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"afterExecute");
   public static final Identifier METHOD_BEFORE_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"beforeExecute");
   public static final Identifier METHOD_CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier METHOD_CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"createIndexValues");
-  public static final Identifier METHOD_EXPORT_PARAMTERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"exportParamters");
+  public static final Identifier METHOD_EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier METHOD_GET_POJO_MODEL = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getPojoModel");
   public static final Identifier METHOD_GET_TEXT1 = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getText1");
   public static final Identifier METHOD_GET_TEXT2 = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getText2");
@@ -37,10 +38,11 @@ public class _S1Pool extends ConstBase {
   public static final Identifier _CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"createIndexValues");
-  public static final Identifier _EXPORT_PARAMTERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"exportParamters");
+  public static final Identifier _EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier _IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"importParameters");
   public static final Identifier _INITIALIZE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"initializeCase");
   public static final Identifier _LOG = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"log");
+  public static final Identifier _LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"LOG_LEVEL_MAPPING");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"pojoModel");
   public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"registerNatives");
   public static final Identifier _TEXT1 = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"text1");

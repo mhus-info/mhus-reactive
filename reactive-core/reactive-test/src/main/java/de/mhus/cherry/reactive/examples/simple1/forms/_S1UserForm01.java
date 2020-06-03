@@ -16,6 +16,7 @@ public class _S1UserForm01 extends ConstBase {
   public static final Identifier FIELD_FORM__CUSTOMER__ID = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"FORM_CUSTOMER_ID");
   public static final Identifier FIELD_FORM__CUSTOM__ID = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"FORM_CUSTOM_ID");
   public static final Identifier FIELD_FORM__MILESTONE = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"FORM_MILESTONE");
+  public static final Identifier FIELD_LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"LOG_LEVEL_MAPPING");
   public static final Identifier FIELD_RETRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"RETRY");
   public static final Identifier METHOD_CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"createIndexValues");
   public static final Identifier METHOD_DO_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"doAction");
@@ -58,6 +59,7 @@ public class _S1UserForm01 extends ConstBase {
   public static final Identifier _IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"importParameters");
   public static final Identifier _INITIALIZE_ACTIVITY = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"initializeActivity");
   public static final Identifier _LOG = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"log");
+  public static final Identifier _LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"LOG_LEVEL_MAPPING");
   public static final Identifier _OPTION = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"option");
   public static final Identifier _OPTION_OPTIONS = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"optionOptions");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.forms.S1UserForm01.class,"pojoModel");

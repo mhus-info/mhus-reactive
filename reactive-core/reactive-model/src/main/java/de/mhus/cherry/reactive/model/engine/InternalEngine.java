@@ -34,17 +34,17 @@ public interface InternalEngine {
 
     void doNodeErrorHandling(PNode closeNode, String error) throws Exception;
 
-    CaseLock getCaseLockByNode(UUID nodeId) throws MException;
+    CaseLock getCaseLockByNode(UUID nodeId, String operation, Object ... tagPairs) throws MException;
 
-    CaseLock getCaseLock(PNodeInfo nodeInfo) throws TimeoutException;
+    CaseLock getCaseLock(PNodeInfo nodeInfo, String operation, Object ... tagPairs) throws TimeoutException;
 
-    CaseLock getCaseLock(PCaseInfo caseInfo) throws TimeoutException;
+    CaseLock getCaseLock(PCaseInfo caseInfo, String operation, Object ... tagPairs) throws TimeoutException;
 
-    CaseLock getCaseLock(PNode node) throws TimeoutException;
+    CaseLock getCaseLock(PNode node, String operation, Object ... tagPairs) throws TimeoutException;
 
-    CaseLock getCaseLockOrNull(PNodeInfo nodeInfo);
+    CaseLock getCaseLockOrNull(PNodeInfo nodeInfo, String operation, Object ... tagPairs);
 
-    CaseLock getCaseLockOrNull(UUID caseId) throws TimeoutException;
+    CaseLock getCaseLockOrNull(UUID caseId, String operation, Object ... tagPairs) throws TimeoutException;
 
-    CaseLock getCaseLock(UUID caseId) throws TimeoutException;
+    CaseLock getCaseLock(UUID caseId, String operation, Object ... tagPairs) throws TimeoutException;
 }
