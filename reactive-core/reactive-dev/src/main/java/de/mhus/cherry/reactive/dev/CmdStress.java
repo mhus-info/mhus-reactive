@@ -27,7 +27,9 @@ import de.mhus.cherry.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
+import de.mhus.lib.core.logging.ITracer;
 import de.mhus.osgi.api.karaf.AbstractCmd;
+import io.opentracing.Scope;
 
 @Command(scope = "reactive", name = "pstress", description = "Execute cases all the time")
 @Service
@@ -58,13 +60,6 @@ public class CmdStress extends AbstractCmd {
     @Option(name = "-m", aliases = "--max", description = "Max active processes", required = false)
     private int max = 0;
 
-    @Option(
-            name = "-s",
-            aliases = "--size",
-            description = "How much to create for each interval",
-            required = false)
-    private int size = 1;
-
     @Reference private Session session;
 
     private static boolean running = false;
@@ -83,27 +78,27 @@ public class CmdStress extends AbstractCmd {
         running = true;
         int pos = 0;
         while (running) {
-            for (int i = 0; i < size; i++) {
-                String uri = uris[pos];
-                uri = uri.replace("$cnt$", "" + cnt);
-                console.setColor(COLOR.RED, null);
-                System.out.println(">>> " + cnt + ": " + uri);
-                console.cleanup();
-                ReactiveAdmin api = M.l(ReactiveAdmin.class);
-                api.getEngine().start(uri);
-                pos = (pos + 1) % uris.length;
-                cnt++;
+            String uri = uris[pos];
+            uri = uri.replace("$cnt$", "" + cnt);
+            console.setColor(COLOR.RED, null);
+            System.out.println(">>> " + cnt + ": " + uri);
+            console.cleanup();
+            ReactiveAdmin api = M.l(ReactiveAdmin.class);
+            try (Scope scope = ITracer.get().start("stress:" + uris[pos], "stress", "cnt", cnt)) {
+            	api.getEngine().start(uri);
+            }
+            pos = (pos + 1) % uris.length;
+            cnt++;
 
-                if (max > 0) {
-                    while (true) {
-                        Result<PCaseInfo> cases = api.getEngine().storageGetCases(null);
-                        int cs = 0;
-                        for (PCaseInfo caze : cases) if (caze.getState() != STATE_CASE.CLOSED) cs++;
-                        if (cs < max) break;
-                        System.out.println("=== To much cases " + cs);
-                        if (session.getKeyboard().available() > 0) return null;
-                        Thread.sleep(interval * 1000);
-                    }
+            if (max > 0) {
+                while (true) {
+                    Result<PCaseInfo> cases = api.getEngine().storageGetCases(null);
+                    int cs = 0;
+                    for (PCaseInfo caze : cases) if (caze.getState() != STATE_CASE.CLOSED) cs++;
+                    if (cs < max) break;
+                    System.out.println("=== To much cases " + cs);
+                    if (session.getKeyboard().available() > 0) return null;
+                    Thread.sleep(interval * 1000);
                 }
             }
             if (session.getKeyboard().available() > 0) return null;

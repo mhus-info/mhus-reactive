@@ -26,7 +26,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     private String stacktrace;
 
     public CaseLockProxy(PCaseLock instance, EngineListener fireEvent, String operation, Object ... tagPairs) {
-    	super(operation, tagPairs);
+    	super(false, operation, tagPairs);
         caseId = instance.getCaseId();
         fireEvent.lock(this, caseId);
         this.instance = instance;

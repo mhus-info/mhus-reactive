@@ -94,6 +94,7 @@ import de.mhus.lib.errors.TimeoutException;
 import de.mhus.lib.errors.TimeoutRuntimeException;
 import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.errors.ValidationException;
+import io.opentracing.References;
 import io.opentracing.Scope;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.propagation.Format;
@@ -157,7 +158,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         for (PNodeInfo nodeId : storage.getScheduledFlowNodes(STATE_NODE.SCHEDULED, now, false)) {
             try {
                 PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
-                PCaseLock lock = getCaseLockOrNull(nodeInfo, "doPrepareNodes.SCHEDULED");
+                PCaseLock lock = getCaseLockOrNull(nodeInfo, "node:scheduled:" + nodeInfo.getCanonicalName());
                 if (lock == null) continue;
                 try (lock) {
                     PNode node = lock.getFlowNode(nodeId.getId());
@@ -173,7 +174,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
         for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
             try {
-                PCaseLock lock = getCaseLockOrNull(nodeInfo, "doPrepareNodes.WAITING");
+                PCaseLock lock = getCaseLockOrNull(nodeInfo, "node:waiting:" + nodeInfo.getCanonicalName());
                 if (lock == null) continue;
                 try (lock) {
                     PCase caze = lock.getCase();
@@ -211,11 +212,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
-                PCaseLock lockx = getCaseLockOrNull(nodeInfo, "doProcessNodes.RUNNING");
+                PCaseLock lockx = getCaseLockOrNull(nodeInfo, "node:" + nodeInfo.getCanonicalName(), "id", nodeInfo.getId());
                 if (lockx == null || !(lockx instanceof EngineCaseLock)) {
                     if (lockx != null) lockx.close();
                     continue;
                 }
+                
+                while (ITracer.get().tracer().scopeManager().active() != null)
+                	ITracer.get().tracer().scopeManager().active().close();
+                
                 EngineCaseLock lock = (EngineCaseLock) lockx;
 
                 try {
@@ -262,7 +267,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
-                PCaseLock lock = getCaseLockOrNull(nodeInfo, "doProcessNodes.linear");
+                PCaseLock lock = getCaseLockOrNull(nodeInfo, "node:" + nodeInfo.getCanonicalName(), "id", nodeInfo.getId());
                 if (lock == null) continue;
 
                 try (lock) {
@@ -327,7 +332,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         fireEvent.doStep("cleanup");
         for (PCaseInfo caseInfo : storage.getCases(STATE_CASE.RUNNING)) {
             try {
-                PCaseLock lock = getCaseLockOrNull(caseInfo.getId(), "doCleanupCases.RUNNING");
+                PCaseLock lock = getCaseLockOrNull(caseInfo.getId(), "cleanup:" + caseInfo.getCanonicalName(), "id", caseInfo.getId());
                 if (lock == null) continue;
                 try (lock) {
                     boolean found = false;
@@ -418,8 +423,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-        	
-        	try {
+        	try (Scope scope = ITracer.get().tracer().scopeManager().activate(lock.getSpan(), false)) {
 	            lock.owner = Thread.currentThread();
 	            start = System.currentTimeMillis();
 	            try {
@@ -809,8 +813,15 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 .clear(); // cleanup before first save, will remove parameters from external input
         
         // create and add trace information
-        SpanBuilder spanBuilder = ITracer.get().createSpan(ITracer.get().current(), "bpm", "uri", uri.toString(), "id", id.toString());
-        try (Scope scope = spanBuilder.startActive(false)) {
+        
+        SpanBuilder spanBuilder = ITracer.get().createSpan(null, 
+        		"bpm:" + pCase.getCanonicalName(), 
+        		"uri", originalUri.toString(), 
+        		"id", id.toString(),
+        		"properties", properties);
+        if (ITracer.get().current() != null)
+        	spanBuilder.addReference(References.FOLLOWS_FROM, ITracer.get().current().context());
+        try (Scope scope = spanBuilder.startActive(true)) {
         	// inject tracer
 			ITracer.get().tracer().inject(scope.span().context(), Format.Builtin.TEXT_MAP, new TextMap() {
 	
@@ -826,7 +837,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 				
 			});
 			// create case lock
-	        try (PCaseLock lock = getCaseLock(pCase.getId(), "create")) {
+	        try (PCaseLock lock = getCaseLock(pCase.getId(), null)) {
 	            lock.setPCase(pCase);
 	            lock.savePCase(aPool, true);
 	
@@ -2114,7 +2125,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         private String stacktrace;
 
         EngineCaseLock(UUID caseId, Lock lock, String operation, Object ... tagPairs) {
-        	super(operation, tagPairs);
+        	super(true, operation, tagPairs);
             owner = Thread.currentThread();
             fireEvent.lock(this, caseId);
             this.lock = lock;
@@ -2133,7 +2144,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         	}
         }
 
-        @Override
+		@Override
         public Lock getLock() {
             return lock;
         }
