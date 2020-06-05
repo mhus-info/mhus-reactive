@@ -85,7 +85,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     private Component currentView;
     private Refreshable currentRefreshable;
 
-    private Map<String, Component> contentCache;
+    private Map<String, Component[]> contentCache;
     private String currentFilter;
 
     public BpmSpace(BpmSpaceService bpmSpaceService) {
@@ -114,16 +114,17 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                         criterias.nodeState = STATE_NODE.WAITING;
                         criterias.type = TYPE_NODE.USER;
                         String[] properties = new String[] {"*"};
-                        Component cached = contentCache.get(selection);
+                        Component[] cached = contentCache.get(selection);
                         if (cached == null) {
                             cached = getNodeListView(criterias, properties);
                             if (cached == null) return null;
                             contentCache.put(selection, cached);
-                        } else if (cached instanceof VNodeList) {
-                            ((VNodeList) cached).doReload();
+                        } else if (cached[1] instanceof VNodeList) {
+                            ((VNodeList) cached[1]).doReload();
+                            currentRefreshable = (Refreshable) cached[1];
                         }
-                        currentView = cached;
-                        setContent(cached);
+                        currentView = cached[0];
+                        setContent(cached[0]);
                     }
                     break;
                 case I_ASSIGNED:
@@ -135,30 +136,31 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                         criterias.nodeState = STATE_NODE.WAITING;
                         criterias.type = TYPE_NODE.USER;
                         String[] properties = new String[] {"*"};
-                        Component cached = contentCache.get(selection);
+                        Component[] cached = contentCache.get(selection);
                         if (cached == null) {
                             cached = getNodeListView(criterias, properties);
                             if (cached == null) return null;
                             contentCache.put(selection, cached);
-                        } else if (cached instanceof VNodeList) {
-                            ((VNodeList) cached).doReload();
+                        } else if (cached[1] instanceof VNodeList) {
+                            ((VNodeList) cached[1]).doReload();
+                            currentRefreshable = (Refreshable) cached[1];
                         }
-                        currentView = cached;
-                        setContent(cached);
+                        currentView = cached[0];
+                        setContent(cached[0]);
                     }
                     break;
                 case I_ALL_NODES:
                     {
                         SearchCriterias criterias = new SearchCriterias();
                         String[] properties = new String[] {"*"};
-                        setContent(getNodeListView(criterias, properties));
+                        setContent(getNodeListView(criterias, properties)[0]);
                     }
                     break;
                 case I_ALL_CASES:
                     {
                         SearchCriterias criterias = new SearchCriterias();
                         String[] properties = new String[] {"*"};
-                        setContent(getCaseListView(criterias, properties));
+                        setContent(getCaseListView(criterias, properties)[0]);
                     }
                     break;
                 case I_ACTIVE_CASES:
@@ -166,7 +168,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                         SearchCriterias criterias = new SearchCriterias();
                         criterias.caseState = STATE_CASE.RUNNING;
                         String[] properties = new String[] {"*"};
-                        setContent(getCaseListView(criterias, properties));
+                        setContent(getCaseListView(criterias, properties)[0]);
                     }
                     break;
             }
@@ -311,7 +313,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         return menu;
     }
 
-    private Component getNodeListView(SearchCriterias criterias, String[] properties) {
+    private Component[] getNodeListView(SearchCriterias criterias, String[] properties) {
         initEngine();
         if (engine == null) return null;
 
@@ -387,7 +389,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         l.setSizeFull();
         
         currentRefreshable = list;
-        return l;
+        return new Component[] {l, list};
     }
 
     protected void showNodeDetails(NodeItem item) {
@@ -424,7 +426,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         setContent(panel);
     }
 
-    private Component getCaseListView(SearchCriterias criterias, String[] properties) {
+    private Component[] getCaseListView(SearchCriterias criterias, String[] properties) {
         initEngine();
         if (engine == null) return null;
         VCaseList list =
@@ -481,7 +483,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
         l.setSizeFull();
         currentRefreshable = list;
-        return l;
+        return new Component[] {l, list};
     }
 
     private void initEngine() {
