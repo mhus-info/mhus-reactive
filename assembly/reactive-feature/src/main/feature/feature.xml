@@ -64,6 +64,7 @@
 	<feature name='cherry-reactive-ui' description='User Interface' version='${project.version}'>
         <feature>mhu-vaadin-ui</feature>
 
+        <bundle>mvn:de.mhus.ports/vaadin-timerextension/${mhus-ports-vaadin.version}</bundle>
 		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${cherry-reactive.version}</bundle>
 		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${cherry-reactive.version}</bundle>
 	

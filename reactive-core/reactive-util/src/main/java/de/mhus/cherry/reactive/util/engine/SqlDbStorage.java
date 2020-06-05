@@ -869,102 +869,88 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             boolean whereAdded = false;
             MProperties prop = new MProperties();
             if (search.unassigned) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 sql.append("assigned_ is null ");
             } else if (search.assigned != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.setString("user", search.assigned);
                 sql.append("assigned_=$user$ ");
             }
 
             if (search.nodeState != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("state", search.nodeState);
                 sql.append("state_=$state$ ");
             }
 
             if (search.type != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("type", search.type);
                 sql.append("type_=$type$ ");
             }
 
             if (search.uri != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("uri", search.uri, prop, sql);
             }
 
             if (search.name != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("name", search.name, prop, sql);
             }
 
             if (search.custom != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("custom", search.custom, prop, sql);
             }
 
             if (search.customer != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("customer", search.customer, prop, sql);
             }
 
             if (search.process != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("process", search.process, prop, sql);
             }
 
             if (search.version != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("version", search.version, prop, sql);
             }
 
             if (search.priority != Integer.MAX_VALUE) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("priority", search.priority);
                 sql.append("priority_=$priority$ ");
             }
 
             if (search.score != Integer.MIN_VALUE) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("score", search.score);
                 sql.append("score_ >= $score$ ");
             }
 
             if (search.pool != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("pool", search.pool, prop, sql);
             }
 
             if (search.caseId != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("case", search.caseId);
                 sql.append("case_=$case$ ");
@@ -975,8 +961,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 for (int i = 0; i < MAX_INDEX_VALUES; i++) {
                     if (search.index.length > i && search.index[i] != null) {
                         if (first) {
-                            if (whereAdded) sql.append("AND (");
-                            else sql.append("WHERE (");
+                        	addJoin(whereAdded, search, sql);
+                            sql.append(" (");
                             whereAdded = true;
                         } else {
                             sql.append("OR ");
@@ -990,8 +976,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
 
             if (search.actors != null && search.actors.length > 0) {
-                if (whereAdded) sql.append("AND (");
-                else sql.append("WHERE (");
+            	addJoin(whereAdded, search, sql);
+                sql.append(" (");
                 whereAdded = true;
                 boolean first = true;
                 for (String actor : search.actors) {
@@ -1032,81 +1018,70 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             MProperties prop = new MProperties();
 
             if (search.caseState != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("state", search.caseState);
                 sql.append("state_=$state$ ");
             }
 
             if (search.uri != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("uri", search.uri, prop, sql);
             }
 
             if (search.name != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("name", search.name, prop, sql);
             }
 
             if (search.custom != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("custom", search.custom, prop, sql);
             }
 
             if (search.customer != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("customer", search.customer, prop, sql);
             }
 
             if (search.process != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("process", search.process, prop, sql);
             }
 
             if (search.version != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("version", search.version, prop, sql);
             }
 
             if (search.priority != Integer.MAX_VALUE) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("priority", search.priority);
                 sql.append("priority_=$priority$ ");
             }
 
             if (search.score != Integer.MIN_VALUE) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("score", search.score);
                 sql.append("score_ >= $score$ ");
             }
 
             if (search.pool != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("pool", search.pool, prop, sql);
             }
 
             if (search.milestone != null) {
-                if (whereAdded) sql.append("AND ");
-                else sql.append("WHERE ");
+            	addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("milestone", search.milestone, prop, sql);
             }
@@ -1116,8 +1091,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 for (int i = 0; i < MAX_INDEX_VALUES; i++) {
                     if (search.index.length > i && search.index[i] != null) {
                         if (first) {
-                            if (whereAdded) sql.append("AND (");
-                            else sql.append("WHERE (");
+                        	addJoin(whereAdded, search, sql);
+                        	sql.append(" (");
                             whereAdded = true;
                         } else {
                             sql.append("OR ");
@@ -1150,7 +1125,18 @@ public class SqlDbStorage extends MLog implements StorageProvider {
         }
     }
 
-    private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
+    private void addJoin(boolean whereAdded, SearchCriterias search, StringBuilder sql) {
+        if (whereAdded) {
+        	if (search.or)
+        		sql.append("OR ");
+        	else
+        		sql.append("AND ");
+        }
+        else sql.append("WHERE ");
+		
+	}
+
+	private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
         prop.put(name, value);
 
         if (value.startsWith("*") || value.endsWith("*")) {

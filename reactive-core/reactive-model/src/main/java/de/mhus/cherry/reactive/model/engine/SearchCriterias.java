@@ -26,8 +26,9 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
+import de.mhus.lib.errors.MRuntimeException;
 
-public class SearchCriterias implements Externalizable {
+public class SearchCriterias implements Externalizable, Cloneable {
 
     public String name;
     public String custom;
@@ -82,6 +83,7 @@ public class SearchCriterias implements Externalizable {
 
     public String[] actors;
     public int limit = 0;
+	public boolean or = false;
 
     public SearchCriterias() {}
 
@@ -95,6 +97,7 @@ public class SearchCriterias implements Externalizable {
 
     public void parse(IProperties parameters) {
         if (parameters == null) return;
+        or = false;
         for (String k : parameters.keySet()) {
             String v = parameters.getString(k, null);
             switch (k) {
@@ -153,8 +156,13 @@ public class SearchCriterias implements Externalizable {
                 case "assigned":
                     assigned = v;
                     break;
+            	case "":
                 case "search":
-                    index = new String[] {v, v, v, v, v, v, v, v, v, v};
+                	String x = "*"+v+"*";
+                    index = new String[] {x, x, x, x, x, x, x, x, x, x};
+                    name = x;
+                    custom = x;
+                    or  = true;
                     break;
                 case "index0":
                     if (index == null)
@@ -343,4 +351,47 @@ public class SearchCriterias implements Externalizable {
         actors = (String[]) in.readObject();
         limit = in.readInt();
     }
+    
+    public static String[] keys() {
+    	return new String[] {
+        "state",
+        "type",
+        "priority",
+        "score",
+        "order",
+        "ascending",
+        "uri",
+        "process",
+        "version",
+        "pool",
+        "custom",
+        "customer",
+        "name",
+        "case",
+        "unassigned",
+        "assigned",
+        "search",
+        "index0",
+        "index1",
+        "index2",
+        "index3",
+        "index4",
+        "index5",
+        "index6",
+        "index7",
+        "index8",
+        "index9",
+        "milestone",
+        "limit"
+    	};
+    }
+    
+    public SearchCriterias clone()
+	{ 
+    	try {
+			return (SearchCriterias) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new MRuntimeException(e);
+		} 
+	} 
 }

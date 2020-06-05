@@ -38,7 +38,7 @@ import de.mhus.lib.vaadin.MhuTable;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
 @SuppressWarnings("deprecation")
-public class VCaseList extends MhuTable {
+public class VCaseList extends MhuTable implements Refreshable {
 
     private Log log = Log.getLog(VCaseList.class);
     private static final long serialVersionUID = 1L;
@@ -259,4 +259,14 @@ public class VCaseList extends MhuTable {
         if (c != null) criterias = c;
         doReload();
     }
+
+	public SearchCriterias getSearchCriterias() {
+		return criterias;
+	}
+
+	@Override
+	public void doRefresh() {
+		doReload();
+	}
+	
 }

@@ -32,6 +32,7 @@ import com.vaadin.v7.ui.Label;
 import com.vaadin.v7.ui.Tree;
 import com.vaadin.v7.ui.VerticalLayout;
 
+import de.akquinet.engineering.vaadin.timerextension.TimerExtension;
 import de.mhus.cherry.reactive.model.engine.EngineMessage;
 import de.mhus.cherry.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.cherry.reactive.model.engine.PNode.STATE_NODE;
@@ -42,6 +43,7 @@ import de.mhus.cherry.reactive.model.ui.IEngineFactory;
 import de.mhus.cherry.reactive.model.ui.INode;
 import de.mhus.cherry.reactive.vaadin.widgets.CaseItem;
 import de.mhus.cherry.reactive.vaadin.widgets.NodeItem;
+import de.mhus.cherry.reactive.vaadin.widgets.Refreshable;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.cherry.reactive.vaadin.widgets.VCaseList;
 import de.mhus.cherry.reactive.vaadin.widgets.VNodeDetails;
@@ -81,6 +83,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
     @SuppressWarnings("unused")
     private Component currentView;
+    private Refreshable currentRefreshable;
 
     private Map<String, Component> contentCache;
     private String currentFilter;
@@ -101,6 +104,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
         if (selection != null && tree.containsId(selection)) {
 
+        	currentRefreshable = null;
+        	
             switch (selection) {
                 case I_UNASSIGNED:
                     {
@@ -204,13 +209,36 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     @Override
     public void doInitialize() {
 
+//    	Refresher refresher = new Refresher();
+//    	refresher.setRefreshInterval(10000);
+//    	refresher.addContextClickListener(new ContextClickListener() {
+//			private static final long serialVersionUID = 1L;
+//
+//			@Override
+//			public void contextClick(ContextClickEvent event) {
+//				System.out.println("Refresher");
+//			}
+//		});
+    	    	
         contentCache = new HashMap<>();
 
         page = new HorizontalLayout();
         page.setSizeFull();
+//        page.addComponent(refresher);
 
         VerticalLayout menu = buildMenu();
 
+    	final TimerExtension timerExtension = TimerExtension.create(menu);
+    	timerExtension.setIntervalInMs(60000);  // polling interval in milliseconds
+    	timerExtension.addTimerListener(e -> { 
+    		if (page.getComponentCount() > 0) {
+	    		if (currentRefreshable != null ) {
+	    			log.i("refresh",currentRefreshable);
+	    			currentRefreshable.doRefresh();
+	    		}
+    		}
+    	});
+        
         page.addComponent(menu);
         page.setExpandRatio(menu, 0);
         //		page.setMargin(true);
@@ -218,6 +246,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         navigateTo(DEFAULT_MENU_SELECTION, null);
 
         addComponent(page);
+        
+        
+        timerExtension.start();
     }
 
     private VerticalLayout buildMenu() {
@@ -322,19 +353,21 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                     }
                     
                 };
-        list.configure(engine, criterias, properties);
+        list.configure(engine, criterias.clone(), properties);
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
-        searchText.addKnownFacetName("search");
-        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
+        //searchText.addKnownFacetName("search");
+        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id+":");
         searchText.setWidth("100%");
         searchText.setListener(
                 new SearchField.Listener() {
 
                     @Override
                     public void doFilter(SearchField searchField) {
-                        SearchCriterias c = criterias;
+                        SearchCriterias c = criterias.clone();
+                        c.order = list.getSearchCriterias().order;
+                        c.orderAscending = list.getSearchCriterias().orderAscending;
                         IProperties s = searchField.createFilterRequest().toProperties();
                         c.parse(s);
                         // System.out.println("Search: " + c);
@@ -352,6 +385,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         setExpandRatio(l, 1);
 
         l.setSizeFull();
+        
+        currentRefreshable = list;
         return l;
     }
 
@@ -416,15 +451,17 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
-        searchText.addKnownFacetName("search");
-        for (String id : list.getColumnHeaders()) searchText.addKnownFacetName(id);
+        // searchText.addKnownFacetName("search");
+        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id+":");
         searchText.setWidth("100%");
         searchText.setListener(
                 new SearchField.Listener() {
 
                     @Override
                     public void doFilter(SearchField searchField) {
-                        SearchCriterias c = criterias;
+                        SearchCriterias c = criterias.clone();
+                        c.order = list.getSearchCriterias().order;
+                        c.orderAscending = list.getSearchCriterias().orderAscending;
                         IProperties s = searchField.createFilterRequest().toProperties();
                         c.parse(s);
                         // System.out.println("Search: " + c);
@@ -438,11 +475,12 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         l.addComponent(list);
         l.setExpandRatio(list, 1);
 
-        list.configure(engine, criterias, properties);
+        list.configure(engine, criterias.clone(), properties);
         addComponent(l);
         setExpandRatio(l, 1);
 
         l.setSizeFull();
+        currentRefreshable = list;
         return l;
     }
 
