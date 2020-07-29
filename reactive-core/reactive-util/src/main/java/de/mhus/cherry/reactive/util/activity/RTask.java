@@ -46,7 +46,7 @@ public abstract class RTask<P extends RPool<?>> extends RAbstractTask<P> {
         for (PojoAttribute attr : getPojoModel()) {
             try {
                 Object value = parameters.get(attr.getName());
-                if (value != null) attr.set(this, value);
+                if (value != null) attr.set(this, value, false);
             } catch (IOException e) {
                 log().d(attr, e);
             }

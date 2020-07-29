@@ -175,7 +175,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
                 PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
                 if (desc.writable()) {
                     try {
-                        attr.set(this, value);
+                        attr.set(this, value, false);
                     } catch (Throwable t) {
                         log().w(this, attr, t);
                     }
@@ -185,7 +185,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
                 PropertyDescription desc = attr.getAnnotation(PropertyDescription.class);
                 if (desc.writable()) {
                     try {
-                        attr.set(pool, value);
+                        attr.set(pool, value, false);
                     } catch (Throwable t) {
                         log().w(this, attr, t);
                     }

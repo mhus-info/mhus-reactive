@@ -76,7 +76,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
             if (!desc.persistent()) continue;
             try {
                 Object value = parameters.get(attr.getName());
-                if (value != null) attr.set(this, value);
+                if (value != null) attr.set(this, value, false);
             } catch (IOException e) {
                 log().d(attr, e);
             }

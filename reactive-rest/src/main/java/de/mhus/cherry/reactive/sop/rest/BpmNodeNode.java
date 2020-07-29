@@ -37,7 +37,7 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
 
     @Override
     public String[] getParentNodeCanonicalClassNames() {
-        return new String[] {ROOT_PARENT, FOUNDATION_PARENT};
+        return new String[] {ROOT_PARENT};
     }
 
     @Override

@@ -70,7 +70,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                         (PropertyDescription) attr.getAnnotation(PropertyDescription.class);
                 if (desc != null && (!initial || desc.initial())) {
                     Object value = parameters.get(attr.getName());
-                    if (value != null) attr.set(this, value);
+                    if (value != null) attr.set(this, value, false);
                 }
             } catch (IOException e) {
                 log().d(attr, e);

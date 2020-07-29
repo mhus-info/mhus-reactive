@@ -38,7 +38,7 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
 
     @Override
     public String[] getParentNodeCanonicalClassNames() {
-        return new String[] {ROOT_PARENT, FOUNDATION_PARENT};
+        return new String[] {ROOT_PARENT};
     }
 
     @Override

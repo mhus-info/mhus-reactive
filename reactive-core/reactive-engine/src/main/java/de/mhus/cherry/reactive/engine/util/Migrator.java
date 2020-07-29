@@ -173,16 +173,16 @@ public class Migrator {
                     if (verbose) monitor.println("--- SET ", action, ": ", rule);
                     switch (action) {
                         case "name":
-                            nodeModel.getAttribute("name").set(node, rule);
+                            nodeModel.getAttribute("name").set(node, rule, false);
                             break;
                         case "canonical":
-                            nodeModel.getAttribute("canonicalName").set(node, rule);
+                            nodeModel.getAttribute("canonicalName").set(node, rule, false);
                             break;
                         case "type":
-                            nodeModel.getAttribute("type").set(node, TYPE_NODE.valueOf(rule));
+                            nodeModel.getAttribute("type").set(node, TYPE_NODE.valueOf(rule), false);
                             break;
                         case "actor":
-                            nodeModel.getAttribute("actor").set(node, rule);
+                            nodeModel.getAttribute("actor").set(node, rule, false);
                             break;
                         case "status":
                             node.setSuspendedState(STATE_NODE.valueOf(rule));
@@ -248,19 +248,19 @@ public class Migrator {
                     }
                     switch (action) {
                         case "name":
-                            caseModel.getAttribute("name").set(caze, rule);
+                            caseModel.getAttribute("name").set(caze, rule, false);
                             break;
                         case "canonical":
-                            caseModel.getAttribute("canonicalName").set(caze, rule);
+                            caseModel.getAttribute("canonicalName").set(caze, rule, false);
                             break;
                         case "milestone":
                             caze.setMilestone(rule);
                             break;
                         case "closeCode":
-                            caseModel.getAttribute("closecode").set(caze, MCast.toint(rule, 0));
+                            caseModel.getAttribute("closecode").set(caze, MCast.toint(rule, 0), false);
                             break;
                         case "closeMessage":
-                            caseModel.getAttribute("closemessage").set(caze, rule);
+                            caseModel.getAttribute("closemessage").set(caze, rule, false);
                             break;
                         case "status":
                             caze.setState(STATE_CASE.valueOf(rule));
