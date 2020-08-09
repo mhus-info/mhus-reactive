@@ -19,12 +19,12 @@ import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.MenuBar.MenuItem;
 
 import org.osgi.service.component.annotations.Component;
-import de.mhus.lib.vaadin.desktop.GuiSpace;
+import de.mhus.lib.vaadin.desktop.SimpleGuiSpace;
 import de.mhus.lib.vaadin.desktop.GuiSpaceService;
 import de.mhus.lib.vaadin.desktop.HelpContext;
 
 @Component(immediate = true, service = GuiSpaceService.class)
-public class BpmSpaceService extends GuiSpace {
+public class BpmSpaceService extends SimpleGuiSpace {
 
     @Override
     public String getName() {
