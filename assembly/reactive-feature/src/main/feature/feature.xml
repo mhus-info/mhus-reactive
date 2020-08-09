@@ -22,8 +22,7 @@
 	<feature name='cherry-reactive-core' description='Reactive Core Bundles' version='${project.version}'>
 		<details>${project.description}</details>
 		
-        <feature>mhu-base</feature>
-        <feature>mhu-base-jaeger</feature>
+        <feature>mhu-jdbc</feature>
 
 		<!-- reactive -->
 		

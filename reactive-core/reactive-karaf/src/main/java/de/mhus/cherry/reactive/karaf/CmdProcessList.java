@@ -43,7 +43,6 @@ public class CmdProcessList extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ConsoleTable table = new ConsoleTable(tblOpt);
-        table.fitToConsole();
         table.setHeaderValues("Registered", "Deployed", "Status", "Info", "Deployed");
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
         for (String name : api.getAvailableProcesses()) {
