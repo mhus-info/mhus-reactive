@@ -21,7 +21,9 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
+import de.mhus.cherry.reactive.engine.Engine;
 import de.mhus.cherry.reactive.engine.Engine.EngineCaseLock;
+import de.mhus.cherry.reactive.engine.EngineConfiguration;
 import de.mhus.cherry.reactive.model.engine.EngineConst;
 import de.mhus.cherry.reactive.model.engine.PCase;
 import de.mhus.cherry.reactive.model.engine.PCaseInfo;
@@ -76,6 +78,7 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " areas                   - Print restricted areas\n"
                             + " area.release <name>     - Release a restricted area\n"
                             + " updateProcessActivationInformation - update only the activation from engine properties\n"
+                            + " inspect\n"
                             + "",
             multiValued = false)
     String cmd;
@@ -300,6 +303,14 @@ public class CmdProcessEngine extends AbstractCmd {
             if (severe == 0) System.out.println("healthy");
             else System.out.println(severe + " in problems");
 
+        } else
+        if (cmd.equals("inspect")) {
+            Engine engine = api.getEngine();
+            EngineConfiguration config = ReactiveAdminImpl.instance.getEngineConfig();
+            System.out.println("Engine: " + engine.getClass());
+            System.out.println("Storage " + config.storage.getClass());
+            System.out.println("Archive " + config.archive.getClass());
+            System.out.println("LockProvider: " + config.lockProvider.getClass());
         } else {
             System.out.println("Unknown command");
         }

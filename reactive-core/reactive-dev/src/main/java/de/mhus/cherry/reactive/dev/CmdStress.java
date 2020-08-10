@@ -62,22 +62,29 @@ public class CmdStress extends AbstractCmd {
 
     @Reference private Session session;
 
-    private static boolean running = false;
+    private volatile static boolean stopped = true;
+    private volatile static boolean running = false;
 
     @Override
     public Object execute2() throws Exception {
 
-        if (uris == null) {
-            running = false;
+        if (uris != null && uris.length == 1 && uris[0].equals("status")) {
+            System.out.println("Stopped: " + stopped);
+            System.out.println("Running: " + running);
+            return null;
+        }
+        if (uris == null || uris.length == 1 && uris[0].equals("stop")) {
+            stopped = true;
             System.out.println(">>> Stopping ...");
             return null;
         }
 
         Console console = Console.get();
 
-        running = true;
+        stopped = false;
         int pos = 0;
-        while (running) {
+        while (!stopped) {
+            running = false;
             String uri = uris[pos];
             uri = uri.replace("$cnt$", "" + cnt);
             console.setColor(COLOR.RED, null);
@@ -95,16 +102,18 @@ public class CmdStress extends AbstractCmd {
                     Result<PCaseInfo> cases = api.getEngine().storageGetCases(null);
                     int cs = 0;
                     for (PCaseInfo caze : cases) if (caze.getState() != STATE_CASE.CLOSED) cs++;
-                    if (cs < max) break;
-                    System.out.println("=== To much cases " + cs);
+                    if (cs < max || stopped) break;
+                    System.out.println("=== Too much cases " + cs);
                     if (session.getKeyboard().available() > 0) return null;
-                    Thread.sleep(interval * 1000);
+                    Thread.sleep(1000);
                 }
             }
             if (session.getKeyboard().available() > 0) return null;
-            Thread.sleep(interval * 1000);
+            if (interval > 0)
+                Thread.sleep(interval * 1000);
         }
         System.out.println("### Stopped");
+        running = true;
         return null;
     }
 }

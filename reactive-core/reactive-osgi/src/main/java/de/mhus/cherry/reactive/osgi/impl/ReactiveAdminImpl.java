@@ -266,6 +266,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         if (engine == null) return false;
         return config.persistent.isProcessEnabled(name);
     }
+    
+    public EngineConfiguration getEngineConfig() {
+        return config;
+    }
 
     @Override
     public Collection<String> getAvailableProcesses() {
