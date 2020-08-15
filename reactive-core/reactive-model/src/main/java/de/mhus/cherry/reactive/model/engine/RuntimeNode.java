@@ -63,7 +63,8 @@ public class RuntimeNode extends MLog implements AElement<APool<?>>, ContextReci
     private synchronized void addMessage(String msg) {
         if (parameters == null) parameters = new HashMap<>();
         int next = getNetMessageId();
-        parameters.put(MSG_PREFIX + next, System.currentTimeMillis() + "," + ident.getIdent() + "|" + msg);
+        parameters.put(
+                MSG_PREFIX + next, System.currentTimeMillis() + "," + ident.getIdent() + "|" + msg);
         save();
     }
 

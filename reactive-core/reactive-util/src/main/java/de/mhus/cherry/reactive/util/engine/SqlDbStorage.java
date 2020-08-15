@@ -869,88 +869,88 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             boolean whereAdded = false;
             MProperties prop = new MProperties();
             if (search.unassigned) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 sql.append("assigned_ is null ");
             } else if (search.assigned != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.setString("user", search.assigned);
                 sql.append("assigned_=$user$ ");
             }
 
             if (search.nodeState != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("state", search.nodeState);
                 sql.append("state_=$state$ ");
             }
 
             if (search.type != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("type", search.type);
                 sql.append("type_=$type$ ");
             }
 
             if (search.uri != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("uri", search.uri, prop, sql);
             }
 
             if (search.name != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("name", search.name, prop, sql);
             }
 
             if (search.custom != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("custom", search.custom, prop, sql);
             }
 
             if (search.customer != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("customer", search.customer, prop, sql);
             }
 
             if (search.process != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("process", search.process, prop, sql);
             }
 
             if (search.version != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("version", search.version, prop, sql);
             }
 
             if (search.priority != Integer.MAX_VALUE) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("priority", search.priority);
                 sql.append("priority_=$priority$ ");
             }
 
             if (search.score != Integer.MIN_VALUE) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("score", search.score);
                 sql.append("score_ >= $score$ ");
             }
 
             if (search.pool != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("pool", search.pool, prop, sql);
             }
 
             if (search.caseId != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("case", search.caseId);
                 sql.append("case_=$case$ ");
@@ -961,13 +961,13 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 for (int i = 0; i < MAX_INDEX_VALUES; i++) {
                     if (search.index.length > i && search.index[i] != null) {
                         if (first) {
-                        	addJoin(whereAdded, search, sql);
+                            addJoin(whereAdded, search, sql);
                             sql.append(" (");
                             whereAdded = true;
                         } else {
                             sql.append("OR ");
                         }
-                        //prop.setString("index" + i, search.index[i]);
+                        // prop.setString("index" + i, search.index[i]);
                         addFilter("index" + i, search.index[i], prop, sql);
                         first = false;
                     }
@@ -976,7 +976,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
 
             if (search.actors != null && search.actors.length > 0) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 sql.append(" (");
                 whereAdded = true;
                 boolean first = true;
@@ -1018,70 +1018,70 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             MProperties prop = new MProperties();
 
             if (search.caseState != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("state", search.caseState);
                 sql.append("state_=$state$ ");
             }
 
             if (search.uri != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("uri", search.uri, prop, sql);
             }
 
             if (search.name != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("name", search.name, prop, sql);
             }
 
             if (search.custom != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("custom", search.custom, prop, sql);
             }
 
             if (search.customer != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("customer", search.customer, prop, sql);
             }
 
             if (search.process != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("process", search.process, prop, sql);
             }
 
             if (search.version != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("version", search.version, prop, sql);
             }
 
             if (search.priority != Integer.MAX_VALUE) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("priority", search.priority);
                 sql.append("priority_=$priority$ ");
             }
 
             if (search.score != Integer.MIN_VALUE) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 prop.put("score", search.score);
                 sql.append("score_ >= $score$ ");
             }
 
             if (search.pool != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("pool", search.pool, prop, sql);
             }
 
             if (search.milestone != null) {
-            	addJoin(whereAdded, search, sql);
+                addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 addFilter("milestone", search.milestone, prop, sql);
             }
@@ -1091,8 +1091,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 for (int i = 0; i < MAX_INDEX_VALUES; i++) {
                     if (search.index.length > i && search.index[i] != null) {
                         if (first) {
-                        	addJoin(whereAdded, search, sql);
-                        	sql.append(" (");
+                            addJoin(whereAdded, search, sql);
+                            sql.append(" (");
                             whereAdded = true;
                         } else {
                             sql.append("OR ");
@@ -1127,24 +1127,18 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     private void addJoin(boolean whereAdded, SearchCriterias search, StringBuilder sql) {
         if (whereAdded) {
-        	if (search.or)
-        		sql.append("OR ");
-        	else
-        		sql.append("AND ");
-        }
-        else sql.append("WHERE ");
-		
-	}
+            if (search.or) sql.append("OR ");
+            else sql.append("AND ");
+        } else sql.append("WHERE ");
+    }
 
-	private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
+    private void addFilter(String name, String value, MProperties prop, StringBuilder sql) {
         prop.put(name, value);
 
         if (value.startsWith("*") || value.endsWith("*")) {
             sql.append(name + "_ like $" + name + "$ ");
-            if (value.startsWith("*"))
-                value = "%" + value.substring(1);
-            if (value.endsWith("*"))
-                value = value.substring(0, value.length()-1) + "%";
+            if (value.startsWith("*")) value = "%" + value.substring(1);
+            if (value.endsWith("*")) value = value.substring(0, value.length() - 1) + "%";
             prop.put(name, value);
         } else sql.append(name + "_=$" + name + "$ ");
     }
@@ -1153,12 +1147,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     public Map<String, String> loadEngine() throws IOException {
         try {
             HashMap<String, String> out = new HashMap<>();
-    
+
             DbConnection con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta =
-                    con.createStatement(
-                            "SELECT id_,content_ FROM " + prefix + "_engine_");
+                    con.createStatement("SELECT id_,content_ FROM " + prefix + "_engine_");
             DbResult res = sta.executeQuery(prop);
             while (res.next()) {
                 out.put(res.getString("id_"), res.getString("content_"));
@@ -1182,8 +1175,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     con.createStatement(
                             "SELECT content_ FROM " + prefix + "_engine_ WHERE id_=$id$");
             DbResult res = sta.executeQuery(prop);
-            if (res.next()) 
-                value = res.getString("content_");
+            if (res.next()) value = res.getString("content_");
             res.close();
             con.close();
             return value;
@@ -1203,17 +1195,19 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             prop.put("now", new Date());
             DbStatement sta =
                     con.createStatement(
-                            currentValue == null ?
-                                    "INSERT INTO " + prefix + "_engine_ (id_,content_,created_,modified_) VALUES ($id$,$value$,$now$,$now$)"
-                                    :
-                                    "UPDATE " + prefix + "_engine_ SET content_=$value$,modified_=$now$ WHERE id_=$id$"
-                            );
+                            currentValue == null
+                                    ? "INSERT INTO "
+                                            + prefix
+                                            + "_engine_ (id_,content_,created_,modified_) VALUES ($id$,$value$,$now$,$now$)"
+                                    : "UPDATE "
+                                            + prefix
+                                            + "_engine_ SET content_=$value$,modified_=$now$ WHERE id_=$id$");
             int res = sta.executeUpdate(prop);
             if (res != 1) throw new Exception("Not Updated");
-            
+
             con.commit();
             con.close();
-            
+
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -1226,19 +1220,17 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             MProperties prop = new MProperties();
             prop.put("id", key);
             DbStatement sta =
-                    con.createStatement(
-                                    "DELETE FROM " + prefix + "_engine_ WHERE id_=$id$"
-                            );
+                    con.createStatement("DELETE FROM " + prefix + "_engine_ WHERE id_=$id$");
             sta.executeUpdate(prop);
-            
+
             con.commit();
             con.close();
-            
+
         } catch (Exception e) {
             throw new IOException(e);
         }
     }
-    
+
     private static class SqlResultCase implements Result<PCaseInfo>, Iterator<PCaseInfo> {
 
         private DbResult res;
@@ -1584,5 +1576,4 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         }
     }
-    
 }

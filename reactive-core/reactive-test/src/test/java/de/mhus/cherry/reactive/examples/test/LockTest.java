@@ -31,32 +31,33 @@ public class LockTest {
     private Engine engine;
     long sleep = 10;
     private Console console;
-    
+
     @Test
     public void testLock() throws Exception {
         createEngine();
-        
+
         String uri =
                 "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=area";
         System.out.println("URI: " + uri);
 
-        for (int i = 0; i < 20; i++)
-            engine.start(uri);
-        
+        for (int i = 0; i < 20; i++) engine.start(uri);
+
         while (true) {
             S2DoSomething.sleepTime = 200;
             engine.step();
             int cntActiveCases = 0;
-            for ( @SuppressWarnings("unused") PCaseInfo info : engine.storageGetCases(STATE_CASE.RUNNING))
-                cntActiveCases++;
+            for (@SuppressWarnings("unused")
+            PCaseInfo info : engine.storageGetCases(STATE_CASE.RUNNING)) cntActiveCases++;
             if (cntActiveCases == 0) break;
             int cntDoSomething = 0;
             int cntActiveNodes = 0;
             console.setColor(COLOR.BLUE, null);
             for (PNodeInfo info : engine.storageGetFlowNodes(null, null)) {
                 if (info.getState() != STATE_NODE.CLOSED) {
-                    if (info.getCanonicalName().equals("de.mhus.cherry.reactive.examples.simple1.lock.S2DoSomething") && info.getState() == STATE_NODE.RUNNING)
-                        cntDoSomething++;
+                    if (info.getCanonicalName()
+                                    .equals(
+                                            "de.mhus.cherry.reactive.examples.simple1.lock.S2DoSomething")
+                            && info.getState() == STATE_NODE.RUNNING) cntDoSomething++;
                     console.println("### " + info);
                     cntActiveNodes++;
                 }
@@ -68,14 +69,13 @@ public class LockTest {
             console.println();
             console.cleanup();
             // Thread.sleep(2000);
-            
+
             assertFalse(S2DoSomething.failed);
             assertFalse(cntDoSomething > 1);
-            assertTrue(engine.getStatisticRounds() < 65 );
+            assertTrue(engine.getStatisticRounds() < 65);
         }
     }
 
-    
     private void createEngine() throws MException, IOException {
 
         console = Console.get();
@@ -107,5 +107,4 @@ public class LockTest {
 
         engine = new Engine(config);
     }
-    
 }

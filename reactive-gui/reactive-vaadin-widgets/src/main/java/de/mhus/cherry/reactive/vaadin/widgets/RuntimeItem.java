@@ -13,62 +13,60 @@ public class RuntimeItem {
     private EngineMessage item;
     private VRuntimeDetails details;
 
-    public RuntimeItem() {
-    }
-    
+    public RuntimeItem() {}
+
     public RuntimeItem(VRuntimeDetails details, EngineMessage item) {
         this.details = details;
         this.item = item;
     }
 
-    @Column(order=1,title="Date")
+    @Column(order = 1, title = "Date")
     public DateTime getDate() {
         if (item == null) return null;
         return new DateTime(item.getTimestamp());
     }
-    
-    @Column(order=2,title="Type")
+
+    @Column(order = 2, title = "Type")
     public TYPE getType() {
         if (item == null) return null;
         return item.getType();
     }
-    
-    @Column(order=3,title="From")
+
+    @Column(order = 3, title = "From")
     public String getFromNode() {
         if (item == null) return null;
         INode node = details.getNode(item.getFromNode());
         return node == null ? "" : node.getCanonicalName();
     }
-    
-    @Column(order=4,title="To")
+
+    @Column(order = 4, title = "To")
     public String getToNode() {
         if (item == null) return null;
         INode node = details.getNode(item.getToNode());
         return node == null ? "" : node.getCanonicalName();
     }
-    
-    @Column(order=5,title="Message")
+
+    @Column(order = 5, title = "Message")
     public String getMessage() {
         if (item == null) return null;
         return item.getMessage();
     }
 
-    @Column(order=6,title="Ident", editable=false)
+    @Column(order = 6, title = "Ident", editable = false)
     public String getServerIdent() {
         if (item == null) return null;
         return item.getServerIdent();
     }
 
-    @Column(order=7,title="From Id",elapsed=false)
+    @Column(order = 7, title = "From Id", elapsed = false)
     public UUID getFromNodeId() {
         if (item == null) return null;
         return item.getFromNode();
     }
-    
-    @Column(order=7,title="To Id",elapsed=false)
+
+    @Column(order = 7, title = "To Id", elapsed = false)
     public UUID getToNodeId() {
         if (item == null) return null;
         return item.getToNode();
     }
-
 }

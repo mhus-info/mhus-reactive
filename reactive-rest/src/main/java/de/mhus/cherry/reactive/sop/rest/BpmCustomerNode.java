@@ -80,8 +80,7 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
         Subject subject = AccessUtil.getSubject();
         String username = AccessUtil.getPrincipal(subject);
         Locale locale = AccessUtil.getLocale(subject);
-        IEngine engine =
-                M.l(IEngineFactory.class).create(username, locale);
+        IEngine engine = M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = context.getParameter("names");
 

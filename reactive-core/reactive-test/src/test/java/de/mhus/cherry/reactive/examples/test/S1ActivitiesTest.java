@@ -83,7 +83,6 @@ public class S1ActivitiesTest {
 
                 PCase caze = engine.getCaseWithoutLock(caseId);
                 if (caze.getState() == STATE_CASE.CLOSED) break;
-                
             }
             assertTrue(i < 10);
             mockup.close();
@@ -94,7 +93,7 @@ public class S1ActivitiesTest {
 
         archiveEngine(engine, config);
     }
-    
+
     @Test
     public void testSubStart() throws Exception {
 

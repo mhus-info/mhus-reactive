@@ -9,5 +9,4 @@ public class RuntimeContainer extends MhuBeanItemContainer<RuntimeItem> {
     public RuntimeContainer() {
         super(RuntimeItem.class);
     }
-
 }

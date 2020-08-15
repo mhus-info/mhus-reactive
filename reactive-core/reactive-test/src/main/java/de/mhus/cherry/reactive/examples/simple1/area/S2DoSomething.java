@@ -7,12 +7,12 @@ import de.mhus.cherry.reactive.model.annotations.Output;
 import de.mhus.cherry.reactive.util.activity.RTask;
 import de.mhus.lib.core.MThread;
 
-@ActivityDescription(outputs = {
-        @Output(activity = S3LeaveArea.class),
-        @Output(name="abord",activity = S1TheEnd.class),
-        
+@ActivityDescription(
+        outputs = {
+            @Output(activity = S3LeaveArea.class),
+            @Output(name = "abord", activity = S1TheEnd.class),
         })
-public class S2DoSomething extends RTask<S1Pool>{
+public class S2DoSomething extends RTask<S1Pool> {
 
     private static boolean inProgress = false;
     public static boolean failed = false;
@@ -30,5 +30,4 @@ public class S2DoSomething extends RTask<S1Pool>{
         inProgress = false;
         return "abord".equals(getPool().getText2()) ? "abord" : null;
     }
-
 }

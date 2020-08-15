@@ -261,7 +261,8 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>> {
 
         EElement start = getEPool().getElement(next.getCanonicalName());
         PNode node = getPNode();
-        try (PCaseLock lock = engine.getCaseLock(node, "createActivity:" + start.getCanonicalName())) {
+        try (PCaseLock lock =
+                engine.getCaseLock(node, "createActivity:" + start.getCanonicalName())) {
             return lock.createActivity(this, node, start);
         }
     }

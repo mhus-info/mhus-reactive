@@ -68,8 +68,7 @@ public class BpmNode extends ObjectListNode<Object, Object> {
         Subject subject = AccessUtil.getSubject();
         String username = AccessUtil.getPrincipal(subject);
         Locale locale = AccessUtil.getLocale(subject);
-        IEngine engine =
-                M.l(IEngineFactory.class).create(username, locale);
+        IEngine engine = M.l(IEngineFactory.class).create(username, locale);
 
         String uri = callContext.getParameter("uri");
         String res = String.valueOf(engine.doExecute(uri));

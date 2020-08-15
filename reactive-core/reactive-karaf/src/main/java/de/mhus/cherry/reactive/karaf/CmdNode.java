@@ -74,8 +74,7 @@ public class CmdNode extends AbstractCmd {
                             + "Experimental:\n"
                             + " erase <uuid>\n"
                             + " submit <id> [key=value]* - submit a user form\n"
-                            + " resave <id>              - load and save node again\n"
-                            ,
+                            + " resave <id>              - load and save node again\n",
             multiValued = false)
     String cmd;
 
@@ -96,7 +95,7 @@ public class CmdNode extends AbstractCmd {
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         if (cmd.equals("skip")) {
-            
+
             String nextName = parameters.length < 2 ? "" : parameters[1];
             PNode node = EngineUtil.getFlowNode(api.getEngine(), parameters[0]);
 
@@ -109,7 +108,8 @@ public class CmdNode extends AbstractCmd {
 
                 Class<? extends AActivity<?>> next = ActivityUtil.getOutputByName(aNode, nextName);
                 if (next == null) {
-                    System.out.println("Output Activity not found: "
+                    System.out.println(
+                            "Output Activity not found: "
                                     + nextName
                                     + " in "
                                     + getClass().getCanonicalName());
@@ -117,14 +117,13 @@ public class CmdNode extends AbstractCmd {
                 }
                 // create new node
                 context.createActivity(next);
-                
+
                 // close old
                 node.setState(STATE_NODE.CLOSED);
                 lock.saveFlowNode(node);
             }
 
-        } else
-        if (cmd.equals("runtime")) {
+        } else if (cmd.equals("runtime")) {
             PNode node = EngineUtil.getFlowNode(api.getEngine(), parameters[0]);
             PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
             EngineContext context = api.getEngine().createContext(null, caze, node);

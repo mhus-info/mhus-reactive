@@ -65,9 +65,11 @@ public class EngineUtil {
     //		return name + ":" + desc.version();
     //	}
 
-    public static PCaseLock getCaseLock(Engine engine, String id, String operation, Object ... tagPairs)
+    public static PCaseLock getCaseLock(
+            Engine engine, String id, String operation, Object... tagPairs)
             throws NotFoundException, IOException, TimeoutException {
-        if (MValidator.isUUID(id)) return engine.getCaseLock(UUID.fromString(id), operation, tagPairs);
+        if (MValidator.isUUID(id))
+            return engine.getCaseLock(UUID.fromString(id), operation, tagPairs);
         SearchCriterias c = new SearchCriterias();
         c.custom = id;
         Result<PCaseInfo> res = engine.storageSearchCases(c);

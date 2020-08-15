@@ -62,8 +62,8 @@ public class CmdStress extends AbstractCmd {
 
     @Reference private Session session;
 
-    private volatile static boolean stopped = true;
-    private volatile static boolean running = false;
+    private static volatile boolean stopped = true;
+    private static volatile boolean running = false;
 
     @Override
     public Object execute2() throws Exception {
@@ -92,7 +92,7 @@ public class CmdStress extends AbstractCmd {
             console.cleanup();
             ReactiveAdmin api = M.l(ReactiveAdmin.class);
             try (Scope scope = ITracer.get().start("stress:" + uris[pos], "stress", "cnt", cnt)) {
-            	api.getEngine().start(uri);
+                api.getEngine().start(uri);
             }
             pos = (pos + 1) % uris.length;
             cnt++;
@@ -109,8 +109,7 @@ public class CmdStress extends AbstractCmd {
                 }
             }
             if (session.getKeyboard().available() > 0) return null;
-            if (interval > 0)
-                Thread.sleep(interval * 1000);
+            if (interval > 0) Thread.sleep(interval * 1000);
         }
         System.out.println("### Stopped");
         running = true;

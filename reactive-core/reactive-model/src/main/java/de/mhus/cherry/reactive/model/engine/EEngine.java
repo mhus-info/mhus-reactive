@@ -46,13 +46,14 @@ public interface EEngine {
     boolean enterRestrictedArea(String resource, ProcessContext<?> context);
 
     void leaveRestrictedArea(String resource, ProcessContext<?> context);
-    
+
     // PEngine getEnginePersistence();
 
     // void saveFlowNode(PNode flow) throws IOException, NotFoundException;
 
     /**
      * Return true if the engine is ready to work.
+     *
      * @return true if ready.
      */
     boolean isReady();

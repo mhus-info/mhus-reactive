@@ -99,30 +99,31 @@ public class CmdProcessEngine extends AbstractCmd {
         if (cmd.equals("updateProcessActivationInformation")) {
             ReactiveAdminImpl.instance.updateProcessActivationInformation(true);
             System.out.println("OK");
-        } else
-        if (cmd.equals("statistics")) {
+        } else if (cmd.equals("statistics")) {
             System.out.println("Started     : " + api.getStartDate());
             System.out.println("Status      : " + api.getEngineStatus());
             System.out.println("Rounds      : " + api.getEngine().getStatisticRounds());
             System.out.println("Case Closed : " + api.getEngine().getStatisticCaseClosed());
             System.out.println("Case Started: " + api.getEngine().getStatisticCaseStarted());
-        } else
-        if (cmd.equals("area.release")) {
+        } else if (cmd.equals("area.release")) {
             api.getEnginePersistence().set(EngineConst.AREA_PREFIX + parameters[0], null);
             System.out.println("OK");
-        } else
-        if (cmd.equals("areas")) {
+        } else if (cmd.equals("areas")) {
             ConsoleTable table = new ConsoleTable(tblOpt);
-            table.setHeaderValues("Area","LockId","State");
-            for (Entry<String, String> entry : api.getEnginePersistence().getParameters().entrySet()) {
+            table.setHeaderValues("Area", "LockId", "State");
+            for (Entry<String, String> entry :
+                    api.getEnginePersistence().getParameters().entrySet()) {
                 if (entry.getKey().startsWith(EngineConst.AREA_PREFIX)) {
-                    PNodeInfo runtime = api.getEngine().getFlowNodeInfo(UUID.fromString(entry.getValue()));
-                    table.addRowValues(entry.getKey().substring(EngineConst.AREA_PREFIX.length()), entry.getValue(), runtime.getState());
+                    PNodeInfo runtime =
+                            api.getEngine().getFlowNodeInfo(UUID.fromString(entry.getValue()));
+                    table.addRowValues(
+                            entry.getKey().substring(EngineConst.AREA_PREFIX.length()),
+                            entry.getValue(),
+                            runtime.getState());
                 }
             }
             table.print();
-        } else
-        if (cmd.equals("lock")) {
+        } else if (cmd.equals("lock")) {
             UUID id = UUID.fromString(parameters[0]);
             for (EngineCaseLock lock : api.getEngine().getCaseLocks()) {
                 if (lock.getCaseId().equals(id)) {
@@ -209,7 +210,9 @@ public class CmdProcessEngine extends AbstractCmd {
             if (parameters != null) {
                 MProperties properties = IProperties.explodeToMProperties(parameters);
                 for (Entry<String, Object> entry : properties.entrySet())
-                    persistent.getParameters().put(entry.getKey(), String.valueOf(entry.getValue()));
+                    persistent
+                            .getParameters()
+                            .put(entry.getKey(), String.valueOf(entry.getValue()));
                 persistent.save();
             }
             System.out.println(persistent);
@@ -303,8 +306,7 @@ public class CmdProcessEngine extends AbstractCmd {
             if (severe == 0) System.out.println("healthy");
             else System.out.println(severe + " in problems");
 
-        } else
-        if (cmd.equals("inspect")) {
+        } else if (cmd.equals("inspect")) {
             Engine engine = api.getEngine();
             EngineConfiguration config = ReactiveAdminImpl.instance.getEngineConfig();
             System.out.println("Engine: " + engine.getClass());

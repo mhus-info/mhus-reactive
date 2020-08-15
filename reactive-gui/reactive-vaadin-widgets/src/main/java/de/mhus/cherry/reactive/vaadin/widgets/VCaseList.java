@@ -153,14 +153,11 @@ public class VCaseList extends MhuTable implements Refreshable {
     protected void doAction(Action action, CaseItem caze) throws Exception {
         if (action == ACTION_REFRESH) {
             doReload();
-        } else
-        if (action == ACTION_ARCHIVE) {
+        } else if (action == ACTION_ARCHIVE) {
             doArchive(caze);
-        } else
-        if (action == ACTION_DETAILS) {
+        } else if (action == ACTION_DETAILS) {
             doDetails(caze);
-        } else
-        if (action == ACTION_RUNTIME) {
+        } else if (action == ACTION_RUNTIME) {
             doRuntime(caze);
         }
     }
@@ -173,7 +170,7 @@ public class VCaseList extends MhuTable implements Refreshable {
     }
 
     protected void doRuntime(CaseItem caze) {}
-    
+
     protected void doDetails(CaseItem caze) {}
 
     protected void doArchive(CaseItem caze) {
@@ -260,13 +257,12 @@ public class VCaseList extends MhuTable implements Refreshable {
         doReload();
     }
 
-	public SearchCriterias getSearchCriterias() {
-		return criterias;
-	}
+    public SearchCriterias getSearchCriterias() {
+        return criterias;
+    }
 
-	@Override
-	public void doRefresh() {
-		doReload();
-	}
-	
+    @Override
+    public void doRefresh() {
+        doReload();
+    }
 }

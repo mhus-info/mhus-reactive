@@ -56,16 +56,17 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         return M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").lock();
     }
 
-//    @Override
-//    public void releaseEngineMaster() {
-//        M.l(LockManager.class).getLock(getClass().getCanonicalName() + ":engine").unlockHard();
-//    }
+    //    @Override
+    //    public void releaseEngineMaster() {
+    //        M.l(LockManager.class).getLock(getClass().getCanonicalName() +
+    // ":engine").unlockHard();
+    //    }
 
     @Override
     public boolean isReady() {
         return true;
     }
-    
+
     private class DummyLock implements Lock {
 
         @Override
@@ -84,9 +85,7 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         }
 
         @Override
-        public void unlockHard() {
-            
-        }
+        public void unlockHard() {}
 
         @Override
         public boolean isLocked() {
@@ -122,6 +121,5 @@ public class LocalCaseLockProvider implements CaseLockProvider {
         public String getStartStackTrace() {
             return null;
         }
-        
     }
 }

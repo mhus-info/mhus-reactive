@@ -46,11 +46,11 @@ public interface CaseLockProvider {
      * @return The acquired lock.
      */
     Lock lockOrNull(UUID caseId);
-    
-    
+
     /**
-     * Return true if the lock engine is ready to lock. If not the engine will wait until it's ready.
-     * 
+     * Return true if the lock engine is ready to lock. If not the engine will wait until it's
+     * ready.
+     *
      * @return true if locking is possible
      */
     boolean isReady();

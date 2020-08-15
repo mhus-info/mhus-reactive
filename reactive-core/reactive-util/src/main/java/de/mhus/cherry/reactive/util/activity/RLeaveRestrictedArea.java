@@ -15,5 +15,4 @@ public class RLeaveRestrictedArea<P extends RPool<?>> extends RAbstractTask<P> {
     protected String getResourceName() {
         return ActivityUtil.getEvent(this);
     }
-
 }

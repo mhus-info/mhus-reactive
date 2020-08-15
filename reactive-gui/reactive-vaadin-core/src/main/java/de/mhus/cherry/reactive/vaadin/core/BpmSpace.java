@@ -83,6 +83,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
     @SuppressWarnings("unused")
     private Component currentView;
+
     private Refreshable currentRefreshable;
 
     private Map<String, Component[]> contentCache;
@@ -104,8 +105,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
         if (selection != null && tree.containsId(selection)) {
 
-        	currentRefreshable = null;
-        	
+            currentRefreshable = null;
+
             switch (selection) {
                 case I_UNASSIGNED:
                     {
@@ -211,36 +212,37 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     @Override
     public void doInitialize() {
 
-//    	Refresher refresher = new Refresher();
-//    	refresher.setRefreshInterval(10000);
-//    	refresher.addContextClickListener(new ContextClickListener() {
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void contextClick(ContextClickEvent event) {
-//				System.out.println("Refresher");
-//			}
-//		});
-    	    	
+        //    	Refresher refresher = new Refresher();
+        //    	refresher.setRefreshInterval(10000);
+        //    	refresher.addContextClickListener(new ContextClickListener() {
+        //			private static final long serialVersionUID = 1L;
+        //
+        //			@Override
+        //			public void contextClick(ContextClickEvent event) {
+        //				System.out.println("Refresher");
+        //			}
+        //		});
+
         contentCache = new HashMap<>();
 
         page = new HorizontalLayout();
         page.setSizeFull();
-//        page.addComponent(refresher);
+        //        page.addComponent(refresher);
 
         VerticalLayout menu = buildMenu();
 
-    	final TimerExtension timerExtension = TimerExtension.create(menu);
-    	timerExtension.setIntervalInMs(60000);  // polling interval in milliseconds
-    	timerExtension.addTimerListener(e -> { 
-    		if (page.getComponentCount() > 0) {
-	    		if (currentRefreshable != null ) {
-	    			log.i("refresh",currentRefreshable);
-	    			currentRefreshable.doRefresh();
-	    		}
-    		}
-    	});
-        
+        final TimerExtension timerExtension = TimerExtension.create(menu);
+        timerExtension.setIntervalInMs(60000); // polling interval in milliseconds
+        timerExtension.addTimerListener(
+                e -> {
+                    if (page.getComponentCount() > 0) {
+                        if (currentRefreshable != null) {
+                            log.i("refresh", currentRefreshable);
+                            currentRefreshable.doRefresh();
+                        }
+                    }
+                });
+
         page.addComponent(menu);
         page.setExpandRatio(menu, 0);
         //		page.setMargin(true);
@@ -248,8 +250,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         navigateTo(DEFAULT_MENU_SELECTION, null);
 
         addComponent(page);
-        
-        
+
         timerExtension.start();
     }
 
@@ -340,11 +341,12 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                             e.printStackTrace();
                         }
                     }
-                    
+
                     @Override
                     protected void doRuntime(NodeItem target) {
                         try {
-                            EngineMessage[] runtime = engine.getNodeRuntimeMessage(target.getId().toString());
+                            EngineMessage[] runtime =
+                                    engine.getNodeRuntimeMessage(target.getId().toString());
                             LinkedList<EngineMessage[]> list = new LinkedList<>();
                             list.add(runtime);
                             showRuntime(list);
@@ -353,14 +355,13 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                             e.printStackTrace();
                         }
                     }
-                    
                 };
         list.configure(engine, criterias.clone(), properties);
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
-        //searchText.addKnownFacetName("search");
-        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id+":");
+        // searchText.addKnownFacetName("search");
+        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id + ":");
         searchText.setWidth("100%");
         searchText.setListener(
                 new SearchField.Listener() {
@@ -387,7 +388,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         setExpandRatio(l, 1);
 
         l.setSizeFull();
-        
+
         currentRefreshable = list;
         return new Component[] {l, list};
     }
@@ -437,24 +438,24 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                     protected void doDetails(CaseItem caze) {
                         showCaseDetails(caze);
                     }
-                    
+
                     @Override
                     protected void doRuntime(CaseItem caze) {
                         try {
-                            List<EngineMessage[]> runtime = engine.getCaseRuntimeMessages(caze.getId().toString());
+                            List<EngineMessage[]> runtime =
+                                    engine.getCaseRuntimeMessages(caze.getId().toString());
                             showRuntime(runtime);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
-                    
                 };
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
         // searchText.addKnownFacetName("search");
-        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id+":");
+        for (String id : SearchCriterias.keys()) searchText.addKnownFacetName(id + ":");
         searchText.setWidth("100%");
         searchText.setListener(
                 new SearchField.Listener() {
@@ -497,25 +498,25 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
         initEngine();
         if (engine == null) return;
-        VRuntimeDetails list = new VRuntimeDetails() {
-            private static final long serialVersionUID = 1L;
+        VRuntimeDetails list =
+                new VRuntimeDetails() {
+                    private static final long serialVersionUID = 1L;
+                };
 
-        };
-        
         VerticalLayout l = new VerticalLayout();
-        
+
         l.addComponent(list);
         l.setExpandRatio(list, 1);
-        
+
         list.configure(engine, runtime);
         addComponent(l);
         setExpandRatio(l, 1);
-        
+
         l.setSizeFull();
-        
+
         setContent(l);
     }
- 
+
     protected void showUserForm(NodeItem item) throws Exception {
 
         INode node = engine.getNode(item.getId().toString());

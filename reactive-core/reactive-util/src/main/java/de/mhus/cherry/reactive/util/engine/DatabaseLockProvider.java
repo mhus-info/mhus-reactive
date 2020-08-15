@@ -27,11 +27,19 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
         this.table = tableName;
         this.key = keyField;
     }
-    
+
     @Override
     public boolean isCaseLocked(UUID caseId) {
         try (DbConnection con = ds.createConnection()) {
-            DbStatement sth = con.createStatement("SELECT "+key+" FROM " + table + " WHERE " + key + "=$key$ FOR UPDATE NOWAIT");
+            DbStatement sth =
+                    con.createStatement(
+                            "SELECT "
+                                    + key
+                                    + " FROM "
+                                    + table
+                                    + " WHERE "
+                                    + key
+                                    + "=$key$ FOR UPDATE NOWAIT");
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("key", "case_" + caseId);
             sth.executeQuery(attributes);
@@ -46,18 +54,25 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     public Lock lock(UUID caseId) throws TimeoutException {
         while (true) {
             Con con = tryLock("case_" + caseId);
-            if (con != null)
-                return new DbLock(con, caseId.toString());
+            if (con != null) return new DbLock(con, caseId.toString());
             MThread.sleep(200);
         }
     }
-    
+
     private Con tryLock(String value) {
         log().t("Try Lock", value);
         DbConnection con = null;
         try {
             con = ds.createConnection();
-            DbStatement sth = con.createStatement("SELECT "+key+" FROM " + table + " WHERE " + key + "=$key$ FOR UPDATE NOWAIT");
+            DbStatement sth =
+                    con.createStatement(
+                            "SELECT "
+                                    + key
+                                    + " FROM "
+                                    + table
+                                    + " WHERE "
+                                    + key
+                                    + "=$key$ FOR UPDATE NOWAIT");
             Map<String, Object> attributes = new HashMap<>();
             attributes.put("key", value);
             try {
@@ -65,18 +80,18 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
                 if (res.next()) {
                     res.close();
                     log().t("=== Lock1", value);
-                    return new Con(con,sth);
+                    return new Con(con, sth);
                 }
                 res.close();
             } catch (SQLException e) {
-                if (!e.getMessage().contains("timeout"))
-                    throw e;
+                if (!e.getMessage().contains("timeout")) throw e;
                 sth.close();
                 con.close();
                 log().t("--- No0", value, e);
                 return null;
             }
-            DbStatement sthSet = con.createStatement("INSERT INTO " + table + "(" + key+") VALUES ($key$)");
+            DbStatement sthSet =
+                    con.createStatement("INSERT INTO " + table + "(" + key + ") VALUES ($key$)");
             boolean done = false;
             try {
                 sthSet.execute(attributes);
@@ -90,18 +105,17 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
             }
             sthSet.close();
             con.commit();
-            
+
             try {
                 DbResult res = sth.executeQuery(attributes);
                 if (res.next()) {
                     res.close();
                     log().t("=== Lock2", value);
-                    return new Con(con,sth);
+                    return new Con(con, sth);
                 }
                 res.close();
             } catch (SQLException e) {
-                if (!e.getMessage().contains("timeout"))
-                    throw e;
+                if (!e.getMessage().contains("timeout")) throw e;
                 sth.close();
                 con.commit();
                 con.close();
@@ -126,7 +140,6 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
             log().t("--- No3", value);
             return null;
         }
-
     }
 
     @Override
@@ -134,7 +147,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
         synchronized (this) {
             Con masterCleanup = tryLock("master_cleanup");
             if (masterCleanup == null) return null;
-            return new DbLock(masterCleanup,"master_cleanup");
+            return new DbLock(masterCleanup, "master_cleanup");
         }
     }
 
@@ -152,21 +165,20 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
         synchronized (this) {
             while (true) {
                 Con masterEngine = tryLock("master_cleanup");
-                if (masterEngine != null)
-                    return new DbLock(masterEngine, "master_cleanup");
+                if (masterEngine != null) return new DbLock(masterEngine, "master_cleanup");
                 MThread.sleep(300);
             }
         }
     }
 
-//    @Override
-//    public void releaseEngineMaster() {
-//        synchronized (this) {
-//            if (masterEngine != null)
-//                masterEngine.close();
-//            masterEngine = null;
-//        }
-//    }
+    //    @Override
+    //    public void releaseEngineMaster() {
+    //        synchronized (this) {
+    //            if (masterEngine != null)
+    //                masterEngine.close();
+    //            masterEngine = null;
+    //        }
+    //    }
 
     @Override
     public Lock lockOrNull(UUID caseId) {
@@ -183,7 +195,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
     private class Con {
         DbConnection con;
         DbStatement sth;
-        
+
         public Con(DbConnection con, DbStatement sth) {
             this.con = con;
             this.sth = sth;
@@ -202,7 +214,7 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
             con = null;
         }
     }
-    
+
     private class DbLock implements Lock {
 
         private Con con;
@@ -269,6 +281,5 @@ public class DatabaseLockProvider extends MLog implements CaseLockProvider {
         public String getStartStackTrace() {
             return null;
         }
-        
     }
 }

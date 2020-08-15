@@ -29,10 +29,10 @@ public class PEngine implements Externalizable {
     protected Map<String, String> parameters;
     private StorageProvider storage;
 
-//    public PEngine() {
-//        parameters = new HashMap<>();
-//    }
-    
+    //    public PEngine() {
+    //        parameters = new HashMap<>();
+    //    }
+
     public PEngine(StorageProvider storage) throws IOException {
         this.storage = storage;
         reload();
@@ -40,14 +40,13 @@ public class PEngine implements Externalizable {
 
     public void reload() throws IOException {
         synchronized (this) {
-            if (storage != null)
-                parameters = storage.loadEngine();
+            if (storage != null) parameters = storage.loadEngine();
         }
     }
 
-//    public PEngine(PEngine clone) {
-//        parameters = new HashMap<>(clone.getParameters());
-//    }
+    //    public PEngine(PEngine clone) {
+    //        parameters = new HashMap<>(clone.getParameters());
+    //    }
 
     public Map<String, String> getParameters() {
         synchronized (this) {
@@ -124,12 +123,12 @@ public class PEngine implements Externalizable {
             set("process:" + n + ":versions", MString.join(versions, ','));
         }
     }
-    
+
     /**
      * Active means this is the default version for a new process instance
      *
      * @param deployedName
-     * @throws IOException 
+     * @throws IOException
      */
     public void activateProcessVersion(String deployedName) throws IOException {
         String v = MString.afterIndex(deployedName, ':');
@@ -141,10 +140,9 @@ public class PEngine implements Externalizable {
         String v = MString.afterIndex(deployedName, ':');
         String n = MString.beforeIndex(deployedName, ':');
         String cur = get("process:" + n + ":active");
-        if (v.equals(cur))
-            set("process:" + n + ":active", null);
+        if (v.equals(cur)) set("process:" + n + ":active", null);
     }
-    
+
     public String getActiveProcessVersion(String processName) {
         if (processName.indexOf(':') >= 0) processName = MString.beforeIndex(processName, ':');
         return String.valueOf(getParameters().get("process:" + processName + ":active"));
@@ -155,14 +153,12 @@ public class PEngine implements Externalizable {
         String n = MString.beforeIndex(deployedName, ':');
         return v.equals(String.valueOf(getParameters().get("process:" + n + ":active")));
     }
-    
+
     public String get(String key) throws IOException {
         synchronized (this) {
             String value = storage.getEngineValue(key);
-            if (value == null)
-                parameters.remove(key);
-            else
-                parameters.put(key, value);
+            if (value == null) parameters.remove(key);
+            else parameters.put(key, value);
             return value;
         }
     }
@@ -179,19 +175,18 @@ public class PEngine implements Externalizable {
             return value;
         }
     }
-    
+
     public void save() throws IOException {
         save(storage);
     }
-    
+
     public void save(StorageProvider storage) throws IOException {
         synchronized (this) {
             for (Entry<String, String> entry : parameters.entrySet()) {
                 storage.setEngineValue(entry.getKey(), entry.getValue());
             }
             for (String key : storage.loadEngine().keySet()) {
-                if (!parameters.containsKey(key))
-                    storage.deleteEngineValue(key);
+                if (!parameters.containsKey(key)) storage.deleteEngineValue(key);
             }
         }
     }

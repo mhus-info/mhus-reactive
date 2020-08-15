@@ -125,7 +125,7 @@ public class VNodeList extends MhuTable implements Refreshable {
                     public void handleAction(
                             final Action action, final Object sender, final Object target) {
                         try {
-                            doAction(action, (NodeItem)target);
+                            doAction(action, (NodeItem) target);
                         } catch (Throwable t) {
                             log.e(t);
                         }
@@ -175,8 +175,7 @@ public class VNodeList extends MhuTable implements Refreshable {
     }
 
     protected void showActions(LinkedList<Action> list, NodeItem node) {
-        if (node.getState() == STATE_NODE.WAITING
-                && node.getType() == TYPE_NODE.USER) {
+        if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.USER) {
             if (node.getAssigned() == null) {
                 list.add(ACTION_ASSIGN);
             } else {
@@ -199,7 +198,7 @@ public class VNodeList extends MhuTable implements Refreshable {
     protected void doOpenUserForm(NodeItem selected) {}
 
     protected void doRuntime(NodeItem selected) {}
-    
+
     public SearchCriterias getSearchCriterias() {
         return criterias;
     }
@@ -272,8 +271,8 @@ public class VNodeList extends MhuTable implements Refreshable {
         doReload();
     }
 
-	@Override
-	public void doRefresh() {
-		doReload();
-	}
+    @Override
+    public void doRefresh() {
+        doReload();
+    }
 }

@@ -83,7 +83,7 @@ public class SearchCriterias implements Externalizable, Cloneable {
 
     public String[] actors;
     public int limit = 0;
-	public boolean or = false;
+    public boolean or = false;
 
     public SearchCriterias() {}
 
@@ -156,13 +156,13 @@ public class SearchCriterias implements Externalizable, Cloneable {
                 case "assigned":
                     assigned = v;
                     break;
-            	case "":
+                case "":
                 case "search":
-                	String x = "*"+v+"*";
+                    String x = "*" + v + "*";
                     index = new String[] {x, x, x, x, x, x, x, x, x, x};
                     name = x;
                     custom = x;
-                    or  = true;
+                    or = true;
                     break;
                 case "index0":
                     if (index == null)
@@ -351,47 +351,46 @@ public class SearchCriterias implements Externalizable, Cloneable {
         actors = (String[]) in.readObject();
         limit = in.readInt();
     }
-    
+
     public static String[] keys() {
-    	return new String[] {
-        "state",
-        "type",
-        "priority",
-        "score",
-        "order",
-        "ascending",
-        "uri",
-        "process",
-        "version",
-        "pool",
-        "custom",
-        "customer",
-        "name",
-        "case",
-        "unassigned",
-        "assigned",
-        "search",
-        "index0",
-        "index1",
-        "index2",
-        "index3",
-        "index4",
-        "index5",
-        "index6",
-        "index7",
-        "index8",
-        "index9",
-        "milestone",
-        "limit"
-    	};
+        return new String[] {
+            "state",
+            "type",
+            "priority",
+            "score",
+            "order",
+            "ascending",
+            "uri",
+            "process",
+            "version",
+            "pool",
+            "custom",
+            "customer",
+            "name",
+            "case",
+            "unassigned",
+            "assigned",
+            "search",
+            "index0",
+            "index1",
+            "index2",
+            "index3",
+            "index4",
+            "index5",
+            "index6",
+            "index7",
+            "index8",
+            "index9",
+            "milestone",
+            "limit"
+        };
     }
-    
-    public SearchCriterias clone()
-	{ 
-    	try {
-			return (SearchCriterias) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new MRuntimeException(e);
-		} 
-	} 
+
+    public SearchCriterias clone() {
+        try {
+            return (SearchCriterias) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new MRuntimeException(e);
+        }
+    }
 }

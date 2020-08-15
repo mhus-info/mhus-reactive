@@ -7,7 +7,8 @@ import de.mhus.cherry.reactive.model.errors.EngineException;
 import de.mhus.cherry.reactive.model.util.ActivityUtil;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 
-public abstract class RConditionGateway<P extends RPool<?>> extends RActivity<P> implements AExclusiveGateway<P> {
+public abstract class RConditionGateway<P extends RPool<?>> extends RActivity<P>
+        implements AExclusiveGateway<P> {
 
     @Override
     public void doExecuteActivity() throws Exception {
@@ -24,9 +25,7 @@ public abstract class RConditionGateway<P extends RPool<?>> extends RActivity<P>
             getContext().createActivity(next);
             getContext().getPNode().setState(STATE_NODE.CLOSED);
         }
-
     }
 
     public abstract String doExecute() throws Exception;
-
 }

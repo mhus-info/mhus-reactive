@@ -10,14 +10,14 @@ import de.mhus.cherry.reactive.model.util.ValidateParametersBeforeExecute;
 import de.mhus.cherry.reactive.util.bpmn2.RPool;
 import de.mhus.lib.errors.ValidationException;
 
-public class REnterRestrictedArea<P extends RPool<?>> extends REvent<P> implements ValidateParametersBeforeExecute {
+public class REnterRestrictedArea<P extends RPool<?>> extends REvent<P>
+        implements ValidateParametersBeforeExecute {
 
-    
     @Override
     public void initializeActivity() throws Exception {
-        
+
         String resource = getResourceName();
-        
+
         if (getContext().getEEngine().enterRestrictedArea(resource, getContext())) {
             getContext().getPNode().setState(STATE_NODE.RUNNING);
         } else {
@@ -26,23 +26,19 @@ public class REnterRestrictedArea<P extends RPool<?>> extends REvent<P> implemen
             getContext().getPNode().setMessageEvent(EngineConst.AREA_PREFIX + resource);
         }
     }
-    
+
     protected String getResourceName() {
         return ActivityUtil.getEvent(this);
     }
 
     @Override
-    public void doExecute() throws Exception {
-
-    }
+    public void doExecute() throws Exception {}
 
     @Override
     public void validateParameters(Map<String, Object> parameters) throws ValidationException {
         String resource = getResourceName();
         if (!getContext().getEEngine().enterRestrictedArea(resource, getContext())) {
-            throw new ValidationException("can't aquire lock",resource);
+            throw new ValidationException("can't aquire lock", resource);
         }
     }
-
-
 }

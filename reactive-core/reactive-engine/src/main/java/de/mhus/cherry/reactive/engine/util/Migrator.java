@@ -179,7 +179,9 @@ public class Migrator {
                             nodeModel.getAttribute("canonicalName").set(node, rule, false);
                             break;
                         case "type":
-                            nodeModel.getAttribute("type").set(node, TYPE_NODE.valueOf(rule), false);
+                            nodeModel
+                                    .getAttribute("type")
+                                    .set(node, TYPE_NODE.valueOf(rule), false);
                             break;
                         case "actor":
                             nodeModel.getAttribute("actor").set(node, rule, false);
@@ -257,7 +259,9 @@ public class Migrator {
                             caze.setMilestone(rule);
                             break;
                         case "closeCode":
-                            caseModel.getAttribute("closecode").set(caze, MCast.toint(rule, 0), false);
+                            caseModel
+                                    .getAttribute("closecode")
+                                    .set(caze, MCast.toint(rule, 0), false);
                             break;
                         case "closeMessage":
                             caseModel.getAttribute("closemessage").set(caze, rule, false);
