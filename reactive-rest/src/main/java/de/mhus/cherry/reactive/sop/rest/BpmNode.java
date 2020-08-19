@@ -41,7 +41,7 @@ public class BpmNode extends ObjectListNode<Object, Object> {
     }
 
     @Override
-    public String getNodeId() {
+    public String getNodeName() {
         return "bpm";
     }
 

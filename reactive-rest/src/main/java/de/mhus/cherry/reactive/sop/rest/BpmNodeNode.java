@@ -43,7 +43,7 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
     }
 
     @Override
-    public String getNodeId() {
+    public String getNodeName() {
         return "bpmnode";
     }
 

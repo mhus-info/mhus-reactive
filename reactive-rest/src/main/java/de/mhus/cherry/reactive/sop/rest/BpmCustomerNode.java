@@ -44,7 +44,7 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
     }
 
     @Override
-    public String getNodeId() {
+    public String getNodeName() {
         return "bpmcustomer";
     }
 
