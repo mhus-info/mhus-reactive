@@ -32,12 +32,26 @@ import de.mhus.lib.basics.consts.GenerateConst;
 @GenerateConst
 public class S1Pool extends RPool<S1Pool> {
 
+    public enum TEST_ENUM { ON, OFF };
+    
     @PropertyDescription(displayName = "Switch Text", writable = false, initial = true)
     private String text1 = "Moin";
 
     @PropertyDescription(initial = true)
     private String text2 = "";
 
+    @PropertyDescription(initial = true)
+    private Date testDate = null;
+
+    @PropertyDescription(initial = true)
+    private TEST_ENUM testEnum = null;
+
+    @PropertyDescription(initial = true)
+    private int testInt = 0;
+
+    @PropertyDescription(initial = true)
+    private Integer testInteger = null;
+    
     public String getText1() {
         return text1;
     }
@@ -61,5 +75,37 @@ public class S1Pool extends RPool<S1Pool> {
     public String[] createIndexValues(boolean init) {
         if (init) return new String[] {text1, text2, new Date().toString()};
         return null;
+    }
+
+    public Date getTestDate() {
+        return testDate;
+    }
+
+    public void setTestDate(Date testDate) {
+        this.testDate = testDate;
+    }
+
+    public TEST_ENUM getTestEnum() {
+        return testEnum;
+    }
+
+    public void setTestEnum(TEST_ENUM testEnum) {
+        this.testEnum = testEnum;
+    }
+
+    public int getTestInt() {
+        return testInt;
+    }
+
+    public void setTestInt(int testInt) {
+        this.testInt = testInt;
+    }
+
+    public Integer getTestInteger() {
+        return testInteger;
+    }
+
+    public void setTestInteger(Integer testInteger) {
+        this.testInteger = testInteger;
     }
 }

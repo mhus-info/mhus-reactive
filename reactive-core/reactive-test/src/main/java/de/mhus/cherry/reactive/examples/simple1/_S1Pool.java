@@ -1,18 +1,3 @@
-/**
- * Copyright (C) 2020 Mike Hummel (mh@mhus.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.mhus.cherry.reactive.examples.simple1;
 
 import de.mhus.lib.basics.consts.Identifier;
@@ -34,12 +19,20 @@ public class _S1Pool extends ConstBase {
   public static final Identifier METHOD_CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"createIndexValues");
   public static final Identifier METHOD_EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier METHOD_GET_POJO_MODEL = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getPojoModel");
+  public static final Identifier METHOD_GET_TEST_DATE = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getTestDate");
+  public static final Identifier METHOD_GET_TEST_ENUM = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getTestEnum");
+  public static final Identifier METHOD_GET_TEST_INT = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getTestInt");
+  public static final Identifier METHOD_GET_TEST_INTEGER = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getTestInteger");
   public static final Identifier METHOD_GET_TEXT1 = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getText1");
   public static final Identifier METHOD_GET_TEXT2 = new Identifier(Identifier.TYPE.GETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"getText2");
   public static final Identifier METHOD_IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"importParameters");
   public static final Identifier METHOD_INITIALIZE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"initializeCase");
   public static final Identifier METHOD_LOG = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"log");
   public static final Identifier METHOD_SET_CONTEXT = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setContext");
+  public static final Identifier METHOD_SET_TEST_DATE = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setTestDate");
+  public static final Identifier METHOD_SET_TEST_ENUM = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setTestEnum");
+  public static final Identifier METHOD_SET_TEST_INT = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setTestInt");
+  public static final Identifier METHOD_SET_TEST_INTEGER = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setTestInteger");
   public static final Identifier METHOD_SET_TEXT1 = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setText1");
   public static final Identifier METHOD_SET_TEXT2 = new Identifier(Identifier.TYPE.SETTER, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"setText2");
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"reactive-test");
@@ -60,6 +53,10 @@ public class _S1Pool extends ConstBase {
   public static final Identifier _LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"LOG_LEVEL_MAPPING");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"pojoModel");
   public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"registerNatives");
+  public static final Identifier _TEST_DATE = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"testDate");
+  public static final Identifier _TEST_ENUM = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"testEnum");
+  public static final Identifier _TEST_INT = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"testInt");
+  public static final Identifier _TEST_INTEGER = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"testInteger");
   public static final Identifier _TEXT1 = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"text1");
   public static final Identifier _TEXT2 = new Identifier(Identifier.TYPE.FIELD, de.mhus.cherry.reactive.examples.simple1.S1Pool.class,"text2");
 
