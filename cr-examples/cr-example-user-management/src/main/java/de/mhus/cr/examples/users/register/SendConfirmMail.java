@@ -15,10 +15,10 @@
  */
 package de.mhus.cr.examples.users.register;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.model.engine.PNode;
-import de.mhus.cherry.reactive.util.activity.RServicePostNextTask;
+import de.mhus.app.reactive.model.annotations.ActivityDescription;
+import de.mhus.app.reactive.model.annotations.Output;
+import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.util.activity.RServicePostNextTask;
 
 @ActivityDescription(outputs = @Output(activity = WaitForConfirm.class))
 public class SendConfirmMail extends RServicePostNextTask<RegisterUser> {

@@ -15,8 +15,8 @@
  */
 package de.mhus.cr.examples.users;
 
-import de.mhus.cherry.reactive.model.annotations.ActorDescription;
-import de.mhus.cherry.reactive.util.activity.RActor;
+import de.mhus.app.reactive.model.annotations.ActorDescription;
+import de.mhus.app.reactive.util.activity.RActor;
 
 @ActorDescription(name = "admin")
 public class ReadActor extends RActor {}

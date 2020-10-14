@@ -56,9 +56,9 @@ http://localhost:8181/ui
 
 Execute:
 
-bpm://de.mhus.cherry.reactive.examples.simple1.S1Process/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=form01
+bpm://de.mhus.app.reactive.examples.simple1.S1Process/de.mhus.app.reactive.examples.simple1.S1Pool?text1=form01
 
-pstart "bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=test;customerId=alf?text1=second"
+pstart "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=test;customerId=alf?text1=second"
 
 
 Additional console:
@@ -98,7 +98,7 @@ docker run -it --name reactive-playground \
 
 deploy process:
 
-pdeploy -a de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1
+pdeploy -a de.mhus.app.reactive.examples.simple1.S1Process:0.0.1
 
 ---
 
@@ -154,17 +154,17 @@ docker rm reactive-playground2
 Start stress tool:
 
 pstress -i 1 -m 50 \
-'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
-'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
-'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \
-'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
-'bpm://de.mhus.cherry.reactive.examples.simple1.S1Process:0.0.1/de.mhus.cherry.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
 
 ---
 
 Enable case logging:
 
-mhus:config set de.mhus.cherry.reactive.osgi.ReactiveAdmin logCases true
+mhus:config set de.mhus.app.reactive.osgi.ReactiveAdmin logCases true
  
  
 

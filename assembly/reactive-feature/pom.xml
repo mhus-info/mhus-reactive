@@ -22,7 +22,7 @@
 	<artifactId>reactive-feature</artifactId>
 	<packaging>feature</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>assembly</artifactId>
 		<version>7.3.0-SNAPSHOT</version>
 	</parent>

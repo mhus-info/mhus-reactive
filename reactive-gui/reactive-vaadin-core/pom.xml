@@ -22,7 +22,7 @@
 	<artifactId>reactive-vaadin-core</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-gui</artifactId>
 		<version>7.3.0-SNAPSHOT</version>
 	</parent>
@@ -38,7 +38,7 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.vaadin.core*;version=${project.version}
+							de.mhus.app.reactive.vaadin.core*;version=${project.version}
 						</Export-Package>
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
@@ -60,11 +60,11 @@
         </dependency>
 		
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-vaadin-widgets</artifactId>
 		</dependency>
 

@@ -15,11 +15,11 @@
  */
 package de.mhus.cr.examples.users.password;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.model.annotations.Trigger;
-import de.mhus.cherry.reactive.model.annotations.Trigger.TYPE;
-import de.mhus.cherry.reactive.util.activity.RExternalEvent;
+import de.mhus.app.reactive.model.annotations.ActivityDescription;
+import de.mhus.app.reactive.model.annotations.Output;
+import de.mhus.app.reactive.model.annotations.Trigger;
+import de.mhus.app.reactive.model.annotations.Trigger.TYPE;
+import de.mhus.app.reactive.util.activity.RExternalEvent;
 
 @ActivityDescription(
         outputs = @Output(activity = End.class),

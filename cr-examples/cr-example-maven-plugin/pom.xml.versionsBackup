@@ -22,7 +22,7 @@
 	<artifactId>cr-example-maven-plugin</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>cr-examples</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
@@ -30,7 +30,7 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>de.mhus.cherry.reactive</groupId>
+				<groupId>de.mhus.app.reactive</groupId>
 				<artifactId>reactive-maven-plugin</artifactId>
 				<version>${project.version}</version>
 				<executions>
@@ -63,17 +63,17 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>

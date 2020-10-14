@@ -20,7 +20,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>reactive-maven-plugin</artifactId>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-tools</artifactId>
 		<version>7.3.0-SNAPSHOT</version>
 	</parent>
@@ -128,15 +128,15 @@
 			<artifactId>lib-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>

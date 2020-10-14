@@ -15,8 +15,8 @@
  */
 package de.mhus.cr.examples.users.password;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.util.bpmn2.REndPoint;
+import de.mhus.app.reactive.model.annotations.ActivityDescription;
+import de.mhus.app.reactive.util.bpmn2.REndPoint;
 
 @ActivityDescription()
 public class End extends REndPoint<ForgotPassword> {}

@@ -22,7 +22,7 @@
 	<artifactId>reactive-model</artifactId>
 	<packaging>jar</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>

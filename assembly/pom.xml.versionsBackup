@@ -21,7 +21,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.mhus.cherry.reactive</groupId>
+        <groupId>de.mhus.app.reactive</groupId>
         <version>1.6.3-SNAPSHOT</version>
         <artifactId>cherry-reactive</artifactId>
     </parent>

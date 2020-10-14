@@ -22,7 +22,7 @@
 	<artifactId>reactive-osgi</artifactId>
 	<packaging>bundle</packaging>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
@@ -39,17 +39,17 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							de.mhus.cherry.reactive.osgi.*;version=${project.version},
-							de.mhus.cherry.reactive.model.*;version=${project.version},
-							de.mhus.cherry.reactive.engine.*;version=${project.version},
-							de.mhus.cherry.reactive.util.*;version=${project.version}
+							de.mhus.app.reactive.osgi.*;version=${project.version},
+							de.mhus.app.reactive.model.*;version=${project.version},
+							de.mhus.app.reactive.engine.*;version=${project.version},
+							de.mhus.app.reactive.util.*;version=${project.version}
 						</Export-Package>
 						<!-- 
-						<Private-Package>de.mhus.cherry.reactive.osgi.impl.*</Private-Package>
+						<Private-Package>de.mhus.app.reactive.osgi.impl.*</Private-Package>
 						 -->
 						<Import-Package>*</Import-Package>
 						<DynamicImport-Package>*</DynamicImport-Package>
-						<Service-Component>de.mhus.cherry.reactive.osgi.*</Service-Component>
+						<Service-Component>de.mhus.app.reactive.osgi.*</Service-Component>
 						<Embed-Dependency>reactive-model,reactive-engine,reactive-util</Embed-Dependency>
 					</instructions>
 				</configuration>
@@ -166,17 +166,17 @@
         </dependency>
 		
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>

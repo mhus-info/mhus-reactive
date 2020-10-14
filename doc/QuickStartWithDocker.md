@@ -29,4 +29,4 @@ docker start -ai reactive-playground
 
 == Start the Process
 
-bpm://de.mhus.cherry.reactive.examples.simple1.S1Process/de.mhus.cherry.reactive.examples.simple1.S1Pool?text1=form01
+bpm://de.mhus.app.reactive.examples.simple1.S1Process/de.mhus.app.reactive.examples.simple1.S1Pool?text1=form01

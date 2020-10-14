@@ -20,7 +20,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>reactive-maven-plugin</artifactId>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-tools</artifactId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
@@ -101,17 +101,17 @@
 			<version>${mhulib.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>de.mhus.cherry.reactive</groupId>
+			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-engine</artifactId>
 			<version>${project.version}</version>
 		</dependency>

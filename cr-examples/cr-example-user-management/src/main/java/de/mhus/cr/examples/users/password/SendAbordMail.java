@@ -15,9 +15,9 @@
  */
 package de.mhus.cr.examples.users.password;
 
-import de.mhus.cherry.reactive.model.annotations.ActivityDescription;
-import de.mhus.cherry.reactive.model.annotations.Output;
-import de.mhus.cherry.reactive.util.bpmn2.RServiceTask;
+import de.mhus.app.reactive.model.annotations.ActivityDescription;
+import de.mhus.app.reactive.model.annotations.Output;
+import de.mhus.app.reactive.util.bpmn2.RServiceTask;
 
 @ActivityDescription(outputs = @Output(activity = End.class))
 public class SendAbordMail extends RServiceTask<ForgotPassword> {

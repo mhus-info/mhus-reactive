@@ -26,15 +26,15 @@
 
 		<!-- reactive -->
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-osgi/${mhus-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-karaf/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-osgi/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-karaf/${mhus-reactive.version}</bundle>
 		
 	</feature>
 	
 	<feature name='mhus-reactive-rest' description='Reactive Rest API' version='${project.version}'>
         <feature>mhu-rest</feature>
 
-        <bundle>mvn:de.mhus.cherry.reactive/reactive-rest/${mhus-reactive.version}</bundle>
+        <bundle>mvn:de.mhus.app.reactive/reactive-rest/${mhus-reactive.version}</bundle>
 
 	</feature>
 	
@@ -44,9 +44,9 @@
 		
 		<feature>mhus-reactive-core</feature>
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-dev/${mhus-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${mhus-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-dev/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-test/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/cr-example-user-management/${mhus-reactive.version}</bundle>
 
         <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.webconsoleplugin/${felix.healthcheck.webconsoleplugin.version}</bundle>
         
@@ -64,8 +64,8 @@
         <feature>mhu-vaadin-ui</feature>
 
         <bundle>mvn:de.mhus.ports/vaadin-timerextension/${mhus-ports-vaadin.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${mhus-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-vaadin-widgets/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.app.reactive/reactive-vaadin-core/${mhus-reactive.version}</bundle>
 	
 	</feature>	
 	

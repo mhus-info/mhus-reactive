@@ -24,7 +24,7 @@
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model Examples</name>
 	<parent>
-		<groupId>de.mhus.cherry.reactive</groupId>
+		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>mhus-reactive</artifactId>
 		<version>7.3.0-SNAPSHOT</version>
 	</parent>

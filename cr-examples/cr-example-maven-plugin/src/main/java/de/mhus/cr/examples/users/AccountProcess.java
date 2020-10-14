@@ -17,8 +17,8 @@ package de.mhus.cr.examples.users;
 
 import org.osgi.service.component.annotations.Component;
 
-import de.mhus.cherry.reactive.model.activity.AProcess;
-import de.mhus.cherry.reactive.model.annotations.ProcessDescription;
+import de.mhus.app.reactive.model.activity.AProcess;
+import de.mhus.app.reactive.model.annotations.ProcessDescription;
 
 @Component
 @ProcessDescription(version = "0.0.1", name = "UserManagement")
