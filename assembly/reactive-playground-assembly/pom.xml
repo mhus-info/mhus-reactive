@@ -187,8 +187,8 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <feature>openjpa3/3.0.0</feature>
                         <feature>activemq-client/${activemq.version}</feature>
 
-                        <feature>cherry-reactive-all</feature>
-                        <feature>cherry-reactive-dev</feature>
+                        <feature>mhus-reactive-all</feature>
+                        <feature>mhus-reactive-dev</feature>
                          
                     </bootFeatures>
                     <installedFeatures>

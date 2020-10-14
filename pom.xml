@@ -25,15 +25,15 @@
         <artifactId>mhus-karaf-oss</artifactId>
     </parent>
 	<groupId>de.mhus.cherry.reactive</groupId>
-	<artifactId>cherry-reactive</artifactId>
+	<artifactId>mhus-reactive</artifactId>
 	<version>7.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model</name>
 	<description>BPM Implementation base on a java class model. It allows to create more complex and refactorable models.</description>
 	<url>http://www.mhus.de</url>
     <properties>
-       <cherry-reactive.version>${project.version}</cherry-reactive.version>
-       <cherry-reactive-plugin.version>7.0.0</cherry-reactive-plugin.version>
+       <mhus-reactive.version>${project.version}</mhus-reactive.version>
+       <mhus-reactive-plugin.version>7.0.0</mhus-reactive-plugin.version>
     </properties>
 
 	<licenses>
@@ -45,8 +45,8 @@
 	</licenses>
 	
 	<scm>
-		<url>https://github.com/mhus/cherry-reactive</url>
-		<connection>scm:git:https://github.com/mhus/cherry-reactive/</connection>
+		<url>https://github.com/mhus/mhus-reactive</url>
+		<connection>scm:git:https://github.com/mhus/mhus-reactive/</connection>
 	</scm>
 	
 	<developers>

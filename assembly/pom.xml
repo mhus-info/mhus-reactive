@@ -23,7 +23,7 @@
     <parent>
         <groupId>de.mhus.cherry.reactive</groupId>
         <version>7.3.0-SNAPSHOT</version>
-        <artifactId>cherry-reactive</artifactId>
+        <artifactId>mhus-reactive</artifactId>
     </parent>
     <artifactId>assembly</artifactId>
     <packaging>pom</packaging>

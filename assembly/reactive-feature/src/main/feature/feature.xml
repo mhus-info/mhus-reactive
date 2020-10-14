@@ -19,40 +19,40 @@
 <features name="${project.artifactId}-${project.version}"
 	xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
-	<feature name='cherry-reactive-core' description='Reactive Core Bundles' version='${project.version}'>
+	<feature name='mhus-reactive-core' description='Reactive Core Bundles' version='${project.version}'>
 		<details>${project.description}</details>
 		
         <feature>mhu-jdbc</feature>
 
 		<!-- reactive -->
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-osgi/${cherry-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-karaf/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-osgi/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-karaf/${mhus-reactive.version}</bundle>
 		
 	</feature>
 	
-	<feature name='cherry-reactive-rest' description='Reactive Rest API' version='${project.version}'>
+	<feature name='mhus-reactive-rest' description='Reactive Rest API' version='${project.version}'>
         <feature>mhu-rest</feature>
 
-        <bundle>mvn:de.mhus.cherry.reactive/reactive-rest/${cherry-reactive.version}</bundle>
+        <bundle>mvn:de.mhus.cherry.reactive/reactive-rest/${mhus-reactive.version}</bundle>
 
 	</feature>
 	
-	<feature name='cherry-reactive-dev' description='Development tools' version='${project.version}'>
+	<feature name='mhus-reactive-dev' description='Development tools' version='${project.version}'>
 		<feature>webconsole</feature>
 		<bundle>mvn:org.hsqldb/hsqldb/${hsqldb.version}</bundle>
 		
-		<feature>cherry-reactive-core</feature>
+		<feature>mhus-reactive-core</feature>
 		
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-dev/${cherry-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${cherry-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-dev/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-test/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/cr-example-user-management/${mhus-reactive.version}</bundle>
 
         <bundle>mvn:org.apache.felix/org.apache.felix.healthcheck.webconsoleplugin/${felix.healthcheck.webconsoleplugin.version}</bundle>
         
 	</feature>
 	
-    <feature name='cherry-reactive-kube' description='User Interface' version='${project.version}'>
+    <feature name='mhus-reactive-kube' description='User Interface' version='${project.version}'>
         <feature>http</feature>
         <feature>http-whiteboard</feature>
         
@@ -60,20 +60,20 @@
         
     </feature>
     
-	<feature name='cherry-reactive-ui' description='User Interface' version='${project.version}'>
+	<feature name='mhus-reactive-ui' description='User Interface' version='${project.version}'>
         <feature>mhu-vaadin-ui</feature>
 
         <bundle>mvn:de.mhus.ports/vaadin-timerextension/${mhus-ports-vaadin.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${cherry-reactive.version}</bundle>
-		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${cherry-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-widgets/${mhus-reactive.version}</bundle>
+		<bundle>mvn:de.mhus.cherry.reactive/reactive-vaadin-core/${mhus-reactive.version}</bundle>
 	
 	</feature>	
 	
-	<feature name='cherry-reactive-all' description='Install all expect dev' version='${project.version}'>
-		<feature>cherry-reactive-core</feature>
-		<feature>cherry-reactive-rest</feature>
-        <feature>cherry-reactive-kube</feature>
-		<feature>cherry-reactive-ui</feature>
+	<feature name='mhus-reactive-all' description='Install all expect dev' version='${project.version}'>
+		<feature>mhus-reactive-core</feature>
+		<feature>mhus-reactive-rest</feature>
+        <feature>mhus-reactive-kube</feature>
+		<feature>mhus-reactive-ui</feature>
 	</feature>
 	
 </features>
