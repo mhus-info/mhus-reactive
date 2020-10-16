@@ -106,6 +106,12 @@ public class Migrator {
 
         if (caseRules == null && nodeRules == null) return;
 
+        monitor.println("URI:      ", uri);
+        monitor.println("Pool:     ", pool);
+        monitor.println("Process:  ", process);
+        monitor.println("Activity: ", activity);
+        monitor.println("Version:  ", version);
+        
         monitor.setSteps(0);
         for (PCaseInfo caseInfo : engine.storageGetCases(null)) {
             if (filter(caseInfo)) {
@@ -172,13 +178,13 @@ public class Migrator {
                         k = MString.beforeIndex(rule, '=');
                         v = MString.afterIndex(rule, '=');
                     }
-                    if (verbose) monitor.println("--- SET ", action, ": ", rule);
+                    monitor.println("=== Node ",node.getId()," Action ", action, " Rule ", rule);
                     switch (action) {
                         case "name":
                             nodeModel.getAttribute("name").set(node, rule, false);
                             break;
                         case "canonical":
-                            nodeModel.getAttribute("canonicalName").set(node, rule, false);
+                            nodeModel.getAttribute("canonicalname").set(node, rule, false);
                             break;
                         case "type":
                             nodeModel
@@ -250,12 +256,13 @@ public class Migrator {
                         k = MString.beforeIndex(rule, '=');
                         v = MString.afterIndex(rule, '=');
                     }
+                    monitor.println("=== Case ",caze.getId()," Action ", action, " Rule ", rule);
                     switch (action) {
                         case "name":
                             caseModel.getAttribute("name").set(caze, rule, false);
                             break;
                         case "canonical":
-                            caseModel.getAttribute("canonicalName").set(caze, rule, false);
+                            caseModel.getAttribute("canonicalname").set(caze, rule, false);
                             break;
                         case "milestone":
                             caze.setMilestone(rule);
@@ -299,7 +306,7 @@ public class Migrator {
                             caze.getParameters().remove(rule);
                             break;
                         default:
-                            monitor.println("*** Unknown action " + action);
+                            monitor.println("*** Unknown action ", action);
                     }
                 }
             } catch (Throwable t) {
@@ -338,15 +345,15 @@ public class Migrator {
             String oPool = MString.beforeIndex(u.getPath(), '/', u.getPath());
 
             if (!p.equals(process)) {
-                if (verbose) monitor.print("--- Ignore by process name", u);
+                if (verbose) monitor.println("--- Ignore by process name ", u);
                 return false;
             }
             if (version != null && !version.includes(new Version(v))) {
-                if (verbose) monitor.print("--- Ignore by process version", u);
+                if (verbose) monitor.println("--- Ignore by process version ", u);
                 return false;
             }
             if (MString.isSet(pool) && !pool.equals(oPool)) {
-                if (verbose) monitor.print("--- Ignore by pool name", u);
+                if (verbose) monitor.println("--- Ignore by pool name ", u);
                 return false;
             }
         }
@@ -363,7 +370,7 @@ public class Migrator {
         if (ids != null && caseRules != null) {
             filtered = true;
             if (!MCollection.contains(ids, info.getId().toString())) {
-                if (verbose) monitor.print("--- Ignore by id", info.getId());
+                if (verbose) monitor.println("--- Ignore by id ", info.getId());
                 return false;
             }
         }
