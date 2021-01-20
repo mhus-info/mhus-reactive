@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2020 Mike Hummel (mh@mhus.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.mhus.app.reactive.examples.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,30 +45,30 @@ public class S1PropertyTest {
     private EngineConfiguration config;
     private Engine engine;
     private Console console;
-    
+
     @Test
     public void testTypes() throws Exception {
 
         createEngine();
-        
+
         String uri =
                 "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool?text1=area&testDate=1.2.1997&testEnum=ON&testInt=5&testInteger=17";
         System.out.println("URI: " + uri);
         System.out.println(
                 "------------------------------------------------------------------------");
         UUID caseId = engine.start(uri);
-        
+
         PCase caze = engine.getCaseWithoutLock(caseId);
         EngineContext context = engine.createContext(caze);
-        S1Pool pool = (S1Pool)context.getPool();
-        
+        S1Pool pool = (S1Pool) context.getPool();
+
         assertNotNull(pool);
-        
+
         System.out.println("Date: " + pool.getTestDate());
         System.out.println("Enum: " + pool.getTestEnum());
         System.out.println("Int : " + pool.getTestInt());
         System.out.println("Integer: " + pool.getTestInteger());
-        
+
         assertEquals(MDate.toDate("1.2.1997", null), pool.getTestDate());
         assertEquals(S1Pool.TEST_ENUM.ON, pool.getTestEnum());
         assertEquals(5, pool.getTestInt());
@@ -92,5 +107,4 @@ public class S1PropertyTest {
 
         engine = new Engine(config);
     }
-
 }

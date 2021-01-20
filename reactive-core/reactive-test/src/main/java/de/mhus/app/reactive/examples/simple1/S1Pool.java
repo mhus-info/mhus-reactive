@@ -32,8 +32,11 @@ import de.mhus.lib.basics.consts.GenerateConst;
 @GenerateConst
 public class S1Pool extends RPool<S1Pool> {
 
-    public enum TEST_ENUM { ON, OFF };
-    
+    public enum TEST_ENUM {
+        ON,
+        OFF
+    };
+
     @PropertyDescription(displayName = "Switch Text", writable = false, initial = true)
     private String text1 = "Moin";
 
@@ -51,7 +54,7 @@ public class S1Pool extends RPool<S1Pool> {
 
     @PropertyDescription(initial = true)
     private Integer testInteger = null;
-    
+
     public String getText1() {
         return text1;
     }

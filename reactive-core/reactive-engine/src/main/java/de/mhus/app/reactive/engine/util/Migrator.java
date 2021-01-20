@@ -111,7 +111,7 @@ public class Migrator {
         monitor.println("Process:  ", process);
         monitor.println("Activity: ", activity);
         monitor.println("Version:  ", version);
-        
+
         monitor.setSteps(0);
         for (PCaseInfo caseInfo : engine.storageGetCases(null)) {
             if (filter(caseInfo)) {
@@ -178,7 +178,7 @@ public class Migrator {
                         k = MString.beforeIndex(rule, '=');
                         v = MString.afterIndex(rule, '=');
                     }
-                    monitor.println("=== Node ",node.getId()," Action ", action, " Rule ", rule);
+                    monitor.println("=== Node ", node.getId(), " Action ", action, " Rule ", rule);
                     switch (action) {
                         case "name":
                             nodeModel.getAttribute("name").set(node, rule, false);
@@ -256,7 +256,7 @@ public class Migrator {
                         k = MString.beforeIndex(rule, '=');
                         v = MString.afterIndex(rule, '=');
                     }
-                    monitor.println("=== Case ",caze.getId()," Action ", action, " Rule ", rule);
+                    monitor.println("=== Case ", caze.getId(), " Action ", action, " Rule ", rule);
                     switch (action) {
                         case "name":
                             caseModel.getAttribute("name").set(caze, rule, false);

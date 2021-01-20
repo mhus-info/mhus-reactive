@@ -161,8 +161,7 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>> {
     public synchronized EElement getENode() {
         if (eNode == null) {
             eNode = ePool.getElement(pNode.getCanonicalName());
-            if (eNode == null)
-                log().f("ENode not found in Pool",uri,eNode.getCanonicalName());
+            if (eNode == null) log().f("ENode not found in Pool", uri, eNode.getCanonicalName());
         }
         return eNode;
     }
