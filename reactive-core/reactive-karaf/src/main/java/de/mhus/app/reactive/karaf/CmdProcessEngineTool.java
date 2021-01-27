@@ -45,9 +45,9 @@ import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pengine", description = "Engine modifiations")
+@Command(scope = "reactive", name = "pengine-tool", description = "Engine modifications")
 @Service
-public class CmdProcessEngine extends AbstractCmd {
+public class CmdProcessEngineTool extends AbstractCmd {
 
     @Argument(
             index = 0,
@@ -65,14 +65,8 @@ public class CmdProcessEngine extends AbstractCmd {
                             + " step                    - execute engine next step\n"
                             + " save                    - save engine configuration\n"
                             + " load                    - load engine configuration\n"
-                            + " status                  - print current engine status\n"
                             + " statistics              - print statistic informtion\n"
-                            + " suspend                 - suspent automatic engine steps\n"
-                            + " resume                  - resume automatic engine steps\n"
-                            + " start                   - start engine\n"
-                            + " stop                    - stop and destroy engine\n"
                             + " archive [<caseId>*]     - archive special cases or all (if no id is set)\n"
-                            + " execute <uri>           - executes the uri, e.g. bpm://process/pool to start a case\n"
                             + " health\n"
                             + " locks                   - Print case locks (cluster lock)\n"
                             + " lock <case id>          - Get lock information\n"
@@ -154,8 +148,6 @@ public class CmdProcessEngine extends AbstractCmd {
                         l);
             }
             table.print();
-        } else if (cmd.equals("execute")) {
-            System.out.println(api.getEngine().doExecute(parameters[0]));
         } else if (cmd.equals("cleanup")) {
             IEngineAdmin uiApi = M.l(IEngineAdmin.class);
             uiApi.cleanupCache();
@@ -227,18 +219,6 @@ public class CmdProcessEngine extends AbstractCmd {
             System.out.println(persistent);
         } else if (cmd.equals("status")) {
             System.out.println(api.getEngineStatus());
-        } else if (cmd.equals("suspend")) {
-            api.setExecutionSuspended(true);
-            System.out.println("OK");
-        } else if (cmd.equals("resume")) {
-            api.setExecutionSuspended(false);
-            System.out.println("OK");
-        } else if (cmd.equals("start")) {
-            api.startEngine();
-            System.out.println("OK");
-        } else if (cmd.equals("stop")) {
-            api.stopEngine();
-            System.out.println("OK");
         } else if (cmd.equals("archive")) {
             if (parameters == null) {
                 System.out.println("Archive all");
