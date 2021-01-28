@@ -9,7 +9,7 @@ in karaf. Use the '-a' flag to print the current used parameters. Copy the param
 
 To define labels for different languages the language can be added to the parameters. Sample:
 
-pnode -a view ea0c363c-b0e1-4447-a017-897ac5a0daf0 me de
+pnode-view -a ea0c363c-b0e1-4447-a017-897ac5a0daf0 me de
 
 [...]
 
@@ -23,11 +23,11 @@ bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive
 
 Then
 
-pengine cleanup
+pengine-tool cleanup
 
 and
 
-pcase view a9dc47df-82e8-4c0d-bff7-de8166e8e377  me de-de
+pcase-view a9dc47df-82e8-4c0d-bff7-de8166e8e377  me de-de
 
 [...]
 
