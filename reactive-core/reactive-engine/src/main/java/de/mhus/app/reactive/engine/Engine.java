@@ -2594,7 +2594,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             null,
                             runtimeId,
                             EngineConst.TRY_COUNT,
-                            actor == null ? null : actor.getName());
+                            actor == null ? null : actor.getName(),
+                            0);
             // flow.setScheduledNow();
             fireEvent.createActivity(
                     context.getARuntime(), flow, context.getPCase(), previous, start);
@@ -2722,7 +2723,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             null,
                             null,
                             0,
-                            null);
+                            null,
+                            0);
             fireEvent.createRuntime(getCase(), start, runtime);
             //          synchronized (nodeCache) {
             storage.saveFlowNode(runtime);
@@ -2752,7 +2754,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             null,
                             runtimeId,
                             EngineConst.TRY_COUNT,
-                            actor == null ? null : actor.getName());
+                            actor == null ? null : actor.getName(),
+                            0);
             flow.setScheduledNow();
             fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(), start);
             context = new EngineContext(context, flow);

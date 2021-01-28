@@ -102,6 +102,8 @@ public class PNode implements Externalizable {
     // will not be stored
     private String[] indexValues;
     private String actor;
+    // due date
+    private long due;
 
     public PNode() {}
 
@@ -124,7 +126,9 @@ public class PNode implements Externalizable {
             String assignedUser,
             UUID runtimeNode,
             int tryCount,
-            String actor) {
+            String actor,
+            long dueDate
+            ) {
         super();
         this.id = id;
         this.caseId = caseId;
@@ -146,6 +150,7 @@ public class PNode implements Externalizable {
         this.runtimeNode = runtimeNode;
         this.tryCount = tryCount;
         this.actor = actor;
+        this.setDue(dueDate);
     }
 
     public PNode(PNode clone) {
@@ -170,6 +175,7 @@ public class PNode implements Externalizable {
         this.tryCount = clone.getTryCount();
         if (clone.getMessage() != null) this.message = new HashMap<>(clone.getMessage());
         this.actor = clone.getActor();
+        this.due = clone.getDue();
     }
 
     public UUID getCaseId() {
@@ -397,7 +403,7 @@ public class PNode implements Externalizable {
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
 
         out.writeObject(id);
         out.writeObject(caseId);
@@ -422,6 +428,8 @@ public class PNode implements Externalizable {
         out.writeInt(tryCount);
         out.writeObject(message);
         out.writeObject(actor);
+        
+        out.writeLong(due);
 
         out.flush();
     }
@@ -430,7 +438,7 @@ public class PNode implements Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int version = in.readInt();
-        if (version != 1) throw new IOException("Wrong version: " + version);
+        if (version < 1 || version > 2) throw new IOException("Wrong version: " + version);
 
         id = (UUID) in.readObject();
         caseId = (UUID) in.readObject();
@@ -456,6 +464,12 @@ public class PNode implements Externalizable {
         tryCount = in.readInt();
         message = (Map<String, Object>) in.readObject();
         actor = (String) in.readObject();
+        
+        if (version >= 2) {
+            due = in.readLong();
+        } else {
+            due = 0;
+        }
     }
 
     public void setScheduledNow() {
@@ -472,5 +486,21 @@ public class PNode implements Externalizable {
 
     public String getActor() {
         return actor == null ? "" : actor;
+    }
+
+    public long getDue() {
+        return due;
+    }
+
+    public void setDue(long dueDate) {
+        this.due = dueDate;
+    }
+    
+    public void setDueDays(int days) {
+        this.due = System.currentTimeMillis() + days * MPeriod.DAY_IN_MILLISECOUNDS;
+    }
+    
+    public void resetDue() {
+        this.due = 0;
     }
 }

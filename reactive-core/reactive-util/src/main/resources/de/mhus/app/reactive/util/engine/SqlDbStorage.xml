@@ -91,6 +91,7 @@
 	  <field name="index8" type="string" size="300" />
 	  <field name="index9" type="string" size="300" />
 	  <field name="actor" type="string" size="100" />
+      <field name="due" type="DATETIME" />
 	</table>
 	<table name="$/prefix$_lock" primary_key="id">
       <field name="id" type="string" size="300" />

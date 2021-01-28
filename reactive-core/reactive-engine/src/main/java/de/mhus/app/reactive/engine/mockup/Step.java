@@ -91,7 +91,8 @@ public class Step {
                             nc.getString("assigned"),
                             UUID.randomUUID(),
                             nc.getInt("tryCount", 0),
-                            nc.getString("actor", null));
+                            nc.getString("actor", null),
+                            0);
 
             nodes.add(node);
         }

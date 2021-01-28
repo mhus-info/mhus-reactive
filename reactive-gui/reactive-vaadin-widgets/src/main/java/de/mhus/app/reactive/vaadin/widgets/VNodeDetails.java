@@ -78,6 +78,7 @@ public class VNodeDetails extends Panel {
             addLine("Priority", node.getPriority());
             addLine("Score", node.getScore());
             addLine("Type", node.getType());
+            addLine("Due", node.getDue());
             Map<String, String> prop = node.getProperties();
             if (prop != null && prop.size() > 0) {
                 addTitle("Node:");

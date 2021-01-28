@@ -144,4 +144,9 @@ public class UiNode extends MLog implements INode, Externalizable {
         info = (PNodeInfo) in.readObject();
         properties = (Map<String, String>) in.readObject();
     }
+
+    @Override
+    public long getDue() {
+        return info.getDue();
+    }
 }

@@ -15,6 +15,7 @@
  */
 package de.mhus.app.reactive.vaadin.widgets;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
@@ -23,6 +24,7 @@ import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.INode;
 import de.mhus.app.reactive.model.ui.IProcess;
 import de.mhus.lib.annotations.vaadin.Column;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.util.MUri;
 import de.mhus.lib.errors.MException;
 
@@ -166,6 +168,12 @@ public class NodeItem {
     @Column(order = 24, title = "Actor", editable = false, elapsed = false)
     public String getActor() {
         return node.getActor();
+    }
+
+    @Column(order = 25, title = "Due", editable = false, elapsed = false)
+    public LocalDate getDue() {
+        if (node.getDue() <= 0) return null;
+        return LocalDate.ofEpochDay(node.getDue() / MPeriod.DAY_IN_MILLISECOUNDS);
     }
 
     @Override

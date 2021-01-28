@@ -48,6 +48,7 @@ public class SearchCriterias implements Externalizable, Cloneable {
     public String uri;
     public UUID caseId;
     public TYPE_NODE type;
+    public int due = -1;
 
     public enum ORDER {
         CUSTOM,
@@ -103,6 +104,9 @@ public class SearchCriterias implements Externalizable, Cloneable {
         for (String k : parameters.keySet()) {
             String v = parameters.getString(k, null);
             switch (k) {
+                case "due":
+                    due = M.to(v, -1);
+                    break;
                 case "state":
                     try {
                         caseState = STATE_CASE.valueOf(v.toUpperCase());
@@ -299,12 +303,14 @@ public class SearchCriterias implements Externalizable, Cloneable {
                 "milestone",
                 milestone,
                 "actors",
-                actors);
+                actors,
+                "due",
+                due);
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
         out.writeObject(name);
         out.writeObject(custom);
         out.writeObject(customer);
@@ -326,11 +332,14 @@ public class SearchCriterias implements Externalizable, Cloneable {
         out.writeObject(milestone);
         out.writeObject(actors);
         out.writeInt(limit);
+        out.writeInt(due);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if (in.readInt() != 1) throw new IOException("Wrong object version");
+        int v = in.readInt();
+        if (v < 1 || v > 2) throw new IOException("Wrong object version");
+        
         name = (String) in.readObject();
         custom = (String) in.readObject();
         customer = (String) in.readObject();
@@ -352,6 +361,12 @@ public class SearchCriterias implements Externalizable, Cloneable {
         milestone = (String) in.readObject();
         actors = (String[]) in.readObject();
         limit = in.readInt();
+        
+        if (v >= 2) {
+            due = in.readInt();
+        } else {
+            due = -1;
+        }
     }
 
     public static String[] keys() {
@@ -384,10 +399,12 @@ public class SearchCriterias implements Externalizable, Cloneable {
             "index8",
             "index9",
             "milestone",
-            "limit"
+            "limit",
+            "due"
         };
     }
 
+    @Override
     public SearchCriterias clone() {
         try {
             return (SearchCriterias) super.clone();

@@ -42,6 +42,7 @@ import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
@@ -69,7 +70,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             "id_,uri_,name_,state_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_,milestone_"
                     + INDEX_COLUMNS;
     private static final String NODE_COLUMNS =
-            "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_,actor_"
+            "id_,case_,name_,assigned_,state_,type_,uri_,custom_,customer_,process_,version_,pool_,created_,modified_,priority_,score_,actor_,due_"
                     + INDEX_COLUMNS;
     private DbPool pool;
     private String prefix;
@@ -397,6 +398,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             prop.put("signal", M.trunc(flow.getSignalsAsString(), 700));
             prop.put("message", M.trunc(flow.getMessagesAsString(), 700));
             prop.put("actor", M.trunc(flow.getActor(), 100));
+            prop.put("due", new Date(flow.getDue()));
 
             PCaseInfo caze = loadCaseInfo(flow.getCaseId());
             if (caze == null)
@@ -441,7 +443,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                             + "process_=$process$,"
                             + "version_=$version$,"
                             + "pool_=$pool$,"
-                            + "actor_ = $actor$";
+                            + "actor_ = $actor$,"
+                            + "due_ = $due$";
 
             if (flow.getIndexValues() != null) {
                 String[] idx = flow.getIndexValues();
@@ -491,6 +494,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             prop.put("signal", M.trunc(flow.getSignalsAsString(), 700));
             prop.put("message", M.trunc(flow.getMessagesAsString(), 700));
             prop.put("actor", M.trunc(flow.getActor(), 100));
+            prop.put("due", new Date(flow.getDue()));
 
             if (!exists) {
                 PCaseInfo caze = loadCaseInfo(flow.getCaseId());
@@ -532,7 +536,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                                 + "message_=$message$,"
                                 + "scheduled_=$scheduled$,"
                                 + "assigned_=$assigned$,"
-                                + "actor_ = $actor$";
+                                + "actor_ = $actor$,"
+                                + "due_ = $due$";
 
                 if (flow.getIndexValues() != null) {
                     String[] idx = flow.getIndexValues();
@@ -591,7 +596,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                                         + "index7_,"
                                         + "index8_,"
                                         + "index9_,"
-                                        + "actor_"
+                                        + "actor_,"
+                                        + "due_"
                                         + ") VALUES ("
                                         + "$id$,"
                                         + "$case$,"
@@ -623,7 +629,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                                         + "$index7$,"
                                         + "$index8$,"
                                         + "$index9$,"
-                                        + "$actor$"
+                                        + "$actor$,"
+                                        + "$due$"
                                         + ")");
                 sta.executeUpdate(prop);
                 sta.close();
@@ -991,6 +998,14 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sql.append(")");
             }
 
+            if (search.due >= 0) {
+                addJoin(whereAdded, search, sql);
+                whereAdded = true;
+                // sql.append(" (");
+                addMathFilter("due", "<=", String.valueOf(System.currentTimeMillis() + search.due * MPeriod.DAY_IN_MILLISECOUNDS), prop, sql);
+                // sql.append(" OR due_ = 0) "); - not needed, 0 is lesser then timestamp
+            }
+
             // after where: order
             if (search.order != null) {
                 sql.append("ORDER BY ").append(search.order.name().toLowerCase()).append("_ ");
@@ -1143,6 +1158,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             if (value.endsWith("*")) value = value.substring(0, value.length() - 1) + "%";
             prop.put(name, value);
         } else sql.append(name + "_=$" + name + "$ ");
+    }
+
+    private void addMathFilter(String name, String comp, String value, MProperties prop, StringBuilder sql) {
+        prop.put(name, value);
+
+        sql.append(name + "_ " + comp + " $" + name + "$ ");
     }
 
     @Override
@@ -1365,6 +1386,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         res.getInt("priority_"),
                         res.getInt("score_"),
                         res.getString("actor_"),
+                        res.getTimestamp("due_").getTime(),
                         new String[] {
                             res.getString("index0_"),
                             res.getString("index1_"),

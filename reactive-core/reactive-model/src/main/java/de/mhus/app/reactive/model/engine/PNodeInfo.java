@@ -41,6 +41,7 @@ public class PNodeInfo implements Externalizable {
     private int priority;
     private int score;
     private String actor;
+    private long due;
 
     public PNodeInfo() {}
 
@@ -59,6 +60,7 @@ public class PNodeInfo implements Externalizable {
             int priority,
             int score,
             String actor,
+            long due,
             String[] indexValues) {
         this.id = id;
         this.caseId = caseId;
@@ -75,6 +77,7 @@ public class PNodeInfo implements Externalizable {
         this.priority = priority;
         this.score = score;
         this.actor = actor;
+        this.due = due;
     }
 
     public PNodeInfo(PCaseInfo cazeInfo, PNode node) {
@@ -93,6 +96,7 @@ public class PNodeInfo implements Externalizable {
                 0,
                 0,
                 node.getActor(),
+                node.getDue(),
                 null);
     }
 
@@ -172,10 +176,14 @@ public class PNodeInfo implements Externalizable {
     public String getActor() {
         return actor;
     }
+    
+    public long getDue() {
+        return due;
+    }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(1);
+        out.writeInt(2);
         out.writeObject(id);
         out.writeObject(caseId);
         out.writeObject(canonicalName);
@@ -191,11 +199,13 @@ public class PNodeInfo implements Externalizable {
         out.writeInt(priority);
         out.writeInt(score);
         out.writeObject(actor);
+        out.writeLong(due);
     }
 
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        if (in.readInt() != 1) throw new IOException("Wrong object version");
+        int v = in.readInt();
+        if (v < 1 || v > 2) throw new IOException("Wrong object version");
         id = (UUID) in.readObject();
         caseId = (UUID) in.readObject();
         canonicalName = (String) in.readObject();
@@ -211,5 +221,10 @@ public class PNodeInfo implements Externalizable {
         priority = in.readInt();
         score = in.readInt();
         actor = (String) in.readObject();
+        if (v >= 2) {
+            due = in.readLong();
+        } else {
+            due = 0;
+        }
     }
 }
