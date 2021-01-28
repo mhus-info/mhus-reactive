@@ -1002,7 +1002,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 addJoin(whereAdded, search, sql);
                 whereAdded = true;
                 // sql.append(" (");
-                addMathFilter("due", "<=", String.valueOf(System.currentTimeMillis() + search.due * MPeriod.DAY_IN_MILLISECOUNDS), prop, sql);
+                addMathFilter("due", "<=", new Date(System.currentTimeMillis() + search.due * MPeriod.DAY_IN_MILLISECOUNDS), prop, sql);
                 // sql.append(" OR due_ = 0) "); - not needed, 0 is lesser then timestamp
             }
 
@@ -1160,7 +1160,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
         } else sql.append(name + "_=$" + name + "$ ");
     }
 
-    private void addMathFilter(String name, String comp, String value, MProperties prop, StringBuilder sql) {
+    private void addMathFilter(String name, String comp, Object value, MProperties prop, StringBuilder sql) {
         prop.put(name, value);
 
         sql.append(name + "_ " + comp + " $" + name + "$ ");

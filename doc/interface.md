@@ -3,7 +3,7 @@
 == Internationalization in OSGi:
 
 The OSGi IEngineFactory is loading the file 'etc/de.mhus.app.reactive.model.ui.IEngineFactory.properties' to
-load nls parameters. The current parameters can be seen using the 'pnode view' and 'pcase view' commands
+load nls parameters. The current parameters can be seen using the 'pnode-view' and 'pcase-view' commands
 in karaf. Use the '-a' flag to print the current used parameters. Copy the parameters into the file and execute
 'pengine cleanup' to reload the file content.
 
