@@ -32,12 +32,15 @@ import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.app.reactive.model.engine.SearchCriterias.ORDER;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.INode;
+import de.mhus.lib.core.M;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.core.util.MNls;
 import de.mhus.lib.core.util.MNlsFactory;
 import de.mhus.lib.vaadin.ExpandingTable;
 import de.mhus.lib.vaadin.MhuTable;
+import de.mhus.lib.vaadin.TextInputDialog;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
 @SuppressWarnings("deprecation")
@@ -51,6 +54,7 @@ public class VNodeList extends MhuTable implements Refreshable {
     protected static final Action ACTION_REFRESH = new Action("Refresh");
     protected static final Action ACTION_DETAILS = new Action("Details");
     protected static final Action ACTION_RUNTIME = new Action("Runtime");
+    protected static final Action ACTION_DUE = new Action("Set Due");
     private String sortByDefault = "duedate";
     private boolean sortAscDefault = true;
     MhuBeanItemContainer<NodeItem> data = new MhuBeanItemContainer<NodeItem>(NodeItem.class);
@@ -173,6 +177,8 @@ public class VNodeList extends MhuTable implements Refreshable {
             doRuntime(target);
         } else if (action == ACTION_DETAILS) {
             doDetails(target);
+        } else if (action == ACTION_DUE) {
+            doDue(target);
         }
     }
 
@@ -188,9 +194,49 @@ public class VNodeList extends MhuTable implements Refreshable {
         list.add(ACTION_DETAILS);
         list.add(ACTION_RUNTIME);
         list.add(ACTION_REFRESH);
+        list.add(ACTION_DUE);
     }
 
     protected void doDetails(NodeItem target) {}
+
+    protected void doDue(final NodeItem target) {
+        TextInputDialog.show(getUI(), 
+                "Set due days", 
+                "", 
+                "Insert number of days or leave empty", 
+                "Set", 
+                "Cancel", 
+                new TextInputDialog.Listener() {
+
+            @Override
+            public boolean validate(String txtInput) {
+                if (MString.isEmpty(txtInput)) {
+                    try {
+                        engine.setDueDays(target.getId().toString(), -1);
+                        doRefresh();
+                        return true;
+                    } catch (Exception e) {
+                        log.e(target,e);
+                        return false;
+                    }
+                }
+                int val = M.to(txtInput, -1);
+                if (val < 0 || val > 1000) return false;
+                try {
+                    engine.setDueDays(target.getId().toString(), val);
+                    doRefresh();
+                } catch (Exception e) {
+                    log.e(target,val,e);
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void onClose(TextInputDialog dialog) {
+            }
+        });
+    }
 
     public void doReload() {
         data.removeAllItems();

@@ -62,6 +62,14 @@ public interface IEngine {
 
     MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception;
 
+    /**
+     * Set days until due or -1 to reset the value.
+     * @param id
+     * @param days
+     * @throws Exception
+     */
+    void setDueDays(String id, int days) throws Exception;
+    
     // case
 
     default ICaseDescription getCaseDescription2(ICase caze) throws Exception {

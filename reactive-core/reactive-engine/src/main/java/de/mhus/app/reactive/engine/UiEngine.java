@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import de.mhus.app.reactive.engine.util.EngineUtil;
+import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.AUserTask;
 import de.mhus.app.reactive.model.annotations.ActivityDescription;
@@ -767,6 +768,18 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
+    public void setDueDays(String id, int days) throws Exception {
+        if (engine == null) throw new WrongStateException();
+        PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user)) throw new NotFoundException("Node", id);
+        try (PCaseLock lock = engine.getCaseLock(info, "setDueDays", "days", days)) {
+            PNode node = lock.getFlowNode(info);
+            node.setDueDays(days);
+            lock.saveFlowNode(node);
+        }
+    }
+
+    @Override
     public MProperties onUserTaskAction(String id, MProperties values, String action)
             throws Exception {
         if (engine == null) throw new WrongStateException();
@@ -815,4 +828,5 @@ public class UiEngine extends MLog implements IEngine {
         List<EngineMessage> messages = aRuntime.getMessages();
         return messages.toArray(new EngineMessage[messages.size()]);
     }
+
 }
