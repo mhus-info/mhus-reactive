@@ -668,9 +668,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     @Deactivate
     public void doDeactivate(ComponentContext ctx) {
         stopExecutor = true;
-        executorProcess.interrupt();
-        executorPrepare.interrupt();
-        executorCleanup.interrupt();
+        if (executorProcess != null)
+            executorProcess.interrupt();
+        if (executorPrepare != null)
+            executorPrepare.interrupt();
+        if (executorCleanup != null)
+            executorCleanup.interrupt();
         int cnt = 60;
         if (executorProcess != null) {
             log().i("Wait for engine to stop");
@@ -685,7 +688,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
         instance = null;
         stopEngine();
-        processTracker.close();
+        if (processTracker != null)
+            processTracker.close();
         processTracker = null;
     }
 
