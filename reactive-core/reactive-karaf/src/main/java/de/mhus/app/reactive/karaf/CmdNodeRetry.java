@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-retry", description = "Node modifications - set node back to running")
+@Command(
+        scope = "reactive",
+        name = "pnode-retry",
+        description = "Node modifications - set node back to running")
 @Service
 public class CmdNodeRetry extends AbstractCmd {
 

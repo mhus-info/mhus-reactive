@@ -828,5 +828,4 @@ public class UiEngine extends MLog implements IEngine {
         List<EngineMessage> messages = aRuntime.getMessages();
         return messages.toArray(new EngineMessage[messages.size()]);
     }
-
 }

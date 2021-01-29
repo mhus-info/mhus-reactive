@@ -200,42 +200,42 @@ public class VNodeList extends MhuTable implements Refreshable {
     protected void doDetails(NodeItem target) {}
 
     protected void doDue(final NodeItem target) {
-        TextInputDialog.show(getUI(), 
-                "Set due days", 
-                "", 
-                "Insert number of days or leave empty", 
-                "Set", 
-                "Cancel", 
+        TextInputDialog.show(
+                getUI(),
+                "Set due days",
+                "",
+                "Insert number of days or leave empty",
+                "Set",
+                "Cancel",
                 new TextInputDialog.Listener() {
 
-            @Override
-            public boolean validate(String txtInput) {
-                if (MString.isEmpty(txtInput)) {
-                    try {
-                        engine.setDueDays(target.getId().toString(), -1);
-                        doRefresh();
+                    @Override
+                    public boolean validate(String txtInput) {
+                        if (MString.isEmpty(txtInput)) {
+                            try {
+                                engine.setDueDays(target.getId().toString(), -1);
+                                doRefresh();
+                                return true;
+                            } catch (Exception e) {
+                                log.e(target, e);
+                                return false;
+                            }
+                        }
+                        int val = M.to(txtInput, -1);
+                        if (val < 0 || val > 1000) return false;
+                        try {
+                            engine.setDueDays(target.getId().toString(), val);
+                            doRefresh();
+                        } catch (Exception e) {
+                            log.e(target, val, e);
+                            return false;
+                        }
                         return true;
-                    } catch (Exception e) {
-                        log.e(target,e);
-                        return false;
                     }
-                }
-                int val = M.to(txtInput, -1);
-                if (val < 0 || val > 1000) return false;
-                try {
-                    engine.setDueDays(target.getId().toString(), val);
-                    doRefresh();
-                } catch (Exception e) {
-                    log.e(target,val,e);
-                    return false;
-                }
-                return true;
-            }
 
-            @Override
-            public void onClose(TextInputDialog dialog) {
-            }
-        });
+                    @Override
+                    public void onClose(TextInputDialog dialog) {}
+                });
     }
 
     public void doReload() {

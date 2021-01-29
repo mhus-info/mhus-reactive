@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-resave", description = "Experimental! Case modifications - load and save the data of the case again")
+@Command(
+        scope = "reactive",
+        name = "pcase-resave",
+        description = "Experimental! Case modifications - load and save the data of the case again")
 @Service
 public class CmdCaseResave extends AbstractCmd {
 

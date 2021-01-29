@@ -28,7 +28,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-updateful", description = "Experimental! Case modifications - update case and nodes in database")
+@Command(
+        scope = "reactive",
+        name = "pcase-updateful",
+        description = "Experimental! Case modifications - update case and nodes in database")
 @Service
 public class CmdCaseUpdateFul extends AbstractCmd {
 

@@ -29,7 +29,10 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-values", description = "Node modifications - search nodes and print values")
+@Command(
+        scope = "reactive",
+        name = "pnode-values",
+        description = "Node modifications - search nodes and print values")
 @Service
 public class CmdNodeValues extends AbstractCmd {
 
@@ -40,7 +43,7 @@ public class CmdNodeValues extends AbstractCmd {
             description = "Search",
             multiValued = true)
     String[] search;
-    
+
     @Option(name = "-a", aliases = "--all", description = "Print all", required = false)
     private boolean all;
 
@@ -48,7 +51,7 @@ public class CmdNodeValues extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
-        
+
         SearchCriterias criterias = new SearchCriterias(search);
 
         ConsoleTable table = new ConsoleTable(tblOpt);

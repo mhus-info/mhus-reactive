@@ -27,7 +27,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-runtime", description = "Node modifications - print the runtime for this node")
+@Command(
+        scope = "reactive",
+        name = "pnode-runtime",
+        description = "Node modifications - print the runtime for this node")
 @Service
 public class CmdNodeRuntime extends AbstractCmd {
 

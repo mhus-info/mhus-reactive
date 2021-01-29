@@ -31,7 +31,10 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-list", description = "Case modifications - list all cases")
+@Command(
+        scope = "reactive",
+        name = "pcase-list",
+        description = "Case modifications - list all cases")
 @Service
 public class CmdCaseList extends AbstractCmd {
 
@@ -54,8 +57,7 @@ public class CmdCaseList extends AbstractCmd {
         SearchCriterias criterias = new SearchCriterias(search);
 
         ConsoleTable table = new ConsoleTable(tblOpt);
-        table.setHeaderValues(
-                "Id", "CustomId", "Customer", "Modified", "Uri", "State", "Close");
+        table.setHeaderValues("Id", "CustomId", "Customer", "Modified", "Uri", "State", "Close");
         table.getColumn(0).minWidth = 32;
         for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
             if (all || info.getState() != STATE_CASE.CLOSED) {

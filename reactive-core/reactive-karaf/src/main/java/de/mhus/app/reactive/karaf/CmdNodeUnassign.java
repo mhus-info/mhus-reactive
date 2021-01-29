@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-unassig", description = "Node modifications - unassign a user task")
+@Command(
+        scope = "reactive",
+        name = "pnode-unassig",
+        description = "Node modifications - unassign a user task")
 @Service
 public class CmdNodeUnassign extends AbstractCmd {
 

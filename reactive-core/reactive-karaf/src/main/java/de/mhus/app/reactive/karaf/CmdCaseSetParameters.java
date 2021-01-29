@@ -29,7 +29,10 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-set", description = "Case modifications - set parameters")
+@Command(
+        scope = "reactive",
+        name = "pcase-set",
+        description = "Case modifications - set parameters")
 @Service
 public class CmdCaseSetParameters extends AbstractCmd {
 
@@ -54,8 +57,7 @@ public class CmdCaseSetParameters extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
-        try (PCaseLock lock =
-                EngineUtil.getCaseLock(api.getEngine(), caseId, "cmdcase.setparam")) {
+        try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), caseId, "cmdcase.setparam")) {
             PCase caze = lock.getCase();
             Map<String, Object> p = caze.getParameters();
             for (int i = 1; i < parameters.length; i++) {

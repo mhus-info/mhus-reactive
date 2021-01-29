@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-erase", description = "Experimental! Case modifications - erase a case data")
+@Command(
+        scope = "reactive",
+        name = "pcase-erase",
+        description = "Experimental! Case modifications - erase a case data")
 @Service
 public class CmdCaseErase extends AbstractCmd {
 
@@ -36,7 +39,6 @@ public class CmdCaseErase extends AbstractCmd {
             description = "case uuid",
             multiValued = false)
     String caseId;
-
 
     @Override
     public Object execute2() throws Exception {

@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-cancel", description = "Node modifications - cancel nodes")
+@Command(
+        scope = "reactive",
+        name = "pnode-cancel",
+        description = "Node modifications - cancel nodes")
 @Service
 public class CmdNodeCancel extends AbstractCmd {
 
@@ -36,7 +39,7 @@ public class CmdNodeCancel extends AbstractCmd {
             description = "node id or custom id",
             multiValued = true)
     String[] nodeId;
-    
+
     @Override
     public Object execute2() throws Exception {
 

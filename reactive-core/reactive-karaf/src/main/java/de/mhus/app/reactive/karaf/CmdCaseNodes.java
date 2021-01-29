@@ -34,7 +34,10 @@ import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-nodes", description = "Case modifications - print case nodes")
+@Command(
+        scope = "reactive",
+        name = "pcase-nodes",
+        description = "Case modifications - print case nodes")
 @Service
 public class CmdCaseNodes extends AbstractCmd {
 

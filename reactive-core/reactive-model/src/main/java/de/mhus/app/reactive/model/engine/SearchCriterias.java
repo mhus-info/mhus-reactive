@@ -339,7 +339,7 @@ public class SearchCriterias implements Externalizable, Cloneable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         int v = in.readInt();
         if (v < 1 || v > 2) throw new IOException("Wrong object version");
-        
+
         name = (String) in.readObject();
         custom = (String) in.readObject();
         customer = (String) in.readObject();
@@ -361,7 +361,7 @@ public class SearchCriterias implements Externalizable, Cloneable {
         milestone = (String) in.readObject();
         actors = (String[]) in.readObject();
         limit = in.readInt();
-        
+
         if (v >= 2) {
             due = in.readInt();
         } else {

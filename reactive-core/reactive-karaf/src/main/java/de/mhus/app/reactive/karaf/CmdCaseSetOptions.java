@@ -30,7 +30,10 @@ import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-set-option", description = "Case modifications - set options")
+@Command(
+        scope = "reactive",
+        name = "pcase-set-option",
+        description = "Case modifications - set options")
 @Service
 public class CmdCaseSetOptions extends AbstractCmd {
 

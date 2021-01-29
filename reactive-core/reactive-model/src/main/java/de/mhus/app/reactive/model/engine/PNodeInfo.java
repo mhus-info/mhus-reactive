@@ -176,7 +176,7 @@ public class PNodeInfo implements Externalizable {
     public String getActor() {
         return actor;
     }
-    
+
     public long getDue() {
         return due;
     }

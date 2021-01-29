@@ -26,7 +26,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-cancel", description = "Case modifications - cancel hard")
+@Command(
+        scope = "reactive",
+        name = "pcase-cancel",
+        description = "Case modifications - cancel hard")
 @Service
 public class CmdCaseCancel extends AbstractCmd {
 
@@ -44,8 +47,7 @@ public class CmdCaseCancel extends AbstractCmd {
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         for (String id : caseId) {
-            try (PCaseLock lock =
-                    EngineUtil.getCaseLock(api.getEngine(), id, "cmdcase.cancel")) {
+            try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), id, "cmdcase.cancel")) {
                 PCase caze = lock.getCase();
                 System.out.println("Cancel: " + caze);
                 lock.closeCase(true, -1, "cancelled by cmd");

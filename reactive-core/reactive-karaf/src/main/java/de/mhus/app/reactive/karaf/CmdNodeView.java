@@ -42,7 +42,10 @@ import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-view", description = "Node modifications - view node details")
+@Command(
+        scope = "reactive",
+        name = "pnode-view",
+        description = "Node modifications - view node details")
 @Service
 public class CmdNodeView extends AbstractCmd {
 
@@ -54,12 +57,7 @@ public class CmdNodeView extends AbstractCmd {
             multiValued = false)
     String nodeId;
 
-    @Argument(
-            index = 1,
-            name = "user",
-            required = false,
-            description = "user",
-            multiValued = false)
+    @Argument(index = 1, name = "user", required = false, description = "user", multiValued = false)
     String userId;
 
     @Argument(
@@ -77,7 +75,6 @@ public class CmdNodeView extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
-
 
         PNode node = EngineUtil.getFlowNode(api.getEngine(), nodeId);
         PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getId());

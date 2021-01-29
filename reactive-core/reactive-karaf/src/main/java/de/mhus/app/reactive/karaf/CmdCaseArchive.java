@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-archive", description = "Case modifications - archive case or all if id is not set")
+@Command(
+        scope = "reactive",
+        name = "pcase-archive",
+        description = "Case modifications - archive case or all if id is not set")
 @Service
 public class CmdCaseArchive extends AbstractCmd {
 

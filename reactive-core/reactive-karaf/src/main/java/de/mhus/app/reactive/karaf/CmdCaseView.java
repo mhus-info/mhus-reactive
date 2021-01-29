@@ -38,7 +38,10 @@ import de.mhus.lib.core.MDate;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-view", description = "Case modifications - view case details")
+@Command(
+        scope = "reactive",
+        name = "pcase-view",
+        description = "Case modifications - view case details")
 @Service
 public class CmdCaseView extends AbstractCmd {
 
@@ -50,12 +53,7 @@ public class CmdCaseView extends AbstractCmd {
             multiValued = false)
     String caseId;
 
-    @Argument(
-            index = 1,
-            name = "user",
-            required = false,
-            description = "user",
-            multiValued = false)
+    @Argument(index = 1, name = "user", required = false, description = "user", multiValued = false)
     String userId;
 
     @Argument(
@@ -91,8 +89,7 @@ public class CmdCaseView extends AbstractCmd {
                                 ? MPeriod.getIntervalAsString(
                                         caze.getScheduled() - System.currentTimeMillis())
                                 : "-"));
-        System.out.println(
-                "Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
+        System.out.println("Close     : " + caze.getClosedCode() + " " + caze.getClosedMessage());
         System.out.println("Options   : " + caze.getOptions());
         String[] values = caze.getIndexValues();
         if (values != null) {

@@ -27,7 +27,10 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-submit", description = "Experimental! Node modifications - submit a user form")
+@Command(
+        scope = "reactive",
+        name = "pnode-submit",
+        description = "Experimental! Node modifications - submit a user form")
 @Service
 public class CmdNodeSubmit extends AbstractCmd {
 
@@ -51,7 +54,6 @@ public class CmdNodeSubmit extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
-
 
         PNode node = EngineUtil.getFlowNode(api.getEngine(), nodeId);
         System.out.println("Update: " + node);

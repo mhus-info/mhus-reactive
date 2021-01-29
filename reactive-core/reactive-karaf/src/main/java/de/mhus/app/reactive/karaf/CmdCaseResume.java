@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pcase-resume", description = "Case modifications - resume case")
+@Command(
+        scope = "reactive",
+        name = "pcase-resume",
+        description = "Case modifications - resume case")
 @Service
 public class CmdCaseResume extends AbstractCmd {
 

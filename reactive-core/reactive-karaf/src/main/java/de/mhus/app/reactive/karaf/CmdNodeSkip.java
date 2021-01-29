@@ -32,7 +32,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-skip", description = "Node modifications - skip a node and start the next one")
+@Command(
+        scope = "reactive",
+        name = "pnode-skip",
+        description = "Node modifications - skip a node and start the next one")
 @Service
 public class CmdNodeSkip extends AbstractCmd {
 
@@ -78,7 +81,7 @@ public class CmdNodeSkip extends AbstractCmd {
         for (String id : nodeId) {
             PNode node = EngineUtil.getFlowNode(api.getEngine(), id);
             System.out.println("Spik: " + node);
-            
+
             try (PCaseLock lock = api.getEngine().getCaseLock(node.getCaseId(), "cmdnode.skip")) {
 
                 PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());

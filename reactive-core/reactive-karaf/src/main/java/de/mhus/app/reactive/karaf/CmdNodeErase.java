@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-erase", description = "Experimental! Node modifications - erase node")
+@Command(
+        scope = "reactive",
+        name = "pnode-erase",
+        description = "Experimental! Node modifications - erase node")
 @Service
 public class CmdNodeErase extends AbstractCmd {
 

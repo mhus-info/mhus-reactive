@@ -25,7 +25,10 @@ import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-resave", description = "Experimental! Node modifications - load and save node again")
+@Command(
+        scope = "reactive",
+        name = "pnode-resave",
+        description = "Experimental! Node modifications - load and save node again")
 @Service
 public class CmdNodeResave extends AbstractCmd {
 

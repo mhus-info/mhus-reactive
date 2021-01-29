@@ -28,7 +28,10 @@ import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-executing", description = "Node modifications - print currently executing nodes")
+@Command(
+        scope = "reactive",
+        name = "pnode-executing",
+        description = "Node modifications - print currently executing nodes")
 @Service
 public class CmdNodeExecuting extends AbstractCmd {
 
@@ -43,8 +46,7 @@ public class CmdNodeExecuting extends AbstractCmd {
             PNode node = api.getEngine().getNodeWithoutLock(nodeId);
             PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
             String time =
-                    MPeriod.getIntervalAsString(
-                            System.currentTimeMillis() - node.getLastRunDate());
+                    MPeriod.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
             table.addRowValues(
                     node.getId(),
                     caze.getName(),

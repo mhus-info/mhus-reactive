@@ -127,8 +127,7 @@ public class PNode implements Externalizable {
             UUID runtimeNode,
             int tryCount,
             String actor,
-            long dueDate
-            ) {
+            long dueDate) {
         super();
         this.id = id;
         this.caseId = caseId;
@@ -428,7 +427,7 @@ public class PNode implements Externalizable {
         out.writeInt(tryCount);
         out.writeObject(message);
         out.writeObject(actor);
-        
+
         out.writeLong(due);
 
         out.flush();
@@ -464,7 +463,7 @@ public class PNode implements Externalizable {
         tryCount = in.readInt();
         message = (Map<String, Object>) in.readObject();
         actor = (String) in.readObject();
-        
+
         if (version >= 2) {
             due = in.readLong();
         } else {
@@ -495,14 +494,12 @@ public class PNode implements Externalizable {
     public void setDue(long dueDate) {
         this.due = dueDate;
     }
-    
+
     public void setDueDays(int days) {
-        if (days < 0)
-            resetDue();
-        else
-            this.due = System.currentTimeMillis() + days * MPeriod.DAY_IN_MILLISECOUNDS;
+        if (days < 0) resetDue();
+        else this.due = System.currentTimeMillis() + days * MPeriod.DAY_IN_MILLISECOUNDS;
     }
-    
+
     public void resetDue() {
         this.due = 0;
     }

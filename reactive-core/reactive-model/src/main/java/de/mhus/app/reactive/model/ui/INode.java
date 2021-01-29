@@ -52,6 +52,6 @@ public interface INode {
     String getAssigned();
 
     String getActor();
-    
+
     long getDue();
 }

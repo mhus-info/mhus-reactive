@@ -34,10 +34,12 @@ import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pnode-list", description = "Node modifications - list all nodes")
+@Command(
+        scope = "reactive",
+        name = "pnode-list",
+        description = "Node modifications - list all nodes")
 @Service
 public class CmdNodeList extends AbstractCmd {
-
 
     @Option(name = "-a", aliases = "--all", description = "Print all", required = false)
     private boolean all;
