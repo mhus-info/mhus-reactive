@@ -52,7 +52,6 @@ public class _S1Pool extends ConstBase {
   public static final Identifier _LOG = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"log");
   public static final Identifier _LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"LOG_LEVEL_MAPPING");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"pojoModel");
-  public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"registerNatives");
   public static final Identifier _TEST_DATE = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"testDate");
   public static final Identifier _TEST_ENUM = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"testEnum");
   public static final Identifier _TEST_INT = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"testInt");

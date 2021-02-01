@@ -52,7 +52,6 @@ public class _Address extends ConstBase {
   public static final Identifier _EMAIL = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"email");
   public static final Identifier _FIRST_NAME = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"firstName");
   public static final Identifier _LAST_NAME = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"lastName");
-  public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.forms.Address.class,"registerNatives");
   public static final Identifier _SALUTATION = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"salutation");
   public static final Identifier _STREET = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"street");
   public static final Identifier _STREET_NUMBER = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"streetNumber");

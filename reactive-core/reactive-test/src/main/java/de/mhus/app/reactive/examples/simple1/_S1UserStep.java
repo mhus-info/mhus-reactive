@@ -63,7 +63,6 @@ public class _S1UserStep extends ConstBase {
   public static final Identifier _OPTION = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"option");
   public static final Identifier _OPTION_OPTIONS = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"optionOptions");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"pojoModel");
-  public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"registerNatives");
   public static final Identifier _RETRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"RETRY");
   public static final Identifier _TEXT3 = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1UserStep.class,"text3");
 

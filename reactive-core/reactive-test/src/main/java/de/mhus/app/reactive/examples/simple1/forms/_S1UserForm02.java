@@ -65,7 +65,6 @@ public class _S1UserForm02 extends ConstBase {
   public static final Identifier _OPTION_OPTIONS = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"optionOptions");
   public static final Identifier _OWNER = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"owner");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"pojoModel");
-  public static final Identifier _REGISTER_NATIVES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"registerNatives");
   public static final Identifier _RETRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"RETRY");
   public static final Identifier _SALUTATION_DEF = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"salutationDef");
   public static final Identifier _TEXT3 = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"text3");
