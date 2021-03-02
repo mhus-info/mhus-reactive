@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Component;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.IEngineFactory;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.shiro.AccessUtil;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotSupportedException;
 import de.mhus.rest.core.CallContext;
@@ -67,9 +67,9 @@ public class BpmNode extends ObjectListNode<Object, Object> {
 
     @Override
     protected void doCreate(JsonResult result, CallContext callContext) throws Exception {
-        Subject subject = AccessUtil.getSubject();
-        String username = AccessUtil.getPrincipal(subject);
-        Locale locale = AccessUtil.getLocale(subject);
+        Subject subject = Aaa.getSubject();
+        String username = Aaa.getPrincipal(subject);
+        Locale locale = Aaa.getLocale(subject);
         IEngine engine = M.l(IEngineFactory.class).create(username, locale);
 
         String uri = callContext.getParameter("uri");

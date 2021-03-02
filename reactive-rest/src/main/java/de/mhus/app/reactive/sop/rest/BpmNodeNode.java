@@ -28,7 +28,7 @@ import de.mhus.app.reactive.model.ui.IEngineFactory;
 import de.mhus.app.reactive.model.ui.INode;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.shiro.AccessUtil;
+import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.errors.MException;
 import de.mhus.rest.core.CallContext;
 import de.mhus.rest.core.api.RestNodeService;
@@ -50,9 +50,9 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
     @Override
     protected List<INode> getObjectList(CallContext callContext) throws MException {
 
-        Subject subject = AccessUtil.getSubject();
-        String username = AccessUtil.getPrincipal(subject);
-        Locale locale = AccessUtil.getLocale(subject);
+        Subject subject = Aaa.getSubject();
+        String username = Aaa.getPrincipal(subject);
+        Locale locale = Aaa.getLocale(subject);
         IEngine engine = M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = callContext.getParameter("names");
@@ -77,9 +77,9 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
     @Override
     protected INode getObjectForId(CallContext context, String id) throws Exception {
 
-        Subject subject = AccessUtil.getSubject();
-        String username = AccessUtil.getPrincipal(subject);
-        Locale locale = AccessUtil.getLocale(subject);
+        Subject subject = Aaa.getSubject();
+        String username = Aaa.getPrincipal(subject);
+        Locale locale = Aaa.getLocale(subject);
         IEngine engine = M.l(IEngineFactory.class).create(username, locale);
 
         String propertyNames = context.getParameter("_names");
