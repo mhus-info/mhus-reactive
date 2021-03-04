@@ -98,7 +98,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
         String formXml = (String) in.readObject();
         if (formXml != null) {
             try {
-                form = ModelUtil.toModel(MXml.loadXml(formXml).getDocumentElement());
+                form = ModelUtil.fromXml(MXml.loadXml(formXml).getDocumentElement());
             } catch (Exception e) {
                 throw new IOException("Form: " + formXml, e);
             }
