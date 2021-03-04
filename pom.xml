@@ -33,7 +33,7 @@
 	<url>http://www.mhus.de</url>
     <properties>
        <mhus-reactive.version>${project.version}</mhus-reactive.version>
-       <mhus-reactive-plugin.version>7.3.0-SNAPSHOT</mhus-reactive-plugin.version>
+       <mhus-reactive-plugin.version>7.3.0</mhus-reactive-plugin.version>
     </properties>
 
     <inceptionYear>2018</inceptionYear>
