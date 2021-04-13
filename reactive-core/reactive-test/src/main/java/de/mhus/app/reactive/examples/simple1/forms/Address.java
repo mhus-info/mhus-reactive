@@ -22,7 +22,7 @@ import de.mhus.lib.basics.consts.GenerateConst;
 import de.mhus.lib.basics.consts.Identifier;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
-import de.mhus.lib.core.MConstants;
+import de.mhus.lib.core.M;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.definition.IDefDefinition;
@@ -36,7 +36,7 @@ import de.mhus.lib.form.definition.FmVoid;
 @GenerateConst
 public class Address {
 
-    public static final String COUNTRY_CODE_DE = Address.getCountryCode(MConstants.LOCALE_DE_DE);
+    public static final String COUNTRY_CODE_DE = Address.getCountryCode(M.LOCALE_DE_DE);
 
     @PropertyDescription private SALUTATION salutation;
     @PropertyDescription private String firstName;
@@ -315,7 +315,7 @@ public class Address {
     }
 
     public String toAddress() {
-        return toSalutationString(salutation, MConstants.LOCALE_DE_DE)
+        return toSalutationString(salutation, M.LOCALE_DE_DE)
                 + (MString.isSet(getFirstName()) ? " " + getFirstName() : "")
                 + (MString.isSet(getLastName()) ? " " + getLastName() : "");
     }
