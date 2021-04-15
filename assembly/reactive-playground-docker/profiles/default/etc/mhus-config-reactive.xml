@@ -32,4 +32,5 @@
   <de.mhus.micro.core.api.JmsApi
     enabled="false"
   />
+  <de.mhus.lib.core.aaa.AccessApi allowAdminLogin="true" />
 </mhus>
