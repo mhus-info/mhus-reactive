@@ -18,8 +18,8 @@ package de.mhus.app.reactive.util.engine;
 import java.util.UUID;
 
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.config.IConfig;
-import de.mhus.lib.core.config.IConfigFactory;
+import de.mhus.lib.core.node.INode;
+import de.mhus.lib.core.node.INodeFactory;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.sql.DbPool;
 import de.mhus.lib.sql.DbPoolBundle;
@@ -45,8 +45,8 @@ public class MemoryStorage extends SqlDbStorage {
             throw new MException("HSQLDB driver not found", jdbcDriver);
         }
 
-        IConfig cconfig = M.l(IConfigFactory.class).create();
-        IConfig cdb = cconfig.createObject("db");
+        INode cconfig = M.l(INodeFactory.class).create();
+        INode cdb = cconfig.createObject("db");
 
         cdb.setString("driver", jdbcDriver);
         cdb.setString("url", jdbcUrl);

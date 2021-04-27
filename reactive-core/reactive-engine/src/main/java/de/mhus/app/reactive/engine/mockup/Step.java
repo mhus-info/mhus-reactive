@@ -27,8 +27,8 @@ import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.MProperties;
-import de.mhus.lib.core.config.ConfigList;
-import de.mhus.lib.core.config.IConfig;
+import de.mhus.lib.core.node.NodeList;
+import de.mhus.lib.core.node.INode;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
@@ -40,12 +40,12 @@ public class Step {
 
     public Step() {}
 
-    public Step(IConfig n) throws MException {
+    public Step(INode n) throws MException {
         nr = n.getInt("nr", 0);
-        for (IConfig nc : n.getArray("cases")) {
+        for (INode nc : n.getArray("cases")) {
 
             MProperties p = new MProperties();
-            IConfig nps = nc.getObject("parameters");
+            INode nps = nc.getObject("parameters");
             for (String key : nps.getPropertyKeys()) p.setString(key, nps.getString(key));
 
             PCase caze =
@@ -65,10 +65,10 @@ public class Step {
             cases.add(caze);
         }
 
-        for (IConfig nc : n.getArray("nodes")) {
+        for (INode nc : n.getArray("nodes")) {
 
             MProperties p = new MProperties();
-            IConfig nps = nc.getObject("parameters");
+            INode nps = nc.getObject("parameters");
             for (String key : nps.getPropertyKeys()) p.setString(key, nps.getString(key));
 
             PNode node =
@@ -106,27 +106,27 @@ public class Step {
         nodes.add(new PNode(node));
     }
 
-    public void save(int nr, IConfig n) throws MException {
+    public void save(int nr, INode n) throws MException {
         n.setInt("nr", nr);
-        ConfigList ncs = n.createArray("cases");
+        NodeList ncs = n.createArray("cases");
         for (PCase caze : cases) {
-            IConfig nc = ncs.createObject();
+            INode nc = ncs.createObject();
             nc.setString("state", caze.getState().name());
             nc.setString("name", caze.getName());
             nc.setString("canonical", caze.getCanonicalName());
             nc.setString("milestone", caze.getMilestone());
             nc.setString("uri", caze.getUri());
             nc.setLong("scheduled", caze.getScheduled());
-            IConfig np = nc.createObject("parameters");
+            INode np = nc.createObject("parameters");
             for (Entry<String, Object> entry : caze.getParameters().entrySet())
                 if (entry.getValue().getClass().isPrimitive()
                         || entry.getValue().getClass() == String.class)
                     np.setString(entry.getKey(), String.valueOf(entry.getValue()));
         }
 
-        ConfigList nns = n.createArray("nodes");
+        NodeList nns = n.createArray("nodes");
         for (PNode node : nodes) {
-            IConfig nn = nns.createObject();
+            INode nn = nns.createObject();
             nn.setString("state", node.getState().name());
             nn.setString("suspended", node.getState().name());
             nn.setString("type", node.getType().name());
@@ -136,7 +136,7 @@ public class Step {
             nn.setInt("tryCount", node.getTryCount());
             nn.setString("actor", node.getActor());
 
-            IConfig np = nn.createObject("parameters");
+            INode np = nn.createObject("parameters");
             for (Entry<String, Object> entry : node.getParameters().entrySet())
                 if (entry.getValue().getClass().isPrimitive()
                         || entry.getValue().getClass() == String.class)

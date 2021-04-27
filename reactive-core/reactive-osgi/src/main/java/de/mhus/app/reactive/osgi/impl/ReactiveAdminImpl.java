@@ -72,7 +72,7 @@ import de.mhus.lib.core.cfg.CfgInt;
 import de.mhus.lib.core.cfg.CfgLong;
 import de.mhus.lib.core.cfg.CfgString;
 import de.mhus.lib.core.concurrent.Lock;
-import de.mhus.lib.core.config.IConfig;
+import de.mhus.lib.core.node.INode;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.MRuntimeException;
 import de.mhus.lib.errors.NotFoundException;
@@ -720,11 +720,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                 log().w("Engine: Using memory storage");
                 config.storage = new MemoryStorage();
                 PEngine e = new PEngine(config.storage);
-                IConfig cfg = MApi.getCfg(ReactiveAdmin.class);
+                INode cfg = MApi.getCfg(ReactiveAdmin.class);
                 if (cfg != null) {
-                    IConfig cfgEngine = cfg.getObject("engine");
+                    INode cfgEngine = cfg.getObject("engine");
                     if (cfgEngine != null) {
-                        for (IConfig cfgPa : cfgEngine.getArray("parameter")) {
+                        for (INode cfgPa : cfgEngine.getArray("parameter")) {
                             e.getParameters()
                                     .put(cfgPa.getString("name"), cfgPa.getString("value"));
                         }

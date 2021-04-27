@@ -27,9 +27,9 @@ import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.StorageProvider;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.config.ConfigList;
-import de.mhus.lib.core.config.IConfig;
-import de.mhus.lib.core.config.IConfigFactory;
+import de.mhus.lib.core.node.NodeList;
+import de.mhus.lib.core.node.INode;
+import de.mhus.lib.core.node.INodeFactory;
 import de.mhus.lib.errors.NotFoundException;
 
 public class EngineMockUp {
@@ -93,9 +93,9 @@ public class EngineMockUp {
     }
 
     protected void load() throws FileNotFoundException, Exception {
-        IConfig config = M.l(IConfigFactory.class).read(file);
+        INode config = M.l(INodeFactory.class).read(file);
         steps.clear();
-        for (IConfig nstep : config.getArray("step")) {
+        for (INode nstep : config.getArray("step")) {
             Step step = new Step(nstep);
             steps.add(step);
         }
@@ -103,14 +103,14 @@ public class EngineMockUp {
 
     protected void save() throws Exception {
         cnt = 0;
-        IConfig config = M.l(IConfigFactory.class).create();
-        ConfigList array = config.createArray("step");
+        INode config = M.l(INodeFactory.class).create();
+        NodeList array = config.createArray("step");
         for (Step step : steps) {
             cnt++;
-            IConfig child = array.createObject();
+            INode child = array.createObject();
             step.save(cnt, child);
         }
-        M.l(IConfigFactory.class).write(config, file);
+        M.l(INodeFactory.class).write(config, file);
     }
 
     public boolean isWarn() {
