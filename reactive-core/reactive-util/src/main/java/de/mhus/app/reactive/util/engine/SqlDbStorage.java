@@ -83,16 +83,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     public void init() {
         while (true) {
+            DbConnection con = null;
             try {
                 URL url = MSystem.locateResource(this, "SqlDbStorage.xml");
-                DbConnection con = pool.getConnection();
+                con = pool.getConnection();
                 INode data = M.l(INodeFactory.class).read(url);
                 data.setString("prefix", prefix);
                 pool.getDialect().createStructure(data, con, null, false);
-                con.close();
                 return;
             } catch (Exception e) {
                 log().e(e);
+            } finally {
+                try {
+                    if (con != null)
+                        con.close();
+                } catch (Throwable t) {
+                    log().d(t);
+                }
             }
             log().i(this, "Retry init of DB in " + CFG_INIT_RETRY_SEC.value() + " sec");
             MThread.sleep(CFG_INIT_RETRY_SEC.value() * 1000);
@@ -101,13 +108,14 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     @Override
     public void updateFullCase(PCase caze) throws IOException {
+        DbConnection con = null;
         try {
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             caze.writeExternal(new ObjectOutputStream(outStream));
             ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", caze.getId());
             prop.put("content", inStream);
@@ -164,16 +172,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             sta.close();
 
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(caze,t);
+            }
         }
     }
 
     @Override
     public void saveCase(PCase caze) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             boolean exists = false;
             MProperties prop = new MProperties();
             prop.put("id", caze.getId());
@@ -308,17 +323,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sta.close();
             }
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(caze,t);
+            }
         }
     }
 
     @Override
     public PCase loadCase(UUID id) throws IOException, NotFoundException {
         PCase caze = null;
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", id);
             DbStatement sta =
@@ -330,9 +352,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 caze.readExternal(new ObjectInputStream(in));
             }
             res.close();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(id,t);
+            }
         }
         if (caze == null) throw new NotFoundException("case", id);
         return caze;
@@ -340,8 +368,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     @Override
     public void deleteCaseAndFlowNodes(UUID id) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", id);
             {
@@ -355,16 +384,23 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sta.execute(prop);
             }
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(id,t);
+            }
         }
     }
 
     @Override
     public void deleteFlowNode(UUID id) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", id);
             {
@@ -373,17 +409,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sta.execute(prop);
             }
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(id,t);
+            }
         }
     }
 
     @Override
     public void updateFullFlowNode(PNode flow) throws IOException {
 
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             flow.writeExternal(new ObjectOutputStream(outStream));
@@ -462,17 +505,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             sta.close();
 
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(flow,t);
+            }
         }
     }
 
     @Override
     public void saveFlowNode(PNode flow) throws IOException {
 
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             boolean exists = false;
             MProperties prop = new MProperties();
             prop.put("id", flow.getId());
@@ -636,17 +686,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sta.close();
             }
             con.commit();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(flow,t);
+            }
         }
     }
 
     @Override
     public PNode loadFlowNode(UUID id) throws IOException, NotFoundException {
         PNode node = null;
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", id);
             DbStatement sta =
@@ -662,9 +719,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 }
             }
             res.close();
-            con.close();
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(id,t);
+            }
         }
         if (node == null) throw new NotFoundException("node", id);
         return node;
@@ -672,8 +735,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     @Override
     public Result<PCaseInfo> getCases(STATE_CASE state) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             if (state == null) {
@@ -691,14 +755,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             DbResult res = sta.executeQuery(prop);
             return new SqlResultCase(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
 
     @Override
     public Result<PNodeInfo> getFlowNodes(UUID caseId, STATE_NODE state) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             if (caseId == null && state == null) {
@@ -735,6 +806,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             DbResult res = sta.executeQuery(prop);
             return new SqlResultNode(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
@@ -773,8 +850,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null) con.close();
-            } catch (Exception e2) {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
             }
             throw new IOException(e);
         }
@@ -783,8 +862,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     @Override
     public Result<PNodeInfo> getSignalFlowNodes(STATE_NODE state, String signal)
             throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             if (state == null) {
@@ -810,6 +890,12 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             DbResult res = sta.executeQuery(prop);
             return new SqlResultNode(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
@@ -817,8 +903,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     @Override
     public Result<PNodeInfo> getMessageFlowNodes(UUID caseId, STATE_NODE state, String message)
             throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             if (state == null && caseId == null) {
@@ -866,12 +953,19 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             DbResult res = sta.executeQuery(prop);
             return new SqlResultNode(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
 
     @Override
     public Result<PNodeInfo> searchFlowNodes(SearchCriterias search) throws IOException {
+        DbConnection con = null;
         try {
             StringBuilder sql =
                     new StringBuilder("SELECT " + NODE_COLUMNS + " FROM " + prefix + "_node_ ");
@@ -1024,17 +1118,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sql.append("LIMIT ").append(search.limit).append(" ");
             }
 
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             DbStatement sta = con.createStatement(sql.toString());
             DbResult res = sta.executeQuery(prop);
             return new SqlResultNode(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
 
     @Override
     public Result<PCaseInfo> searchCases(SearchCriterias search) throws IOException {
+        DbConnection con = null;
         try {
             StringBuilder sql =
                     new StringBuilder("SELECT " + CASE_COLUMNS + " FROM " + prefix + "_case_ ");
@@ -1140,11 +1241,17 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 sql.append("LIMIT ").append(search.limit).append(" ");
             }
 
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             DbStatement sta = con.createStatement(sql.toString());
             DbResult res = sta.executeQuery(prop);
             return new SqlResultCase(con, res);
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new IOException(e);
         }
     }
@@ -1176,10 +1283,11 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     @Override
     public Map<String, String> loadEngine() throws IOException {
+        DbConnection con = null;
         try {
             HashMap<String, String> out = new HashMap<>();
 
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta =
                     con.createStatement("SELECT id_,content_ FROM " + prefix + "_engine_");
@@ -1188,18 +1296,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 out.put(res.getString("id_"), res.getString("content_"));
             }
             res.close();
-            con.close();
             return out;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
         }
     }
 
     @Override
     public String getEngineValue(String key) throws IOException {
+        DbConnection con = null;
         try {
             String value = null;
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", key);
             DbStatement sta =
@@ -1208,18 +1323,25 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             DbResult res = sta.executeQuery(prop);
             if (res.next()) value = res.getString("content_");
             res.close();
-            con.close();
             return value;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(key,t);
+            }
         }
     }
 
     @Override
     public void setEngineValue(String key, String value) throws IOException {
         String currentValue = getEngineValue(key); // TODO could be optimized
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", key);
             prop.put("value", value);
@@ -1241,13 +1363,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(key,t);
+            }
         }
     }
 
     @Override
     public void deleteEngineValue(String key) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             prop.put("id", key);
             DbStatement sta =
@@ -1255,10 +1385,16 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             sta.executeUpdate(prop);
 
             con.commit();
-            con.close();
 
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(key,t);
+            }
         }
     }
 
@@ -1286,12 +1422,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
         @Override
         public synchronized void close() {
-            if (res == null) return;
+            if (res == null || con == null) return;
             try {
                 res.close();
             } catch (Exception e) {
             }
-            con.close();
+            try {
+                con.close();
+            } catch (Throwable e) {
+            }
             res = null;
             con = null;
         }
@@ -1311,7 +1450,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 PCaseInfo out = newPCase(res);
                 hasNext = res.next();
                 return out;
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                hasNext = false;
+                close();
                 throw new MRuntimeException(e);
             }
         }
@@ -1341,12 +1482,15 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
         @Override
         public synchronized void close() {
-            if (res == null) return;
+            if (res == null || con == null) return;
             try {
                 res.close();
             } catch (Exception e) {
             }
-            con.close();
+            try {
+                con.close();
+            } catch (Throwable e) {
+            }
             res = null;
             con = null;
         }
@@ -1366,7 +1510,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 PNodeInfo out = newPNode(res);
                 hasNext = res.next();
                 return out;
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                hasNext = false;
+                close();
                 throw new MRuntimeException(e);
             }
         }
@@ -1450,8 +1596,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     }
 
     public void dumpCases() {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = con.createStatement("SELECT * FROM " + prefix + "_case_");
             DbResult res = sta.executeQuery(prop);
@@ -1462,13 +1609,20 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         System.out.println("  " + name + ": " + res.getString(name));
             }
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new RuntimeException(e);
         }
     }
 
     public void dumpNodes() {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = con.createStatement("SELECT * FROM " + prefix + "_node_");
             DbResult res = sta.executeQuery(prop);
@@ -1479,14 +1633,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         System.out.println("  " + name + ": " + res.getString(name));
             }
         } catch (Exception e) {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(t);
+            }
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public PCaseInfo loadCaseInfo(UUID caseId) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", caseId);
@@ -1501,17 +1662,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
             PCaseInfo out = newPCase(res);
             res.close();
-            con.close();
             return out;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(caseId,t);
+            }
         }
     }
 
     @Override
     public PNodeInfo loadFlowNodeInfo(UUID nodeId) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", nodeId);
@@ -1526,17 +1694,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
             PNodeInfo out = newPNode(res);
             res.close();
-            con.close();
             return out;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(nodeId,t);
+            }
         }
     }
 
     @Override
     public boolean setNodePriority(UUID nodeId, int priority) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", nodeId);
@@ -1545,17 +1720,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     con.createStatement(
                             "UPDATE " + prefix + "_node_ SET priority_=$value$ WHERE id_=$id$");
             int res = sta.executeUpdate(prop);
-            con.close();
             return res == 1;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(nodeId,t);
+            }
         }
     }
 
     @Override
     public boolean setNodeScope(UUID nodeId, int scope) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", nodeId);
@@ -1564,17 +1746,24 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     con.createStatement(
                             "UPDATE " + prefix + "_node_ SET scope_=$value$ WHERE id_=$id$");
             int res = sta.executeUpdate(prop);
-            con.close();
             return res == 1;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(nodeId,t);
+            }
         }
     }
 
     @Override
     public boolean setCasePriority(UUID caseId, int priority) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", caseId);
@@ -1587,13 +1776,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return res == 1;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(caseId,t);
+            }
         }
     }
 
     @Override
     public boolean setCaseScope(UUID caseId, int scope) throws IOException {
+        DbConnection con = null;
         try {
-            DbConnection con = pool.getConnection();
+            con = pool.getConnection();
             MProperties prop = new MProperties();
             DbStatement sta = null;
             prop.put("id", caseId);
@@ -1602,10 +1799,16 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     con.createStatement(
                             "UPDATE " + prefix + "_case_ SET scope_=$value$ WHERE id_=$id$");
             int res = sta.executeUpdate(prop);
-            con.close();
             return res == 1;
         } catch (Exception e) {
             throw new IOException(e);
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Throwable t) {
+                log().d(caseId,t);
+            }
         }
     }
 }
