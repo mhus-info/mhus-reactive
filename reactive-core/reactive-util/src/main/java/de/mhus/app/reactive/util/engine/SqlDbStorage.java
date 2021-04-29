@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1547,6 +1548,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
     }
 
     protected static PNodeInfo newPNode(DbResult res) throws Exception {
+        Timestamp due = res.getTimestamp("due_");
         PNodeInfo out =
                 new PNodeInfo(
                         UUID.fromString(res.getString("id_")),
@@ -1563,7 +1565,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         res.getInt("priority_"),
                         res.getInt("score_"),
                         res.getString("actor_"),
-                        res.getTimestamp("due_").getTime(),
+                        due == null ? 0 : due.getTime(),
                         new String[] {
                             res.getString("index0_"),
                             res.getString("index1_"),
