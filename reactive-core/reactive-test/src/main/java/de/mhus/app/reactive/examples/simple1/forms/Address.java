@@ -22,7 +22,6 @@ import de.mhus.lib.basics.consts.GenerateConst;
 import de.mhus.lib.basics.consts.Identifier;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MCast;
-import de.mhus.lib.core.M;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.definition.IDefDefinition;

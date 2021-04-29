@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Date;
@@ -31,23 +30,26 @@ import java.util.UUID;
 
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
 import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.Result;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.StorageProvider;
-import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
-import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
-import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MActivator;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.MThread;
+import de.mhus.lib.core.activator.DefaultActivator;
 import de.mhus.lib.core.cfg.CfgInt;
+import de.mhus.lib.core.io.MObjectInputStream;
 import de.mhus.lib.core.node.INode;
 import de.mhus.lib.core.node.INodeFactory;
 import de.mhus.lib.core.util.MUri;
@@ -74,6 +76,8 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     + INDEX_COLUMNS;
     private DbPool pool;
     private String prefix;
+
+    private MActivator activator;
 
     public SqlDbStorage(DbPool pool, String prefix) {
         this.pool = pool;
@@ -349,7 +353,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             if (res.next()) {
                 InputStream in = res.getBinaryStream("content_");
                 caze = new PCase();
-                caze.readExternal(new ObjectInputStream(in));
+                MActivator act = getActivator();
+                MObjectInputStream ois = new MObjectInputStream(in, act);
+                caze.readExternal(ois);
             }
             res.close();
         } catch (Exception e) {
@@ -364,6 +370,21 @@ public class SqlDbStorage extends MLog implements StorageProvider {
         }
         if (caze == null) throw new NotFoundException("case", id);
         return caze;
+    }
+
+    private synchronized MActivator getActivator() {
+        if (activator == null) {
+            activator = new DefaultActivator(getClass().getClassLoader()) {
+                @Override
+                public Object mapName(String name) {
+                    if (name == null) return name;
+                    if (name.startsWith("de.mhus.cherry.reactive."))
+                        name = "de.mhus.app.reactive." + name.substring(24);
+                    return super.mapName(name);
+                }
+            };
+        }
+        return activator;
     }
 
     @Override
@@ -713,7 +734,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 InputStream in = res.getBinaryStream("content_");
                 node = new PNode();
                 try {
-                    node.readExternal(new ObjectInputStream(in));
+                    MActivator act = getActivator();
+                    MObjectInputStream ois = new MObjectInputStream(in, act);
+                    node.readExternal(ois);
                 } catch (java.io.EOFException eofe) {
                     log().w(node, eofe); // most because of extended parameters
                 }

@@ -2986,4 +2986,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public long getStatisticCaseStarted() {
         return statisticCaseStarted;
     }
+
+    @Deprecated
+    public StorageProvider getStorage() {
+        return storage;
+    }
 }

@@ -25,8 +25,9 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.Engine;
-import de.mhus.app.reactive.engine.EngineConfiguration;
 import de.mhus.app.reactive.engine.Engine.EngineCaseLock;
+import de.mhus.app.reactive.engine.EngineConfiguration;
+import de.mhus.app.reactive.engine.util.ExchangeUtil;
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
@@ -34,19 +35,16 @@ import de.mhus.app.reactive.model.engine.PEngine;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
-import de.mhus.app.reactive.model.util.ExchangeUtil;
 import de.mhus.app.reactive.osgi.IEngineAdmin;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.app.reactive.osgi.impl.ReactiveAdminImpl;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MFile;
 import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.core.console.ConsoleTable;
-import de.mhus.lib.core.node.INode;
 import de.mhus.lib.errors.MException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -104,50 +102,14 @@ public class CmdProcessEngineTool extends AbstractCmd {
             if (!dir.exists() || !dir.isDirectory())
                 throw new MException("directory not found",dir);
             Engine engine = api.getEngine();
-            for (PCaseInfo info : engine.storageGetCases(null)) {
-                PCase caze = engine.getCaseWithoutLock(info.getId());
-                INode out = ExchangeUtil.caseToINode(caze);
-                File f = new File(dir, "case_" + caze.getId() + ".data");
-                System.out.println(f.getName());
-                String content = INode.toPrettyJsonString(out);
-                MFile.writeFile(f, content);
-            }
-            for (PNodeInfo info : engine.storageGetFlowNodes(null, null)) {
-                PNode node = engine.getNodeWithoutLock(info.getId());
-                INode out = ExchangeUtil.nodeToINode(node);
-                File f = new File(dir, "node_" + node.getId() + ".data");
-                System.out.println(f.getName());
-                String content = INode.toPrettyJsonString(out);
-                MFile.writeFile(f, content);
-            }
+            ExchangeUtil.exportData(engine, dir);
         } else
         if (cmd.equals("import")) {
             File dir = new File(parameters[0]);
             if (!dir.exists() || !dir.isDirectory())
                 throw new MException("directory not found",dir);
-            
             Engine engine = api.getEngine();
-            for (File f : dir.listFiles()) {
-                if (f.isFile() && f.getName().endsWith(".data")) {
-                    System.out.println(f.getName());
-                    try {
-                        String content = MFile.readFile(f);
-                        INode in = INode.readFromJsonString(content);
-                        if (f.getName().startsWith("case_")) {
-                            PCase out = ExchangeUtil.nodeToPCase(in);
-                            engine.storageUpdateFull(out);
-                        } else
-                        if (f.getName().startsWith("node_")) {
-                            PNode out = ExchangeUtil.nodeToPNode(in);
-                            engine.storageUpdateFull(out);
-                        }
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
-                }
-            }
-
-            
+            ExchangeUtil.importData(engine, dir);
         } else
         if (cmd.equals("updateProcessActivationInformation")) {
             ReactiveAdminImpl.instance.updateProcessActivationInformation(true);
