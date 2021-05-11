@@ -20,8 +20,11 @@ import java.util.Map;
 
 import de.mhus.app.reactive.model.annotations.PoolDescription;
 import de.mhus.app.reactive.model.annotations.PropertyDescription;
+import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.app.reactive.util.bpmn2.RPool;
+import de.mhus.lib.annotations.pojo.Action;
 import de.mhus.lib.basics.consts.GenerateConst;
+import de.mhus.lib.core.MProperties;
 
 @PoolDescription(
         displayName = "Example Pool",
@@ -111,4 +114,15 @@ public class S1Pool extends RPool<S1Pool> {
     public void setTestInteger(Integer testInteger) {
         this.testInteger = testInteger;
     }
+
+    @Action("action")
+    public MProperties doCaseAction(ProcessContext<S1Pool> context, MProperties values) {
+        return new MProperties("a","b");
+    }
+
+    @Action("actions")
+    public MProperties doCaseActions(ProcessContext<S1Pool> context, MProperties values) {
+        return new MProperties("action","Simple Action");
+    }
+
 }

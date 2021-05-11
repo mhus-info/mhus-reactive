@@ -95,6 +95,8 @@ public interface IEngine {
 
     void doArchive(UUID caseId) throws Exception;
 
+    MProperties onUserCaseAction(String id, MProperties values, String action) throws Exception;
+
     /**
      * Return the surrounding model for the node.
      *

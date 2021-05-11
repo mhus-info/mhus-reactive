@@ -2011,6 +2011,33 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
     }
 
+    /**
+     * Execute a pool / case action on the running case.
+     * You need to save manually if needed: lock.savePCase(context);
+     * 
+     * @param caseId
+     * @param values
+     * @param action
+     * @return The result of the action or null
+     * @throws IOException
+     * @throws MException
+     */
+    public MProperties onUserCaseAction(UUID caseId, IProperties values, String action)
+            throws IOException, MException {
+        try (PCaseLock lock =
+                getCaseLock(caseId, "onUserCaseAction", "action", action, "values", values)) {
+            PCase caze = lock.getCase();
+            if (caze.getState() != STATE_CASE.RUNNING)
+                throw new MException("case is not RUNNING", caseId);
+
+            EngineContext context = createContext(lock, caze, null);
+            APool<?> aPool = context.getPool();
+            MProperties ret = aPool.onUserCaseAction(context, values, action);
+//            lock.savePCase(context); // do not save by default
+            return ret;
+        }
+    }
+
     public AElement<?> getANode(UUID nodeId) throws IOException, MException {
         PNode node = getNodeWithoutLock(nodeId);
         PCase caze = getCaseWithoutLock(node.getCaseId());

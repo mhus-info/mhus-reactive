@@ -25,8 +25,11 @@ import de.mhus.app.reactive.model.annotations.PropertyDescription;
 import de.mhus.app.reactive.model.engine.ContextRecipient;
 import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.app.reactive.model.util.ActivityUtil;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCollection;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.pojo.PojoAction;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
 
@@ -117,4 +120,27 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
 
     @Override
     public void afterExecute(AActivity<?> activity) {}
+
+    @Override
+    public MProperties onUserCaseAction(ProcessContext<P> context, IProperties values, String action) {
+        try {
+            PojoModel model = getPojoModel();
+            PojoAction method = model.getAction(action);
+            Object ret = null;
+            if (method.getParameterType().length == 2)
+                ret = method.doExecute(this, context, values);
+            else
+            if (method.getParameterType().length == 1)
+                ret = method.doExecute(this, values);
+            else {
+                log().e("onUserCaseAction",this,action,"wrong number of arguments", method.getName());
+                return null;
+            }
+            return (MProperties) ret;
+        } catch (Throwable t) {
+            log().e("onUserCaseAction",this,action,t);
+            return null;
+        }
+    }
+
 }

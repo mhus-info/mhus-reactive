@@ -789,6 +789,15 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
+    public MProperties onUserCaseAction(String id, MProperties values, String action)
+            throws Exception {
+        if (engine == null) throw new WrongStateException();
+        PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
+        if (!engine.hasReadAccess(info.getUri(), user)) throw new NotFoundException("Case", id);
+        return engine.onUserCaseAction(info.getId(), values, action);
+    }
+
+    @Override
     public List<EngineMessage[]> getCaseRuntimeMessages(String id) throws Exception {
         if (engine == null) throw new WrongStateException();
         PCaseInfo info = EngineUtil.getCaseInfo(engine, id);

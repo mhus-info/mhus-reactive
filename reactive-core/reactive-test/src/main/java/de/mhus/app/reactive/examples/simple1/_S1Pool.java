@@ -17,6 +17,8 @@ public class _S1Pool extends ConstBase {
   public static final Identifier METHOD_BEFORE_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"beforeExecute");
   public static final Identifier METHOD_CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier METHOD_CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"createIndexValues");
+  public static final Identifier METHOD_DO_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseAction");
+  public static final Identifier METHOD_DO_CASE_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseActions");
   public static final Identifier METHOD_EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier METHOD_GET_POJO_MODEL = new Identifier(Identifier.TYPE.GETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"getPojoModel");
   public static final Identifier METHOD_GET_TEST_DATE = new Identifier(Identifier.TYPE.GETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"getTestDate");
@@ -28,6 +30,7 @@ public class _S1Pool extends ConstBase {
   public static final Identifier METHOD_IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"importParameters");
   public static final Identifier METHOD_INITIALIZE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"initializeCase");
   public static final Identifier METHOD_LOG = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"log");
+  public static final Identifier METHOD_ON_USER_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"onUserCaseAction");
   public static final Identifier METHOD_SET_CONTEXT = new Identifier(Identifier.TYPE.SETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"setContext");
   public static final Identifier METHOD_SET_TEST_DATE = new Identifier(Identifier.TYPE.SETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"setTestDate");
   public static final Identifier METHOD_SET_TEST_ENUM = new Identifier(Identifier.TYPE.SETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"setTestEnum");
@@ -46,11 +49,14 @@ public class _S1Pool extends ConstBase {
   public static final Identifier _CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"createIndexValues");
+  public static final Identifier _DO_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseAction");
+  public static final Identifier _DO_CASE_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseActions");
   public static final Identifier _EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier _IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"importParameters");
   public static final Identifier _INITIALIZE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"initializeCase");
   public static final Identifier _LOG = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"log");
   public static final Identifier _LOG__LEVEL__MAPPING = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"LOG_LEVEL_MAPPING");
+  public static final Identifier _ON_USER_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"onUserCaseAction");
   public static final Identifier _POJO_MODEL = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"pojoModel");
   public static final Identifier _TEST_DATE = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"testDate");
   public static final Identifier _TEST_ENUM = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"testEnum");
