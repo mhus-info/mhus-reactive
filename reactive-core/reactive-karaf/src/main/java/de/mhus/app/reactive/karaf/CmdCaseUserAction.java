@@ -46,9 +46,9 @@ public class CmdCaseUserAction extends AbstractCmd {
     @Argument(
             index = 1,
             name = "action",
-            required = false,
+            required = true,
             description = "Action or '__list' or '__form'",
-            multiValued = true)
+            multiValued = false)
     String action;
     
     @Argument(
@@ -71,7 +71,7 @@ public class CmdCaseUserAction extends AbstractCmd {
             action = EngineConst.ACTION_LIST;
         } else
         if (action.equals("__form")) {
-            values.setString("action", action);
+            values.setString("action", parameters[0]);
             action = EngineConst.ACTION_FORM;
         }
         MProperties ret = api.getEngine().onUserCaseAction(caze.getId(), action, values);

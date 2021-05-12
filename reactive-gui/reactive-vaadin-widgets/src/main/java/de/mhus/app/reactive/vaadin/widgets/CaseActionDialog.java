@@ -31,10 +31,13 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
     private VaadinForm vForm;
     private WidgetActivityDelegate activity;
 
-    public CaseActionDialog(CaseActionList actions, WidgetActivityDelegate activity) {
+    public CaseActionDialog(CaseActionList actions, WidgetActivityDelegate activity) throws Exception {
         this.caseActions = actions;
         this.actions = new Action[] {CLOSE};
         this.activity = activity;
+        setPack(true);
+        initUI();
+        setCaption("Actions");
     }
 
     @Override
@@ -42,7 +45,7 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
         this.layout = layout;
         for (String action : caseActions.getNames()) {
             String title = caseActions.getTitle(action);
-            new Button(title, new Button.ClickListener() {
+            Button button = new Button(title, new Button.ClickListener() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -50,6 +53,8 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
                     doCaseAction(action);
                 }
             });
+            button.setWidthFull();
+            layout.addComponent(button);
         }
     }
 
@@ -65,9 +70,11 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
                 return;
             }
             layout.addComponent(vForm);
+            layout.setExpandRatio(vForm, 1);
             this.actions = new Action[] {OK,CLOSE};
             formAction = action;
             updateButtons();
+            setPack(true);
         } else {
             doExecuteCaseAction(action);
         }

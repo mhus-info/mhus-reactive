@@ -129,7 +129,7 @@ public class S1Pool extends RPool<S1Pool> {
     @Action(value="test",title = "Test")
     @ActionForm(S1PoolTestForm.class)
     public MProperties doTest(MProperties values) {
-        return new MProperties("action","Simple Action");
+        return new MProperties("action","Simple Action", "text", values.getString("name", "?"));
     }
     
 }

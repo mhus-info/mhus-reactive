@@ -142,13 +142,16 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
             PojoModel model = getPojoModel();
             PojoAction method = model.getAction(action);
             Object ret = null;
+            if (method == null || method.getParameterType() == null) {
+                // nothing
+            } else
             if (method.getParameterType().length == 2)
                 ret = method.doExecute(this, context, values);
             else
             if (method.getParameterType().length == 1)
                 ret = method.doExecute(this, values);
             else {
-                log().e("onUserCaseAction",this,action,"wrong number of arguments", method.getName());
+                log().e("onUserCaseAction",this,action,"wrong number of arguments", method);
                 return null;
             }
             return (MProperties) ret;

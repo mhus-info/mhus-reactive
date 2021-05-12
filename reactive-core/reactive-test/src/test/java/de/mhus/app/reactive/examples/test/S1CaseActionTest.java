@@ -16,6 +16,7 @@ import de.mhus.app.reactive.engine.EngineConfiguration;
 import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
+import de.mhus.app.reactive.examples.simple1.S1PoolTestForm;
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.core.MProperties;
@@ -62,6 +63,11 @@ public class S1CaseActionTest {
             assertEquals("Test", actions.get("test"));
         }
         {
+            DefRoot form = new S1PoolTestForm().getForm();
+            form.build();
+            System.out.println(form);
+        }
+        {
             MProperties values = new MProperties("action","test");
             MProperties form = engine.onUserCaseAction(caseId, EngineConst.ACTION_FORM, values);
             System.out.println(form);
@@ -71,7 +77,7 @@ public class S1CaseActionTest {
             assertNotNull(model);
             System.out.println(model);
             int cnt = 0;
-            for (INode entry : model.getArray(INode.NAMELESS_VALUE)) {
+            for (INode entry : model.getArray("element")) {
                 if (cnt == 0) {
                     assertEquals("name", entry.getString("name"));
                     assertEquals("name.title=Name", entry.getString("caption"));

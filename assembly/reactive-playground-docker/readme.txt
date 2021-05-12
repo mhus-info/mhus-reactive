@@ -42,7 +42,8 @@ docker run -it --name reactive-playground \
  --link jaeger:jaeger \
  -p 8181:8181 \
  -p 15005:5005 \
- mhus/reactive-playground:7.2.0 debug
+ -e CONFIG_PROFILE=jaeger \
+ mhus/reactive-playground:7.5.0 debug
 
 docker rm reactive-playground
 
@@ -50,9 +51,11 @@ docker start -ia reactive-playground
 
 ---
 
-Execute sample prrocess:
+Execute sample process:
 
 http://localhost:8181/ui
+
+admin - secret
 
 Execute:
 
@@ -64,6 +67,10 @@ pstart "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.
 Additional console:
 
 docker exec -it reactive-playground /opt/karaf/bin/client
+
+Jaeger:
+
+http://localhost:16686
 
 ---
 
@@ -94,7 +101,7 @@ docker run -it --name reactive-playground \
  -e CONFIG_PROFILE=single \
  -e ENV_DB_BPM_PASS=nein \
  --oom-kill-disable \
- mhus/reactive-playground:7.0.0-SNAPSHOT debug
+ mhus/reactive-playground:7.5.0-SNAPSHOT debug
 
 deploy process:
 
@@ -128,7 +135,7 @@ docker run -it --name reactive-playground1 \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
  --oom-kill-disable \
- mhus/reactive-playground:7.0.0-SNAPSHOT debug
+ mhus/reactive-playground:7.5.0 debug
 
 docker run -it --name reactive-playground2 \
  -h reactive2 \
@@ -142,7 +149,7 @@ docker run -it --name reactive-playground2 \
  -e ENV_JMS_SOP_USER=admin \
  -e ENV_JMS_SOP_PASS=nein \
  --oom-kill-disable \
- mhus/reactive-playground:7.0.0-SNAPSHOT debug
+ mhus/reactive-playground:7.5.0 debug
 
 docker stop reactive-playground1 
 docker stop reactive-playground2
