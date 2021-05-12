@@ -1,6 +1,7 @@
 package de.mhus.app.reactive.examples.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -15,12 +16,16 @@ import de.mhus.app.reactive.engine.EngineConfiguration;
 import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
+import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
+import de.mhus.lib.core.definition.DefRoot;
+import de.mhus.lib.core.node.INode;
 import de.mhus.lib.errors.MException;
+import de.mhus.lib.form.ModelUtil;
 
 public class S1CaseActionTest {
 
@@ -41,14 +46,40 @@ public class S1CaseActionTest {
                 "------------------------------------------------------------------------");
         UUID caseId = engine.start(uri);
 
-        MProperties actions = engine.onUserCaseAction(caseId, null, "actions");
-        
-        assertTrue(actions.containsKey("action"));
-        
-        MProperties res = engine.onUserCaseAction(caseId, null, "action");
-        
-        assertEquals("b", res.getString("a"));
-        
+        {
+            MProperties actions = engine.onUserCaseAction(caseId, "actions", null);
+            
+            assertTrue(actions.containsKey("action"));
+            
+            MProperties res = engine.onUserCaseAction(caseId, "action", null);
+            
+            assertEquals("b", res.getString("a"));
+        }
+        {
+            MProperties actions = engine.onUserCaseAction(caseId, EngineConst.ACTION_LIST, null);
+            System.out.println(actions);
+            assertTrue(actions.containsKey("test"));
+            assertEquals("Test", actions.get("test"));
+        }
+        {
+            MProperties values = new MProperties("action","test");
+            MProperties form = engine.onUserCaseAction(caseId, EngineConst.ACTION_FORM, values);
+            System.out.println(form);
+            assertNotNull(form);
+            String formStr = form.getString("form");
+            DefRoot model = ModelUtil.fromJson(formStr);
+            assertNotNull(model);
+            System.out.println(model);
+            int cnt = 0;
+            for (INode entry : model.getArray(INode.NAMELESS_VALUE)) {
+                if (cnt == 0) {
+                    assertEquals("name", entry.getString("name"));
+                    assertEquals("name.title=Name", entry.getString("caption"));
+                }
+                cnt++;
+            }
+         //   elements = model.getArray("element");
+        }
     }
     
     private void createEngine() throws MException, IOException {

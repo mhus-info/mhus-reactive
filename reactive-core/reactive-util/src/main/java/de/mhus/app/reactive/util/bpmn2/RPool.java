@@ -21,17 +21,25 @@ import java.util.Map;
 
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.APool;
+import de.mhus.app.reactive.model.annotations.ActionForm;
 import de.mhus.app.reactive.model.annotations.PropertyDescription;
 import de.mhus.app.reactive.model.engine.ContextRecipient;
+import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.app.reactive.model.util.ActivityUtil;
+import de.mhus.app.reactive.model.util.NoForm;
+import de.mhus.lib.annotations.pojo.Action;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCollection;
+import de.mhus.lib.core.MJson;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.pojo.PojoAction;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
+import de.mhus.lib.form.IFormInformation;
+import de.mhus.lib.form.ModelUtil;
 
 /**
  * Implementation of a pool. The pool will serialize the variables defined with PropertyDescription
@@ -122,8 +130,15 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
     public void afterExecute(AActivity<?> activity) {}
 
     @Override
-    public MProperties onUserCaseAction(ProcessContext<P> context, IProperties values, String action) {
+    public MProperties onUserCaseAction(String action, IProperties values) {
         try {
+            if (EngineConst.ACTION_LIST.equals(action)) {
+                return onUserActionList(values);
+            } else
+            if (EngineConst.ACTION_FORM.equals(action)) {
+                action = values.getString("action");
+                return onUserActionForm(action, values);
+            }
             PojoModel model = getPojoModel();
             PojoAction method = model.getAction(action);
             Object ret = null;
@@ -141,6 +156,54 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
             log().e("onUserCaseAction",this,action,t);
             return null;
         }
+    }
+
+    protected MProperties onUserActionForm(String action, IProperties values) {
+        PojoModel model = getPojoModel();
+        PojoAction method = model.getAction(action);
+        try {
+            ActionForm actionForm = method.getAnnotation(ActionForm.class);
+            if (actionForm != null && actionForm.value() != NoForm.class) {
+                IFormInformation formInfo = actionForm.value().getConstructor().newInstance();
+                DefRoot form = formInfo.getForm();
+                if (form != null) {
+                    form.build();
+                    String formStr = MJson.toString(ModelUtil.toJson(form));
+                    MProperties ret = new MProperties();
+                    ret.setString("form", formStr);
+                    return ret;
+                }
+            }
+        } catch (Throwable t) {
+            log().e(this,action,values,t);
+        }
+        return null;
+    }
+
+    protected MProperties onUserActionList(IProperties values) {
+        MProperties ret = new MProperties();
+        try {
+            PojoModel model = getPojoModel();
+            for (String name : model.getActionNames()) {
+                if (isUserActionAllowed(name)) {
+                    String title = getUserActionTitle(model, name);
+                    ret.setString(name, title);
+                }
+            }
+        } catch (Throwable t) {
+            log().e(this,values,t);
+        }
+        return ret;
+    }
+
+    protected String getUserActionTitle(PojoModel model, String name) {
+        Action action = model.getAction(name).getAnnotation(Action.class);
+        if (action == null || action.title().length() == 0) return name;
+        return action.title();
+    }
+
+    protected boolean isUserActionAllowed(String name) {
+        return true;
     }
 
 }

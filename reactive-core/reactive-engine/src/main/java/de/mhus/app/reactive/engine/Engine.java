@@ -587,7 +587,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                     return id;
                 }
-            case "bmpm":
+            case "bpmm":
                 {
                     // check access
                     String user = uri.getUsername();
@@ -699,6 +699,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         return lock.createStartPoint(context, start);
                     }
                 }
+            case "bpma": // case action bpma://case-id/action?parameters
+                {
+                    String l = uri.getLocation();
+                    if (!MValidator.isUUID(l)) throw new MException("misspelled case id", l);
+                    UUID caseId = UUID.fromString(l);
+                    return onUserCaseAction(caseId, uri.getPath(), new MProperties(uri.getQuery()));
+                } 
                 // case "bpmq": // not implemented use executeQuery()
             default:
                 throw new MException("scheme unknown", uri.getScheme());
@@ -1982,7 +1989,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
     }
 
-    public MProperties onUserTaskAction(UUID nodeId, IProperties values, String action)
+    public MProperties onUserTaskAction(UUID nodeId, String action, IProperties values)
             throws IOException, MException {
         try (PCaseLock lock =
                 getCaseLockByNode(nodeId, "onUserTaskAction", "action", action, "values", values)) {
@@ -2003,7 +2010,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         nodeId,
                         aNode.getClass().getCanonicalName());
 
-            MProperties ret = ((AUserTask<?>) aNode).doAction(values, action);
+            MProperties ret = ((AUserTask<?>) aNode).doAction(action, values);
 
             lock.saveFlowNode(context, node, (AActivity<?>) aNode);
 
@@ -2022,7 +2029,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
      * @throws IOException
      * @throws MException
      */
-    public MProperties onUserCaseAction(UUID caseId, IProperties values, String action)
+    public MProperties onUserCaseAction(UUID caseId, String action, IProperties values)
             throws IOException, MException {
         try (PCaseLock lock =
                 getCaseLock(caseId, "onUserCaseAction", "action", action, "values", values)) {
@@ -2032,7 +2039,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
             EngineContext context = createContext(lock, caze, null);
             APool<?> aPool = context.getPool();
-            MProperties ret = aPool.onUserCaseAction(context, values, action);
+            MProperties ret = aPool.onUserCaseAction(action, values);
 //            lock.savePCase(context); // do not save by default
             return ret;
         }

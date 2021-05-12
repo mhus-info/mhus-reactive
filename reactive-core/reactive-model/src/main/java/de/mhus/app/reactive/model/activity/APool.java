@@ -17,7 +17,6 @@ package de.mhus.app.reactive.model.activity;
 
 import java.util.Map;
 
-import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.app.reactive.model.util.IndexValuesProvider;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
@@ -42,6 +41,6 @@ public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvi
 
     void afterExecute(AActivity<?> activity);
 
-    MProperties onUserCaseAction(ProcessContext<P> context, IProperties values, String action);
+    MProperties onUserCaseAction(String action, IProperties values);
 
 }

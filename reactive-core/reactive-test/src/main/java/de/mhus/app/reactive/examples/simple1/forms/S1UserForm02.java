@@ -255,7 +255,7 @@ public class S1UserForm02 extends RUserTask<S1Pool> {
     }
 
     @Override
-    public MProperties doAction(IProperties values, String action) {
+    public MProperties doAction(String action, IProperties values) {
         if (action.equals("random")) {
             log().i("Action Random");
             MProperties out = new MProperties();

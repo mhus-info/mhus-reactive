@@ -60,7 +60,7 @@ public interface IEngine {
 
     void doAssignUserTask(String id) throws Exception;
 
-    MProperties onUserTaskAction(String id, MProperties values, String action) throws Exception;
+    MProperties onUserTaskAction(String id, String action, MProperties values) throws Exception;
 
     /**
      * Set days until due or -1 to reset the value.
@@ -95,7 +95,7 @@ public interface IEngine {
 
     void doArchive(UUID caseId) throws Exception;
 
-    MProperties onUserCaseAction(String id, MProperties values, String action) throws Exception;
+    MProperties onUserCaseAction(String id, String action, MProperties values) throws Exception;
 
     /**
      * Return the surrounding model for the node.

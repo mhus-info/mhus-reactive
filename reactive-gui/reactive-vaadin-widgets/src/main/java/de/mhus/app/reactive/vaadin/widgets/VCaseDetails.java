@@ -54,10 +54,10 @@ public class VCaseDetails extends Panel {
                 });
     }
 
-    public void configure(IEngine engine, CaseItem item) {
+    public void configure(IEngine engine, String caseId) {
 
         try {
-            ICase caze = engine.getCase(item.getId().toString(), "*");
+            ICase caze = engine.getCase(caseId, "*");
 
             setCaption(caze.getCanonicalName());
             grid.removeAllComponents();

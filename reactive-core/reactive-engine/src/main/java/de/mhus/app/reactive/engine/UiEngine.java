@@ -780,21 +780,21 @@ public class UiEngine extends MLog implements IEngine {
     }
 
     @Override
-    public MProperties onUserTaskAction(String id, MProperties values, String action)
+    public MProperties onUserTaskAction(String id, String action, MProperties values)
             throws Exception {
         if (engine == null) throw new WrongStateException();
         PNodeInfo info = EngineUtil.getFlowNodeInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user)) throw new NotFoundException("Node", id);
-        return engine.onUserTaskAction(info.getId(), values, action);
+        return engine.onUserTaskAction(info.getId(), action, values);
     }
 
     @Override
-    public MProperties onUserCaseAction(String id, MProperties values, String action)
+    public MProperties onUserCaseAction(String id, String action, MProperties values)
             throws Exception {
         if (engine == null) throw new WrongStateException();
         PCaseInfo info = EngineUtil.getCaseInfo(engine, id);
         if (!engine.hasReadAccess(info.getUri(), user)) throw new NotFoundException("Case", id);
-        return engine.onUserCaseAction(info.getId(), values, action);
+        return engine.onUserCaseAction(info.getId(), action, values);
     }
 
     @Override

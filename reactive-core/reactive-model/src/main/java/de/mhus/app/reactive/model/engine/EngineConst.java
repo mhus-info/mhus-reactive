@@ -45,4 +45,12 @@ public class EngineConst {
     public static final String OPTION_UUID = "uuid";
     public static final String OPTION_CLOSE_ACTIVITY = "closeActivity";
     public static final String AREA_PREFIX = "area:";
+    public static final String ACTION_LIST = "de.mhus.app.reactive.model.actionlist";
+    public static final String FIELD_DUEDATE = "duedate";
+    public static final String ACTION_FORM = "de.mhus.app.reactive.model.actionform";
+    public static final String ACTION_RET_ACTION = "de.mhus.app.reactive.model.actionretaction";
+    public static final String ACTION_RET_ACTION_CASE = "case";
+    public static final String ACTION_RET_ACTION_NODE = "node";
+    public static final String ACTION_RET_ACTION_FORM = "form";
+    public static final String ACTION_RET_ID = "de.mhus.app.reactive.model.actionretid";
 }

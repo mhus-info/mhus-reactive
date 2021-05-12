@@ -84,7 +84,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 
     protected void onFormSubmit(INode node2, MProperties properties) {}
 
-    protected MProperties onAction(INode node2, MProperties properties, String action) {
+    protected MProperties onAction(INode node2, String action, MProperties properties) {
         return null;
     }
 
@@ -111,7 +111,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
             mform.setActionHandler(this);
             Class<? extends FormControl> control = hForm.getFormControl();
             if (control != null) {
-                FormControl controlObject = control.newInstance();
+                FormControl controlObject = hForm.createFormControl();
                 mform.setControl(controlObject);
             }
             vform.setForm(mform);
@@ -138,7 +138,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
         } else if (action.startsWith("action:")) {
             action = action.substring(7);
             MProperties p = dataSource.getProperties();
-            p = onAction(node, p, action);
+            p = onAction(node, action, p);
             if (p != null) {
                 dataSource.getProperties().putAll(p);
                 vForm.getBuilder().doUpdateValues();

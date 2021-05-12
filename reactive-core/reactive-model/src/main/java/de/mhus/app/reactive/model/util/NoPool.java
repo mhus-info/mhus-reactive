@@ -19,7 +19,6 @@ import java.util.Map;
 
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.APool;
-import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.errors.NotSupportedException;
@@ -59,7 +58,7 @@ public class NoPool implements APool<NoPool> {
     public void afterExecute(AActivity<?> activity) {}
 
     @Override
-    public MProperties onUserCaseAction(ProcessContext<NoPool> context, IProperties values, String action) {
+    public MProperties onUserCaseAction(String action, IProperties values) {
         return null;
     }
 }

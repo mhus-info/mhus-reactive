@@ -201,7 +201,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
     protected abstract void doSubmit() throws MException;
 
     @Override
-    public MProperties doAction(IProperties values, String action) {
+    public MProperties doAction(String action, IProperties values) {
         return null;
     }
 

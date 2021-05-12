@@ -19,18 +19,21 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import com.vaadin.event.Action;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 
-import de.mhus.app.reactive.model.engine.SearchCriterias;
+import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
+import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.SearchCriterias.ORDER;
 import de.mhus.app.reactive.model.ui.ICase;
 import de.mhus.app.reactive.model.ui.IEngine;
+import de.mhus.app.reactive.model.util.CaseActionList;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.core.util.MNls;
@@ -48,7 +51,8 @@ public class VCaseList extends MhuTable implements Refreshable {
     protected static final Action ACTION_ARCHIVE = new Action("Archive");
     protected static final Action ACTION_DETAILS = new Action("Details");
     protected static final Action ACTION_RUNTIME = new Action("Runtime");
-    private String sortByDefault = "duedate";
+    protected static final Action ACTION_ACTIONS = new Action("Actions");
+    private String sortByDefault = EngineConst.FIELD_DUEDATE;
     private boolean sortAscDefault = true;
     MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
     private SearchCriterias criterias;
@@ -58,13 +62,17 @@ public class VCaseList extends MhuTable implements Refreshable {
     private int page;
     private IEngine engine;
     private int size = 100;
+    private WidgetActivityDelegate activity;
 
-    public VCaseList() {}
+    public VCaseList(WidgetActivityDelegate activity) {
+        this.activity = activity;
+    }
 
-    public void configure(IEngine engine, SearchCriterias criterias, String[] properties) {
+    public void configure(IEngine engine, WidgetActivityDelegate activity, SearchCriterias criterias, String[] properties) {
         this.engine = engine;
         this.criterias = criterias;
         this.properties = properties;
+        this.activity = activity;
 
         data = getItems(0);
         setSizeFull();
@@ -156,34 +164,38 @@ public class VCaseList extends MhuTable implements Refreshable {
         if (action == ACTION_REFRESH) {
             doReload();
         } else if (action == ACTION_ARCHIVE) {
-            doArchive(caze);
+            activity.doCaseArchive(caze.getId());
+            doReload();
         } else if (action == ACTION_DETAILS) {
-            doDetails(caze);
+            activity.showCaseDetails(caze.getId());
         } else if (action == ACTION_RUNTIME) {
-            doRuntime(caze);
+            activity.showCaseRuntime(caze.getId());
+        } else if (action == ACTION_ACTIONS) {
+            doActions(caze.getId());
         }
     }
 
     protected void showActions(LinkedList<Action> list, CaseItem caze) {
         list.add(ACTION_DETAILS);
+        list.add(ACTION_ACTIONS);
         list.add(ACTION_REFRESH);
         list.add(ACTION_RUNTIME);
         if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
     }
 
-    protected void doRuntime(CaseItem caze) {}
-
-    protected void doDetails(CaseItem caze) {}
-
-    protected void doArchive(CaseItem caze) {
-        // TODO
+    protected void doActions(UUID caseId) {
         try {
-            engine.doArchive(caze.getId());
+            CaseActionList actions = new CaseActionList(engine, caseId.toString());
+            if (!actions.isValid()) {
+                Notification.show("Keine Aktionen gefunden", Type.TRAY_NOTIFICATION);
+                return;
+            }
+            CaseActionDialog dialog = new CaseActionDialog(actions, activity);
+            dialog.show(getUI());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        doReload();
     }
 
     public void doReload() {

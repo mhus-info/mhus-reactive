@@ -18,6 +18,7 @@ package de.mhus.app.reactive.examples.simple1;
 import java.util.Date;
 import java.util.Map;
 
+import de.mhus.app.reactive.model.annotations.ActionForm;
 import de.mhus.app.reactive.model.annotations.PoolDescription;
 import de.mhus.app.reactive.model.annotations.PropertyDescription;
 import de.mhus.app.reactive.model.engine.ProcessContext;
@@ -121,8 +122,14 @@ public class S1Pool extends RPool<S1Pool> {
     }
 
     @Action("actions")
-    public MProperties doCaseActions(ProcessContext<S1Pool> context, MProperties values) {
+    public MProperties doCaseActions(MProperties values) {
         return new MProperties("action","Simple Action");
     }
 
+    @Action(value="test",title = "Test")
+    @ActionForm(S1PoolTestForm.class)
+    public MProperties doTest(MProperties values) {
+        return new MProperties("action","Simple Action");
+    }
+    
 }

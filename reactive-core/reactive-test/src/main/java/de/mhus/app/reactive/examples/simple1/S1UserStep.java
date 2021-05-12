@@ -59,7 +59,7 @@ public class S1UserStep extends RUserTask<S1Pool> {
     }
 
     @Override
-    public MProperties doAction(IProperties values, String action) {
+    public MProperties doAction(String action, IProperties values) {
         // TODO Auto-generated method stub
         return null;
     }

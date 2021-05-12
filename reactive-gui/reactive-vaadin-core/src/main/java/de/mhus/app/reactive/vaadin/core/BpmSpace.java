@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.shiro.subject.Subject;
 
@@ -36,14 +37,13 @@ import com.vaadin.v7.ui.VerticalLayout;
 
 import de.akquinet.engineering.vaadin.timerextension.TimerExtension;
 import de.mhus.app.reactive.model.engine.EngineMessage;
-import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.IEngineFactory;
 import de.mhus.app.reactive.model.ui.INode;
-import de.mhus.app.reactive.vaadin.widgets.CaseItem;
 import de.mhus.app.reactive.vaadin.widgets.NodeItem;
 import de.mhus.app.reactive.vaadin.widgets.Refreshable;
 import de.mhus.app.reactive.vaadin.widgets.VCaseDetails;
@@ -52,6 +52,7 @@ import de.mhus.app.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.app.reactive.vaadin.widgets.VNodeList;
 import de.mhus.app.reactive.vaadin.widgets.VRuntimeDetails;
 import de.mhus.app.reactive.vaadin.widgets.VUserForm;
+import de.mhus.app.reactive.vaadin.widgets.WidgetActivityDelegate;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
@@ -63,7 +64,7 @@ import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
 
 @SuppressWarnings("deprecation")
-public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable {
+public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable, WidgetActivityDelegate {
 
     private static Log log = Log.getLog(BpmSpace.class);
     private static final long serialVersionUID = 1L;
@@ -327,7 +328,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                     @Override
                     protected void doOpenUserForm(NodeItem node) {
                         try {
-                            showUserForm(node);
+                            showUserForm(node.getId());
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -412,7 +413,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         setContent(panel);
     }
 
-    protected void showCaseDetails(CaseItem item) {
+    @Override
+    public void showCaseDetails(UUID itemId) {
         VCaseDetails panel =
                 new VCaseDetails() {
                     private static final long serialVersionUID = 1L;
@@ -424,7 +426,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
                     }
                 };
 
-        panel.configure(engine, item);
+        panel.configure(engine, itemId.toString());
 
         setContent(panel);
     }
@@ -432,27 +434,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     private Component[] getCaseListView(SearchCriterias criterias, String[] properties) {
         initEngine();
         if (engine == null) return null;
-        VCaseList list =
-                new VCaseList() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void doDetails(CaseItem caze) {
-                        showCaseDetails(caze);
-                    }
-
-                    @Override
-                    protected void doRuntime(CaseItem caze) {
-                        try {
-                            List<EngineMessage[]> runtime =
-                                    engine.getCaseRuntimeMessages(caze.getId().toString());
-                            showRuntime(runtime);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                };
+        VCaseList list = new VCaseList(this);
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
@@ -480,7 +462,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         l.addComponent(list);
         l.setExpandRatio(list, 1);
 
-        list.configure(engine, criterias.clone(), properties);
+        list.configure(engine, this, criterias.clone(), properties);
         addComponent(l);
         setExpandRatio(l, 1);
 
@@ -519,9 +501,9 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         setContent(l);
     }
 
-    protected void showUserForm(NodeItem item) throws Exception {
+    protected void showUserForm(UUID itemId) throws Exception {
 
-        INode node = engine.getNode(item.getId().toString());
+        INode node = engine.getNode(itemId.toString());
 
         VUserForm form =
                 new VUserForm(engine, node) {
@@ -547,12 +529,12 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
 
                     @Override
                     protected MProperties onAction(
-                            INode node, MProperties properties, String action) {
+                            INode node, String action, MProperties properties) {
                         System.out.println("Action");
                         try {
                             MProperties res =
                                     engine.onUserTaskAction(
-                                            node.getId().toString(), properties, action);
+                                            node.getId().toString(), action, properties);
                             return res;
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
@@ -602,5 +584,49 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     public IEngine getEngine() {
         if (engine == null) initEngine();
         return engine;
+    }
+
+    @Override
+    public void showNodeDetails(UUID id) {
+        try {
+            INode item = engine.getNode(id.toString());
+            showNodeDetails(new NodeItem(engine, item));
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showForm(UUID id) {
+        try {
+            showUserForm(id);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void showCaseRuntime(UUID id) {
+        try {
+            List<EngineMessage[]> runtime =
+                    engine.getCaseRuntimeMessages(id.toString());
+            showRuntime(runtime);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void doCaseArchive(UUID id) {
+        // TODO
+        try {
+            engine.doArchive(id);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

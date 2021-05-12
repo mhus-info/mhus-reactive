@@ -35,7 +35,7 @@ public interface AUserTask<P extends APool<?>>
 
     void doSubmit(IProperties values) throws MException;
 
-    MProperties doAction(IProperties values, String action);
+    MProperties doAction(String action, IProperties values);
 
     @Override
     Class<? extends FormControl> getFormControl();
