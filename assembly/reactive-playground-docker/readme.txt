@@ -45,10 +45,6 @@ docker run -it --name reactive-playground \
  -e CONFIG_PROFILE=jaeger \
  mhus/reactive-playground:7.5.0 debug
 
-docker rm reactive-playground
-
-docker start -ia reactive-playground
-
 ---
 
 Execute sample process:

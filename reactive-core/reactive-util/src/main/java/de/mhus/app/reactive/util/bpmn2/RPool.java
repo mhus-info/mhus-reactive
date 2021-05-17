@@ -139,6 +139,10 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 action = values.getString("action");
                 return onUserActionForm(action, values);
             }
+            if (!isUserActionAllowed(action)) {
+                log().d("action is not allowed",this,action);
+                return null;
+            }
             PojoModel model = getPojoModel();
             PojoAction method = model.getAction(action);
             Object ret = null;
@@ -205,6 +209,12 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
         return action.title();
     }
 
+    /**
+     * Overwrite to check if a action is allowed for the current user and in the current state of the case.
+     * 
+     * @param name
+     * @return
+     */
     protected boolean isUserActionAllowed(String name) {
         return true;
     }
