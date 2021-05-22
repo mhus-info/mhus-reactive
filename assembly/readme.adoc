@@ -1,0 +1,247 @@
+
+== Create docker image
+
+The command `./create.sh` will create the karaf assembly and a dockerimage using it.
+
+To start the image after creation use `./create.sh test`
+
+At the end you can see the created version. It's also set in the create.sh script.
+
+----
+ => => naming to docker.io/mhus/reactive-playground:7.5.0.1                                                                                                                                                                                
+----
+
+In this case `7.5.0.1`. It will tagged as `local` also.
+
+== Execute the reactive-playground
+
+Please replace `local` with the current version of the playground.
+
+=== Simplest option
+
+Use a in memory db.
+
+----
+docker run -it --name reactive-playground \
+ -h reactive \
+ -v ~/.m2:/home/user/.m2 \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ mhus/reactive-playground:local debug
+----
+
+=== Use jaeger tracing
+
+Create reactive playground as single node with in memory db using jaeger to trace what's going on:
+
+----
+docker run -d --name jaeger \
+  -p 5775:5775/udp \
+  -p 6831:6831/udp \
+  -p 6832:6832/udp \
+  -p 5778:5778 \
+  -p 16686:16686 \
+  -p 14268:14268 \
+  jaegertracing/all-in-one:latest
+
+docker run -it --name reactive-playground \
+ -h reactive \
+ -v ~/.m2:/home/user/.m2 \
+ --link jaeger:jaeger \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ -e CONFIG_PROFILE=jaeger \
+ mhus/reactive-playground:local debug
+
+----
+
+Jaeger UI: *http://localhost:16686*
+
+=== With persistent mariadb database
+
+Start database:
+
+----
+docker run -d --name reactive-db \
+ -e MYSQL_ROOT_PASSWORD=nein \
+ mariadb:10.3
+----
+
+Init database:
+----
+docker exec -it reactive-db mysql -pnein
+
+CREATE DATABASE db_bpm_stor;
+CREATE DATABASE db_bpm_arch;
+CREATE OR REPLACE USER 'db_bpm_arch'@'%' IDENTIFIED BY 'nein';
+CREATE OR REPLACE USER 'db_bpm_stor'@'%' IDENTIFIED BY 'nein';
+GRANT ALL PRIVILEGES ON db_bpm_arch.* TO 'db_bpm_arch'@'%';
+GRANT ALL PRIVILEGES ON db_bpm_stor.* TO 'db_bpm_stor'@'%';
+quit
+----
+
+Start reactive:
+----
+docker run -it --name reactive-playground \
+ -h reactive \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ --link reactive-db:dbserver \
+ -v ~/.m2:/home/user/.m2 \
+ -e CONFIG_PROFILE=single \
+ -e ENV_DB_BPM_PASS=nein \
+ --oom-kill-disable \
+ mhus/reactive-playground:local debug
+----
+
+You need to deploy the sample process manually in the karaf console:
+
+----
+pdeploy -a de.mhus.app.reactive.examples.simple1.S1Process:0.0.1
+----
+
+=== Multi node instances with mariadb
+
+Create and initialize the mysql container described in the previous chapter.
+
+Create two reactive docker images:
+
+----
+docker run -it --name reactive-playground1 \
+ -h reactive1 \
+ -p 8181:8181 \
+ -p 15005:5005 \
+ --link reactive-db:dbserver \
+ -v ~/.m2:/home/user/.m2 \
+ -e CONFIG_PROFILE=multi \
+ -e ENV_DB_BPM_PASS=nein \
+ -e ENV_JMS_SOP_USER=admin \
+ -e ENV_JMS_SOP_PASS=nein \
+ --oom-kill-disable \
+ mhus/reactive-playground:local debug
+
+docker run -it --name reactive-playground2 \
+ -h reactive2 \
+ -p 8182:8181 \
+ -p 15006:5005 \
+ --link reactive-db:dbserver \
+ -v ~/.m2:/home/user/.m2 \
+ -e CONFIG_PROFILE=multi \
+ -e ENV_DB_BPM_PASS=nein \
+ -e ENV_JMS_SOP_USER=admin \
+ -e ENV_JMS_SOP_PASS=nein \
+ --oom-kill-disable \
+ mhus/reactive-playground:local debug
+----
+
+Remove container:
+----
+docker stop reactive-playground1 
+docker stop reactive-playground2
+docker rm reactive-playground1 
+docker rm reactive-playground2
+----
+
+== First steps in the karaf console
+
+=== Check if the engine is running
+
+----
+pengine-status
+----
+
+Should return `RUNNING`.
+
+=== Check installed processes
+
+----
+pls
+----
+
+Should return the process `de.mhus.app.reactive.examples.simple1.S1Process:0.0.1`.
+
+=== Start a new case
+
+----
+pstart "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=test;customerId=alf?text1=second"
+----
+
+=== Check case and note status
+
+Use the commands `pcase-list` and `pnode-list` to check the current status or show details with `pcase-view` and `pnode-view`.
+
+== Using the reactive playground UI
+
+Go to *http://localhost:8181/ui* in the browser and login with *admin - secret*. Click the field 'BPM' to enter
+the BPM space.
+
+=== Start a sample with case UI Form
+
+In the menu select *Engine -> Execute...*. A big text area appears. In the area you can specify a engine URI to execute. With the scheme 'bpm' you tell reactive to start a new case:
+
+----
+bpm://de.mhus.app.reactive.examples.simple1.S1Process/de.mhus.app.reactive.examples.simple1.S1Pool?text1=form01
+----
+
+NOTE: In the text field you could use multi line entries. The breaks will be removed before sending the request to the engine.
+
+
+----
+bpm://de.mhus.app.reactive.examples.simple1.S1Process/de.mhus.app.reactive.examples.simple1.S1Pool?
+text1=form01
+----
+
+After *submit* the case a new entry will appear in the `Unassigned` list. Wait a minute (auto refresh) or use the magnifying glass to refresh the list.
+
+Right click at the new line and select *DoIt* in the context menu. The form will open to do the manual task. Close the form using the *Submit* button inside the form.
+
+You can also try the 'form02' form. It will show a lot of different widgets and options:
+
+----
+bpm://de.mhus.app.reactive.examples.simple1.S1Process/de.mhus.app.reactive.examples.simple1.S1Pool?
+text1=form02
+----
+
+== More
+
+=== Start stress tool
+
+----
+pstress -i 1 -m 50 \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=second' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=third' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=error1' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel1' \
+'bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool;customId=$cnt$;customerId=alf?text1=parallel2'
+
+----
+
+=== Enable case logging
+
+----
+mhus:config-set de.mhus.app.reactive.osgi.ReactiveAdmin logCases true
+----
+ 
+=== Manual build
+
+----
+mvn dockerfile:build
+----
+
+Publish docker image:
+
+----
+docker push "mhus/reactive-playground:7.0.0-SNAPSHOT"
+----
+
+=== Publish docker image
+
+----
+./create.sh push
+----
+
+=== Additional console
+
+----
+docker exec -it reactive-playground /opt/karaf/bin/client
+----
