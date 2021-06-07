@@ -64,6 +64,9 @@ public class VCaseList extends MhuTable implements Refreshable {
     private int size = 100;
     private WidgetActivityDelegate activity;
 
+    public VCaseList() {
+    }
+
     public VCaseList(WidgetActivityDelegate activity) {
         this.activity = activity;
     }
@@ -176,11 +179,16 @@ public class VCaseList extends MhuTable implements Refreshable {
     }
 
     protected void showActions(LinkedList<Action> list, CaseItem caze) {
-        list.add(ACTION_DETAILS);
-        list.add(ACTION_ACTIONS);
-        list.add(ACTION_REFRESH);
-        list.add(ACTION_RUNTIME);
-        if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
+        if (activity.isShowCaseDetails(caze.getId()))
+            list.add(ACTION_DETAILS);
+        if (activity.isShowCaseActions(caze.getId()))
+            list.add(ACTION_ACTIONS);
+        if (activity.isShowCaseRefresh(caze.getId()))
+            list.add(ACTION_REFRESH);
+        if (activity.isShowCaseRuntime(caze.getId()))
+            list.add(ACTION_RUNTIME);
+        if (activity.isShowCaseArchive(caze.getId()))
+            if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
     }
 
     protected void doActions(UUID caseId) {

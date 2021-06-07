@@ -16,11 +16,9 @@
 package de.mhus.app.reactive.vaadin.core;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.shiro.subject.Subject;
 
@@ -43,19 +41,14 @@ import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.IEngineFactory;
-import de.mhus.app.reactive.model.ui.INode;
 import de.mhus.app.reactive.vaadin.widgets.NodeItem;
 import de.mhus.app.reactive.vaadin.widgets.Refreshable;
-import de.mhus.app.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.app.reactive.vaadin.widgets.VCaseList;
 import de.mhus.app.reactive.vaadin.widgets.VNodeDetails;
 import de.mhus.app.reactive.vaadin.widgets.VNodeList;
 import de.mhus.app.reactive.vaadin.widgets.VRuntimeDetails;
-import de.mhus.app.reactive.vaadin.widgets.VUserForm;
-import de.mhus.app.reactive.vaadin.widgets.WidgetActivityDelegate;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.aaa.Aaa;
 import de.mhus.lib.core.logging.Log;
@@ -64,7 +57,7 @@ import de.mhus.lib.vaadin.desktop.GuiLifecycle;
 import de.mhus.lib.vaadin.desktop.Navigable;
 
 @SuppressWarnings("deprecation")
-public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable, WidgetActivityDelegate {
+public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable {
 
     private static Log log = Log.getLog(BpmSpace.class);
     private static final long serialVersionUID = 1L;
@@ -91,9 +84,11 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
 
     private Map<String, Component[]> contentCache;
     private String currentFilter;
+    private WidgetActivity activity;
 
     public BpmSpace(BpmSpaceService bpmSpaceService) {
         this.service = bpmSpaceService;
+        this.activity = new WidgetActivity(this);
     }
 
     @Override
@@ -117,6 +112,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
                         criterias.unassigned = true;
                         criterias.nodeState = STATE_NODE.WAITING;
                         criterias.type = TYPE_NODE.USER;
+                        criterias.due = 0;
                         String[] properties = new String[] {"*"};
                         Component[] cached = contentCache.get(selection);
                         if (cached == null) {
@@ -198,7 +194,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
     @Override
     public void onShowSpace(boolean firstTime) {}
 
-    private void setContent(Component content) {
+    public void setContent(Component content) {
         if (content == null) return;
         try {
             Component oldContent = page.getComponent(1);
@@ -235,7 +231,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         VerticalLayout menu = buildMenu();
 
         final TimerExtension timerExtension = TimerExtension.create(menu);
-        timerExtension.setIntervalInMs(60000); // polling interval in milliseconds
+        timerExtension.setIntervalInMs(20000); // polling interval in milliseconds
         timerExtension.addTimerListener(
                 e -> {
                     if (page.getComponentCount() > 0) {
@@ -321,45 +317,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         initEngine();
         if (engine == null) return null;
 
-        VNodeList list =
-                new VNodeList() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void doOpenUserForm(NodeItem node) {
-                        try {
-                            showUserForm(node.getId());
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected void doDetails(NodeItem node) {
-                        try {
-                            showNodeDetails(node);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected void doRuntime(NodeItem target) {
-                        try {
-                            EngineMessage[] runtime =
-                                    engine.getNodeRuntimeMessage(target.getId().toString());
-                            LinkedList<EngineMessage[]> list = new LinkedList<>();
-                            list.add(runtime);
-                            showRuntime(list);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                };
-        list.configure(engine, criterias.clone(), properties);
+        VNodeList list = new VNodeList();
+        list.configure(engine, activity, criterias.clone(), properties);
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
@@ -413,28 +372,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         setContent(panel);
     }
 
-    @Override
-    public void showCaseDetails(UUID itemId) {
-        VCaseDetails panel =
-                new VCaseDetails() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onCancel() {
-                        System.out.println("Cancel");
-                        showNodeList();
-                    }
-                };
-
-        panel.configure(engine, itemId.toString());
-
-        setContent(panel);
-    }
-
     private Component[] getCaseListView(SearchCriterias criterias, String[] properties) {
         initEngine();
         if (engine == null) return null;
-        VCaseList list = new VCaseList(this);
+        VCaseList list = new VCaseList(activity);
 
         VerticalLayout l = new VerticalLayout();
         SearchField searchText = new SearchField(null);
@@ -462,7 +403,7 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         l.addComponent(list);
         l.setExpandRatio(list, 1);
 
-        list.configure(engine, this, criterias.clone(), properties);
+        list.configure(engine, activity, criterias.clone(), properties);
         addComponent(l);
         setExpandRatio(l, 1);
 
@@ -499,52 +440,6 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         l.setSizeFull();
 
         setContent(l);
-    }
-
-    protected void showUserForm(UUID itemId) throws Exception {
-
-        INode node = engine.getNode(itemId.toString());
-
-        VUserForm form =
-                new VUserForm(engine, node) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onFormCancel() {
-                        System.out.println("Cancel");
-                        showNodeList();
-                    }
-
-                    @Override
-                    protected void onFormSubmit(INode node, MProperties properties) {
-                        System.out.println("Submit");
-                        try {
-                            engine.submitUserTask(node.getId().toString(), properties);
-                            showNodeList();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    protected MProperties onAction(
-                            INode node, String action, MProperties properties) {
-                        System.out.println("Action");
-                        try {
-                            MProperties res =
-                                    engine.onUserTaskAction(
-                                            node.getId().toString(), action, properties);
-                            return res;
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                };
-
-        setContent(form);
     }
 
     public void showNodeList() {
@@ -586,47 +481,13 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable,
         return engine;
     }
 
-    @Override
-    public void showNodeDetails(UUID id) {
-        try {
-            INode item = engine.getNode(id.toString());
-            showNodeDetails(new NodeItem(engine, item));
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void doRefresh() {
+        if (currentRefreshable != null)
+            currentRefreshable.doRefresh();
     }
 
-    @Override
-    public void showForm(UUID id) {
-        try {
-            showUserForm(id);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public Log log() {
+        return log;
     }
 
-    @Override
-    public void showCaseRuntime(UUID id) {
-        try {
-            List<EngineMessage[]> runtime =
-                    engine.getCaseRuntimeMessages(id.toString());
-            showRuntime(runtime);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void doCaseArchive(UUID id) {
-        // TODO
-        try {
-            engine.doArchive(id);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 }

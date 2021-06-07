@@ -21,26 +21,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.vaadin.event.Action;
-import com.vaadin.v7.event.ItemClickEvent;
-import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.v7.event.ItemClickEvent;
+import com.vaadin.v7.event.ItemClickEvent.ItemClickListener;
 
-import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.SearchCriterias.ORDER;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.INode;
-import de.mhus.lib.core.M;
-import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.logging.Log;
 import de.mhus.lib.core.util.MNls;
 import de.mhus.lib.core.util.MNlsFactory;
 import de.mhus.lib.vaadin.ExpandingTable;
 import de.mhus.lib.vaadin.MhuTable;
-import de.mhus.lib.vaadin.TextInputDialog;
 import de.mhus.lib.vaadin.container.MhuBeanItemContainer;
 
 @SuppressWarnings("deprecation")
@@ -65,13 +62,20 @@ public class VNodeList extends MhuTable implements Refreshable {
     private int page;
     private IEngine engine;
     private int size = 100;
+    private WidgetActivityDelegate activity;
 
-    public VNodeList() {}
+    public VNodeList() {
+    }
+    
+    public VNodeList(WidgetActivityDelegate activity) {
+        this.activity = activity;
+    }
 
-    public void configure(IEngine engine, SearchCriterias criterias, String[] properties) {
+    public void configure(IEngine engine, WidgetActivityDelegate activity, SearchCriterias criterias, String[] properties) {
         this.engine = engine;
         this.criterias = criterias;
         this.properties = properties;
+        this.activity = activity;
 
         data = getItems(0);
         setSizeFull();
@@ -101,7 +105,8 @@ public class VNodeList extends MhuTable implements Refreshable {
                             if (selected != null
                                     && selected.getState() == STATE_NODE.WAITING
                                     && selected.getType() == TYPE_NODE.USER) {
-                                doOpenUserForm(selected);
+                                activity.showForm(selected.getId());
+//                                doOpenUserForm(selected);
                             }
                             //					Notification.show("DoubleClick: " +
                             // ((NodeItem)event.getItemId()).getName());
@@ -170,83 +175,53 @@ public class VNodeList extends MhuTable implements Refreshable {
             engine.doAssignUserTask(node.getId().toString());
             doReload();
         } else if (action == ACTION_EXECUTE) {
-            doOpenUserForm(target);
+            activity.showForm(target.getId());
+            //doOpenUserForm(target);
         } else if (action == ACTION_REFRESH) {
             doReload();
         } else if (action == ACTION_RUNTIME) {
-            doRuntime(target);
+            activity.showNodeRuntime(target.getId());
+//            doRuntime(target);
         } else if (action == ACTION_DETAILS) {
-            doDetails(target);
+            activity.showNodeDetails(target.getId());
+//            doDetails(target);
         } else if (action == ACTION_DUE) {
-            doDue(target);
+            activity.doDue(target.getId());
         }
     }
 
     protected void showActions(LinkedList<Action> list, NodeItem node) {
-        if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.USER) {
-            if (node.getAssigned() == null) {
-                list.add(ACTION_ASSIGN);
-            } else {
-                list.add(ACTION_UNASSIGN);
+        if (activity.isShowNodeAssign(node.getId()))
+            if (node.getState() == STATE_NODE.WAITING && node.getType() == TYPE_NODE.USER) {
+                if (node.getAssigned() == null) {
+                    list.add(ACTION_ASSIGN);
+                } else {
+                    list.add(ACTION_UNASSIGN);
+                }
+                list.add(ACTION_EXECUTE);
             }
-            list.add(ACTION_EXECUTE);
-        }
-        list.add(ACTION_DETAILS);
-        list.add(ACTION_RUNTIME);
-        list.add(ACTION_REFRESH);
-        list.add(ACTION_DUE);
+        if (activity.isShowNodeDetails(node.getId()))
+            list.add(ACTION_DETAILS);
+        if (activity.isShowNodeRuntime(node.getId()))
+            list.add(ACTION_RUNTIME);
+        if (activity.isShowNodeRefresh(node.getId()))
+            list.add(ACTION_REFRESH);
+        if (activity.isShowNodeDue(node.getId()))
+            list.add(ACTION_DUE);
     }
 
-    protected void doDetails(NodeItem target) {}
+//    protected void doDetails(NodeItem target) {}
 
-    protected void doDue(final NodeItem target) {
-        TextInputDialog.show(
-                getUI(),
-                "Set due days",
-                "",
-                "Insert number of days or leave empty",
-                "Set",
-                "Cancel",
-                new TextInputDialog.Listener() {
-
-                    @Override
-                    public boolean validate(String txtInput) {
-                        if (MString.isEmpty(txtInput)) {
-                            try {
-                                engine.setDueDays(target.getId().toString(), -1);
-                                doRefresh();
-                                return true;
-                            } catch (Exception e) {
-                                log.e(target, e);
-                                return false;
-                            }
-                        }
-                        int val = M.to(txtInput, -1);
-                        if (val < 0 || val > 1000) return false;
-                        try {
-                            engine.setDueDays(target.getId().toString(), val);
-                            doRefresh();
-                        } catch (Exception e) {
-                            log.e(target, val, e);
-                            return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    public void onClose(TextInputDialog dialog) {}
-                });
-    }
 
     public void doReload() {
         data.removeAllItems();
         doRefresh(0);
     }
 
-    protected void doOpenUserForm(NodeItem selected) {}
-
-    protected void doRuntime(NodeItem selected) {}
-
+//    protected void doOpenUserForm(NodeItem selected) {}
+//
+//    protected void doRuntime(NodeItem selected) {}
+//
     public SearchCriterias getSearchCriterias() {
         return criterias;
     }
