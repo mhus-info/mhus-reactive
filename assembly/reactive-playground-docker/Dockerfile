@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-FROM mhus/karaf-k8s:4.2.6.0
+FROM mhus/karaf-k8s:4.2.11.1
 LABEL AUTHOR Mike Hummel <mh@mhus.de>
 
 COPY target/assembly.tar.gz /docker/assembly.tar.gz
