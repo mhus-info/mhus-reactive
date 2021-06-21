@@ -19,9 +19,19 @@ public class RProcess extends MLog implements AProcess {
             String bundleSymbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
             long bndLastModified = MCast.tolong(manifest.getMainAttributes().getValue("Bnd-LastModified"), 0);
             return bundleSymbolicName + ":" + bundleVersion 
-                    + (bndLastModified == 0 ? "" : " (" + new Date(bndLastModified) + ")");
+                    + (bndLastModified <= 0 ? "" : " (" + new Date(bndLastModified) + ")");
         } catch (NotFoundException e) {}
         return null;
+    }
+
+    @Override
+    public long getBuildTime() {
+        try {
+            Manifest manifest = MSystem.getManifest(getClass());
+            long bndLastModified = MCast.tolong(manifest.getMainAttributes().getValue("Bnd-LastModified"), 0);
+            return bndLastModified;
+        } catch (NotFoundException e) {}
+        return 0;
     }
 
 }

@@ -42,7 +42,7 @@ public interface ReactiveAdmin {
 
     Collection<String> getAvailableProcesses();
 
-    boolean addProcess(String name, ProcessLoader loader);
+    boolean addProcess(String name, ProcessLoader loader, String processPackage);
 
     void removeProcess(String name);
 
@@ -62,7 +62,7 @@ public interface ReactiveAdmin {
 
     String getProcessInfo(String name);
 
-    String addProcess(String[] fileNames, boolean remember) throws FileNotFoundException;
+    String addProcess(String[] fileNames, boolean remember, String processPackage) throws FileNotFoundException;
 
     ProcessLoader getProcessLoader(String name) throws NotFoundException;
 

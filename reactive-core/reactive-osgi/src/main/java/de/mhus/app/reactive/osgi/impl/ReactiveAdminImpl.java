@@ -163,7 +163,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     @Override
-    public String addProcess(String[] fileNames, boolean remember) throws FileNotFoundException {
+    public String addProcess(String[] fileNames, boolean remember, String processPackage) throws FileNotFoundException {
         StringBuilder names = new StringBuilder();
         File[] files = new File[fileNames.length];
         for (int i = 0; i < fileNames.length; i++) {
@@ -173,7 +173,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             names.append(fileNames[i]);
         }
         DefaultProcessLoader loader = new DefaultProcessLoader(files);
-        addProcess(names.toString(), loader);
+        addProcess(names.toString(), loader, processPackage);
         if (remember)
             config.persistent
                     .getParameters()
@@ -231,14 +231,14 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     @Override
-    public boolean addProcess(String info, ProcessLoader loader) {
+    public boolean addProcess(String info, ProcessLoader loader, String processPackage) {
         if (info == null) {
             info = "";
         }
         String canonicalName = loader.getProcessCanonicalName();
         log().d("add process", info);
         synchronized (availableProcesses) {
-            if (availableProcesses.put(canonicalName, new ProcessInfo(info, canonicalName, loader))
+            if (availableProcesses.put(canonicalName, new ProcessInfo(info, canonicalName, processPackage, loader))
                     != null) log().w("Process was already present", canonicalName);
         }
         // find process
@@ -309,7 +309,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
 
         info.deployedName =
-                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader, MString.beforeLastIndex(info.canonicalName, '.'));
+                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader, info.processPackage);
         info.time = System.currentTimeMillis();
 
         EProcess process = config.processProvider.getProcess(info.deployedName);
@@ -419,15 +419,17 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     private class ProcessInfo {
+        public String processPackage;
         ProcessLoader loader;
         String info;
         String deployedName;
         String canonicalName;
         long time = 0;
 
-        public ProcessInfo(String info, String canonicalName, ProcessLoader loader) {
+        public ProcessInfo(String info, String canonicalName, String processPackage, ProcessLoader loader) {
             this.info = info;
             this.canonicalName = canonicalName;
+            this.processPackage = processPackage;
             this.loader = loader;
         }
 
@@ -490,7 +492,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                             reference.getBundle().getSymbolicName()
                                                     + ":"
                                                     + process.getClass().getSimpleName(),
-                                            loader);
+                                            loader,
+                                            process.getClass().getPackageName()
+                                            );
                                 } catch (Throwable t) {
                                     log().e(reference, t);
                                 }
@@ -507,7 +511,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                             reference.getBundle().getSymbolicName()
                                                     + ":"
                                                     + service.getClass().getSimpleName(),
-                                            loader);
+                                            loader,
+                                            service.getClass().getPackageName()
+                                            );
                                 } catch (Throwable t) {
                                     log().e(reference, t);
                                 }
@@ -841,7 +847,11 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                             break;
                         }
                     }
-                    if (files != null) addProcess(name, new DefaultProcessLoader(files));
+                    String processPackage = name;
+                    if (MString.isIndex(processPackage, ':'))
+                        processPackage = MString.beforeLastIndex(processPackage, ':');
+                    processPackage = MString.beforeLastIndex(processPackage, '.');
+                    if (files != null) addProcess(name, new DefaultProcessLoader(files), processPackage);
                 }
             }
 

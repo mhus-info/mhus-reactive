@@ -210,7 +210,7 @@ public class CmdProcessEngineTool extends AbstractCmd {
         } else if (cmd.equals("uninstall")) {
             api.removeProcess(parameters[0]);
         } else if (cmd.equals("install")) {
-            System.out.println(api.addProcess(parameters, true));
+            System.out.println(api.addProcess(parameters, true, null));
         } else if (cmd.equals("cleanup")) {
             api.getEngine().doCleanupCases();
             System.out.println("OK");
