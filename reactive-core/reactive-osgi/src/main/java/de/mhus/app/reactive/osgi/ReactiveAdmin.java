@@ -69,4 +69,6 @@ public interface ReactiveAdmin {
     long getProcessDeployTime(String name);
 
     Date getStartDate();
+
+    String getProcessVersionInformation(String name);
 }

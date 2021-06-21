@@ -29,6 +29,7 @@ import de.mhus.app.reactive.engine.EngineConfiguration;
 import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
+import de.mhus.app.reactive.examples.simple1.S1Process;
 import de.mhus.app.reactive.examples.simple1.area.S2DoSomething;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
@@ -105,7 +106,7 @@ public class LockTest {
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addProcess(loader, S1Process.class.getPackageName());
 
         config = new EngineConfiguration();
         config.storage = new MemoryStorage();

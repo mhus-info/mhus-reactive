@@ -16,6 +16,7 @@
 package de.mhus.app.reactive.engine.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,8 +61,22 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
     protected HashMap<String, ProcessContainer> processes = new HashMap<>();
     protected LinkedList<String> warnings = new LinkedList<>();
 
-    public String addProcess(ProcessLoader loader) throws MException {
-        ProcessContainer container = new ProcessContainer(loader);
+    public List<String> addAllProcesses(ProcessLoader loader) throws MException {
+        ArrayList<String> out = new ArrayList<>();
+
+        for (Class<? extends AElement<?>> element : loader.getElements()) {
+            if (!element.isInterface()
+                    && de.mhus.app.reactive.model.activity.AProcess.class.isAssignableFrom(
+                            element)) {
+                String name = addProcess(loader, element.getPackageName());
+                out.add(name);
+            }
+        }
+        return out;
+    }
+
+    public String addProcess(ProcessLoader loader, String processPackage) throws MException {
+        ProcessContainer container = new ProcessContainer(loader, processPackage);
         String name = container.getCanonicalName() + ":" + container.getVersion();
         if (processes.containsKey(name))
             log().w("Process already defined, overwrite", container.getProcessName());
@@ -95,10 +110,17 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
         private String name;
 
         @SuppressWarnings("unchecked")
-        public ProcessContainer(ProcessLoader loader) throws MException {
+        public ProcessContainer(ProcessLoader loader, String processPackage) throws MException {
             this.loader = loader;
             // iterate all elements
             for (Class<? extends AElement<?>> element : loader.getElements()) {
+
+                if (
+                        processPackage != null 
+                        && !element.getPackageName().startsWith(processPackage +".") 
+                        && !element.getPackageName().equals(processPackage)
+                   )
+                    continue;
 
                 // find the process description
                 if (!element.isInterface()
@@ -214,6 +236,20 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
         @Override
         public Class<? extends AProcess> getProcessClass() {
             return processClass;
+        }
+
+        @Override
+        public AProcess newInstance() throws MException {
+            try {
+                return getProcessClass().getConstructor().newInstance();
+            } catch (InstantiationException
+                    | IllegalAccessException
+                    | IllegalArgumentException
+                    | InvocationTargetException
+                    | NoSuchMethodException
+                    | SecurityException e) {
+                throw new MException(getName(), e);
+            }
         }
     }
 

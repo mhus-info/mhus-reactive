@@ -21,8 +21,8 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.app.reactive.engine.util.PoolValidator;
-import de.mhus.app.reactive.engine.util.ProcessTrace;
 import de.mhus.app.reactive.engine.util.PoolValidator.Finding;
+import de.mhus.app.reactive.engine.util.ProcessTrace;
 import de.mhus.app.reactive.model.activity.ACondition;
 import de.mhus.app.reactive.model.activity.AEndPoint;
 import de.mhus.app.reactive.model.activity.AEvent;
@@ -210,7 +210,7 @@ public class CmdInspect extends AbstractCmd {
         if (process == null) {
             ProcessLoader loader = api.getProcessLoader(uri.getLocation());
             JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-            provider.addProcess(loader);
+            provider.addProcess(loader, MString.beforeLastIndex(uri.getLocation(), '.'));
             process = provider.getProcess(uri.getLocation());
         }
         return process;

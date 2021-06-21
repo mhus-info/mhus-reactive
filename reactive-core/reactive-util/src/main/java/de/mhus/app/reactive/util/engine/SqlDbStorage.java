@@ -857,7 +857,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                                         + " FROM "
                                         + prefix
                                         + "_node_ WHERE scheduled_ <= $scheduled$"
-                                        + (order ? " ORDER BY modified_ DESC" : ""));
+                                        + (order ? " ORDER BY priority_ ASC, modified_ DESC" : ""));
             } else {
                 prop.setLong("scheduled", scheduled);
                 prop.put("state", state);
@@ -868,7 +868,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                                         + " FROM "
                                         + prefix
                                         + "_node_ WHERE state_=$state$ and scheduled_ <= $scheduled$"
-                                        + (order ? " ORDER BY modified_ DESC" : ""));
+                                        + (order ? " ORDER BY priority_ ASC, modified_ DESC" : ""));
             }
             DbResult res = sta.executeQuery(prop);
             return new SqlResultNode(con, res);

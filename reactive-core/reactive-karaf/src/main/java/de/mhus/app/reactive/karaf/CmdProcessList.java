@@ -45,7 +45,7 @@ public class CmdProcessList extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ConsoleTable table = new ConsoleTable(tblOpt);
-        table.setHeaderValues("Registered", "Deployed", "Status", "Info", "Deployed");
+        table.setHeaderValues("Registered", "Deployed", "Status", "Info", "Deployed", "Version");
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
         for (String name : api.getAvailableProcesses()) {
             String deployName = api.getProcessDeployName(name);
@@ -59,7 +59,8 @@ public class CmdProcessList extends AbstractCmd {
                     deployTime = MDate.toIso8601(api.getProcessDeployTime(deployName));
                 }
                 String info = api.getProcessInfo(name);
-                table.addRowValues(name, deployName, a, info, deployTime);
+                String version = api.getProcessVersionInformation(name);
+                table.addRowValues(name, deployName, a, info, deployTime, version);
                 if (pools && deployName != null) {
                     EProcess process =
                             api.getEngine().getProcess(MUri.toUri("reactive://" + deployName));

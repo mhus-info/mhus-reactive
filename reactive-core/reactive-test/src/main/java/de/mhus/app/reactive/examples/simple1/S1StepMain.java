@@ -76,7 +76,7 @@ public class S1StepMain extends RServiceTask<S1Pool> implements IndexValuesProvi
             case "error1":
                 throw new TaskException("error1", "F** Exception");
             case "fatal":
-                throw new Exception("F** Excption");
+                throw new Exception("F** Exception");
             case "second":
                 return "step2";
             case "third":

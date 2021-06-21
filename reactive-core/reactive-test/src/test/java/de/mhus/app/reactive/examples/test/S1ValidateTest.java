@@ -23,6 +23,7 @@ import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.app.reactive.engine.util.PoolValidator;
 import de.mhus.app.reactive.engine.util.ProcessTrace;
+import de.mhus.app.reactive.examples.simple1.S1Process;
 import de.mhus.app.reactive.model.engine.EPool;
 import de.mhus.app.reactive.model.engine.EProcess;
 import de.mhus.lib.errors.MException;
@@ -35,7 +36,7 @@ public class S1ValidateTest {
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addProcess(loader, S1Process.class.getPackageName());
 
         for (String processName : provider.getProcessNames()) {
             System.out.println(">>> Process: " + processName);

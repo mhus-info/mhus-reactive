@@ -17,9 +17,9 @@ package de.mhus.cr.examples.users;
 
 import org.osgi.service.component.annotations.Component;
 
-import de.mhus.app.reactive.model.activity.AProcess;
 import de.mhus.app.reactive.model.annotations.ProcessDescription;
+import de.mhus.app.reactive.util.bpmn2.RProcess;
 
 @Component
 @ProcessDescription(version = "0.0.1", name = "UserManagement")
-public class AccountProcess implements AProcess {}
+public class AccountProcess extends RProcess {}

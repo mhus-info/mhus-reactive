@@ -34,6 +34,7 @@ import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.AActor;
 import de.mhus.app.reactive.model.activity.AElement;
 import de.mhus.app.reactive.model.activity.APool;
+import de.mhus.app.reactive.model.activity.AProcess;
 import de.mhus.app.reactive.model.activity.AStartPoint;
 import de.mhus.app.reactive.model.activity.ASwimlane;
 import de.mhus.app.reactive.model.activity.AUserTask;
@@ -952,6 +953,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return pool.newInstance();
     }
 
+    public AProcess createProcessObject(EProcess process) throws MException {
+        return process.newInstance();
+    }
+    
     public AElement<?> createActivityObject(EElement element) throws MException {
         return element.newInstance();
     }

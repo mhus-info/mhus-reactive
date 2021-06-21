@@ -98,6 +98,7 @@
 	</table>
     <index name="$/prefix$_node_ss" table="$/prefix$_node" fields="state,scheduled" unique="false" />
     <index name="$/prefix$_node_ssm" table="$/prefix$_node" fields="state,scheduled,modified" unique="false" />
+    <index name="$/prefix$_node_pm" table="$/prefix$_node" fields="priority,modified" unique="false" />
     <index name="$/prefix$_node_st" table="$/prefix$_node" fields="state" unique="false" />
     <index name="$/prefix$_node_ca" table="$/prefix$_node" fields="case" unique="false" />
     <index name="$/prefix$_node_c1" table="$/prefix$_node" fields="custom" unique="false" />

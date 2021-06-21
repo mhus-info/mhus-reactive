@@ -32,6 +32,7 @@ import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
 import de.mhus.app.reactive.examples.simple1.S1Pool;
+import de.mhus.app.reactive.examples.simple1.S1Process;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.util.engine.MemoryStorage;
 import de.mhus.lib.core.MDate;
@@ -90,7 +91,7 @@ public class S1PropertyTest {
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addProcess(loader, S1Process.class.getPackageName());
 
         config = new EngineConfiguration();
         config.storage = new MemoryStorage();

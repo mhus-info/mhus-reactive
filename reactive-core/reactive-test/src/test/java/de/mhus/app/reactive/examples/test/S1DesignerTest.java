@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import de.mhus.app.reactive.engine.util.DefaultProcessLoader;
 import de.mhus.app.reactive.engine.util.JavaPackageProcessProvider;
+import de.mhus.app.reactive.examples.simple1.S1Process;
 import de.mhus.app.reactive.model.engine.EPool;
 import de.mhus.app.reactive.model.engine.EProcess;
 import de.mhus.app.reactive.util.designer.DesignerUtil;
@@ -34,7 +35,7 @@ public class S1DesignerTest {
         System.out.println(f.getAbsolutePath());
         DefaultProcessLoader loader = new DefaultProcessLoader(new File[] {f});
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addProcess(loader, S1Process.class.getPackageName());
 
         XmlModel model = new XmlModel();
         EProcess process =

@@ -8,7 +8,7 @@ To start the image after creation use `./create.sh test`
 At the end you can see the created version. It's also set in the create.sh script.
 
 ----
- => => naming to docker.io/mhus/reactive-playground:7.5.0.1
+ => => naming to docker.io/mhus/reactive-playground:7.5.0.2
 ----
 
 In this case `7.5.0.1`. It will tagged as `local` also.
@@ -27,7 +27,7 @@ docker run -it --name reactive-playground \
  -v ~/.m2:/home/user/.m2 \
  -p 8181:8181 \
  -p 15005:5005 \
- mhus/reactive-playground:local debug
+ mhus/reactive-playground:7.5.0.2 debug
 ----
 
 === Use jaeger tracing

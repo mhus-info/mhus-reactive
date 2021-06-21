@@ -32,7 +32,7 @@ public class S1EngineTest {
         DefaultProcessLoader loader =
                 new DefaultProcessLoader(new File[] {new File("target/classes")});
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addProcess(loader, S1Process.class.getPackageName());
 
         for (String processName : provider.getProcessNames()) {
             System.out.println(">>> Process: " + processName);

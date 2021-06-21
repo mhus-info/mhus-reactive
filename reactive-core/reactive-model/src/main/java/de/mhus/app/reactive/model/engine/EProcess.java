@@ -21,6 +21,7 @@ import java.util.Set;
 import de.mhus.app.reactive.model.activity.AElement;
 import de.mhus.app.reactive.model.activity.AProcess;
 import de.mhus.app.reactive.model.annotations.ProcessDescription;
+import de.mhus.lib.errors.MException;
 
 public interface EProcess {
 
@@ -60,4 +61,6 @@ public interface EProcess {
      * @return canonical class name
      */
     String getCanonicalName();
+
+    AProcess newInstance() throws MException;
 }

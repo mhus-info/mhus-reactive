@@ -17,9 +17,9 @@ package de.mhus.app.reactive.examples.simple1;
 
 import org.osgi.service.component.annotations.Component;
 
-import de.mhus.app.reactive.model.activity.AProcess;
 import de.mhus.app.reactive.model.annotations.ProcessDescription;
+import de.mhus.app.reactive.util.bpmn2.RProcess;
 
 @Component
 @ProcessDescription(version = "0.0.1")
-public class S1Process implements AProcess {}
+public class S1Process extends RProcess {}

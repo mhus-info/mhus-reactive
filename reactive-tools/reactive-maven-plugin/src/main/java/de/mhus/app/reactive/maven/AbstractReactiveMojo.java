@@ -59,7 +59,7 @@ public abstract class AbstractReactiveMojo extends AbstractMojo {
                         search.toArray(new File[search.size()]),
                         null);
         JavaPackageProcessProvider provider = new JavaPackageProcessProvider();
-        provider.addProcess(loader);
+        provider.addAllProcesses(loader);
 
         return provider;
     }

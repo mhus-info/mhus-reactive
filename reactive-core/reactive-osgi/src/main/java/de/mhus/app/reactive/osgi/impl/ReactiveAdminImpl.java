@@ -66,6 +66,7 @@ import de.mhus.lib.core.MApi.SCOPE;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MPeriod;
+import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MThread;
 import de.mhus.lib.core.cfg.CfgBoolean;
 import de.mhus.lib.core.cfg.CfgInt;
@@ -308,7 +309,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
 
         info.deployedName =
-                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader);
+                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader, MString.beforeLastIndex(info.canonicalName, '.'));
         info.time = System.currentTimeMillis();
 
         EProcess process = config.processProvider.getProcess(info.deployedName);
@@ -943,5 +944,17 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     @Override
     public Date getStartDate() {
         return startDate;
+    }
+
+    @Override
+    public String getProcessVersionInformation(String name) {
+        try {
+            ProcessInfo info = availableProcesses.get(name);
+            EProcess process = config.processProvider.getProcess(info.deployedName);
+            AProcess aprocess = engine.createProcessObject(process);
+            return aprocess.getVersionInformation();
+        } catch (Throwable e) {
+            return e.toString();
+        }
     }
 }

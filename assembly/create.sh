@@ -31,9 +31,9 @@ fi
 if [ "$1" = "clean" ]; then
     shift
     docker rmi $REPOSITORY:$VERSION
-    docker build --no-cache -t $REPOSITORY:$VERSION .
+    DOCKER_BUILDKIT=0 docker build --no-cache -t $REPOSITORY:$VERSION .
 else
-    docker build -t $REPOSITORY:$VERSION .
+    DOCKER_BUILDKIT=0 docker build --progress plain -t $REPOSITORY:$VERSION .
 fi
 
 if [ "$1" = "push" ]; then

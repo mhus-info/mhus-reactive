@@ -22,4 +22,8 @@ import de.mhus.app.reactive.model.util.NoPool;
  *
  * @author mikehummel
  */
-public interface AProcess extends AElement<NoPool> {}
+public interface AProcess extends AElement<NoPool> {
+    
+    String getVersionInformation();
+    
+}

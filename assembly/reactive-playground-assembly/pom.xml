@@ -152,6 +152,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                     <targetFile>assembly</targetFile>
                     
 				    <blacklistedRepositories>
+				    <!-- 
                         <repository>mvn:org.apache.karaf.features/framework/[4.2.7,*)/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/standard/[4.2.7,*)/xml/features</repository>
                         <repository>mvn:org.apache.karaf.features/enterprise/[4.2.7,*)/xml/features</repository>
@@ -162,6 +163,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                         <repository>mvn:org.apache.karaf.features/org.apache.karaf.features.extension/[4.2.7,*)</repository>
                         
                         <repository>mvn:org.ops4j.pax.web/pax-web-features/[7.2.11,*)/xml/features</repository>
+				     -->
 				    </blacklistedRepositories>
                     <bootFeatures>
                         <feature>bundle</feature>
@@ -184,7 +186,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
                          -->
                         
                         <feature>cxf-core/${cxf.version}</feature>
-                        <feature>openjpa3/3.0.0</feature>
+                        <feature>openjpa3/${openjpa3.version}</feature>
                         <feature>activemq-client/${activemq.version}</feature>
 
                         <feature>mhus-reactive-all</feature>
@@ -234,7 +236,7 @@ https://raw.githubusercontent.com/pentaho/pentaho-karaf-assembly/master/pentaho-
         									karaf-maven-plugin
         								</artifactId>
         								<versionRange>
-        									[4.2.6,)
+        									[4.2.11,)
         								</versionRange>
         								<goals>
         									<goal>assembly</goal>
