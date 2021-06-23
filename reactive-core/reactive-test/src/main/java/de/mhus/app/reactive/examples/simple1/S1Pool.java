@@ -41,7 +41,7 @@ public class S1Pool extends RPool<S1Pool> {
         OFF
     };
 
-    @PropertyDescription(displayName = "Switch Text", writable = false, initial = true)
+    @PropertyDescription(displayName = "Switch Text", writable = false, initial = true, mandatory = true)
     private String text1 = "Moin";
 
     @PropertyDescription(initial = true)

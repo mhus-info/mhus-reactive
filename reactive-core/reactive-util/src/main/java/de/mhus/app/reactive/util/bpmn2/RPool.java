@@ -38,6 +38,7 @@ import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.core.pojo.PojoAction;
 import de.mhus.lib.core.pojo.PojoAttribute;
 import de.mhus.lib.core.pojo.PojoModel;
+import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.form.IFormInformation;
 import de.mhus.lib.form.ModelUtil;
 
@@ -83,7 +84,12 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                         (PropertyDescription) attr.getAnnotation(PropertyDescription.class);
                 if (desc != null && (!initial || desc.initial())) {
                     Object value = parameters.get(attr.getName());
-                    if (value != null) attr.set(this, value, false);
+                    if (value != null) {
+                        attr.set(this, value, false);
+                    } else {
+                        if (initial && desc.mandatory())
+                            throw new UsageException("parameter is mandatory", attr);
+                    }
                 }
             } catch (IOException e) {
                 log().d(attr, e);
