@@ -16,6 +16,7 @@
 package de.mhus.app.reactive.examples.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -51,6 +52,7 @@ import de.mhus.lib.core.console.Console;
 import de.mhus.lib.core.console.Console.COLOR;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
+import de.mhus.lib.errors.UsageException;
 
 public class S1ActivitiesTest {
 
@@ -89,6 +91,35 @@ public class S1ActivitiesTest {
             }
             assertTrue(i < 10);
             mockup.close();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
+        }
+
+        archiveEngine(engine, config);
+    }
+
+    @Test
+    public void testMandatory() throws Exception {
+
+        createEngine();
+
+        try { // area lock
+            EngineMockUp mockup =
+                    new EngineMockUp(config.storage, engine, new File("mockup/s1_area.xml"));
+            mockup.setWarn(false);
+            mockup.setVerbose(false);
+            String uri =
+                    "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool";
+            System.out.println("URI: " + uri);
+            System.out.println(
+                    "------------------------------------------------------------------------");
+            UUID caseId = engine.start(uri);
+            System.out.println(caseId);
+            assertFalse(true,"Should throw an exception");
+
+        } catch (UsageException e) {
+            System.out.println("Correct: " + e);
         } catch (Throwable t) {
             t.printStackTrace();
             throw t;
@@ -565,7 +596,7 @@ public class S1ActivitiesTest {
             mockup.setWarn(false);
             mockup.setVerbose(false);
             String uri =
-                    "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool#de.mhus.app.reactive.examples.simple1.S1Start2";
+                    "bpm://de.mhus.app.reactive.examples.simple1.S1Process:0.0.1/de.mhus.app.reactive.examples.simple1.S1Pool?text1=Moin#de.mhus.app.reactive.examples.simple1.S1Start2";
             System.out.println("URI: " + uri);
             System.out.println(
                     "------------------------------------------------------------------------");
