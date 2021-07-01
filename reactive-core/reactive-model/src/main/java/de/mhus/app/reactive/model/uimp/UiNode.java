@@ -28,6 +28,7 @@ import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.app.reactive.model.ui.INode;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MSystem;
 
 public class UiNode extends MLog implements INode, Externalizable {
 
@@ -149,4 +150,10 @@ public class UiNode extends MLog implements INode, Externalizable {
     public long getDue() {
         return info.getDue();
     }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, info);
+    }
+
 }

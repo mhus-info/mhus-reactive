@@ -27,6 +27,7 @@ import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.ui.ICase;
 import de.mhus.lib.annotations.generic.Public;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MSystem;
 
 public class UiCase extends MLog implements ICase, Externalizable {
 
@@ -126,5 +127,10 @@ public class UiCase extends MLog implements ICase, Externalizable {
         if (in.readInt() != 1) throw new IOException("Wrong object version");
         info = (PCaseInfo) in.readObject();
         properties = (Map<String, String>) in.readObject();
+    }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, info);
     }
 }

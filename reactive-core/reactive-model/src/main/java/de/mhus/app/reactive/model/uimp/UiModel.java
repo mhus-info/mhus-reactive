@@ -24,6 +24,7 @@ import java.util.UUID;
 import de.mhus.app.reactive.model.engine.EngineMessage;
 import de.mhus.app.reactive.model.ui.IModel;
 import de.mhus.app.reactive.model.ui.INodeDescription;
+import de.mhus.lib.core.MSystem;
 
 public class UiModel implements IModel, Externalizable {
 
@@ -94,4 +95,10 @@ public class UiModel implements IModel, Externalizable {
         predecessor = (INodeDescription) in.readObject();
         node = (INodeDescription) in.readObject();
     }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, nodeId);
+    }
+
 }

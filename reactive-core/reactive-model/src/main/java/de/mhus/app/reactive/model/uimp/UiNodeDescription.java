@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 import de.mhus.app.reactive.model.ui.INodeDescription;
 import de.mhus.app.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MSystem;
 
 public class UiNodeDescription extends MLog implements INodeDescription, Externalizable {
 
@@ -69,4 +70,10 @@ public class UiNodeDescription extends MLog implements INodeDescription, Externa
         name = (String) in.readObject();
         // process = (IProcess) in.readObject();
     }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, uri);
+    }
+
 }

@@ -100,6 +100,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
         try {
             IFormInformation hForm = engine.getNodeUserForm(node.getId().toString());
             DefRoot form = hForm.getForm();
+            form = checkForm(form);
             dataSource = new PropertiesDataSource();
             dataSource.setProperties(
                     new MProperties(engine.getNodeUserFormValues(node.getId().toString())));
@@ -126,6 +127,10 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
             log.e(node, t);
         }
         return null;
+    }
+
+    protected DefRoot checkForm(DefRoot form) {
+        return form;
     }
 
     @Override

@@ -11,8 +11,10 @@ import de.mhus.app.reactive.vaadin.widgets.VCaseDetails;
 import de.mhus.app.reactive.vaadin.widgets.VUserForm;
 import de.mhus.app.reactive.vaadin.widgets.WidgetActivityAdapter;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MString;
+import de.mhus.lib.core.definition.DefRoot;
 import de.mhus.lib.vaadin.TextInputDialog;
 
 public class WidgetActivity extends WidgetActivityAdapter {
@@ -100,6 +102,17 @@ public class WidgetActivity extends WidgetActivityAdapter {
         VUserForm form =
                 new VUserForm(space.getEngine(), node) {
                     private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected DefRoot checkForm(DefRoot form) {
+                        try { // test serialization
+                            String serialized = MCast.serializeToString(form);
+                            form = (DefRoot) MCast.unserializeFromString(serialized, null);
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
+                        return form;
+                    }
 
                     @Override
                     protected void onFormCancel() {

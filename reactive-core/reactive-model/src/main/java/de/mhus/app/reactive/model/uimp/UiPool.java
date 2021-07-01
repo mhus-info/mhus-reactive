@@ -26,6 +26,7 @@ import de.mhus.app.reactive.model.ui.IPool;
 import de.mhus.app.reactive.model.util.NoForm;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MSystem;
 import de.mhus.lib.form.IFormInformation;
 
 public class UiPool extends MLog implements IPool, Externalizable {
@@ -104,4 +105,10 @@ public class UiPool extends MLog implements IPool, Externalizable {
         pd = (PoolDescription) in.readObject();
         properties = (MProperties) in.readObject();
     }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, pUri);
+    }
+
 }

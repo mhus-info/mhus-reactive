@@ -23,6 +23,7 @@ import java.io.ObjectOutput;
 import de.mhus.app.reactive.model.ui.ICaseDescription;
 import de.mhus.app.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MLog;
+import de.mhus.lib.core.MSystem;
 
 public class UiCaseDescription extends MLog implements ICaseDescription, Externalizable {
 
@@ -65,4 +66,10 @@ public class UiCaseDescription extends MLog implements ICaseDescription, Externa
         uri = (String) in.readObject();
         process = (IProcess) in.readObject();
     }
+
+    @Override
+    public String toString() {
+        return MSystem.toString(this, uri);
+    }
+
 }

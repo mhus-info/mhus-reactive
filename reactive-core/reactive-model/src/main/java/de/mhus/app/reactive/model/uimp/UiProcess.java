@@ -24,6 +24,7 @@ import java.util.Locale;
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.ui.IProcess;
 import de.mhus.lib.core.MProperties;
+import de.mhus.lib.core.MSystem;
 
 public class UiProcess implements IProcess, Externalizable {
 
@@ -120,4 +121,10 @@ public class UiProcess implements IProcess, Externalizable {
         locale = (Locale) in.readObject();
         properties = (MProperties) in.readObject();
     }
+    
+    @Override
+    public String toString() {
+        return MSystem.toString(this, properties);
+    }
+
 }
