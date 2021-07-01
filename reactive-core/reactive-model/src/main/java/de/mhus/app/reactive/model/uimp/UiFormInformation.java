@@ -23,15 +23,12 @@ import java.io.ObjectOutput;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MActivator;
 import de.mhus.lib.core.MSystem;
-import de.mhus.lib.core.MXml;
 import de.mhus.lib.core.definition.DefRoot;
-import de.mhus.lib.core.logging.MLogUtil;
 import de.mhus.lib.core.util.AlreadyBoundException;
 import de.mhus.lib.core.util.LocalClassLoader;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
 import de.mhus.lib.form.IFormInformation;
-import de.mhus.lib.form.ModelUtil;
 
 public class UiFormInformation implements IFormInformation, Externalizable {
 
@@ -69,18 +66,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeInt(1);
-        try {
-            if (form != null) {
-                form.build();
-                String formXml = MXml.toString(ModelUtil.toXml(form), false);
-                out.writeObject(formXml);
-            } else {
-                out.writeObject(null);
-            }
-        } catch (Exception e) {
-            MLogUtil.log().e(getClass(), e);
-            out.writeObject(null);
-        }
+        out.writeObject(form);
         if (actionHandler != null) {
             out.writeObject(actionHandler.getCanonicalName());
             out.writeObject(MSystem.getBytes(actionHandler));
@@ -95,14 +81,7 @@ public class UiFormInformation implements IFormInformation, Externalizable {
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         if (in.readInt() != 1) throw new IOException("Wrong object version");
-        String formXml = (String) in.readObject();
-        if (formXml != null) {
-            try {
-                form = ModelUtil.fromXml(MXml.loadXml(formXml).getDocumentElement());
-            } catch (Exception e) {
-                throw new IOException("Form: " + formXml, e);
-            }
-        }
+        form = (DefRoot) in.readObject();
         {
             String name = (String) in.readObject();
             if (name != null) {
