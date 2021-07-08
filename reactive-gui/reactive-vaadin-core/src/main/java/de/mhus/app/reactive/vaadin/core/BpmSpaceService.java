@@ -17,13 +17,13 @@ package de.mhus.app.reactive.vaadin.core;
 
 import java.util.Locale;
 
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.MenuBar.MenuItem;
-
 import org.osgi.service.component.annotations.Component;
-import de.mhus.lib.vaadin.desktop.SimpleGuiSpace;
+
+import com.vaadin.ui.AbstractComponent;
+
 import de.mhus.lib.vaadin.desktop.GuiSpaceService;
 import de.mhus.lib.vaadin.desktop.HelpContext;
+import de.mhus.lib.vaadin.desktop.SimpleGuiSpace;
 
 @Component(immediate = true, service = GuiSpaceService.class)
 public class BpmSpaceService extends SimpleGuiSpace {
@@ -48,8 +48,4 @@ public class BpmSpaceService extends SimpleGuiSpace {
         return null;
     }
 
-    @Override
-    public void createMenu(AbstractComponent space, MenuItem[] menu) {
-        ((BpmSpace) space).createMenu(menu);
-    }
 }

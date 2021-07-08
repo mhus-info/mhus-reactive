@@ -454,7 +454,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         page = null;
     }
 
-    public void createMenu(MenuItem[] menu) {
+    @Override
+    public void doCreateMenu(MenuItem[] menu) {
         menu[0].setEnabled(true);
         menu[0].setText("Engine");
         menu[0].setVisible(true);
