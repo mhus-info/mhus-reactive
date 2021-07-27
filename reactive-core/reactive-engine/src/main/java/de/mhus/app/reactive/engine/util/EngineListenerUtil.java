@@ -27,6 +27,7 @@ import de.mhus.app.reactive.engine.Engine;
 import de.mhus.app.reactive.engine.EngineConfiguration;
 import de.mhus.app.reactive.model.engine.EngineListener;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.RuntimeNode;
 import de.mhus.lib.core.MCast;

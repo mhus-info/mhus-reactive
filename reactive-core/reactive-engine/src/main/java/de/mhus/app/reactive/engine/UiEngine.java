@@ -25,7 +25,6 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import de.mhus.app.reactive.engine.util.EngineUtil;
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.AUserTask;
 import de.mhus.app.reactive.model.annotations.ActivityDescription;
@@ -40,6 +39,7 @@ import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.engine.EngineMessage;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.Result;

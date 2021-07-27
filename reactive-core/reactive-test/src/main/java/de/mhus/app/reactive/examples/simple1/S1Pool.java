@@ -22,6 +22,7 @@ import de.mhus.app.reactive.model.annotations.ActionForm;
 import de.mhus.app.reactive.model.annotations.PoolDescription;
 import de.mhus.app.reactive.model.annotations.PropertyDescription;
 import de.mhus.app.reactive.model.engine.ProcessContext;
+import de.mhus.app.reactive.model.util.EngineUtil;
 import de.mhus.app.reactive.util.bpmn2.RPool;
 import de.mhus.lib.annotations.pojo.Action;
 import de.mhus.lib.basics.consts.GenerateConst;
@@ -126,6 +127,52 @@ public class S1Pool extends RPool<S1Pool> {
         return new MProperties("action","Simple Action");
     }
 
+    @Action("restart")
+    public MProperties doRestartActions(MProperties values) {
+        try {
+            EngineUtil.cancelAll(context);
+            EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new MProperties("error",e.toString());
+        }
+        return new MProperties();
+    }
+    
+    @Action("cancel")
+    public MProperties doCancelActions(MProperties values) {
+        try {
+            EngineUtil.cancelAll(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new MProperties("error",e.toString());
+        }
+        return new MProperties();
+    }
+    
+    @Action("start2")
+    public MProperties doStart2Actions(MProperties values) {
+        try {
+            EngineUtil.cancelAll(context);
+            EngineUtil.start(context, _S1Start2.CLASS_NAME, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new MProperties("error",e.toString());
+        }
+        return new MProperties();
+    }
+    
+    @Action("start1")
+    public MProperties doStart1Actions(MProperties values) {
+        try {
+            EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new MProperties("error",e.toString());
+        }
+        return new MProperties();
+    }
+    
     @Action(value="test",title = "Test")
     @ActionForm(S1PoolTestForm.class)
     public MProperties doTest(MProperties values) {

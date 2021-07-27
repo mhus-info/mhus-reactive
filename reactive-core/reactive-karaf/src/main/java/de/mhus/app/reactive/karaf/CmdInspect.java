@@ -43,6 +43,7 @@ import de.mhus.app.reactive.model.engine.EElement;
 import de.mhus.app.reactive.model.engine.EPool;
 import de.mhus.app.reactive.model.engine.EProcess;
 import de.mhus.app.reactive.model.engine.ProcessLoader;
+import de.mhus.app.reactive.model.util.InactiveStartPoint;
 import de.mhus.app.reactive.model.util.NoPool;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
@@ -91,8 +92,8 @@ public class CmdInspect extends AbstractCmd {
                     for (String name : process.getPoolNames()) {
                         EPool pool = process.getPool(name);
                         System.out.println(parameters[0] + "/" + name);
-                        for (EElement start : pool.getStartPoints()) {
-                            System.out.println("--- Start: " + start.getCanonicalName());
+                        for (EElement start : pool.getStartPoints(false)) {
+                            System.out.println("--- Start: " + start.getCanonicalName() + " " + (start.isInterface(InactiveStartPoint.class) ? "!" : "") );
                         }
                     }
                 }

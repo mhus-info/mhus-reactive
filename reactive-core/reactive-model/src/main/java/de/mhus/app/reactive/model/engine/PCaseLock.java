@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.mhus.app.reactive.engine.util;
+package de.mhus.app.reactive.model.engine;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
-import de.mhus.app.reactive.engine.EngineContext;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.APool;
-import de.mhus.app.reactive.model.engine.CaseLock;
-import de.mhus.app.reactive.model.engine.EElement;
-import de.mhus.app.reactive.model.engine.PCase;
-import de.mhus.app.reactive.model.engine.PNode;
-import de.mhus.app.reactive.model.engine.RuntimeNode;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
@@ -34,24 +29,24 @@ public interface PCaseLock extends CaseLock {
 
     void closeRuntime(UUID nodeId) throws MException, IOException;
 
-    void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state)
+    void closeFlowNode(ProcessContext<?> context, PNode pNode, STATE_NODE state)
             throws IOException, NotFoundException;
 
     void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException;
 
-    void savePCase(EngineContext context) throws IOException, NotFoundException;
+    void savePCase(ProcessContext<?> context) throws IOException, NotFoundException;
 
     void savePCase(APool<?> aPool, boolean init) throws IOException, NotFoundException;
 
-    void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t);
+    void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t);
 
-    PNode createActivity(EngineContext context, PNode previous, EElement start) throws Exception;
+    PNode createActivity(ProcessContext<?> context, PNode previous, EElement start) throws Exception;
 
-    void doNodeLifecycle(EngineContext context, PNode flow) throws Exception;
+    void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception;
 
-    UUID createStartPoint(EngineContext context, EElement start) throws Exception;
+    UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam) throws Exception;
 
-    void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity)
+    void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
             throws IOException, NotFoundException;
 
     void doFlowNode(PNode pNode);

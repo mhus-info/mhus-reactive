@@ -25,9 +25,9 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.Engine.EngineCaseLock;
 import de.mhus.app.reactive.engine.util.EngineUtil;
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.SearchCriterias;

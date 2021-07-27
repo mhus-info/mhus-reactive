@@ -1,6 +1,7 @@
 package de.mhus.app.reactive.model.util;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.model.ui.IEngine;
@@ -35,7 +36,7 @@ public class CaseActionList {
     }
 
     public Set<String> getNames() {
-        return list.keys();
+        return new TreeSet<>(list.keys());
     }
 
     public String getTitle(String action) {

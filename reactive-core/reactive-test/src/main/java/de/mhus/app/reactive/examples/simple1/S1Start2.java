@@ -19,10 +19,12 @@ import de.mhus.app.reactive.model.annotations.ActivityDescription;
 import de.mhus.app.reactive.model.annotations.Output;
 import de.mhus.app.reactive.model.util.InactiveStartPoint;
 import de.mhus.app.reactive.util.bpmn2.RStartPoint;
+import de.mhus.lib.basics.consts.GenerateConst;
 
 @ActivityDescription(
         outputs = @Output(activity = S1Step2.class),
         lane = S1Lane1.class,
         displayName = "Extra Start Point",
         description = "Another not automatically executed startpoint")
+@GenerateConst
 public class S1Start2 extends RStartPoint<S1Pool> implements InactiveStartPoint {}

@@ -22,9 +22,9 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.EngineContext;
 import de.mhus.app.reactive.engine.util.EngineUtil;
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.util.ActivityUtil;

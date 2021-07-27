@@ -16,17 +16,19 @@
 package de.mhus.app.reactive.engine.util;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
-import de.mhus.app.reactive.engine.EngineContext;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.APool;
 import de.mhus.app.reactive.model.engine.EElement;
 import de.mhus.app.reactive.model.engine.EngineListener;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
-import de.mhus.app.reactive.model.engine.RuntimeNode;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
+import de.mhus.app.reactive.model.engine.ProcessContext;
+import de.mhus.app.reactive.model.engine.RuntimeNode;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.concurrent.Lock;
@@ -110,7 +112,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state)
+    public void closeFlowNode(ProcessContext<?> context, PNode pNode, STATE_NODE state)
             throws IOException, NotFoundException {
         try {
             scope.span().log("closeFlowNode " + pNode + " " + state);
@@ -129,7 +131,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public void savePCase(EngineContext context) throws IOException, NotFoundException {
+    public void savePCase(ProcessContext<?> context) throws IOException, NotFoundException {
         try {
             scope.span().log("savePCase");
         } catch (Throwable t) {
@@ -147,7 +149,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
+    public void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t) {
         try {
             scope.span().log("doNodeErrorHandling " + pNode + " " + t);
         } catch (Throwable tt) {
@@ -156,7 +158,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public PNode createActivity(EngineContext context, PNode previous, EElement start)
+    public PNode createActivity(ProcessContext<?> context, PNode previous, EElement start)
             throws Exception {
         try {
             scope.span().log("createActivity " + previous + " " + start);
@@ -166,7 +168,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public void doNodeLifecycle(EngineContext context, PNode flow) throws Exception {
+    public void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception {
         try {
             scope.span().log("doNodeLifecycle " + flow);
         } catch (Throwable t) {
@@ -175,16 +177,16 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public UUID createStartPoint(EngineContext context, EElement start) throws Exception {
+    public UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam) throws Exception {
         try {
             scope.span().log("createStartPoint " + start);
         } catch (Throwable t) {
         }
-        return instance.createStartPoint(context, start);
+        return instance.createStartPoint(context, start, runtimeParam);
     }
 
     @Override
-    public void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity)
+    public void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
             throws IOException, NotFoundException {
         try {
             scope.span().log("saveFlowNode " + flow);

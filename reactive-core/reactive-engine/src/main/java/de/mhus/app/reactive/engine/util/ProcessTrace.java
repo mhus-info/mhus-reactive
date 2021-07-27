@@ -21,11 +21,13 @@ import java.util.List;
 
 import de.mhus.app.reactive.model.activity.AGateway;
 import de.mhus.app.reactive.model.activity.APoint;
+import de.mhus.app.reactive.model.activity.AStartPoint;
 import de.mhus.app.reactive.model.activity.ATask;
 import de.mhus.app.reactive.model.annotations.Trigger;
 import de.mhus.app.reactive.model.engine.EElement;
 import de.mhus.app.reactive.model.engine.EPool;
 import de.mhus.app.reactive.model.engine.EProcess;
+import de.mhus.app.reactive.model.util.InactiveStartPoint;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ANSIConsole;
 import de.mhus.lib.core.console.Console;
@@ -87,7 +89,7 @@ public class ProcessTrace {
         needed = new HashSet<>();
         out.println(MString.rep('=', width));
         out.println("Pool: " + pool.getCanonicalName());
-        for (EElement startPoint : pool.getStartPoints()) {
+        for (EElement startPoint : pool.getStartPoints(false)) {
             done.add(startPoint.getCanonicalName());
             needed.add(startPoint.getCanonicalName());
             while (needed.size() > 0) {
@@ -104,9 +106,11 @@ public class ProcessTrace {
     private void printElement(PrintStream out, EElement cur) {
         if (ansi) out.print(ANSIConsole.ansiForeground(COLOR.RED));
         if (cur.is(APoint.class)) out.print('(');
+        if (cur.is(AStartPoint.class) && cur.isInterface(InactiveStartPoint.class)) out.print("!");
         if (cur.is(ATask.class)) out.print('[');
         if (cur.is(AGateway.class)) out.print('<');
         out.print(cur.getCanonicalName());
+        
         if (cur.is(APoint.class)) out.print(')');
         if (cur.is(ATask.class)) out.print(']');
         if (cur.is(AGateway.class)) out.print('>');

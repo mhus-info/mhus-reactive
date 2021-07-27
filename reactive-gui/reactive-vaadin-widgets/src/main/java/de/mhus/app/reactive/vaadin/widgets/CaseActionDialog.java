@@ -92,6 +92,7 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
             else {
                 String retAction = ret.getString(EngineConst.ACTION_RET_ACTION, null);
                 String id = ret.getString(EngineConst.ACTION_RET_ID, null);
+                close();
                 if (retAction != null && activity != null && id != null) {
                     switch (retAction) {
                     case EngineConst.ACTION_RET_ACTION_CASE:

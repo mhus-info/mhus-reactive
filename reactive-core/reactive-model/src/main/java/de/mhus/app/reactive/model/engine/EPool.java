@@ -25,7 +25,7 @@ import de.mhus.lib.errors.MException;
 
 public interface EPool {
 
-    List<EElement> getStartPoints();
+    List<EElement> getStartPoints(boolean activeOnly);
 
     //	Class<? extends APool<?>> getPoolClass();
 

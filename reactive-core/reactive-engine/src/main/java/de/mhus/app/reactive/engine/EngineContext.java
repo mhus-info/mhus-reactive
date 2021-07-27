@@ -18,7 +18,6 @@ package de.mhus.app.reactive.engine;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.AElement;
 import de.mhus.app.reactive.model.activity.APool;
@@ -33,6 +32,7 @@ import de.mhus.app.reactive.model.engine.EEngine;
 import de.mhus.app.reactive.model.engine.EPool;
 import de.mhus.app.reactive.model.engine.EProcess;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.ProcessContext;
 import de.mhus.app.reactive.model.engine.RuntimeNode;
@@ -289,5 +289,23 @@ public class EngineContext extends MLog implements ProcessContext<APool<?>> {
     @Override
     public CaseLock getCaseLock() {
         return lock;
+    }
+
+    @Override
+    public void debug(Object... objects) {
+        try {
+            getARuntime().doDebugMsg(getPNode(), objects);
+        } catch (Throwable t) {
+            log().e(t);
+        }
+    }
+
+    @Override
+    public void error(Object... objects) {
+        try {
+            getARuntime().doErrorMsg(getPNode(), objects);
+        } catch (Throwable t) {
+            log().e(t);
+        }
     }
 }

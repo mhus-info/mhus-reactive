@@ -18,10 +18,12 @@ package de.mhus.app.reactive.examples.simple1;
 import de.mhus.app.reactive.model.annotations.ActivityDescription;
 import de.mhus.app.reactive.model.annotations.Output;
 import de.mhus.app.reactive.util.bpmn2.RStartPoint;
+import de.mhus.lib.basics.consts.GenerateConst;
 
 @ActivityDescription(
         outputs = @Output(activity = S1StepMain.class),
         lane = S1Lane1.class,
         displayName = "Start Point",
         description = "The default start point for S1Pool")
+@GenerateConst
 public class S1Start1 extends RStartPoint<S1Pool> {}

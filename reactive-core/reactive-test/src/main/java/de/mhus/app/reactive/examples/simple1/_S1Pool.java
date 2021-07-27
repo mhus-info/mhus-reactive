@@ -17,8 +17,12 @@ public class _S1Pool extends ConstBase {
   public static final Identifier METHOD_BEFORE_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"beforeExecute");
   public static final Identifier METHOD_CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier METHOD_CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"createIndexValues");
+  public static final Identifier METHOD_DO_CANCEL_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCancelActions");
   public static final Identifier METHOD_DO_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseAction");
   public static final Identifier METHOD_DO_CASE_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseActions");
+  public static final Identifier METHOD_DO_RESTART_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doRestartActions");
+  public static final Identifier METHOD_DO_START1_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doStart1Actions");
+  public static final Identifier METHOD_DO_START2_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doStart2Actions");
   public static final Identifier METHOD_DO_TEST = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doTest");
   public static final Identifier METHOD_EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier METHOD_GET_POJO_MODEL = new Identifier(Identifier.TYPE.GETTER, de.mhus.app.reactive.examples.simple1.S1Pool.class,"getPojoModel");
@@ -50,8 +54,12 @@ public class _S1Pool extends ConstBase {
   public static final Identifier _CLOSE_CASE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"closeCase");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Pool.class,"context");
   public static final Identifier _CREATE_INDEX_VALUES = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"createIndexValues");
+  public static final Identifier _DO_CANCEL_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCancelActions");
   public static final Identifier _DO_CASE_ACTION = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseAction");
   public static final Identifier _DO_CASE_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doCaseActions");
+  public static final Identifier _DO_RESTART_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doRestartActions");
+  public static final Identifier _DO_START1_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doStart1Actions");
+  public static final Identifier _DO_START2_ACTIONS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doStart2Actions");
   public static final Identifier _DO_TEST = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"doTest");
   public static final Identifier _EXPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"exportParameters");
   public static final Identifier _IMPORT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"importParameters");

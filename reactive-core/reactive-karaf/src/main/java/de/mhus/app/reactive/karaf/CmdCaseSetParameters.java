@@ -22,8 +22,8 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.util.EngineUtil;
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.engine.PCase;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;

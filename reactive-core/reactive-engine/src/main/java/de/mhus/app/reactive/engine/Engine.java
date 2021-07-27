@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
 
 import de.mhus.app.reactive.engine.util.CaseLockProxy;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
-import de.mhus.app.reactive.engine.util.PCaseLock;
 import de.mhus.app.reactive.model.activity.AActivity;
 import de.mhus.app.reactive.model.activity.AActor;
 import de.mhus.app.reactive.model.activity.AElement;
@@ -54,6 +53,7 @@ import de.mhus.app.reactive.model.engine.EngineListener;
 import de.mhus.app.reactive.model.engine.InternalEngine;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
+import de.mhus.app.reactive.model.engine.PCaseLock;
 import de.mhus.app.reactive.model.engine.PEngine;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
@@ -697,7 +697,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         if (start == null)
                             throw new MException("start point not found", uri.getFragment());
 
-                        return lock.createStartPoint(context, start);
+                        return lock.createStartPoint(context, start, uri.getQuery());
                     }
                 }
             case "bpma": // case action bpma://case-id/action?parameters
@@ -776,7 +776,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             startPoints = new LinkedList<>();
             startPoints.add(point);
         } else {
-            startPoints = pool.getStartPoints();
+            startPoints = pool.getStartPoints(true);
             // remove inactive startpoints from list
             startPoints.removeIf(s -> s.isInterface(InactiveStartPoint.class));
         }
@@ -884,7 +884,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 Throwable isError = null;
                 for (EElement start : startPoints) {
                     try {
-                        lock.createStartPoint(context, start);
+                        lock.createStartPoint(context, start, null);
                     } catch (Throwable t) {
                         log().w(start, t);
                         fireEvent.error(pCase, start, t);
@@ -2177,7 +2177,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         "doExecuteStartPoint",
                         "point",
                         eMyStartPoint)) {
-            UUID flowId = lock.createStartPoint(eContext, eMyStartPoint);
+            UUID flowId = lock.createStartPoint(eContext, eMyStartPoint, null);
             PNode pNode = lock.getFlowNode(flowId);
             PCase caze = lock.getCase();
             EngineContext newContext = createContext(lock, caze, pNode);
@@ -2447,7 +2447,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public void closeFlowNode(EngineContext context, PNode pNode, STATE_NODE state)
+        public void closeFlowNode(ProcessContext<?> context, PNode pNode, STATE_NODE state)
                 throws IOException, NotFoundException {
             try {
                 scope.span().log("closeFlowNode " + pNode + " " + state);
@@ -2457,9 +2457,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 throw new IOException("flow node is not part of the case " + pNode + " " + caseId);
             fireEvent.closeFlowNode(pNode, state);
 
-            if (context != null) fireEvent.closedActivity(context.getARuntime(), pNode);
+            boolean ownContext = context == null;
+            if (context == null) context = new EngineContext(this, Engine.this, pNode);
 
-            if (context != null && context.getPCase() != null) {
+            fireEvent.closedActivity(context.getARuntime(), pNode);
+
+            if (context.getPCase() != null) {
                 //                synchronized (context.getLock()) {
                 pNode.setState(state);
                 //                  synchronized (nodeCache) {
@@ -2475,6 +2478,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 //                  nodeCache.put(pNode.getId(), pNode);
                 //              }
             }
+
+            if (ownContext)
+                saveRuntime(context.getPRuntime(), context.getARuntime());
         }
 
         /**
@@ -2504,7 +2510,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public void savePCase(EngineContext context) throws IOException, NotFoundException {
+        public void savePCase(ProcessContext<?> context) throws IOException, NotFoundException {
             savePCase(context.getPool(), false);
         }
 
@@ -2534,7 +2540,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public void doNodeErrorHandling(EngineContext context, PNode pNode, Throwable t) {
+        public void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t) {
             try {
                 scope.span().log("doNodeErrorHandling " + pNode + " " + t);
             } catch (Throwable tt) {
@@ -2600,7 +2606,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public PNode createActivity(EngineContext context, PNode previous, EElement start)
+        public PNode createActivity(ProcessContext<?> context, PNode previous, EElement start)
                 throws Exception {
             try {
                 scope.span().log("createActivity " + previous + " " + start);
@@ -2638,7 +2644,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             // flow.setScheduledNow();
             fireEvent.createActivity(
                     context.getARuntime(), flow, context.getPCase(), previous, start);
-            context = new EngineContext(context, flow);
+            context = new EngineContext((EngineContext)context, flow);
 
             doNodeLifecycle(context, flow);
 
@@ -2646,7 +2652,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public void doNodeLifecycle(EngineContext context, PNode flow) throws Exception {
+        public void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception {
             try {
                 scope.span().log("doNodeLifecycle " + flow);
             } catch (Throwable t) {
@@ -2654,12 +2660,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
             boolean init =
                     flow.getStartState() == STATE_NODE.NEW; // this means the node is not executed!
-            context = new EngineContext(context, flow);
+            context = new EngineContext((EngineContext)context, flow);
 
             // lifecycle flow node
             EElement start = context.getENode();
             AActivity<?> activity = (AActivity<?>) createActivityObject(start);
-            context.setANode(activity);
+            ((EngineContext)context).setANode(activity);
             RuntimeNode runtime = context.getARuntime();
             if (init) fireEvent.initStart(runtime, flow, start, activity);
             else fireEvent.executeStart(runtime, flow, start, activity);
@@ -2720,7 +2726,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         }
 
         @Override
-        public UUID createStartPoint(EngineContext context, EElement start) throws Exception {
+        public UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam) throws Exception {
             try {
                 scope.span().log("createStartPoint " + start);
             } catch (Throwable t) {
@@ -2764,12 +2770,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             0,
                             null,
                             0);
+
+            if (runtimeParam != null)
+                runtime.getParameters().putAll(runtimeParam);
+
             fireEvent.createRuntime(getCase(), start, runtime);
             //          synchronized (nodeCache) {
             storage.saveFlowNode(runtime);
             //              nodeCache.put(runtime.getId(), runtime);
             //          }
-            context.setPRuntime(runtime);
+            ((EngineContext)context).setPRuntime(runtime);
             UUID runtimeId = runtime.getId();
 
             // create flow node
@@ -2797,13 +2807,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             0);
             flow.setScheduledNow();
             fireEvent.createStartNode(context.getARuntime(), flow, context.getPCase(), start);
-            context = new EngineContext(context, flow);
+            context = new EngineContext((EngineContext)context, flow);
             doNodeLifecycle(context, flow);
             return flow.getId();
         }
 
         @Override
-        public void saveFlowNode(EngineContext context, PNode flow, AActivity<?> activity)
+        public void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
                 throws IOException, NotFoundException {
             try {
                 scope.span().log("saveFlowNode " + flow);

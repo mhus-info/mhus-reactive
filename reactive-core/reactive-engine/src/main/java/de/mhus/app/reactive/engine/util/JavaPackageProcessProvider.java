@@ -306,12 +306,12 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
         }
 
         @Override
-        public List<EElement> getStartPoints() {
+        public List<EElement> getStartPoints(boolean activeOnly) {
             LinkedList<EElement> out = new LinkedList<>();
             for (EElement element : poolElements.values()) {
                 Class<? extends AElement<?>> clazz = ((ElementContainer) element).getElementClass();
                 if (element.is(AStartPoint.class)
-                        && !InactiveStartPoint.class.isAssignableFrom(clazz)) out.add(element);
+                        && (!activeOnly || !InactiveStartPoint.class.isAssignableFrom(clazz))) out.add(element);
             }
             return out;
         }
