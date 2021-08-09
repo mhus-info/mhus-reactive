@@ -29,11 +29,8 @@ import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.util.ActivityUtil;
 import de.mhus.app.reactive.util.activity.RGateway;
 
-/**
- * Execute all Output(s) parallel.
- *
- * @author mikehummel
- * @param <P>
+/*man bpmn
+ * Execute all Output(s) in parallel.
  */
 public class RParallelGateway<P extends RPool<?>> extends RGateway<P>
         implements AParallelGateway<P> {

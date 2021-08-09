@@ -42,12 +42,9 @@ import de.mhus.lib.errors.UsageException;
 import de.mhus.lib.form.IFormInformation;
 import de.mhus.lib.form.ModelUtil;
 
-/**
+/*man bpmn
  * Implementation of a pool. The pool will serialize the variables defined with PropertyDescription
  * to / from database.
- *
- * @author mikehummel
- * @param <P>
  */
 public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>, ContextRecipient {
 

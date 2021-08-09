@@ -33,11 +33,8 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.form.ActionHandler;
 import de.mhus.lib.form.FormControl;
 
-/**
+/*man bpmn
  * User task. Handles Form activities.
- *
- * @author mikehummel
- * @param <P>
  */
 public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
         implements AUserTask<P> {

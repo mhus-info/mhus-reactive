@@ -22,11 +22,8 @@ import de.mhus.app.reactive.model.annotations.ActorAssign;
 import de.mhus.app.reactive.model.engine.ContextRecipient;
 import de.mhus.app.reactive.model.engine.ProcessContext;
 
-/**
+/*man bpmn
  * A swim lane get the actor from assigned actor annotation or the default actor from the pool.
- *
- * @author mikehummel
- * @param <P>
  */
 public class RSwimlane<P extends APool<?>> implements ASwimlane<P>, ContextRecipient {
 

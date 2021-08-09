@@ -22,7 +22,10 @@ import de.mhus.app.reactive.model.engine.InternalEngine;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.util.activity.RActivity;
-
+/*man bpmn
+ * Use this task to end your task sequence with an error. If the sequence is
+ * started as sub sequence it will cause an error at the calling task.
+ */
 /**
  * The end will trigger an error on a parent process but will not terminate the current case.
  *

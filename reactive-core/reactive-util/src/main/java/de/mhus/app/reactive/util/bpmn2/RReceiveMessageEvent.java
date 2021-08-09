@@ -20,11 +20,8 @@ import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
 import de.mhus.app.reactive.model.util.ActivityUtil;
 import de.mhus.app.reactive.util.activity.REvent;
 
-/**
+/*man bpmn
  * Wait until a message is received.
- *
- * @author mikehummel
- * @param <P>
  */
 public abstract class RReceiveMessageEvent<P extends RPool<?>> extends REvent<P> {
 

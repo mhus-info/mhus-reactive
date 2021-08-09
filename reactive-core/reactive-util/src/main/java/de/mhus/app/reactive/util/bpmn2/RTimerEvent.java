@@ -18,11 +18,8 @@ package de.mhus.app.reactive.util.bpmn2;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.util.activity.REvent;
 
-/**
+/*man bpmn
  * Timer based event. Set the timer definition as ActivityDescription.event() value.
- *
- * @author mikehummel
- * @param <P>
  */
 public abstract class RTimerEvent<P extends RPool<?>> extends REvent<P> {
 

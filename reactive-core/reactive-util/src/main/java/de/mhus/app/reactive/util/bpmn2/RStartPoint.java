@@ -21,11 +21,9 @@ import de.mhus.app.reactive.model.engine.EElement;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.util.activity.RActivity;
 
-/**
- * A start point.
- *
- * @author mikehummel
- * @param <P>
+/*man bpmn
+ * A start point. By default a start point will executed if the case starts.
+ * Combine it with InactiveStartPoint to avoid automatic start.
  */
 public class RStartPoint<P extends RPool<?>> extends RActivity<P> implements AStartPoint<P> {
 

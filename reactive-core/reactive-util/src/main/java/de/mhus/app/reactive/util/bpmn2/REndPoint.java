@@ -18,7 +18,10 @@ package de.mhus.app.reactive.util.bpmn2;
 import de.mhus.app.reactive.model.activity.AEndPoint;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.util.activity.RActivity;
-
+/*man bpmn
+ * Use this Task to end the sequence of tasks. It will close and not start
+ * a new tasks.
+ */
 /**
  * Implementation of the default end point.
  *

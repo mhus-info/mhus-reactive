@@ -21,11 +21,8 @@ import de.mhus.app.reactive.util.activity.RActivity;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
 
-/**
- * End point and send in the same time a message to the system.
- *
- * @author mikehummel
- * @param <P>
+/*man bpmn
+ * End point that sends a message to the system.
  */
 public abstract class RMessageEnd<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 

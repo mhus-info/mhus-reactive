@@ -18,11 +18,8 @@ package de.mhus.app.reactive.util.bpmn2;
 import de.mhus.app.reactive.model.activity.AEndPoint;
 import de.mhus.app.reactive.util.activity.RActivity;
 
-/**
- * This will end the case.
- *
- * @author mikehummel
- * @param <P>
+/*man bpmn
+ * This will end the hole case without executing any more tasks.
  */
 public abstract class RTerminateEnd<P extends RPool<?>> extends RActivity<P>
         implements AEndPoint<P> {

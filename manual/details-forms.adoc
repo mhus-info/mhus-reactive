@@ -1,0 +1,263 @@
+== Forms
+
+Forms are used to interact with users. For example manual tasks will be
+presented as forms. The form itself is a definition of fields and will be
+send with the values as key-value parameters to the user front end.
+
+The front end can execute actions on the user task. Actions can have an action 
+name. If the action "submit:..." is given then the task will be submitted.
+
+Forms will be designed using meta classes to define the form. The base class
+is DefRoot. It contains the form definition. You can add different form fields
+and layouts by adding new meta classes.
+
+----
+new DefRoot(
+    new DefAttribute("showInformation", true),
+    new FmText(M.n(_S1Pool._TEXT1), "Text1", "", new FaReadOnly()),
+    new FmText(M.n(_S1Pool._TEXT2), "Text2", ""),
+    new FmText(M.n(_S1UserForm01._TEXT3), "Text3", ""),
+    new FmCombobox("option", "Option", "Sample Option with options"),
+    new FmAction("submit", "submit:action=submit", "Submit", "Send"));
+----
+
+in the first line the DefRoot object will be created. It contains an attribute
+that will instruct the UI to show the information panel on top. The information 
+panel will show the help text for the currently selected input component.
+
+In lines 3-5 text inputs will be added.  Then in line 6 a combo box and in the
+last line the submit action.
+
+NOTE: If you not add a submit action it will not be possible to submit the ƒorm.
+
+The notation ``M.n()`` are used to reference parameter names. It would also be 
+possible to use String like "text1" to reference a parameter "text1" in the 
+class. But this could cause runtime exceptions if the parameter name is changed.
+Therefore a maven plugin generates meta classes with referenceable elements. A
+change will cause a compiler error and so protect from runtime errors.
+
+More complex example:
+
+----
+new DefRoot(
+    new FaShowInformationPanel(),
+    new FmLayoutWizard(
+            "wizard",
+            "",
+            "",
+            new FaFullWidth(),
+            new FmLayout3x33(
+                    "t1",
+                    "Case",
+                    "",
+                    new FmText(M.n(_S1Pool._TEXT1), "Text1", "", new FaReadOnly()),
+                    new FmVoid(),
+                    new FmText(M.n(_S1Pool._TEXT2), "Text2", "")),
+            new FmLayout3x33(
+                    "t3",
+                    "Node",
+                    "",
+                    new FmText(
+                            M.n(_S1UserForm02._TEXT3), "Text3", "", new FaColumns(3)),
+                    new FmCombobox("option", "Option", "Sample Option with options"),
+                    new FmVoid(new FaColumns(2)),
+                    new FmAction("submit", "submit:action=submit", "Submit", "Send"),
+                    new FmVoid(),
+                    new FmAction(
+                            "actionrandom",
+                            "action:random",
+                            "Random",
+                            "Random values for text3")),
+            new FmLayout3x33(
+                    "t2",
+                    "Address",
+                    "Embedded address",
+                    Address.createForm(_S1UserForm02._OWNER)),
+            new FmLayout100(
+                    "t4",
+                    "Widgets",
+                    "Test UI Widgets",
+                    new FmText("xtext", "Text", "Simple Text Widget"),
+                    new FmPassword("xpass", "Password", "Password Text Widget"),
+                    new FmCombobox(
+                            "xcombo",
+                            "Combobox",
+                            "Combobox with items",
+                            new FaItemDefinition("salutationdef")),
+                    new FmLabel(
+                            "xlabel",
+                            "Label",
+                            "Label widget",
+                            new FaDefaultValue("Static Label Text")),
+                    new FmLabel(
+                            "xlabelhtml",
+                            "Html Label",
+                            "Label with html widget",
+                            new FaDefaultValue("Static <b>bold Label</b> Text"),
+                            new FaHtml()),
+                    new FmNumber(
+                            "xint", TYPES.INTEGER, "Integer", "Integer number value"),
+                    new FmNumber(
+                            "xdouble", TYPES.DOUBLE, "Double", "Double number value"),
+                    new FmNumber("xfloat", TYPES.FLOAT, "Float", "Float number value"),
+                    new FmNumber("xlong", TYPES.LONG, "Long", "Long number value"),
+                    new FmCheckbox("xcheckbox", "Checkbox", "Checkbox boolean value"),
+                    new FmDate("xdate", FORMATS.DATE, "Date", "Date value"),
+                    new FmDate(
+                            "xdatetime",
+                            FORMATS.DATETIME,
+                            "Date Time",
+                            "Date and time values"),
+                    new FmDate(
+                            "xdatetimesec",
+                            FORMATS.DATETIMESECONDS,
+                            "Date Time Seconds",
+                            "Date and time with seconds"),
+                    new FmDate("xtime", FORMATS.TIME, "Time", "Time value"),
+                    new FmDate(
+                            "xtimesec",
+                            FORMATS.TIMESECONDS,
+                            "Time Seconds",
+                            "Date incl. seconds value"),
+                    new FmDate(
+                            "xtimecustom",
+                            FORMATS.CUSTOM,
+                            "Custom Date",
+                            "Date in format dd.MM.yyyy HH:mm",
+                            new FaCustomDateFormat("dd.MM.yyyy HH:mm")),
+                    new FmLink(
+                            "xlink",
+                            "Label",
+                            "Link",
+                            "Text as link, static link to google",
+                            new FaDefaultValue("http://google.com")),
+                    new FmOptions(
+                            "xoptions",
+                            "Options",
+                            "Options",
+                            new FaItemDefinition("salutationdef")),
+                    new FmRichText(
+                            "xrich",
+                            "Rich Text",
+                            "Rich text widget",
+                            new FaFullWidth()),
+                    new FmTextArea(
+                            "xtextarea",
+                            "Text Area",
+                            "Text Area widget",
+                            new FaFullWidth())),
+            new FmLayout100(
+                    "t5",
+                    "Control",
+                    "Test Form Control",
+                    new FmText("ctext1", "Text1", "Sync with Text2"),
+                    new FmText("ctext2", "Text2", "Sync with Text1"),
+                    new FmCombobox(
+                            "cgender",
+                            "Select Gender",
+                            "Change visibility be selecting items",
+                            new FaItemDefinition("salutationdef")),
+                    new FmLayout100(
+                            "cmale",
+                            "Male",
+                            "",
+                            new FaDisabled(),
+                            new FmCheckbox("cmalesuit", "Suit", "Wear a suit")),
+                    new FmLayout100(
+                            "cfemale",
+                            "Female",
+                            "",
+                            new FaDisabled(),
+                            new FmCheckbox("cfemaledress", "Dress", "Wear a dress")),
+                    new FmLayout2x50(
+                            "cnow",
+                            "Control Action",
+                            "",
+                            new FmAction(
+                                    "cnowaction",
+                                    "control:now",
+                                    "Now",
+                                    "Send control:now to the controller, the controller will set the time into the right field"),
+                            new FmText("cnowtext", "Now", "", new FaReadOnly())))));
+----
+
+=== Layout FmLayout100
+
+This is the simplest layout with one column 100%.
+
+=== Layout FmLayout2x50
+
+This is a layout with two columns 50% - 50%.
+
+=== Layout FmLayout3x33
+
+This is a layout with three columns 33% - 33% - 33%.
+
+=== Label FmLabel
+
+This shows only a label.
+
+=== Label FmLink
+
+The link label shows a label with link behind.
+
+=== Space FmVoid
+
+This element will create space between elements. It's an empty element.
+
+=== Input FmText
+
+This is a simple text input field.
+
+=== Input FmNumber
+
+This shows a number input. You can define kind and range of the number.
+
+=== Input FmDate
+
+This shows a calendar input field.
+
+=== Input FmCheckbox
+
+This shows a checkbox input field.
+
+=== Input FmCombobox
+
+This shows a dropdown combobox field.
+
+=== Input FmTextArea
+
+This shows a simple text input field with multiple lines.
+
+=== Input FmRichText
+
+This shows a complex text field with multiple lines. The text will be stored
+as html rich text.
+
+=== Input FmPassword
+
+Shows a text field where the input is hidden.
+
+=== Action FmAction
+
+The action will show a button and executes a action in the remote flow node. It
+can change the parameter set of the form.
+
+=== Action Submit
+
+This is a action with the action ``submit:...``
+
+----
+new FmAction("submit", "submit:action=submit", "Submit", "Send"),
+----
+
+=== Local Control Actions
+
+A action with the action ``control:...`` will execute a local action. This means
+the request will not be send to the remote reactive back end. This is only possible
+if the UI has a java back end. The goal is that it will be faster. All other actions
+will be transfered into the reactive engine and executed there. To allow
+local actions you have to implement a form control class which will execute the
+actions. Be aware that the available dependencies will not be the same on a local 
+UI back end.
+

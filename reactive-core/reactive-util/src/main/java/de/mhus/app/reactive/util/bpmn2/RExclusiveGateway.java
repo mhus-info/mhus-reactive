@@ -23,14 +23,11 @@ import de.mhus.app.reactive.model.util.NoCondition;
 import de.mhus.app.reactive.util.activity.RGateway;
 import de.mhus.lib.errors.MException;
 
-/**
+/*man bpmn
  * Decide between outputs using the Output Condition Define one Output without Condition to set it
  * as default Output Define ACondition(s) to the Output(s) for the condition. RExclusiveGateway will
  * follow the Output with the highest result. Or the first with the same result For binary decisions
  * use the constants TRUE and FALSE
- *
- * @author mikehummel
- * @param <P>
  */
 public class RExclusiveGateway<P extends RPool<?>> extends RGateway<P>
         implements AExclusiveGateway<P> {

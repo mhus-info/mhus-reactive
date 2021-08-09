@@ -25,13 +25,10 @@ import de.mhus.app.reactive.model.util.NoCondition;
 import de.mhus.app.reactive.util.activity.RGateway;
 import de.mhus.lib.errors.MException;
 
-/**
+/*man bpmn
  * Collect all output where the condition is zero or higher. If no condition is found the default
  * output will be executed. If no default output was found an exception is thrown. This gateway can
  * execute one ore more outputs in parallel.
- *
- * @author mikehummel
- * @param <P>
  */
 public class RInclusiveGateway<P extends RPool<?>> extends RGateway<P>
         implements AInclusiveGateway<P> {

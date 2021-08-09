@@ -1,0 +1,111 @@
+= mhus reactive documentation
+
+Mhus reactive is a full featured process engine written in java. 
+
+== Basic idea
+
+After working with traditional business process engines we havve the following results
+
+* Processes must be designed by special skilled personal. It's NOT possible that the most business man create processes. BPM is not excel.
+* Refactoring of huge processes (more then 50 tasks) is not possible in UI editors in adequate time - and as well it is pain.
+
+It makes sense to develop processes direct in a compiling programming language
+
+* You have the full power of the programming language.
+* Compiling will show a lot of errors while compiling and not later in runtime.
+* Refactoring can be done by copy and paste or IDE refactoring functions.
+
+
+== Main features
+
+* Java based processes. processes will be developed in java not in a ui design editor. This makes it more comfortable to enhance an existing process by editing the source code. The full power of java is available for process tasks.
+* Scalable. The engine is able to scale over multiple instances.
+* Full BPMNv2 compatibility.
+* Additional features to solve real life problems beyond the BPMNv2 specification 
+* Fully open source. Full features, there are no hidden features in a commercial version.
+* Eclipse EMF support to export visible BPMN Models
+* Maven support to validate processes
+* Cloud ready using apache karaf and docker containers
+* Comfortable operations using apache karaf console and commands
+* Robust handling of problems
+
+== Compare mhus reactive to apache kafka
+
+Kafka is a streaming pipe. It is designed to execute small piped processes in a short amount of time. In opposite reactive is designed to execute and develop very complex processes but not in real time.
+
+Mhus reactive brings a user interface to execute manual tasks by default.
+
+== Wording
+
+* Process: Definition of a process
+* Pool: A process is separated in multiple pools. Every pool is an executable unit.
+* Node: A pool is separated in node definitions
+* Task: A task is a node that will do something.
+* Start point: Is a node. It is the start point if a pool is started and creates a runtime.
+* End point: Is a node that ends a runtime.
+* User Task: Is a node that can be assigned to an actor
+* Actor: A user or user group
+* Swim lane: Nodes can be assigned to swim lanes and swim lanes can be assigned to actors. Its a way to group and assign nodes.
+* Task Sequence: a sequence of tasks that will be executed (could also include parallel task execution), it should start with a start point and end with an end point. Between are other task and gateways.
+* Gateway: This is a definition from BPMN2 and define elements which will direct the task sequence. e.g. conditional. 
+* Runtime: A data object to handle sequence of tasks (internal coordination)
+* Case: If the process is the definition, a case is the instance of a process.
+* Flow node: The instance of a Task
+
+== Reactive
+
+By design reactive is event driven and reacts to events from outside and inside.
+Outside events are signals, messages, form actions, case actions and even the
+start of a new case. Inside events are outstanding tasks or scheduled tasks.
+
+In detail
+
+* signals: Will wake up all tasks waiting for the event
+* message: Will wake up a single task waiting for the event
+* externalEvent: Will wake up a waiting task from a specified case
+* form action: Forms can execute actions in a user task. It can modify case parameters.
+* submit action: Is a special form action that will finalize the flow node.
+* case action: Actions that can be executed directly at the case object. It can execute side functionality to the case.
+* Flow nodes: Flow nodes are ordered by next scheduled time and will be executed in this order if overdue.
+
+== Architecture details
+
+reactive follows the design of a minimal engine. The engine is only responsible for a smooth
+execution of all events. It takes events locks the case and then gives the processing
+of the event to the implemented code. Coordination of closing and starting new FlowNodes
+is not part of the engine. It has to be done by the process definition. This
+gives maximal freedom to the process definition. A basic set of Process and Task classes
+are defined to implement the BPMN2 standard.
+
+Actor access is also implemented in a separate UI implementation covering the engine.
+
+Values will be stored in key value blobs for case and flow nodes. Serialization and deserialization
+of the values have to be done outside of the engine. This will also be done by the default
+implementation classes.
+
+Parallel implementations of new behavior is possible and wanted.
+
+Engine and utilities are implemented in pure java. A working application and utilities
+to run the engine are implemented in apache karaf osgi engine. But it's also
+possible to embed the engine direct in an application.
+
+Persistence is implemented in an interface which can be implemented for new
+data sources.
+
+== Quick start
+
+
+include::path[start-docker.adoc]
+
+== tbd
+
+- Feature list
+- Quick start
+- Installation
+-- Local installation
+-- Cloud support
+- Administrator documentation
+- Architecture description
+- Process developer documentation
+- User documentation (UI)
+- Rest Developer documentation

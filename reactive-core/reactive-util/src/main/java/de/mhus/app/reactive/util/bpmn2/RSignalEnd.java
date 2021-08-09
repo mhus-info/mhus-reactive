@@ -21,11 +21,8 @@ import de.mhus.app.reactive.util.activity.RActivity;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.util.MUri;
 
-/**
- * End point and send a signal to the system.
- *
- * @author mikehummel
- * @param <P>
+/*man bpmn
+ * End point that sends a signal to the system.
  */
 public abstract class RSignalEnd<P extends RPool<?>> extends RActivity<P> implements AEndPoint<P> {
 
