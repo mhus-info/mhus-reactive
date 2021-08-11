@@ -105,10 +105,9 @@ public class UiPool extends MLog implements IPool, Externalizable {
         pd = (PoolDescription) in.readObject();
         properties = (MProperties) in.readObject();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, pUri);
     }
-
 }

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018 Mike Hummel (mh@mhus.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.mhus.app.reactive.examples.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +46,6 @@ import de.mhus.lib.form.ModelUtil;
 
 public class S1CaseActionTest {
 
-    
     private EngineConfiguration config;
     private Engine engine;
     private Console console;
@@ -50,11 +64,11 @@ public class S1CaseActionTest {
 
         {
             MProperties actions = engine.onUserCaseAction(caseId, "actions", null);
-            
+
             assertTrue(actions.containsKey("action"));
-            
+
             MProperties res = engine.onUserCaseAction(caseId, "action", null);
-            
+
             assertEquals("b", res.getString("a"));
         }
         {
@@ -69,7 +83,7 @@ public class S1CaseActionTest {
             System.out.println(form);
         }
         {
-            MProperties values = new MProperties("action","test");
+            MProperties values = new MProperties("action", "test");
             MProperties form = engine.onUserCaseAction(caseId, EngineConst.ACTION_FORM, values);
             System.out.println(form);
             assertNotNull(form);
@@ -85,10 +99,10 @@ public class S1CaseActionTest {
                 }
                 cnt++;
             }
-         //   elements = model.getArray("element");
+            //   elements = model.getArray("element");
         }
     }
-    
+
     private void createEngine() throws MException, IOException {
 
         console = Console.get();

@@ -100,8 +100,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                 log().e(e);
             } finally {
                 try {
-                    if (con != null)
-                        con.close();
+                    if (con != null) con.close();
                 } catch (Throwable t) {
                     log().d(t);
                 }
@@ -181,10 +180,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caze,t);
+                log().d(caze, t);
             }
         }
     }
@@ -332,10 +330,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caze,t);
+                log().d(caze, t);
             }
         }
     }
@@ -363,10 +360,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id,t);
+                log().d(id, t);
             }
         }
         if (caze == null) throw new NotFoundException("case", id);
@@ -375,15 +371,16 @@ public class SqlDbStorage extends MLog implements StorageProvider {
 
     private synchronized MActivator getActivator() {
         if (activator == null) {
-            activator = new DefaultActivator(getClass().getClassLoader()) {
-                @Override
-                public Object mapName(String name) {
-                    if (name == null) return name;
-                    if (name.startsWith("de.mhus.cherry.reactive."))
-                        name = "de.mhus.app.reactive." + name.substring(24);
-                    return super.mapName(name);
-                }
-            };
+            activator =
+                    new DefaultActivator(getClass().getClassLoader()) {
+                        @Override
+                        public Object mapName(String name) {
+                            if (name == null) return name;
+                            if (name.startsWith("de.mhus.cherry.reactive."))
+                                name = "de.mhus.app.reactive." + name.substring(24);
+                            return super.mapName(name);
+                        }
+                    };
         }
         return activator;
     }
@@ -410,10 +407,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id,t);
+                log().d(id, t);
             }
         }
     }
@@ -435,10 +431,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id,t);
+                log().d(id, t);
             }
         }
     }
@@ -531,10 +526,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(flow,t);
+                log().d(flow, t);
             }
         }
     }
@@ -712,10 +706,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(flow,t);
+                log().d(flow, t);
             }
         }
     }
@@ -747,10 +740,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id,t);
+                log().d(id, t);
             }
         }
         if (node == null) throw new NotFoundException("node", id);
@@ -780,8 +772,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultCase(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -831,8 +822,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -874,8 +864,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -915,8 +904,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -978,8 +966,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1148,8 +1135,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultNode(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1271,8 +1257,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             return new SqlResultCase(con, res);
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1325,8 +1310,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1352,10 +1336,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(key,t);
+                log().d(key, t);
             }
         }
     }
@@ -1389,10 +1372,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(key,t);
+                log().d(key, t);
             }
         }
     }
@@ -1414,10 +1396,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(key,t);
+                log().d(key, t);
             }
         }
     }
@@ -1635,8 +1616,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1659,8 +1639,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             }
         } catch (Exception e) {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
                 log().d(t);
             }
@@ -1692,10 +1671,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId,t);
+                log().d(caseId, t);
             }
         }
     }
@@ -1724,10 +1702,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId,t);
+                log().d(nodeId, t);
             }
         }
     }
@@ -1750,10 +1727,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId,t);
+                log().d(nodeId, t);
             }
         }
     }
@@ -1776,10 +1752,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId,t);
+                log().d(nodeId, t);
             }
         }
     }
@@ -1803,10 +1778,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId,t);
+                log().d(caseId, t);
             }
         }
     }
@@ -1829,10 +1803,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             throw new IOException(e);
         } finally {
             try {
-                if (con != null)
-                    con.close();
+                if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId,t);
+                log().d(caseId, t);
             }
         }
     }

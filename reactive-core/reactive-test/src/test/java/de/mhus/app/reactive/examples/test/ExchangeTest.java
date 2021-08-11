@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018 Mike Hummel (mh@mhus.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.mhus.app.reactive.examples.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,7 +45,6 @@ import de.mhus.lib.errors.MException;
 
 public class ExchangeTest {
 
-
     private EngineConfiguration config;
     private Engine engine;
     private Console console;
@@ -52,60 +66,57 @@ public class ExchangeTest {
             PCase caze = engine.getCaseWithoutLock(caseId);
             EngineContext context = engine.createContext(caze);
             S1Pool pool = (S1Pool) context.getPool();
-    
+
             assertNotNull(pool);
 
             System.out.println("Date: " + pool.getTestDate());
             System.out.println("Enum: " + pool.getTestEnum());
             System.out.println("Int : " + pool.getTestInt());
             System.out.println("Integer: " + pool.getTestInteger());
-    
+
             assertEquals(MDate.toDate("1.2.1997", null), pool.getTestDate());
             assertEquals(S1Pool.TEST_ENUM.ON, pool.getTestEnum());
             assertEquals(5, pool.getTestInt());
             assertEquals(Integer.valueOf(17), pool.getTestInteger());
             assertEquals("554466", caze.getCustomId());
-            
         }
-        
+
         // export
         System.out.println(">>> Export");
         File dir = new File("target/test/exchange");
         MFile.deleteDir(dir);
         dir.mkdirs();
         ExchangeUtil.exportData(engine, dir);
-        
+
         // reset engine
         engine = null;
         config = null;
         createEngine();
-        
+
         // import
         System.out.println(">>> Import");
         ExchangeUtil.importData(engine, dir);
-        
+
         // test again
         System.out.println(">>> Test");
         {
             PCase caze = engine.getCaseWithoutLock(caseId);
             EngineContext context = engine.createContext(caze);
             S1Pool pool = (S1Pool) context.getPool();
-    
+
             assertNotNull(pool);
 
             System.out.println("Date: " + pool.getTestDate());
             System.out.println("Enum: " + pool.getTestEnum());
             System.out.println("Int : " + pool.getTestInt());
             System.out.println("Integer: " + pool.getTestInteger());
-    
+
             assertEquals(MDate.toDate("1.2.1997", null), pool.getTestDate());
             assertEquals(S1Pool.TEST_ENUM.ON, pool.getTestEnum());
             assertEquals(5, pool.getTestInt());
             assertEquals(Integer.valueOf(17), pool.getTestInteger());
             assertEquals("554466", caze.getCustomId());
-
         }
-
     }
 
     private void createEngine() throws MException, IOException {
@@ -140,5 +151,4 @@ public class ExchangeTest {
 
         engine = new Engine(config);
     }
-    
 }

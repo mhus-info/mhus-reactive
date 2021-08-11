@@ -64,14 +64,17 @@ public class VNodeList extends MhuTable implements Refreshable {
     private int size = 100;
     private WidgetActivityDelegate activity;
 
-    public VNodeList() {
-    }
-    
+    public VNodeList() {}
+
     public VNodeList(WidgetActivityDelegate activity) {
         this.activity = activity;
     }
 
-    public void configure(IEngine engine, WidgetActivityDelegate activity, SearchCriterias criterias, String[] properties) {
+    public void configure(
+            IEngine engine,
+            WidgetActivityDelegate activity,
+            SearchCriterias criterias,
+            String[] properties) {
         this.engine = engine;
         this.criterias = criterias;
         this.properties = properties;
@@ -106,7 +109,7 @@ public class VNodeList extends MhuTable implements Refreshable {
                                     && selected.getState() == STATE_NODE.WAITING
                                     && selected.getType() == TYPE_NODE.USER) {
                                 activity.showForm(selected.getId());
-//                                doOpenUserForm(selected);
+                                //                                doOpenUserForm(selected);
                             }
                             //					Notification.show("DoubleClick: " +
                             // ((NodeItem)event.getItemId()).getName());
@@ -176,15 +179,15 @@ public class VNodeList extends MhuTable implements Refreshable {
             doReload();
         } else if (action == ACTION_EXECUTE) {
             activity.showForm(target.getId());
-            //doOpenUserForm(target);
+            // doOpenUserForm(target);
         } else if (action == ACTION_REFRESH) {
             doReload();
         } else if (action == ACTION_RUNTIME) {
             activity.showNodeRuntime(target.getId());
-//            doRuntime(target);
+            //            doRuntime(target);
         } else if (action == ACTION_DETAILS) {
             activity.showNodeDetails(target.getId());
-//            doDetails(target);
+            //            doDetails(target);
         } else if (action == ACTION_DUE) {
             activity.doDue(target.getId());
         }
@@ -200,28 +203,23 @@ public class VNodeList extends MhuTable implements Refreshable {
                 }
                 list.add(ACTION_EXECUTE);
             }
-        if (activity.isShowNodeDetails(node.getId()))
-            list.add(ACTION_DETAILS);
-        if (activity.isShowNodeRuntime(node.getId()))
-            list.add(ACTION_RUNTIME);
-        if (activity.isShowNodeRefresh(node.getId()))
-            list.add(ACTION_REFRESH);
-        if (activity.isShowNodeDue(node.getId()))
-            list.add(ACTION_DUE);
+        if (activity.isShowNodeDetails(node.getId())) list.add(ACTION_DETAILS);
+        if (activity.isShowNodeRuntime(node.getId())) list.add(ACTION_RUNTIME);
+        if (activity.isShowNodeRefresh(node.getId())) list.add(ACTION_REFRESH);
+        if (activity.isShowNodeDue(node.getId())) list.add(ACTION_DUE);
     }
 
-//    protected void doDetails(NodeItem target) {}
-
+    //    protected void doDetails(NodeItem target) {}
 
     public void doReload() {
         data.removeAllItems();
         doRefresh(0);
     }
 
-//    protected void doOpenUserForm(NodeItem selected) {}
-//
-//    protected void doRuntime(NodeItem selected) {}
-//
+    //    protected void doOpenUserForm(NodeItem selected) {}
+    //
+    //    protected void doRuntime(NodeItem selected) {}
+    //
     public SearchCriterias getSearchCriterias() {
         return criterias;
     }

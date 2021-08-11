@@ -50,12 +50,11 @@ public @interface PropertyDescription {
      * @return true
      */
     boolean initial() default false;
-    
+
     /**
      * Set true if the parameter must be set at start.
-     * 
+     *
      * @return true
      */
     boolean mandatory() default false;
-    
 }

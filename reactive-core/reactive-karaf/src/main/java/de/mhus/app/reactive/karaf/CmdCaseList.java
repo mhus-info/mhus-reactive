@@ -48,7 +48,7 @@ public class CmdCaseList extends AbstractCmd {
 
     @Option(name = "-1", aliases = "--one", description = "Print in one table", required = false)
     private boolean one;
-    
+
     @Option(name = "-a", aliases = "--all", description = "Print all", required = false)
     private boolean all;
 
@@ -91,8 +91,7 @@ public class CmdCaseList extends AbstractCmd {
                 System.out.println();
             }
         }
-        if (table.size() > 0)
-            table.print(System.out);
+        if (table.size() > 0) table.print(System.out);
 
         return null;
     }

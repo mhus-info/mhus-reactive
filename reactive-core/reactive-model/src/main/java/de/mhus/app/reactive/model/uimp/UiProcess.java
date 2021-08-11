@@ -121,10 +121,9 @@ public class UiProcess implements IProcess, Externalizable {
         locale = (Locale) in.readObject();
         properties = (MProperties) in.readObject();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, properties);
     }
-
 }

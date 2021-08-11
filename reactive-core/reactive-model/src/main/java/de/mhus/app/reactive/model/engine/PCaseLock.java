@@ -40,11 +40,13 @@ public interface PCaseLock extends CaseLock {
 
     void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t);
 
-    PNode createActivity(ProcessContext<?> context, PNode previous, EElement start) throws Exception;
+    PNode createActivity(ProcessContext<?> context, PNode previous, EElement start)
+            throws Exception;
 
     void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception;
 
-    UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam) throws Exception;
+    UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam)
+            throws Exception;
 
     void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
             throws IOException, NotFoundException;

@@ -42,7 +42,11 @@ public class S1Pool extends RPool<S1Pool> {
         OFF
     };
 
-    @PropertyDescription(displayName = "Switch Text", writable = false, initial = true, mandatory = true)
+    @PropertyDescription(
+            displayName = "Switch Text",
+            writable = false,
+            initial = true,
+            mandatory = true)
     private String text1 = "Moin";
 
     @PropertyDescription(initial = true)
@@ -119,12 +123,12 @@ public class S1Pool extends RPool<S1Pool> {
 
     @Action("action")
     public MProperties doCaseAction(ProcessContext<S1Pool> context, MProperties values) {
-        return new MProperties("a","b");
+        return new MProperties("a", "b");
     }
 
     @Action("actions")
     public MProperties doCaseActions(MProperties values) {
-        return new MProperties("action","Simple Action");
+        return new MProperties("action", "Simple Action");
     }
 
     @Action("restart")
@@ -134,22 +138,22 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error",e.toString());
+            return new MProperties("error", e.toString());
         }
         return new MProperties();
     }
-    
+
     @Action("cancel")
     public MProperties doCancelActions(MProperties values) {
         try {
             EngineUtil.cancelAll(context);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error",e.toString());
+            return new MProperties("error", e.toString());
         }
         return new MProperties();
     }
-    
+
     @Action("start2")
     public MProperties doStart2Actions(MProperties values) {
         try {
@@ -157,26 +161,25 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.start(context, _S1Start2.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error",e.toString());
+            return new MProperties("error", e.toString());
         }
         return new MProperties();
     }
-    
+
     @Action("start1")
     public MProperties doStart1Actions(MProperties values) {
         try {
             EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error",e.toString());
+            return new MProperties("error", e.toString());
         }
         return new MProperties();
     }
-    
-    @Action(value="test",title = "Test")
+
+    @Action(value = "test", title = "Test")
     @ActionForm(S1PoolTestForm.class)
     public MProperties doTest(MProperties values) {
-        return new MProperties("action","Simple Action", "text", values.getString("name", "?"));
+        return new MProperties("action", "Simple Action", "text", values.getString("name", "?"));
     }
-    
 }

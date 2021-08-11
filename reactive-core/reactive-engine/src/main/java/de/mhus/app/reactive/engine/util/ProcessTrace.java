@@ -110,7 +110,7 @@ public class ProcessTrace {
         if (cur.is(ATask.class)) out.print('[');
         if (cur.is(AGateway.class)) out.print('<');
         out.print(cur.getCanonicalName());
-        
+
         if (cur.is(APoint.class)) out.print(')');
         if (cur.is(ATask.class)) out.print(']');
         if (cur.is(AGateway.class)) out.print('>');

@@ -128,7 +128,7 @@ public class UiCase extends MLog implements ICase, Externalizable {
         info = (PCaseInfo) in.readObject();
         properties = (Map<String, String>) in.readObject();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, info);

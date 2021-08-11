@@ -42,5 +42,4 @@ public interface APool<P extends APool<?>> extends AElement<P>, IndexValuesProvi
     void afterExecute(AActivity<?> activity);
 
     MProperties onUserCaseAction(String action, IProperties values);
-
 }

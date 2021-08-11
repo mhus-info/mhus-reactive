@@ -64,14 +64,17 @@ public class VCaseList extends MhuTable implements Refreshable {
     private int size = 100;
     private WidgetActivityDelegate activity;
 
-    public VCaseList() {
-    }
+    public VCaseList() {}
 
     public VCaseList(WidgetActivityDelegate activity) {
         this.activity = activity;
     }
 
-    public void configure(IEngine engine, WidgetActivityDelegate activity, SearchCriterias criterias, String[] properties) {
+    public void configure(
+            IEngine engine,
+            WidgetActivityDelegate activity,
+            SearchCriterias criterias,
+            String[] properties) {
         this.engine = engine;
         this.criterias = criterias;
         this.properties = properties;
@@ -179,14 +182,10 @@ public class VCaseList extends MhuTable implements Refreshable {
     }
 
     protected void showActions(LinkedList<Action> list, CaseItem caze) {
-        if (activity.isShowCaseDetails(caze.getId()))
-            list.add(ACTION_DETAILS);
-        if (activity.isShowCaseActions(caze.getId()))
-            list.add(ACTION_ACTIONS);
-        if (activity.isShowCaseRefresh(caze.getId()))
-            list.add(ACTION_REFRESH);
-        if (activity.isShowCaseRuntime(caze.getId()))
-            list.add(ACTION_RUNTIME);
+        if (activity.isShowCaseDetails(caze.getId())) list.add(ACTION_DETAILS);
+        if (activity.isShowCaseActions(caze.getId())) list.add(ACTION_ACTIONS);
+        if (activity.isShowCaseRefresh(caze.getId())) list.add(ACTION_REFRESH);
+        if (activity.isShowCaseRuntime(caze.getId())) list.add(ACTION_RUNTIME);
         if (activity.isShowCaseArchive(caze.getId()))
             if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
     }

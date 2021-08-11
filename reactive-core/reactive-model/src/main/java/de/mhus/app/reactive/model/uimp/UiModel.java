@@ -95,10 +95,9 @@ public class UiModel implements IModel, Externalizable {
         predecessor = (INodeDescription) in.readObject();
         node = (INodeDescription) in.readObject();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, nodeId);
     }
-
 }

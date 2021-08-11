@@ -137,13 +137,12 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
         try {
             if (EngineConst.ACTION_LIST.equals(action)) {
                 return onUserActionList(values);
-            } else
-            if (EngineConst.ACTION_FORM.equals(action)) {
+            } else if (EngineConst.ACTION_FORM.equals(action)) {
                 action = values.getString("action");
                 return onUserActionForm(action, values);
             }
             if (!isUserActionAllowed(action)) {
-                log().d("action is not allowed",this,action);
+                log().d("action is not allowed", this, action);
                 return null;
             }
             PojoModel model = getPojoModel();
@@ -151,19 +150,16 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
             Object ret = null;
             if (method == null || method.getParameterType() == null) {
                 // nothing
-            } else
-            if (method.getParameterType().length == 2)
+            } else if (method.getParameterType().length == 2)
                 ret = method.doExecute(this, context, values);
-            else
-            if (method.getParameterType().length == 1)
-                ret = method.doExecute(this, values);
+            else if (method.getParameterType().length == 1) ret = method.doExecute(this, values);
             else {
-                log().e("onUserCaseAction",this,action,"wrong number of arguments", method);
+                log().e("onUserCaseAction", this, action, "wrong number of arguments", method);
                 return null;
             }
             return (MProperties) ret;
         } catch (Throwable t) {
-            log().e("onUserCaseAction",this,action,t);
+            log().e("onUserCaseAction", this, action, t);
             return null;
         }
     }
@@ -185,7 +181,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 }
             }
         } catch (Throwable t) {
-            log().e(this,action,values,t);
+            log().e(this, action, values, t);
         }
         return null;
     }
@@ -201,7 +197,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 }
             }
         } catch (Throwable t) {
-            log().e(this,values,t);
+            log().e(this, values, t);
         }
         return ret;
     }
@@ -213,13 +209,13 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
     }
 
     /**
-     * Overwrite to check if a action is allowed for the current user and in the current state of the case.
-     * 
+     * Overwrite to check if a action is allowed for the current user and in the current state of
+     * the case.
+     *
      * @param name
      * @return
      */
     protected boolean isUserActionAllowed(String name) {
         return true;
     }
-
 }

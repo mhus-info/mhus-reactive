@@ -93,7 +93,13 @@ public class CmdInspect extends AbstractCmd {
                         EPool pool = process.getPool(name);
                         System.out.println(parameters[0] + "/" + name);
                         for (EElement start : pool.getStartPoints(false)) {
-                            System.out.println("--- Start: " + start.getCanonicalName() + " " + (start.isInterface(InactiveStartPoint.class) ? "!" : "") );
+                            System.out.println(
+                                    "--- Start: "
+                                            + start.getCanonicalName()
+                                            + " "
+                                            + (start.isInterface(InactiveStartPoint.class)
+                                                    ? "!"
+                                                    : ""));
                         }
                     }
                 }

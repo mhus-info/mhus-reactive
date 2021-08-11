@@ -150,10 +150,9 @@ public class UiNode extends MLog implements INode, Externalizable {
     public long getDue() {
         return info.getDue();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, info);
     }
-
 }

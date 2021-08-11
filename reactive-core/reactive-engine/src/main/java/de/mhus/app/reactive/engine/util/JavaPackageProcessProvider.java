@@ -115,12 +115,9 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
             // iterate all elements
             for (Class<? extends AElement<?>> element : loader.getElements()) {
 
-                if (
-                        processPackage != null 
-                        && !element.getPackageName().startsWith(processPackage +".") 
-                        && !element.getPackageName().equals(processPackage)
-                   )
-                    continue;
+                if (processPackage != null
+                        && !element.getPackageName().startsWith(processPackage + ".")
+                        && !element.getPackageName().equals(processPackage)) continue;
 
                 // find the process description
                 if (!element.isInterface()
@@ -311,7 +308,8 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
             for (EElement element : poolElements.values()) {
                 Class<? extends AElement<?>> clazz = ((ElementContainer) element).getElementClass();
                 if (element.is(AStartPoint.class)
-                        && (!activeOnly || !InactiveStartPoint.class.isAssignableFrom(clazz))) out.add(element);
+                        && (!activeOnly || !InactiveStartPoint.class.isAssignableFrom(clazz)))
+                    out.add(element);
             }
             return out;
         }

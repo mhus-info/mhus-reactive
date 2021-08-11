@@ -116,7 +116,7 @@ public class S1ActivitiesTest {
                     "------------------------------------------------------------------------");
             UUID caseId = engine.start(uri);
             System.out.println(caseId);
-            assertFalse(true,"Should throw an exception");
+            assertFalse(true, "Should throw an exception");
 
         } catch (UsageException e) {
             System.out.println("Correct: " + e);

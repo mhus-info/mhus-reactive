@@ -62,7 +62,8 @@ public interface ReactiveAdmin {
 
     String getProcessInfo(String name);
 
-    String addProcess(String[] fileNames, boolean remember, String processPackage) throws FileNotFoundException;
+    String addProcess(String[] fileNames, boolean remember, String processPackage)
+            throws FileNotFoundException;
 
     ProcessLoader getProcessLoader(String name) throws NotFoundException;
 

@@ -71,5 +71,4 @@ public class UiCaseDescription extends MLog implements ICaseDescription, Externa
     public String toString() {
         return MSystem.toString(this, uri);
     }
-
 }

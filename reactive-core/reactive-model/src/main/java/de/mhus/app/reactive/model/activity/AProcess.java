@@ -27,5 +27,4 @@ public interface AProcess extends AElement<NoPool> {
     String getVersionInformation();
 
     long getBuildTime();
-
 }

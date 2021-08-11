@@ -46,7 +46,7 @@ public class CmdNodeList extends AbstractCmd {
 
     @Option(name = "-1", aliases = "--one", description = "Print in one table", required = false)
     private boolean one;
-    
+
     @Argument(
             index = 0,
             name = "search",
@@ -119,8 +119,7 @@ public class CmdNodeList extends AbstractCmd {
                 System.out.println();
             }
         }
-        if (table.size() > 0)
-            table.print(System.out);
+        if (table.size() > 0) table.print(System.out);
 
         return null;
     }

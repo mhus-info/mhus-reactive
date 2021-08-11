@@ -70,10 +70,9 @@ public class UiNodeDescription extends MLog implements INodeDescription, Externa
         name = (String) in.readObject();
         // process = (IProcess) in.readObject();
     }
-    
+
     @Override
     public String toString() {
         return MSystem.toString(this, uri);
     }
-
 }

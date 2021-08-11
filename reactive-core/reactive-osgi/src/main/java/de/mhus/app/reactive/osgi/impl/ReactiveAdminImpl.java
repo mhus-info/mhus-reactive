@@ -163,7 +163,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     }
 
     @Override
-    public String addProcess(String[] fileNames, boolean remember, String processPackage) throws FileNotFoundException {
+    public String addProcess(String[] fileNames, boolean remember, String processPackage)
+            throws FileNotFoundException {
         StringBuilder names = new StringBuilder();
         File[] files = new File[fileNames.length];
         for (int i = 0; i < fileNames.length; i++) {
@@ -238,7 +239,9 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         String canonicalName = loader.getProcessCanonicalName();
         log().d("add process", info);
         synchronized (availableProcesses) {
-            if (availableProcesses.put(canonicalName, new ProcessInfo(info, canonicalName, processPackage, loader))
+            if (availableProcesses.put(
+                            canonicalName,
+                            new ProcessInfo(info, canonicalName, processPackage, loader))
                     != null) log().w("Process was already present", canonicalName);
         }
         // find process
@@ -309,7 +312,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         }
 
         info.deployedName =
-                ((JavaPackageProcessProvider) config.processProvider).addProcess(info.loader, info.processPackage);
+                ((JavaPackageProcessProvider) config.processProvider)
+                        .addProcess(info.loader, info.processPackage);
         info.time = System.currentTimeMillis();
 
         EProcess process = config.processProvider.getProcess(info.deployedName);
@@ -426,7 +430,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         String canonicalName;
         long time = 0;
 
-        public ProcessInfo(String info, String canonicalName, String processPackage, ProcessLoader loader) {
+        public ProcessInfo(
+                String info, String canonicalName, String processPackage, ProcessLoader loader) {
             this.info = info;
             this.canonicalName = canonicalName;
             this.processPackage = processPackage;
@@ -493,8 +498,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                                     + ":"
                                                     + process.getClass().getSimpleName(),
                                             loader,
-                                            process.getClass().getPackageName()
-                                            );
+                                            process.getClass().getPackageName());
                                 } catch (Throwable t) {
                                     log().e(reference, t);
                                 }
@@ -512,8 +516,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                                     + ":"
                                                     + service.getClass().getSimpleName(),
                                             loader,
-                                            service.getClass().getPackageName()
-                                            );
+                                            service.getClass().getPackageName());
                                 } catch (Throwable t) {
                                     log().e(reference, t);
                                 }
@@ -851,7 +854,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                     if (MString.isIndex(processPackage, ':'))
                         processPackage = MString.beforeLastIndex(processPackage, ':');
                     processPackage = MString.beforeLastIndex(processPackage, '.');
-                    if (files != null) addProcess(name, new DefaultProcessLoader(files), processPackage);
+                    if (files != null)
+                        addProcess(name, new DefaultProcessLoader(files), processPackage);
                 }
             }
 

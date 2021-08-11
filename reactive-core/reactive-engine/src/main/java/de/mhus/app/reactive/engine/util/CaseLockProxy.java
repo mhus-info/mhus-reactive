@@ -177,7 +177,9 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     }
 
     @Override
-    public UUID createStartPoint(ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam) throws Exception {
+    public UUID createStartPoint(
+            ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam)
+            throws Exception {
         try {
             scope.span().log("createStartPoint " + start);
         } catch (Throwable t) {

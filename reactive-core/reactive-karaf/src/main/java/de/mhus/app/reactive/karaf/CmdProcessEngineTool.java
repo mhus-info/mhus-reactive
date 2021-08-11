@@ -100,18 +100,16 @@ public class CmdProcessEngineTool extends AbstractCmd {
         if (cmd.equals("export")) {
             File dir = new File(parameters[0]);
             if (!dir.exists() || !dir.isDirectory())
-                throw new MException("directory not found",dir);
+                throw new MException("directory not found", dir);
             Engine engine = api.getEngine();
             ExchangeUtil.exportData(engine, dir);
-        } else
-        if (cmd.equals("import")) {
+        } else if (cmd.equals("import")) {
             File dir = new File(parameters[0]);
             if (!dir.exists() || !dir.isDirectory())
-                throw new MException("directory not found",dir);
+                throw new MException("directory not found", dir);
             Engine engine = api.getEngine();
             ExchangeUtil.importData(engine, dir);
-        } else
-        if (cmd.equals("updateProcessActivationInformation")) {
+        } else if (cmd.equals("updateProcessActivationInformation")) {
             ReactiveAdminImpl.instance.updateProcessActivationInformation(true);
             System.out.println("OK");
         } else if (cmd.equals("statistics")) {

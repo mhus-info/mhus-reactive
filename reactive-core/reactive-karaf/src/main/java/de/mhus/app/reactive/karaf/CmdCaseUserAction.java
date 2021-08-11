@@ -28,10 +28,7 @@ import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(
-        scope = "reactive",
-        name = "pcase-useraction",
-        description = "Case user action")
+@Command(scope = "reactive", name = "pcase-useraction", description = "Case user action")
 @Service
 public class CmdCaseUserAction extends AbstractCmd {
 
@@ -50,7 +47,7 @@ public class CmdCaseUserAction extends AbstractCmd {
             description = "Action or '__list' or '__form'",
             multiValued = false)
     String action;
-    
+
     @Argument(
             index = 2,
             name = "parameters",
@@ -69,8 +66,7 @@ public class CmdCaseUserAction extends AbstractCmd {
 
         if (action.equals("__list")) {
             action = EngineConst.ACTION_LIST;
-        } else
-        if (action.equals("__form")) {
+        } else if (action.equals("__form")) {
             values.setString("action", parameters[0]);
             action = EngineConst.ACTION_FORM;
         }

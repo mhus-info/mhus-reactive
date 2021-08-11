@@ -1,3 +1,18 @@
+/**
+ * Copyright (C) 2018 Mike Hummel (mh@mhus.de)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.mhus.app.reactive.vaadin.widgets;
 
 import java.util.UUID;
@@ -31,7 +46,8 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
     private VaadinForm vForm;
     private WidgetActivityDelegate activity;
 
-    public CaseActionDialog(CaseActionList actions, WidgetActivityDelegate activity) throws Exception {
+    public CaseActionDialog(CaseActionList actions, WidgetActivityDelegate activity)
+            throws Exception {
         this.caseActions = actions;
         this.actions = new Action[] {CLOSE};
         this.activity = activity;
@@ -45,14 +61,17 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
         this.layout = layout;
         for (String action : caseActions.getNames()) {
             String title = caseActions.getTitle(action);
-            Button button = new Button(title, new Button.ClickListener() {
-                private static final long serialVersionUID = 1L;
+            Button button =
+                    new Button(
+                            title,
+                            new Button.ClickListener() {
+                                private static final long serialVersionUID = 1L;
 
-                @Override
-                public void buttonClick(ClickEvent event) {
-                    doCaseAction(action);
-                }
-            });
+                                @Override
+                                public void buttonClick(ClickEvent event) {
+                                    doCaseAction(action);
+                                }
+                            });
             button.setWidthFull();
             layout.addComponent(button);
         }
@@ -71,7 +90,7 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
             }
             layout.addComponent(vForm);
             layout.setExpandRatio(vForm, 1);
-            this.actions = new Action[] {OK,CLOSE};
+            this.actions = new Action[] {OK, CLOSE};
             formAction = action;
             updateButtons();
             setPack(true);
@@ -95,21 +114,21 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
                 close();
                 if (retAction != null && activity != null && id != null) {
                     switch (retAction) {
-                    case EngineConst.ACTION_RET_ACTION_CASE:
-                        activity.showCaseDetails(UUID.fromString(id));
-                        break;
-                    case EngineConst.ACTION_RET_ACTION_NODE:
-                        activity.showNodeDetails(UUID.fromString(id));
-                        break;
-                    case EngineConst.ACTION_RET_ACTION_FORM:
-                        activity.showForm(UUID.fromString(id));
-                        break;
+                        case EngineConst.ACTION_RET_ACTION_CASE:
+                            activity.showCaseDetails(UUID.fromString(id));
+                            break;
+                        case EngineConst.ACTION_RET_ACTION_NODE:
+                            activity.showNodeDetails(UUID.fromString(id));
+                            break;
+                        case EngineConst.ACTION_RET_ACTION_FORM:
+                            activity.showForm(UUID.fromString(id));
+                            break;
                     }
                 } else {
                     Notification.show("Ergebnis", ret.toString(), Type.HUMANIZED_MESSAGE);
                 }
             }
-       } catch (Throwable t) {
+        } catch (Throwable t) {
             Notification.show("Fehler bei der Ausführung", Type.ERROR_MESSAGE);
             t.printStackTrace();
         }
@@ -144,7 +163,8 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
             t.printStackTrace();
         }
         return null;
-    }    
+    }
+
     @Override
     protected boolean doAction(Action action) {
         if (action == OK) {
@@ -154,8 +174,5 @@ public class CaseActionDialog extends ModalDialog implements ActionHandler {
     }
 
     @Override
-    public void doAction(MForm form, String action) {
-        
-    }
-
+    public void doAction(MForm form, String action) {}
 }

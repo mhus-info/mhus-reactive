@@ -483,12 +483,10 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
     }
 
     public void doRefresh() {
-        if (currentRefreshable != null)
-            currentRefreshable.doRefresh();
+        if (currentRefreshable != null) currentRefreshable.doRefresh();
     }
 
     public Log log() {
         return log;
     }
-
 }

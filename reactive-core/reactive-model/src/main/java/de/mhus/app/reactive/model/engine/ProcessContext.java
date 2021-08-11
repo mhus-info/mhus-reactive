@@ -54,9 +54,8 @@ public interface ProcessContext<P extends APool<?>> {
     EEngine getEEngine();
 
     CaseLock getCaseLock();
-    
-    void debug(Object ... objects);
-    
-    void error(Object ... objects);
-    
+
+    void debug(Object... objects);
+
+    void error(Object... objects);
 }

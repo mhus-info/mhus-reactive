@@ -47,5 +47,4 @@ public class BpmSpaceService extends SimpleGuiSpace {
     public HelpContext createHelpContext(Locale locale) {
         return null;
     }
-
 }
