@@ -30,7 +30,7 @@
 	<packaging>pom</packaging>
 	<name>Cherry Business Process Model</name>
 	<description>BPM Implementation base on a java class model. It allows to create more complex and refactorable models.</description>
-	<url>http://www.mhus.de</url>
+	<url>http://www.mhus.info</url>
     <properties>
        <mhus-reactive.version>${project.version}</mhus-reactive.version>
        <mhus-reactive-plugin.version>7.3.0</mhus-reactive-plugin.version>
@@ -46,8 +46,8 @@
 	</licenses>
 	
 	<scm>
-		<url>https://github.com/mhus/mhus-reactive</url>
-		<connection>scm:git:https://github.com/mhus/mhus-reactive/</connection>
+		<url>https://github.com/mhus-info/mhus-reactive</url>
+		<connection>scm:git:https://github.com/mhus-info/mhus-reactive/</connection>
 	</scm>
 	
 	<developers>
