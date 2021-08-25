@@ -2235,7 +2235,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 scope.span().setTag("caseId", caseId.toString());
                 scope.span().setTag("stacktrace", stacktrace);
             } catch (Throwable t) {
-                log().d(caseId, t);
+                log().d(caseId, t.toString());
             }
         }
 
