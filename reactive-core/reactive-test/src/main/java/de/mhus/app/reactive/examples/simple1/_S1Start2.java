@@ -25,7 +25,7 @@ public class _S1Start2 extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Start2.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Start2.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Start2.class,"de.mhus.app.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Start2.class,"7.6.0-SNAPSHOT");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Start2.class,"7.5.2");
   public static final Identifier _CONTEXT = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.S1Start2.class,"context");
   public static final Identifier _DEBUG = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Start2.class,"debug");
   public static final Identifier _DO_EXECUTE_ACTIVITY = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Start2.class,"doExecuteActivity");

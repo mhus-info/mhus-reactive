@@ -46,7 +46,7 @@ public class _S1Pool extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Pool.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Pool.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Pool.class,"de.mhus.app.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Pool.class,"7.6.0-SNAPSHOT");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.S1Pool.class,"7.5.2");
   public static final Identifier _AFTER_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"afterExecute");
   public static final Identifier _BEFORE_EXECUTE = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"beforeExecute");
   public static final Identifier _CHECK_INPUT_PARAMETERS = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.S1Pool.class,"checkInputParameters");
