@@ -63,7 +63,7 @@ public class CmdNodeView extends AbstractCmd {
     @Argument(
             index = 2,
             name = "language",
-            required = true,
+            required = false,
             description = "Language",
             multiValued = false)
     String language;

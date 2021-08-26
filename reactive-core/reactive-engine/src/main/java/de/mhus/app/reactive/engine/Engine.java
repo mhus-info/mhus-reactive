@@ -980,7 +980,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 if (out != null) return out;
             }
         }
-        if (RuntimeNode.class.getCanonicalName().equals(canonicalName))
+        if (RuntimeNode.class.getCanonicalName().equals(canonicalName) 
+                || 
+                "de.mhus.cherry.reactive.model.engine.RuntimeNode".equals(canonicalName)) // legacy
             out = new RuntimeNode(runtime.getId());
         else out = (RuntimeNode) context.getEPool().getElement(canonicalName);
         // lifecycle
