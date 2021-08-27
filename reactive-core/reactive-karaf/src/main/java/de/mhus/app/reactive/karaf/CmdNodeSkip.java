@@ -47,29 +47,6 @@ public class CmdNodeSkip extends AbstractCmd {
             multiValued = true)
     String[] nodeId;
 
-    @Argument(
-            index = 0,
-            name = "cmd",
-            required = true,
-            description =
-                    "Command:\n"
-                            + " executing                - print currently executing nodes\n"
-                            + " list [search: state=,name=,search=,index0..9=,uri=,case=]\n"
-                            + "                          - list all nodes\n"
-                            + " view <id> [user] [lang]  - view node details\n"
-                            + " cancel <id>*             - cancel node\n"
-                            + " retry <id>*              - set node back to running\n"
-                            + " runtime <id>             - print runtime for this node\n"
-                            + " assign <id> <user>       - assign a user task to a user\n"
-                            + " unassign <id>            - unassign a user task\n"
-                            + " skip <id> [next step]    - skip a node and start the next one\n"
-                            + "Experimental:\n"
-                            + " erase <uuid>\n"
-                            + " submit <id> [key=value]* - submit a user form\n"
-                            + " resave <id>              - load and save node again\n",
-            multiValued = false)
-    String cmd;
-
     @Option(name = "-n", aliases = "--next", description = "next step", required = false)
     private String nextName = "";
 
@@ -80,7 +57,7 @@ public class CmdNodeSkip extends AbstractCmd {
 
         for (String id : nodeId) {
             PNode node = EngineUtil.getFlowNode(api.getEngine(), id);
-            System.out.println("Spik: " + node);
+            System.out.println("Skip: " + node);
 
             try (PCaseLock lock = api.getEngine().getCaseLock(node.getCaseId(), "cmdnode.skip")) {
 
