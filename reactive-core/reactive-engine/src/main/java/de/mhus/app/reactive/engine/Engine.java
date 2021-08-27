@@ -163,7 +163,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 PNodeInfo nodeInfo = getFlowNodeInfo(nodeId.getId());
                 PCaseLock lock =
                         getCaseLockOrNull(
-                                nodeInfo, "node:scheduled:" + nodeInfo.getCanonicalName());
+                                nodeInfo, "global:node:scheduled:" + nodeInfo.getCanonicalName());
                 if (lock == null) continue;
                 try (lock) {
                     PNode node = lock.getFlowNode(nodeId.getId());
@@ -180,7 +180,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
             try {
                 PCaseLock lock =
-                        getCaseLockOrNull(nodeInfo, "node:waiting:" + nodeInfo.getCanonicalName());
+                        getCaseLockOrNull(nodeInfo, "global:node:waiting:" + nodeInfo.getCanonicalName());
                 if (lock == null) continue;
                 try (lock) {
                     PCase caze = lock.getCase();
@@ -351,7 +351,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 PCaseLock lock =
                         getCaseLockOrNull(
                                 caseInfo.getId(),
-                                "cleanup:" + caseInfo.getCanonicalName(),
+                                "global:cleanup:" + caseInfo.getCanonicalName(),
                                 "id",
                                 caseInfo.getId());
                 if (lock == null) continue;
