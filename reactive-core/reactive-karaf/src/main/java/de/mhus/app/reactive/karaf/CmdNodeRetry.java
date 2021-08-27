@@ -21,6 +21,8 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.util.EngineUtil;
 import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.model.engine.PNodeInfo;
+import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
@@ -36,7 +38,7 @@ public class CmdNodeRetry extends AbstractCmd {
             index = 0,
             name = "id",
             required = true,
-            description = "node id or custom id",
+            description = "node id or custom id or * for each",
             multiValued = true)
     String[] nodeId;
 
@@ -45,16 +47,28 @@ public class CmdNodeRetry extends AbstractCmd {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
-        for (String id : nodeId) {
-            try {
-                PNode node = EngineUtil.getFlowNode(api.getEngine(), id);
-                System.out.println("Retry: " + node);
-                api.getEngine().retryFlowNode(node.getId());
-            } catch (Throwable t) {
-                System.out.println("Error in " + id);
-                t.printStackTrace();
+        if (nodeId.length == 1 && nodeId[0].equals("*")) {
+            SearchCriterias criterias = new SearchCriterias(new String[] {"state=failed"});
+            for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
+                try {
+                    System.out.println("Retry: " + info);
+                    api.getEngine().retryFlowNode(info.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + info);
+                    t.printStackTrace();
+                }
             }
-        }
+        } else
+            for (String id : nodeId) {
+                try {
+                    PNode node = EngineUtil.getFlowNode(api.getEngine(), id);
+                    System.out.println("Retry: " + node);
+                    api.getEngine().retryFlowNode(node.getId());
+                } catch (Throwable t) {
+                    System.out.println("Error in " + id);
+                    t.printStackTrace();
+                }
+            }
 
         return null;
     }
