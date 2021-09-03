@@ -24,8 +24,9 @@
 	<parent>
 		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-core</artifactId>
-		<version>7.6.0-SNAPSHOT</version>
+        <version>7.5.2</version>
 	</parent>
+        <version>7.5.5</version>
 
 	<build>
 		<plugins>
@@ -41,6 +42,7 @@
 		<dependency>
 			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-model</artifactId>
+        <version>7.5.2</version>
 		</dependency>
 		
 	</dependencies>
