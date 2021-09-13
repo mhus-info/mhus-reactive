@@ -633,7 +633,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         Map<String, String> p = uri.getQuery();
                         if (p != null) parameters.putAll(p);
                     }
-                    return fireSignal(signal, parameters);
+                    String l = uri.getLocation();
+                    UUID caseId = null;
+                    if (MValidator.isUUID(l))
+                        caseId = UUID.fromString(l);
+                    return fireSignal(caseId, signal, parameters);
                 }
             case "bpme":
                 {
@@ -1775,15 +1779,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         throw new NotFoundException("node not found for message", caseId, message);
     }
 
-    public int fireSignal(String signal, Map<String, Object> parameters)
+    public int fireSignal(UUID caseId, String signal, Map<String, Object> parameters)
             throws NotFoundException, IOException {
 
         fireEvent.fireSignal(signal, parameters);
         int cnt = 0;
         for (PNodeInfo nodeInfo : storage.getSignalFlowNodes(PNode.STATE_NODE.WAITING, signal)) {
+            if (caseId != null && !nodeInfo.getCaseId().equals(caseId)) continue;
             try (PCaseLock lock =
                     getCaseLock(
-                            nodeInfo, "fireSignal", "signal", signal, "parameters", parameters)) {
+                            nodeInfo, "fireSignal", "case", caseId, "signal", signal, "parameters", parameters)) {
                 PNode node = lock.getFlowNode(nodeInfo.getId());
                 if (node.getState()
                         == STATE_NODE

@@ -22,6 +22,7 @@ import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.Engine;
@@ -91,6 +92,9 @@ public class CmdProcessEngineTool extends AbstractCmd {
             description = "Parameters",
             multiValued = true)
     String[] parameters;
+
+    @Option(name = "-c", aliases = "--case", description = "Case Id", required = false)
+    private String caseId;
 
     @Override
     public Object execute2() throws Exception {
@@ -199,7 +203,7 @@ public class CmdProcessEngineTool extends AbstractCmd {
                     String v = MString.afterIndex(parts, '=');
                     p.put(k, v);
                 }
-                api.getEngine().fireSignal(parameters[1], p);
+                api.getEngine().fireSignal(caseId == null ? null : UUID.fromString(caseId), parameters[1], p);
                 System.out.println("OK");
             } else {
                 System.out.println("Unknown type");

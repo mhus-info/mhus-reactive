@@ -326,7 +326,7 @@ public class S1ActivitiesTest {
 
                 if (i == 4) {
                     ((MemoryStorage) config.storage).dumpNodes();
-                    engine.fireSignal("signal", new MProperties());
+                    engine.fireSignal(null, "signal", new MProperties());
                 }
             }
             assertTrue(i < 10);
@@ -703,7 +703,7 @@ public class S1ActivitiesTest {
                 if (i == 5) {
                     for (PNodeInfo node : engine.storageGetFlowNodes(caseId1, STATE_NODE.WAITING)) {
                         if (node.getType() == TYPE_NODE.SIGNAL) {
-                            int cnt = engine.fireSignal("signal", new MProperties());
+                            int cnt = engine.fireSignal(null, "signal", new MProperties());
                             assertEquals(2, cnt);
                             found = true;
                         }
