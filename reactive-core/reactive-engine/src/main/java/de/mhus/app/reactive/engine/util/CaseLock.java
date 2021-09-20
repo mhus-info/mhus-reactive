@@ -37,6 +37,7 @@ public class CaseLock extends MLog implements Closeable {
     private Object[] tagPairs;
     private boolean scopeOwner;
     private boolean master;
+    protected Span span;
 
     public CaseLock(boolean master, String operation, Object... tagPairs) {
         this.operation = operation;
@@ -47,7 +48,8 @@ public class CaseLock extends MLog implements Closeable {
     public void startSpan(PCase caze) {
         if (operation == null) {
             scopeOwner = false;
-            scope = ITracer.get().tracer().scopeManager().active();
+            // scope =  ITracer.get().tracer().scopeManager(). active();
+            span = ITracer.get().current();
             return;
         }
         if (master && !operation.startsWith("global:")) {
@@ -57,7 +59,9 @@ public class CaseLock extends MLog implements Closeable {
             scopeOwner = true;
             scope = ITracer.get().enter(operation, tagPairs);
         }
-        scope.span().setTag("operation", operation);
+        span = ITracer.get().current();
+        if (span != null)
+            span.setTag("operation", operation);
     }
 
     public static Scope spanStart(PCase caze, String operation, Object... tagPairs) {
@@ -87,14 +91,16 @@ public class CaseLock extends MLog implements Closeable {
                                 });
 
         Scope scope = null;
-        if (ctx == null) scope = ITracer.get().tracer().buildSpan(operation).startActive(true);
-        else {
-            scope =
-                    ITracer.get()
-                            .tracer()
-                            .buildSpan(operation)
-                            .addReference(References.FOLLOWS_FROM, ctx)
-                            .startActive(true);
+        if (ctx == null) {
+            Span span = ITracer.get().tracer().buildSpan(operation).start();
+            scope = ITracer.get().tracer().scopeManager().activate(span);
+        } else {
+            Span span = ITracer.get()
+                    .tracer()
+                    .buildSpan(operation)
+                    .addReference(References.FOLLOWS_FROM, ctx)
+                    .start();
+            scope = ITracer.get().tracer().scopeManager().activate(span);
         }
         return scope;
     }
@@ -103,12 +109,12 @@ public class CaseLock extends MLog implements Closeable {
     public void close() {
         if (scope != null && scopeOwner) {
             scope.close();
-            scope.span().finish();
         }
         scope = null;
+        span = null;
     }
 
     public Span getSpan() {
-        return scope.span();
+        return span;
     }
 }
