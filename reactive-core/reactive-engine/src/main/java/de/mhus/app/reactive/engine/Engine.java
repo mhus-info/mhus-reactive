@@ -444,7 +444,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void run() {
             try (Scope scope =
-                    ITracer.get().tracer().scopeManager().activate(lock.getSpan())) {
+                    ITracer.get().activate(lock.getSpan())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
                 try {
@@ -859,7 +859,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                 properties);
         if (ITracer.get().current() != null)
             spanBuilder.addReference(References.FOLLOWS_FROM, ITracer.get().current().context());
-        try (Scope scope = ITracer.get().tracer().activateSpan(spanBuilder.start())) {
+        try (Scope scope = ITracer.get().activate(spanBuilder.start())) {
             // inject tracer
             ITracer.get()
                     .tracer()
