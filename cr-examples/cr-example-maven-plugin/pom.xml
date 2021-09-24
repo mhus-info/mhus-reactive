@@ -32,7 +32,7 @@
 			<plugin>
 				<groupId>de.mhus.app.reactive</groupId>
 				<artifactId>reactive-maven-plugin</artifactId>
-				<version>${mhus-reactive-plugin.version}</version>
+				<version>${mhus-reactive.plugin}</version>
 				<executions>
 					<execution>
 						<goals>

@@ -16,7 +16,7 @@
 #
 
 
-VERSION=7.6.0.2
+VERSION=7.6.0-SNAPSHOT-1
 REPOSITORY=mhus/reactive-playground
 
 mvn install -P assembly || exit 1

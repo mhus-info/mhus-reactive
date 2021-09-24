@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>de.mhus.app.reactive</groupId>
 			<artifactId>reactive-engine</artifactId>
-			<version>${project.version}</version>
+			<version>${mhus-reactive.version}</version>
 		</dependency>
 
         <dependency>

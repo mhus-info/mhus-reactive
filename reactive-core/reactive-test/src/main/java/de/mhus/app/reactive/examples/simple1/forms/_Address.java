@@ -42,7 +42,7 @@ public class _Address extends ConstBase {
   public static final Identifier METHOD_TO_SALUTATION_INT = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.forms.Address.class,"toSalutationInt");
   public static final Identifier METHOD_TO_SALUTATION_STRING = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.forms.Address.class,"toSalutationString");
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"reactive-test");
-  public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
+  public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"BPM and BPMN 2.0 Implementation and Server");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"de.mhus.app.reactive");
   public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"7.6.0-SNAPSHOT");
   public static final Identifier _COUNTRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"country");

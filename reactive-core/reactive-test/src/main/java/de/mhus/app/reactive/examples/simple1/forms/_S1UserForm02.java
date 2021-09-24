@@ -37,7 +37,7 @@ public class _S1UserForm02 extends ConstBase {
   public static final Identifier METHOD_LOG = new Identifier(Identifier.TYPE.ACTION, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"log");
   public static final Identifier METHOD_SET_CONTEXT = new Identifier(Identifier.TYPE.SETTER, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"setContext");
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"reactive-test");
-  public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"BPM Implementation base on a java class model. It allows to create more complex and refactorable models.");
+  public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"BPM and BPMN 2.0 Implementation and Server");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"de.mhus.app.reactive");
   public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"7.6.0-SNAPSHOT");
   public static final Identifier _ACTION_HANDLER = new Identifier(Identifier.TYPE.GETTER, de.mhus.app.reactive.examples.simple1.forms.S1UserForm02.class,"ActionHandler");
