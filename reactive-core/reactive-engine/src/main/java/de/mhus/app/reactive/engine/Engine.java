@@ -180,7 +180,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
             try {
                 PCaseLock lock =
-                        getCaseLockOrNull(nodeInfo, "global:node:waiting:" + nodeInfo.getCanonicalName());
+                        getCaseLockOrNull(
+                                nodeInfo, "global:node:waiting:" + nodeInfo.getCanonicalName());
                 if (lock == null) continue;
                 try (lock) {
                     PCase caze = lock.getCase();
@@ -443,8 +444,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-            try (Scope scope =
-                    ITracer.get().activate(lock.getSpan())) {
+            try (Scope scope = ITracer.get().activate(lock.getSpan())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
                 try {
@@ -634,8 +634,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                     String l = uri.getLocation();
                     UUID caseId = null;
-                    if (MValidator.isUUID(l))
-                        caseId = UUID.fromString(l);
+                    if (MValidator.isUUID(l)) caseId = UUID.fromString(l);
                     return fireSignal(caseId, signal, parameters);
                 }
             case "bpme":
@@ -983,13 +982,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 if (out != null) return out;
             }
         }
-        if (RuntimeNode.class.getCanonicalName().equals(canonicalName) 
-                || 
-                "de.mhus.cherry.reactive.model.engine.RuntimeNode".equals(canonicalName)) // legacy
-            out = new RuntimeNode(runtime.getId());
+        if (RuntimeNode.class.getCanonicalName().equals(canonicalName)
+                || "de.mhus.cherry.reactive.model.engine.RuntimeNode"
+                        .equals(canonicalName)) // legacy
+        out = new RuntimeNode(runtime.getId());
         else out = (RuntimeNode) context.getEPool().getElement(canonicalName);
         if (out == null) // fallback
-            out = new RuntimeNode(runtime.getId());
+        out = new RuntimeNode(runtime.getId());
         // lifecycle
         if (out instanceof ContextRecipient) ((ContextRecipient) out).setContext(context);
 
@@ -1787,7 +1786,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             if (caseId != null && !nodeInfo.getCaseId().equals(caseId)) continue;
             try (PCaseLock lock =
                     getCaseLock(
-                            nodeInfo, "fireSignal", "case", caseId, "signal", signal, "parameters", parameters)) {
+                            nodeInfo,
+                            "fireSignal",
+                            "case",
+                            caseId,
+                            "signal",
+                            signal,
+                            "parameters",
+                            parameters)) {
                 PNode node = lock.getFlowNode(nodeInfo.getId());
                 if (node.getState()
                         == STATE_NODE
@@ -2267,8 +2273,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void setPCase(PCase pCase) throws MException {
             try {
-                if (span != null)
-                    span.log("setPCase " + pCase);
+                if (span != null) span.log("setPCase " + pCase);
             } catch (Throwable t) {
             }
             if (cazex != null) throw new MException("Case already set", caseId);
@@ -2317,8 +2322,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public PNode getFlowNode(UUID nodeId) throws NotFoundException, IOException {
             try {
-                if (span != null)
-                    span.log("getFlowNode " + nodeId);
+                if (span != null) span.log("getFlowNode " + nodeId);
             } catch (Throwable t) {
             }
             synchronized (nodeCache) {
@@ -2337,8 +2341,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public void closeCase(boolean hard, int code, String msg)
                 throws IOException, NotFoundException {
             try {
-                if (span != null)
-                    span.log("closeCase " + hard + " " + code + " " + msg);
+                if (span != null) span.log("closeCase " + hard + " " + code + " " + msg);
             } catch (Throwable t) {
             }
             PCase caze = getCase();
@@ -2395,8 +2398,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void saveFlowNode(PNode flow) throws IOException, NotFoundException {
             try {
-                if (span != null)
-                    span.log("saveFlowNode " + flow);
+                if (span != null) span.log("saveFlowNode " + flow);
             } catch (Throwable t) {
             }
             if (!flow.getCaseId().equals(caseId))
@@ -2418,8 +2420,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void closeRuntime(UUID nodeId) throws MException, IOException {
             try {
-                if (span != null)
-                    span.log("closeRuntime " + nodeId);
+                if (span != null) span.log("closeRuntime " + nodeId);
             } catch (Throwable t) {
             }
             PNode pNode = getFlowNode(nodeId);
@@ -2465,8 +2466,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public void closeFlowNode(ProcessContext<?> context, PNode pNode, STATE_NODE state)
                 throws IOException, NotFoundException {
             try {
-                if (span != null)
-                    span.log("closeFlowNode " + pNode + " " + state);
+                if (span != null) span.log("closeFlowNode " + pNode + " " + state);
             } catch (Throwable t) {
             }
             if (!pNode.getCaseId().equals(caseId))
@@ -2508,8 +2508,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException {
             try {
-                if (span != null)
-                    span.log("saveRuntime " + pRuntime);
+                if (span != null) span.log("saveRuntime " + pRuntime);
             } catch (Throwable t) {
             }
             if (aRuntime != null) {
@@ -2533,8 +2532,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void savePCase(APool<?> aPool, boolean init) throws IOException, NotFoundException {
             try {
-                if (span != null)
-                    span.log("savePCase " + init);
+                if (span != null) span.log("savePCase " + init);
             } catch (Throwable t) {
             }
             PCase pCase = getCase();
@@ -2559,8 +2557,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t) {
             try {
-                if (span != null)
-                    span.log("doNodeErrorHandling " + pNode + " " + t);
+                if (span != null) span.log("doNodeErrorHandling " + pNode + " " + t);
             } catch (Throwable tt) {
             }
             fireEvent.doNodeErrorHandling(this, context, pNode, t);
@@ -2627,8 +2624,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public PNode createActivity(ProcessContext<?> context, PNode previous, EElement start)
                 throws Exception {
             try {
-                if (span != null)
-                    span.log("createActivity " + previous + " " + start);
+                if (span != null) span.log("createActivity " + previous + " " + start);
             } catch (Throwable t) {
             }
 
@@ -2673,8 +2669,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception {
             try {
-                if (span != null)
-                    span.log("doNodeLifecycle " + flow);
+                if (span != null) span.log("doNodeLifecycle " + flow);
             } catch (Throwable t) {
             }
 
@@ -2750,8 +2745,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam)
                 throws Exception {
             try {
-                if (span != null)
-                    span.log("createStartPoint " + start);
+                if (span != null) span.log("createStartPoint " + start);
             } catch (Throwable t) {
             }
 
@@ -2838,8 +2832,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         public void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
                 throws IOException, NotFoundException {
             try {
-                if (span != null)
-                    span.log("saveFlowNode " + flow);
+                if (span != null) span.log("saveFlowNode " + flow);
             } catch (Throwable t) {
             }
             fireEvent.saveFlowNode(flow, activity);
@@ -2875,8 +2868,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void doFlowNode(PNode pNode) {
             try {
-                if (span != null)
-                    span.log("doFlowNode " + pNode);
+                if (span != null) span.log("doFlowNode " + pNode);
             } catch (Throwable t) {
             }
             fireEvent.doFlowNode(pNode);
@@ -2962,8 +2954,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         @Override
         public void putRuntime(UUID id, RuntimeNode runtime) {
             try {
-                if (span != null)
-                    span.log("putRuntime " + id);
+                if (span != null) span.log("putRuntime " + id);
             } catch (Throwable t) {
             }
             synchronized (runtimeCache) {

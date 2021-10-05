@@ -70,8 +70,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public PNode getFlowNode(UUID id) throws NotFoundException, IOException {
         try {
-            if (span != null)
-                span.log("getFlowNode " + id);
+            if (span != null) span.log("getFlowNode " + id);
         } catch (Throwable t) {
         }
         return instance.getFlowNode(id);
@@ -81,8 +80,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     public void closeCase(boolean hard, int code, String msg)
             throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("closeCase " + hard + " " + code + " " + msg);
+            if (span != null) span.log("closeCase " + hard + " " + code + " " + msg);
         } catch (Throwable t) {
         }
         instance.closeCase(hard, code, msg);
@@ -100,8 +98,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void saveFlowNode(PNode node) throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("saveFlowNode " + node);
+            if (span != null) span.log("saveFlowNode " + node);
         } catch (Throwable t) {
         }
         instance.saveFlowNode(node);
@@ -110,8 +107,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void closeRuntime(UUID nodeId) throws MException, IOException {
         try {
-            if (span != null)
-                span.log("closeRuntime " + nodeId);
+            if (span != null) span.log("closeRuntime " + nodeId);
         } catch (Throwable t) {
         }
         instance.closeRuntime(nodeId);
@@ -121,8 +117,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     public void closeFlowNode(ProcessContext<?> context, PNode pNode, STATE_NODE state)
             throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("closeFlowNode " + pNode + " " + state);
+            if (span != null) span.log("closeFlowNode " + pNode + " " + state);
         } catch (Throwable t) {
         }
         instance.closeFlowNode(context, pNode, state);
@@ -131,8 +126,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void saveRuntime(PNode pRuntime, RuntimeNode aRuntime) throws IOException {
         try {
-            if (span != null)
-                span.log("saveRuntime " + pRuntime);
+            if (span != null) span.log("saveRuntime " + pRuntime);
         } catch (Throwable t) {
         }
         instance.saveRuntime(pRuntime, aRuntime);
@@ -141,8 +135,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void savePCase(ProcessContext<?> context) throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("savePCase");
+            if (span != null) span.log("savePCase");
         } catch (Throwable t) {
         }
         instance.savePCase(context);
@@ -151,8 +144,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void savePCase(APool<?> aPool, boolean init) throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("savePCase " + init);
+            if (span != null) span.log("savePCase " + init);
         } catch (Throwable t) {
         }
         instance.savePCase(aPool, init);
@@ -161,8 +153,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void doNodeErrorHandling(ProcessContext<?> context, PNode pNode, Throwable t) {
         try {
-            if (span != null)
-                span.log("doNodeErrorHandling " + pNode + " " + t);
+            if (span != null) span.log("doNodeErrorHandling " + pNode + " " + t);
         } catch (Throwable tt) {
         }
         instance.doNodeErrorHandling(context, pNode, t);
@@ -172,8 +163,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     public PNode createActivity(ProcessContext<?> context, PNode previous, EElement start)
             throws Exception {
         try {
-            if (span != null)
-                span.log("createActivity " + previous + " " + start);
+            if (span != null) span.log("createActivity " + previous + " " + start);
         } catch (Throwable t) {
         }
         return instance.createActivity(context, previous, start);
@@ -182,8 +172,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void doNodeLifecycle(ProcessContext<?> context, PNode flow) throws Exception {
         try {
-            if (span != null)
-                span.log("doNodeLifecycle " + flow);
+            if (span != null) span.log("doNodeLifecycle " + flow);
         } catch (Throwable t) {
         }
         instance.doNodeLifecycle(context, flow);
@@ -194,8 +183,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
             ProcessContext<?> context, EElement start, Map<String, ?> runtimeParam)
             throws Exception {
         try {
-            if (span != null)
-                span.log("createStartPoint " + start);
+            if (span != null) span.log("createStartPoint " + start);
         } catch (Throwable t) {
         }
         return instance.createStartPoint(context, start, runtimeParam);
@@ -205,8 +193,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     public void saveFlowNode(ProcessContext<?> context, PNode flow, AActivity<?> activity)
             throws IOException, NotFoundException {
         try {
-            if (span != null)
-                span.log("saveFlowNode " + flow);
+            if (span != null) span.log("saveFlowNode " + flow);
         } catch (Throwable t) {
         }
         instance.saveFlowNode(context, flow, activity);
@@ -215,8 +202,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void doFlowNode(PNode pNode) {
         try {
-            if (span != null)
-                span.log("doFlowNode " + pNode);
+            if (span != null) span.log("doFlowNode " + pNode);
         } catch (Throwable t) {
         }
         instance.doFlowNode(pNode);
@@ -225,8 +211,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void setPCase(PCase pCase) throws MException {
         try {
-            if (span != null)
-                span.log("setPCase " + pCase);
+            if (span != null) span.log("setPCase " + pCase);
         } catch (Throwable t) {
         }
         instance.setPCase(pCase);
@@ -235,8 +220,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void resetPCase() {
         try {
-            if (span != null)
-                span.log("resetPCase");
+            if (span != null) span.log("resetPCase");
         } catch (Throwable t) {
         }
         instance.resetPCase();
@@ -260,8 +244,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
     @Override
     public void putRuntime(UUID id, RuntimeNode runtime) {
         try {
-            if (span != null)
-                span.log("putRuntime " + id);
+            if (span != null) span.log("putRuntime " + id);
         } catch (Throwable t) {
         }
         instance.putRuntime(id, runtime);

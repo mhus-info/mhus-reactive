@@ -203,7 +203,9 @@ public class CmdProcessEngineTool extends AbstractCmd {
                     String v = MString.afterIndex(parts, '=');
                     p.put(k, v);
                 }
-                api.getEngine().fireSignal(caseId == null ? null : UUID.fromString(caseId), parameters[1], p);
+                api.getEngine()
+                        .fireSignal(
+                                caseId == null ? null : UUID.fromString(caseId), parameters[1], p);
                 System.out.println("OK");
             } else {
                 System.out.println("Unknown type");

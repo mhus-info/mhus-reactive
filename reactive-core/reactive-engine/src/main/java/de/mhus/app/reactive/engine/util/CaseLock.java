@@ -59,8 +59,7 @@ public class CaseLock extends MLog implements Closeable {
             scope = ITracer.get().enter(operation, tagPairs);
         }
         span = ITracer.get().current();
-        if (span != null)
-            span.setTag("operation", operation);
+        if (span != null) span.setTag("operation", operation);
     }
 
     public static Scope spanStart(PCase caze, String operation, Object... tagPairs) {
@@ -94,11 +93,12 @@ public class CaseLock extends MLog implements Closeable {
             Span span = ITracer.get().tracer().buildSpan(operation).start();
             scope = ITracer.get().activate(span);
         } else {
-            Span span = ITracer.get()
-                    .tracer()
-                    .buildSpan(operation)
-                    .addReference(References.FOLLOWS_FROM, ctx)
-                    .start();
+            Span span =
+                    ITracer.get()
+                            .tracer()
+                            .buildSpan(operation)
+                            .addReference(References.FOLLOWS_FROM, ctx)
+                            .start();
             scope = ITracer.get().activate(span);
         }
         return scope;
