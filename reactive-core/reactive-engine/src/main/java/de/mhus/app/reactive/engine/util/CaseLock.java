@@ -53,7 +53,8 @@ public class CaseLock extends MLog implements Closeable {
         }
         if (operation.startsWith("run:")) {
             scopeOwner = false;
-            scope = spanStart(caze, false, operation, tagPairs);
+            scope = null;
+            spanStart(caze, false, operation, tagPairs);
         } else
         if (master && !operation.startsWith("global:")) {
             scopeOwner = true;

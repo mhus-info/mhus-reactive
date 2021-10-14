@@ -222,7 +222,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 PCaseLock lockx =
                         getCaseLockOrNull(
                                 nodeInfo,
-                                "node:" + nodeInfo.getCanonicalName(),
+                                "run:node:" + nodeInfo.getCanonicalName(),
                                 "id",
                                 nodeInfo.getId());
                 if (lockx == null || !(lockx instanceof EngineCaseLock)) {
@@ -444,11 +444,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-//            try {
-//                lock.startSpan(lock.getCase());
-//                lock.getSpan().setTag("type", "run");
-//                lock.getSpan().setTag("case", lock.getCaseId().toString());
-//            } catch (Throwable t) {}
+            try {
+                lock.startSpan(lock.getCase());
+                lock.getSpan().setTag("type", "run");
+                lock.getSpan().setTag("case", lock.getCaseId().toString());
+            } catch (Throwable t) {}
             try (Scope scope = ITracer.get().enter(lock.getSpan(), lock.getName())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
