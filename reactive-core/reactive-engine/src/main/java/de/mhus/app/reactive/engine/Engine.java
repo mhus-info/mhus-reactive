@@ -449,7 +449,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 lock.getSpan().setTag("type", "run");
                 lock.getSpan().setTag("case", lock.getCaseId().toString());
             } catch (Throwable t) {}
-            try (Scope scope = ITracer.get().enter(lock.getSpan(), lock.getName())) {
+            try (Scope scope = ITracer.get().activate(lock.getSpan())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
                 try {
