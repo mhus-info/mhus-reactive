@@ -444,6 +444,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
+            try {
+                lock.startSpan(lock.getCase());
+                lock.getSpan().setTag("type", "run");
+                lock.getSpan().setTag("case", lock.getCaseId().toString());
+            } catch (Throwable t) {}
             try (Scope scope = ITracer.get().enter(lock.getSpan(), lock.getName())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
@@ -2243,16 +2248,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     MCast.toString(
                             "Lock " + caseId + " " + Thread.currentThread().getId(),
                             Thread.currentThread().getStackTrace());
-            try {
-                startSpan(getCase());
-                if (span != null) {
-                    span.setTag("type", "engine");
-                    span.setTag("caseId", caseId.toString());
-                    span.setTag("stacktrace", stacktrace);
+            if (operation == null || !operation.startsWith("run:"))
+                try {
+                    startSpan(getCase());
+                    if (span != null) {
+                        span.setTag("type", "engine");
+                        span.setTag("caseId", caseId.toString());
+                        span.setTag("stacktrace", stacktrace);
+                    }
+                } catch (Throwable t) {
+                    log().d(caseId, t.toString());
                 }
-            } catch (Throwable t) {
-                log().d(caseId, t.toString());
-            }
         }
 
         @Override
