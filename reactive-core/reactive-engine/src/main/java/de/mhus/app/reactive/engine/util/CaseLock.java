@@ -122,4 +122,9 @@ public class CaseLock extends MLog implements Closeable {
     public Span getSpan() {
         return span;
     }
+    
+    public String getName() {
+        return operation;
+    }
+    
 }

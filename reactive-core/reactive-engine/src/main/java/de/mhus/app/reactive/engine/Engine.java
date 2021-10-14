@@ -444,7 +444,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
         @Override
         public void run() {
-            try (Scope scope = ITracer.get().activate(lock.getSpan())) {
+            try (Scope scope = ITracer.get().enter(lock.getSpan(), lock.getName())) {
                 lock.owner = Thread.currentThread();
                 start = System.currentTimeMillis();
                 try {
