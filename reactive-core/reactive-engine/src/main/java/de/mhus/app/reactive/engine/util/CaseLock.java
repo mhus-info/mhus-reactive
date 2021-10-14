@@ -104,7 +104,7 @@ public class CaseLock extends MLog implements Closeable {
                     ITracer.get()
                             .tracer()
                             .buildSpan(operation)
-                            .addReference(References.FOLLOWS_FROM, ctx)
+                            .addReference(References.CHILD_OF, ctx)
                             .start();
             if (doScope)
                 scope = ITracer.get().activate(span);
