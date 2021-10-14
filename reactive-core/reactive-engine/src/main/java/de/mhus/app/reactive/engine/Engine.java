@@ -222,7 +222,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 PCaseLock lockx =
                         getCaseLockOrNull(
                                 nodeInfo,
-                                "node:" + nodeInfo.getCanonicalName(),
+                                "global:node:" + nodeInfo.getCanonicalName(),
                                 "id",
                                 nodeInfo.getId());
                 if (lockx == null || !(lockx instanceof EngineCaseLock)) {
