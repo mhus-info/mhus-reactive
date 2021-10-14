@@ -51,9 +51,14 @@ public class CaseLock extends MLog implements Closeable {
             span = ITracer.get().current();
             return;
         }
+        if (operation.startsWith("run:")) {
+            scopeOwner = false;
+            scope = null;
+            spanStart(caze, false, operation, tagPairs);
+        } else
         if (master && !operation.startsWith("global:")) {
             scopeOwner = true;
-            scope = spanStart(caze, operation, tagPairs);
+            scope = spanStart(caze, true, operation, tagPairs);
         } else {
             scopeOwner = true;
             scope = ITracer.get().enter(operation, tagPairs);
@@ -62,7 +67,7 @@ public class CaseLock extends MLog implements Closeable {
         if (span != null) span.setTag("operation", operation);
     }
 
-    public static Scope spanStart(PCase caze, String operation, Object... tagPairs) {
+    public static Scope spanStart(PCase caze, boolean doScope, String operation, Object... tagPairs) {
         SpanContext ctx =
                 ITracer.get()
                         .tracer()
@@ -91,15 +96,18 @@ public class CaseLock extends MLog implements Closeable {
         Scope scope = null;
         if (ctx == null) {
             Span span = ITracer.get().tracer().buildSpan(operation).start();
-            scope = ITracer.get().activate(span);
+            span.setTag("nocontext", true);
+            if (doScope)
+                scope = ITracer.get().activate(span);
         } else {
             Span span =
                     ITracer.get()
                             .tracer()
                             .buildSpan(operation)
-                            .addReference(References.FOLLOWS_FROM, ctx)
+                            .addReference(References.CHILD_OF, ctx)
                             .start();
-            scope = ITracer.get().activate(span);
+            if (doScope)
+                scope = ITracer.get().activate(span);
         }
         return scope;
     }
@@ -116,4 +124,9 @@ public class CaseLock extends MLog implements Closeable {
     public Span getSpan() {
         return span;
     }
+    
+    public String getName() {
+        return operation;
+    }
+    
 }
