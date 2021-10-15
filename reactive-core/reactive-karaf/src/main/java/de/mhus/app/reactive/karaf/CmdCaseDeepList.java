@@ -45,7 +45,10 @@ public class CmdCaseDeepList extends AbstractCmd {
             index = 0,
             name = "columns",
             required = false,
-            description = "List of columns, separated by comma, case_id, case.*",
+            description = "List of columns, separated by comma,\n"
+                    + " case_* - case attribute\n"
+                    + " option_* - option of the case, e.g. option_customerId\n"
+                    + " case.* - case parameter",
             multiValued = false)
     String cols;
     
@@ -99,6 +102,9 @@ public class CmdCaseDeepList extends AbstractCmd {
         }
         if (col.startsWith("case.")) {
             printCol(caze.getParameters().get(col.substring(5)), hint, out);
+        } else
+        if (col.startsWith("option_")) {
+            printCol(caze.getOptions().get(col.substring(7)), hint, out);
         } else
         if (col.startsWith("case_")) {
             Object val = null;
