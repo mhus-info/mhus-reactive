@@ -45,7 +45,7 @@ public class CmdNodeExecuting extends AbstractCmd {
         for (UUID nodeId : api.getEngine().getExecuting()) {
             PNode node = api.getEngine().getNodeWithoutLock(nodeId);
             PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
-            String time =
+            String time = node.getLastRunDate() <= 0 ? "-" :
                     MPeriod.getIntervalAsString(System.currentTimeMillis() - node.getLastRunDate());
             table.addRowValues(
                     node.getId(),

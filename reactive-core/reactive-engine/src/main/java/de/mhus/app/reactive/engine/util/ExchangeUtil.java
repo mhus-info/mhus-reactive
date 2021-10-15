@@ -31,7 +31,7 @@ import de.mhus.lib.errors.MException;
 public class ExchangeUtil {
 
     public static INode caseToINode(PCase caze) throws Exception {
-        INode nc = MPojo.pojoToNode(caze, MPojo.getAttributeModelFactory(), true, false);
+        INode nc = MPojo.pojoToNode(caze, MPojo.getAttributesModelFactory(), true, false);
         //        INode nc = new MNode();
         //        nc.setString("id", caze.getId().toString());
         //        nc.setString("state", caze.getState().name());
@@ -79,7 +79,7 @@ public class ExchangeUtil {
 
     public static PCase nodeToPCase(INode in) throws Exception {
         PCase out = new PCase();
-        MPojo.nodeToPojo(in, out, MPojo.getAttributeModelFactory(), true, true);
+        MPojo.nodeToPojo(in, out, MPojo.getAttributesModelFactory(), true, true);
         //        setValue(out, "id", UUID.fromString(in.getString("id")));
         //        out.setState(STATE_CASE.valueOf(in.getString("state")));
         //        setValue(out, "name", in.getString("name"));
@@ -143,7 +143,7 @@ public class ExchangeUtil {
     }
 
     public static INode nodeToINode(PNode node) throws Exception {
-        INode nn = MPojo.pojoToNode(node, MPojo.getAttributeModelFactory(), true, false);
+        INode nn = MPojo.pojoToNode(node, MPojo.getAttributesModelFactory(), true, false);
         //        INode nn = new MNode();
         //        nn.setString("id", node.getId().toString());
         //        nn.setString("caseId", node.getCaseId().toString());
@@ -185,7 +185,7 @@ public class ExchangeUtil {
 
     public static PNode nodeToPNode(INode in) throws MException, IOException {
         PNode out = new PNode();
-        MPojo.nodeToPojo(in, out, MPojo.getAttributeModelFactory(), true, true);
+        MPojo.nodeToPojo(in, out, MPojo.getAttributesModelFactory(), true, true);
         //        setValue(out, "id", UUID.fromString(in.getString("id")));
         //        setValue(out, "caseId", UUID.fromString(in.getString("caseId")));
         //        out.setState(STATE_NODE.valueOf(in.getString("state")));
