@@ -47,6 +47,9 @@ public class CmdNodeList extends AbstractCmd {
     @Option(name = "-1", aliases = "--one", description = "Print in one table", required = false)
     private boolean one;
 
+    @Option(name = "-c", aliases = "--count", description = "Print count only", required = false)
+    private boolean count;
+
     @Argument(
             index = 0,
             name = "search",
@@ -76,29 +79,34 @@ public class CmdNodeList extends AbstractCmd {
                 "Uri");
         table.getColumn(0).minWidth = 32;
         table.getColumn(7).minWidth = 32;
+        int c = 0;
         for (PNodeInfo info : api.getEngine().storageSearchFlowNodes(criterias)) {
             if (all
                     || (info.getState() != STATE_NODE.CLOSED
                             && info.getType() != TYPE_NODE.RUNTIME)) {
                 try {
-                    PNode node = api.getEngine().getNodeWithoutLock(info.getId());
-                    String scheduled = "-";
-                    Entry<String, Long> scheduledEntry = node.getNextScheduled();
-                    if (scheduledEntry != null) {
-                        long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-                        if (diff > 0) scheduled = MPeriod.getIntervalAsString(diff);
+                    if (count) {
+                        c++;
+                    } else {
+                        PNode node = api.getEngine().getNodeWithoutLock(info.getId());
+                        String scheduled = "-";
+                        Entry<String, Long> scheduledEntry = node.getNextScheduled();
+                        if (scheduledEntry != null) {
+                            long diff = scheduledEntry.getValue() - System.currentTimeMillis();
+                            if (diff > 0) scheduled = MPeriod.getIntervalAsString(diff);
+                        }
+                        table.addRowValues(
+                                node.getId(),
+                                info.getCustomId(),
+                                node.getName(),
+                                node.getState(),
+                                node.getType(),
+                                new Date(info.getModified()),
+                                scheduled,
+                                node.getCaseId(),
+                                node.getAssignedUser(),
+                                info.getUri());
                     }
-                    table.addRowValues(
-                            node.getId(),
-                            info.getCustomId(),
-                            node.getName(),
-                            node.getState(),
-                            node.getType(),
-                            new Date(info.getModified()),
-                            scheduled,
-                            node.getCaseId(),
-                            node.getAssignedUser(),
-                            info.getUri());
                 } catch (Throwable t) {
                     table.addRowValues(
                             info.getId(),
@@ -113,13 +121,16 @@ public class CmdNodeList extends AbstractCmd {
                             info.getUri());
                 }
             }
-            if (!one && table.size() >= 100) {
+            if (!count && !one && table.size() >= 100) {
                 table.print(System.out);
                 table.clear();
                 System.out.println();
             }
         }
-        if (table.size() > 0) table.print(System.out);
+        if (count)
+            System.out.println(c);
+        else
+            if (table.size() > 0) table.print(System.out);
 
         return null;
     }

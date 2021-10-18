@@ -52,6 +52,9 @@ public class CmdCaseList extends AbstractCmd {
     @Option(name = "-a", aliases = "--all", description = "Print all", required = false)
     private boolean all;
 
+    @Option(name = "-c", aliases = "--count", description = "Print count only", required = false)
+    private boolean count;
+    
     @Override
     public Object execute2() throws Exception {
 
@@ -62,18 +65,23 @@ public class CmdCaseList extends AbstractCmd {
         ConsoleTable table = new ConsoleTable(tblOpt);
         table.setHeaderValues("Id", "CustomId", "Customer", "Modified", "Uri", "State", "Close");
         table.getColumn(0).minWidth = 32;
+        int c = 0;
         for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
             if (all || info.getState() != STATE_CASE.CLOSED) {
                 try {
                     PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
-                    table.addRowValues(
-                            info.getId(),
-                            caze.getCustomId(),
-                            caze.getCustomerId(),
-                            new Date(info.getModified()),
-                            caze.getUri(),
-                            caze.getState(),
-                            caze.getClosedCode() + " " + caze.getClosedMessage());
+                    if (count) {
+                        c++;
+                     } else {
+                        table.addRowValues(
+                                info.getId(),
+                                caze.getCustomId(),
+                                caze.getCustomerId(),
+                                new Date(info.getModified()),
+                                caze.getUri(),
+                                caze.getState(),
+                                caze.getClosedCode() + " " + caze.getClosedMessage());
+                     }
                 } catch (Throwable t) {
                     table.addRowValues(
                             info.getId(),
@@ -85,13 +93,16 @@ public class CmdCaseList extends AbstractCmd {
                             t.getMessage());
                 }
             }
-            if (!one && table.size() >= 100) {
+            if (!count && !one && table.size() >= 100) {
                 table.print(System.out);
                 table.clear();
                 System.out.println();
             }
         }
-        if (table.size() > 0) table.print(System.out);
+        if (count)
+            System.out.println(c);
+        else
+            if (table.size() > 0) table.print(System.out);
 
         return null;
     }

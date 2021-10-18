@@ -24,7 +24,8 @@ import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.model.engine.PCase;
-import de.mhus.app.reactive.model.engine.PCaseInfo;
+import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
@@ -36,18 +37,20 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 
 @Command(
         scope = "reactive",
-        name = "pcase-deeplist",
-        description = "Node modifications - list all cases")
+        name = "pnode-query",
+        description = "Query nodes")
 @Service
-public class CmdCaseDeepList extends AbstractCmd {
+public class CmdNodeQuery extends AbstractCmd {
 
     @Argument(
             index = 0,
             name = "columns",
             required = false,
             description = "List of columns, separated by comma,\n"
+                    + " node_* - node attribute\n"
                     + " case_* - case attribute\n"
                     + " option_* - option of the case, e.g. option_customerId\n"
+                    + " node.* - node parameter\n"
                     + " case.* - case parameter",
             multiValued = false)
     String cols;
@@ -63,6 +66,7 @@ public class CmdCaseDeepList extends AbstractCmd {
     @Option(name = "-a", aliases = "--archive", description = "Use archive storage", required = false)
     private boolean archive;
 
+    PojoModel PNODE_MODEL = MPojo.getAttributesModelFactory().createPojoModel(PNode.class);
     PojoModel PCASE_MODEL = MPojo.getAttributesModelFactory().createPojoModel(PCase.class);
 
     @Override
@@ -75,16 +79,17 @@ public class CmdCaseDeepList extends AbstractCmd {
 
         SearchCriterias criterias = new SearchCriterias(search);
 
-        for (PCaseInfo info : archive ? api.getEngine().archiveSearchCases(criterias) : api.getEngine().storageSearchCases(criterias)) {
+        for (PNodeInfo info : archive ? api.getEngine().archiveSearchFlowNodes(criterias) : api.getEngine().storageSearchFlowNodes(criterias)) {
                 try {
-                    PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
+                    PNode node = api.getEngine().getNodeWithoutLock(info.getId());
+                    PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
                     
                     boolean first = true;
                     for (String col : colNames) {
                         if (!first)
                             out.print(",");
                         first = false;
-                        printCol(caze, col, out);
+                        printCol(node, caze, col, out);
                     }
                     out.println();
                 } catch (Throwable t) {}
@@ -93,18 +98,28 @@ public class CmdCaseDeepList extends AbstractCmd {
         return null;
     }
 
-    private void printCol(PCase caze, String col, PrintStream out) {
+    private void printCol(PNode node, PCase caze, String col, PrintStream out) {
         int p = col.indexOf(':');
         String hint = null;
         if (p > 0) {
             hint = col.substring(p);
             col = col.substring(0,p-1);
         }
+        if (col.startsWith("node.")) {
+            printCol(node.getParameters().get(col.substring(5)), hint, out);
+        } else
         if (col.startsWith("case.")) {
             printCol(caze.getParameters().get(col.substring(5)), hint, out);
         } else
         if (col.startsWith("option_")) {
             printCol(caze.getOptions().get(col.substring(7)), hint, out);
+        } else
+        if (col.startsWith("node_")) {
+            Object val = null;
+            try {
+                val = PNODE_MODEL.getAttribute(col.substring(5)).get(node);
+            } catch (Throwable t) {}
+            printCol(val, hint, out);
         } else
         if (col.startsWith("case_")) {
             Object val = null;
