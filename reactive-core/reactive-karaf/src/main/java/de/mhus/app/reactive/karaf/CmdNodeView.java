@@ -77,6 +77,10 @@ public class CmdNodeView extends AbstractCmd {
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         PNode node = EngineUtil.getFlowNode(api.getEngine(), nodeId);
+        if (node == null) {
+            System.err.println("Node not found");
+            return null;
+        }
         PNodeInfo info = api.getEngine().getFlowNodeInfo(node.getId());
 
         System.out.println("Name      : " + node.getName());

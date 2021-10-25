@@ -73,6 +73,10 @@ public class CmdCaseView extends AbstractCmd {
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         PCase caze = EngineUtil.getCase(api.getEngine(), caseId);
+        if (caze == null) {
+            System.err.println("Case not found");
+            return null;
+        }
         System.out.println("Uri       : " + caze.getUri());
         System.out.println("CustomId  : " + caze.getCustomId());
         System.out.println("CustomerId: " + caze.getCustomerId());
