@@ -219,6 +219,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
+                ITracer.get().cleanup();
+
                 PCaseLock lockx =
                         getCaseLockOrNull(
                                 nodeInfo,
@@ -230,7 +232,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     continue;
                 }
 
-                ITracer.get().cleanup();
 
                 EngineCaseLock lock = (EngineCaseLock) lockx;
 
@@ -278,6 +279,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
+                ITracer.get().cleanup();
+                
                 PCaseLock lock =
                         getCaseLockOrNull(
                                 nodeInfo,
