@@ -17,11 +17,15 @@ package de.mhus.app.reactive.karaf;
 
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import de.mhus.app.reactive.engine.util.EngineUtil;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseLock;
+import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.model.engine.PNodeInfo;
+import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
 import de.mhus.osgi.api.karaf.AbstractCmd;
@@ -41,6 +45,9 @@ public class CmdCaseCancel extends AbstractCmd {
             multiValued = true)
     String[] caseId;
 
+    @Option(name = "-o", aliases = "--only", description = "Do not cancel nodes", required = false)
+    private boolean only;
+
     @Override
     public Object execute2() throws Exception {
 
@@ -49,8 +56,22 @@ public class CmdCaseCancel extends AbstractCmd {
         for (String id : caseId) {
             try (PCaseLock lock = EngineUtil.getCaseLock(api.getEngine(), id, "cmdcase.cancel")) {
                 PCase caze = lock.getCase();
-                System.out.println("Cancel: " + caze);
+                System.out.println("Case: " + caze);
                 lock.closeCase(true, -1, "cancelled by cmd");
+                if (!only)
+                    for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
+                        if (info.getState() != STATE_NODE.CLOSED && info.getState() != STATE_NODE.FAILED) {
+                            System.out.println("Node: " + info);
+                            try {
+                                PNode pNode = lock.getFlowNode(info.getId());
+                                pNode.setState(STATE_NODE.CLOSED);
+                                lock.saveFlowNode(pNode);
+                            } catch (Throwable t) {
+                                System.out.println("Error in " + info);
+                                t.printStackTrace();
+                            }
+                        }
+                    }
             } catch (Throwable t) {
                 System.out.println("Error in " + id);
                 t.printStackTrace();

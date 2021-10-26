@@ -15,6 +15,8 @@
  */
 package de.mhus.app.reactive.karaf;
 
+import java.util.UUID;
+
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
@@ -24,6 +26,7 @@ import de.mhus.app.reactive.engine.Engine;
 import de.mhus.app.reactive.engine.util.Migrator;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MValidator;
 import de.mhus.lib.core.operation.DefaultMonitor;
 import de.mhus.lib.core.operation.Monitor;
 import de.mhus.lib.core.util.MUri;
@@ -102,8 +105,12 @@ public class CmdMigrate extends AbstractCmd {
         Migrator migrator = new Migrator(monitor);
 
         if (uriStr != null) {
-            MUri uri = MUri.toUri(uriStr);
-            migrator.setUri(uri);
+            if ( MValidator.isUUID(uriStr)) {
+                migrator.setUUID(UUID.fromString(uriStr));
+            } else {
+                MUri uri = MUri.toUri(uriStr);
+                migrator.setUri(uri);
+            }
         }
 
         migrator.setSelectedIds(ids);

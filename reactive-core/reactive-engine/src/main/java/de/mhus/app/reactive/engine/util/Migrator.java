@@ -16,7 +16,9 @@
 package de.mhus.app.reactive.engine.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
 
 import de.mhus.app.reactive.engine.Engine;
@@ -25,6 +27,7 @@ import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PCaseInfo;
 import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
+import de.mhus.app.reactive.model.engine.Result;
 import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
@@ -67,6 +70,7 @@ public class Migrator {
     private VersionRange version;
     private MUri uri;
     private boolean verbose = false;
+    private UUID uuid;
 
     public Migrator(Monitor monitor) {
         this.monitor = monitor;
@@ -82,7 +86,7 @@ public class Migrator {
 
     public void suspend() throws IOException, MException {
         monitor.setSteps(0);
-        for (PCaseInfo info : engine.storageGetCases(null)) {
+        for (PCaseInfo info : getCases()) {
             if (info.getState() != STATE_CASE.SUSPENDED
                     && info.getState() != STATE_CASE.CLOSED
                     && filter(info)) {
@@ -113,7 +117,7 @@ public class Migrator {
         monitor.println("Version:  ", version);
 
         monitor.setSteps(0);
-        for (PCaseInfo caseInfo : engine.storageGetCases(null)) {
+        for (PCaseInfo caseInfo : getCases() ) {
             if (filter(caseInfo)) {
 
                 if (caseRules != null) {
@@ -153,9 +157,75 @@ public class Migrator {
         }
     }
 
+    private Result<PCaseInfo> getCases() throws IOException {
+        if (uuid == null)
+            return engine.storageGetCases(null);
+        try {
+            if (caseRules != null) {
+                final PCaseInfo entry = engine.storageGetCaseInfo(uuid);
+                if (entry != null)
+                    return new Result<PCaseInfo>() {
+                        @Override
+                        public Iterator<PCaseInfo> iterator() {
+                            ArrayList<PCaseInfo> list = new ArrayList<>(1);
+                            list.add(entry);
+                            return list.iterator();
+                        }
+                        @Override
+                        public void close() {
+                        }
+                    };
+            }
+            if (nodeRules != null) {
+                PNodeInfo node = engine.storageGetFlowNodeInfo(uuid);
+                if (node != null) {
+                    final PCaseInfo entry = engine.storageGetCaseInfo(node.getCaseId());
+                    if (entry != null)
+                        return new Result<PCaseInfo>() {
+                            @Override
+                            public Iterator<PCaseInfo> iterator() {
+                                ArrayList<PCaseInfo> list = new ArrayList<>(1);
+                                list.add(entry);
+                                return list.iterator();
+                            }
+                            @Override
+                            public void close() {
+                            }
+                        };
+                }
+                final PCaseInfo entry = engine.storageGetCaseInfo(uuid);
+                if (entry != null)
+                    if (entry != null)
+                        return new Result<PCaseInfo>() {
+                            @Override
+                            public Iterator<PCaseInfo> iterator() {
+                                ArrayList<PCaseInfo> list = new ArrayList<>(1);
+                                list.add(entry);
+                                return list.iterator();
+                            }
+                            @Override
+                            public void close() {
+                            }
+                        };
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+        return new Result<PCaseInfo>() {
+            @Override
+            public Iterator<PCaseInfo> iterator() {
+                ArrayList<PCaseInfo> list = new ArrayList<>(0);
+                return list.iterator();
+            }
+            @Override
+            public void close() {
+            }
+        };
+    }
+
     public void resume() throws IOException, MException {
         monitor.setSteps(0);
-        for (PCaseInfo info : engine.storageGetCases(null)) {
+        for (PCaseInfo info : getCases()) {
             if (info.getState() == STATE_CASE.SUSPENDED && filter(info)) {
                 monitor.incrementStep();
                 monitor.println("*** Resume " + info);
@@ -328,6 +398,11 @@ public class Migrator {
             filtered = true;
             if (!MCollection.contains(ids, info.getId().toString())) return false;
         }
+        if (uuid != null) {
+            if (!info.getId().equals(uuid) && !info.getCaseId().equals(uuid)) {
+                return false;
+            }
+        }
 
         if (!filtered) return false;
 
@@ -354,6 +429,12 @@ public class Migrator {
             }
             if (MString.isSet(pool) && !pool.equals(oPool)) {
                 if (verbose) monitor.println("--- Ignore by pool name ", u);
+                return false;
+            }
+        }
+        if (uuid != null) {
+            if (!info.getId().equals(uuid)) {
+                if (verbose) monitor.println("--- Ignore by UUID ", uuid);
                 return false;
             }
         }
@@ -410,5 +491,9 @@ public class Migrator {
 
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
     }
 }
