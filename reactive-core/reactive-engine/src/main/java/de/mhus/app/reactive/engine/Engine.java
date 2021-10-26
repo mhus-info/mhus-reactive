@@ -219,8 +219,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
-                ITracer.get().cleanup();
-
                 PCaseLock lockx =
                         getCaseLockOrNull(
                                 nodeInfo,
@@ -232,6 +230,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     continue;
                 }
 
+                ITracer.get().cleanup();
 
                 EngineCaseLock lock = (EngineCaseLock) lockx;
 
@@ -279,8 +278,6 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
                 if (!isNodeActive(nodeInfo)) continue;
 
-                ITracer.get().cleanup();
-                
                 PCaseLock lock =
                         getCaseLockOrNull(
                                 nodeInfo,
@@ -336,11 +333,22 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try {
             MUri uri = MUri.toUri(caze.getUri());
             EProcess process = getProcess(uri);
-            if (process == null) return false;
+            if (process == null) {
+                log().d("Process not available",caze, uri);
+                return false;
+            }
             EPool pool = getPool(process, uri);
-            if (pool == null) return false;
-            return pool.getCanonicalName() != null;
+            if (pool == null) {
+                log().d("Pool not available",caze, uri);
+                return false;
+            }
+            if (pool.getCanonicalName() == null) {
+                log().d("Canonical name not found",caze, uri);
+                return false;
+            }
+            return true;
         } catch (Throwable t) {
+            log().d("isProcessHealthy",caze,t);
         }
         return false;
     }
