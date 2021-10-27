@@ -328,6 +328,9 @@ public class Migrator {
                     }
                     monitor.println("=== Case ", caze.getId(), " Action ", action, " Rule ", rule);
                     switch (action) {
+                        case "uri":
+                            caseModel.getAttribute("uri").set(caze, rule, false);
+                            break;
                         case "name":
                             caseModel.getAttribute("name").set(caze, rule, false);
                             break;
