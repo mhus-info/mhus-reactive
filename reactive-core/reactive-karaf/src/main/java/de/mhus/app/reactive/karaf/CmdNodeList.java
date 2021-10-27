@@ -30,7 +30,6 @@ import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
-import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -92,8 +91,7 @@ public class CmdNodeList extends AbstractCmd {
                         String scheduled = "-";
                         Entry<String, Long> scheduledEntry = node.getNextScheduled();
                         if (scheduledEntry != null) {
-                            long diff = scheduledEntry.getValue() - System.currentTimeMillis();
-                            if (diff > 0) scheduled = MPeriod.getIntervalAsString(diff);
+                            scheduled = Util.toPeriod(scheduledEntry.getValue());
                         }
                         table.addRowValues(
                                 node.getId(),

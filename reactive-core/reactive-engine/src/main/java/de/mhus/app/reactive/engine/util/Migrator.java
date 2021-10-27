@@ -433,6 +433,7 @@ public class Migrator {
             }
         }
         if (uuid != null) {
+            filtered = true;
             if (!info.getId().equals(uuid)) {
                 if (verbose) monitor.println("--- Ignore by UUID ", uuid);
                 return false;

@@ -25,6 +25,7 @@ import de.mhus.app.reactive.model.engine.PNode;
 import de.mhus.app.reactive.model.engine.RuntimeNode;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.MDate;
+import de.mhus.lib.core.MPeriod;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.console.ConsoleTable;
 
@@ -86,5 +87,17 @@ public class Util {
             cacheActivityNames.put(id, name);
         }
         return name;
+    }
+
+    public static String toPeriod(long value) {
+        if (value == Long.MAX_VALUE) {
+            return "max";
+        } else {
+            long diff = value - System.currentTimeMillis();
+            if (diff > 0) 
+                return MPeriod.getIntervalAsString(diff);
+            else
+                return "done";
+        }
     }
 }
