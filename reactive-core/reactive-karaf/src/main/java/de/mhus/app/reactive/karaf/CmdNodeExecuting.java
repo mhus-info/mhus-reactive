@@ -47,7 +47,7 @@ public class CmdNodeExecuting extends AbstractCmd {
     public Object execute2() throws Exception {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
-        {
+        if (!upcoming) {
             ConsoleTable table = new ConsoleTable(tblOpt);
             table.setHeaderValues("Id", "Case", "Name", "Time", "State", "Type", "CaseId");
             for (UUID nodeId : api.getEngine().getExecuting()) {
