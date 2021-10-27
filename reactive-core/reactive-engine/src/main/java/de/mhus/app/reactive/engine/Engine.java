@@ -321,11 +321,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return doneCnt;
     }
 
-    private boolean isNodeActive(PNode node) {
+    public boolean isNodeActive(PNode node) {
         return node != null && node.getState() == STATE_NODE.RUNNING;
     }
 
-    private boolean isNodeActive(PNodeInfo node) {
+    public boolean isNodeActive(PNodeInfo node) {
         return node != null && node.getState() == STATE_NODE.RUNNING;
     }
 
