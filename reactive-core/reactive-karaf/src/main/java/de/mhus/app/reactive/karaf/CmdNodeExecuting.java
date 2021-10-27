@@ -67,7 +67,6 @@ public class CmdNodeExecuting extends AbstractCmd {
         }
         
         if (upcoming) {
-            System.out.println("Upcoming:");
             ConsoleTable table = new ConsoleTable(tblOpt);
             table.setHeaderValues("Id", "Case", "Name", "State", "Type", "CaseId","Running");
     
