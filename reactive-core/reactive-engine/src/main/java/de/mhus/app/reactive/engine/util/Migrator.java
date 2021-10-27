@@ -251,18 +251,18 @@ public class Migrator {
                     monitor.println("=== Node ", node.getId(), " Action ", action, " Rule ", rule);
                     switch (action) {
                         case "name":
-                            nodeModel.getAttribute("name").set(node, rule, false);
+                            nodeModel.getAttribute("name").set(node, rule, true);
                             break;
                         case "canonical":
-                            nodeModel.getAttribute("canonicalname").set(node, rule, false);
+                            nodeModel.getAttribute("canonicalname").set(node, rule, true);
                             break;
                         case "type":
                             nodeModel
                                     .getAttribute("type")
-                                    .set(node, TYPE_NODE.valueOf(rule), false);
+                                    .set(node, TYPE_NODE.valueOf(rule), true);
                             break;
                         case "actor":
-                            nodeModel.getAttribute("actor").set(node, rule, false);
+                            nodeModel.getAttribute("actor").set(node, rule, true);
                             break;
                         case "status":
                             node.setSuspendedState(STATE_NODE.valueOf(rule));
@@ -329,10 +329,10 @@ public class Migrator {
                     monitor.println("=== Case ", caze.getId(), " Action ", action, " Rule ", rule);
                     switch (action) {
                         case "uri":
-                            caseModel.getAttribute("uri").set(caze, rule, false);
+                            caseModel.getAttribute("uri").set(caze, rule, true);
                             break;
                         case "name":
-                            caseModel.getAttribute("name").set(caze, rule, false);
+                            caseModel.getAttribute("name").set(caze, rule, true);
                             break;
                         case "canonical":
                             caseModel.getAttribute("canonicalname").set(caze, rule, false);
@@ -343,10 +343,10 @@ public class Migrator {
                         case "closeCode":
                             caseModel
                                     .getAttribute("closecode")
-                                    .set(caze, MCast.toint(rule, 0), false);
+                                    .set(caze, MCast.toint(rule, 0), true);
                             break;
                         case "closeMessage":
-                            caseModel.getAttribute("closemessage").set(caze, rule, false);
+                            caseModel.getAttribute("closemessage").set(caze, rule, true);
                             break;
                         case "status":
                             caze.setState(STATE_CASE.valueOf(rule));
