@@ -71,7 +71,7 @@ public class CmdNodeExecuting extends AbstractCmd {
             ConsoleTable table = new ConsoleTable(tblOpt);
             table.setHeaderValues("Id", "Case", "Name", "State", "Type", "CaseId","Running");
     
-            Engine engine = M.l(Engine.class);
+            Engine engine = api.getEngine();
             long now = System.currentTimeMillis();
             Result<PNodeInfo> result = engine.getStorage().getScheduledFlowNodes(STATE_NODE.RUNNING, now, true);
             int cnt = 0;
