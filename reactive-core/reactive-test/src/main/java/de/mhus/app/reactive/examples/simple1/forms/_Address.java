@@ -44,7 +44,7 @@ public class _Address extends ConstBase {
   public static final Identifier PROJECT_ARTIFACT = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"reactive-test");
   public static final Identifier PROJECT_DESCRIPTION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"BPM and BPMN 2.0 Implementation and Server");
   public static final Identifier PROJECT_GROUP = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"de.mhus.app.reactive");
-  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"7.7.0");
+  public static final Identifier PROJECT_VERSION = new Identifier(Identifier.TYPE.MAVEN, de.mhus.app.reactive.examples.simple1.forms.Address.class,"7.8.0-SNAPSHOT");
   public static final Identifier _COUNTRY = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"country");
   public static final Identifier _COUNTRY_CODE = new Identifier(Identifier.TYPE.GETTER, de.mhus.app.reactive.examples.simple1.forms.Address.class,"CountryCode");
   public static final Identifier _COUNTRY__CODE__DE = new Identifier(Identifier.TYPE.FIELD, de.mhus.app.reactive.examples.simple1.forms.Address.class,"COUNTRY_CODE_DE");
