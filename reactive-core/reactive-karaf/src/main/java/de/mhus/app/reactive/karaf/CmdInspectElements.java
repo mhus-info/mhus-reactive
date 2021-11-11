@@ -50,29 +50,25 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pinspect-elements", description = "Elements of deployed processes")
+@Command(
+        scope = "reactive",
+        name = "pinspect-elements",
+        description = "Elements of deployed processes")
 @Service
 public class CmdInspectElements extends AbstractCmd {
 
-    @Argument(
-            index = 0,
-            name = "Pool",
-            required = false,
-            description = "Pool",
-            multiValued = false)
+    @Argument(index = 0, name = "Pool", required = false, description = "Pool", multiValued = false)
     String name;
 
     @Override
     public Object execute2() throws Exception {
 
-
         MUri uri = MUri.toUri(name);
         EProcess process = findProcess(name);
         EPool pool = getPool(process, uri);
-    
+
         ConsoleTable table = new ConsoleTable(tblOpt);
-        table.setHeaderValues(
-                "Type", "Name", "Canonical Name", "Swimlane", "Outputs", "Trigger");
+        table.setHeaderValues("Type", "Name", "Canonical Name", "Swimlane", "Outputs", "Trigger");
         for (String name : pool.getElementNames()) {
             EElement element = pool.getElement(name);
             StringBuilder out = new StringBuilder();
@@ -95,34 +91,34 @@ public class CmdInspectElements extends AbstractCmd {
             if (element.is(ASwimlane.class)) type += "Swimlane\n";
             if (element.is(AProcess.class)) type += "Process\n";
             if (element.is(ACondition.class)) type += "Condition\n";
-    
+
             if (element.is(AUserTask.class)) type += "UserTask\n";
             else if (element.is(AServiceTask.class)) type += "ServiceTask\n";
             else if (element.is(ATask.class)) type += "Task\n";
-    
+
             if (element.is(AExclusiveGateway.class)) type += "ExclusiveGateway\n";
             else if (element.is(AParallelGateway.class)) type += "ParallelGateway\n";
             else if (element.is(AGateway.class)) type += "Gateway\n";
-    
+
             if (element.is(AStartPoint.class)) type += "StartPoint\n";
             else if (element.is(AEndPoint.class)) type += "EndPoint\n";
             else if (element.is(APoint.class)) type += "Point\n";
-    
+
             type = type.trim();
             if (type.length() == 0) type = "Element";
-    
+
             table.addRowValues(
                     type,
                     element.getName(),
                     element.getCanonicalName(),
                     element.getSwimlane() == null
                             ? "none"
-                                : element.getSwimlane().getCanonicalName(),
-                        out,
-                        trig);
-            }
-            table.print(System.out);
-       
+                            : element.getSwimlane().getCanonicalName(),
+                    out,
+                    trig);
+        }
+        table.print(System.out);
+
         return null;
     }
 

@@ -105,7 +105,7 @@ public class CmdMigrate extends AbstractCmd {
         Migrator migrator = new Migrator(monitor);
 
         if (uriStr != null) {
-            if ( MValidator.isUUID(uriStr)) {
+            if (MValidator.isUUID(uriStr)) {
                 migrator.setUUID(UUID.fromString(uriStr));
             } else {
                 MUri uri = MUri.toUri(uriStr);

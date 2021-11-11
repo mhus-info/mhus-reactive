@@ -35,7 +35,7 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Command(scope = "reactive", name = "pinspect-pools", description = "Inspect deployed processes")
 @Service
 public class CmdInspectPools extends AbstractCmd {
-    
+
     @Argument(
             index = 0,
             name = "process",
@@ -47,8 +47,7 @@ public class CmdInspectPools extends AbstractCmd {
     @Override
     public Object execute2() throws Exception {
 
-        if (!process.startsWith("bpm://"))
-            process = "bpm://" + process;
+        if (!process.startsWith("bpm://")) process = "bpm://" + process;
         EProcess p = findProcess(process);
         for (String name : p.getPoolNames()) {
             EPool pool = p.getPool(name);
@@ -58,9 +57,7 @@ public class CmdInspectPools extends AbstractCmd {
                         "--- Start: "
                                 + start.getCanonicalName()
                                 + " "
-                                + (start.isInterface(InactiveStartPoint.class)
-                                        ? "!"
-                                        : ""));
+                                + (start.isInterface(InactiveStartPoint.class) ? "!" : ""));
             }
         }
 
@@ -85,5 +82,4 @@ public class CmdInspectPools extends AbstractCmd {
         }
         return process;
     }
-
 }

@@ -35,10 +35,7 @@ import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(
-        scope = "reactive",
-        name = "pnode-query",
-        description = "Query nodes")
+@Command(scope = "reactive", name = "pnode-query", description = "Query nodes")
 @Service
 public class CmdNodeQuery extends AbstractCmd {
 
@@ -46,15 +43,16 @@ public class CmdNodeQuery extends AbstractCmd {
             index = 0,
             name = "columns",
             required = false,
-            description = "List of columns, separated by comma,\n"
-                    + " node_* - node attribute\n"
-                    + " case_* - case attribute\n"
-                    + " option_* - option of the case, e.g. option_customerId\n"
-                    + " node.* - node parameter\n"
-                    + " case.* - case parameter",
+            description =
+                    "List of columns, separated by comma,\n"
+                            + " node_* - node attribute\n"
+                            + " case_* - case attribute\n"
+                            + " option_* - option of the case, e.g. option_customerId\n"
+                            + " node.* - node parameter\n"
+                            + " case.* - case parameter",
             multiValued = false)
     String cols;
-    
+
     @Argument(
             index = 1,
             name = "search",
@@ -63,7 +61,11 @@ public class CmdNodeQuery extends AbstractCmd {
             multiValued = true)
     String[] search;
 
-    @Option(name = "-a", aliases = "--archive", description = "Use archive storage", required = false)
+    @Option(
+            name = "-a",
+            aliases = "--archive",
+            description = "Use archive storage",
+            required = false)
     private boolean archive;
 
     PojoModel PNODE_MODEL = MPojo.getAttributesModelFactory().createPojoModel(PNode.class);
@@ -74,25 +76,28 @@ public class CmdNodeQuery extends AbstractCmd {
 
         String[] colNames = cols.split(",");
         PrintStream out = System.out;
-        
+
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         SearchCriterias criterias = new SearchCriterias(search);
 
-        for (PNodeInfo info : archive ? api.getEngine().archiveSearchFlowNodes(criterias) : api.getEngine().storageSearchFlowNodes(criterias)) {
-                try {
-                    PNode node = api.getEngine().getNodeWithoutLock(info.getId());
-                    PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
-                    
-                    boolean first = true;
-                    for (String col : colNames) {
-                        if (!first)
-                            out.print(",");
-                        first = false;
-                        printCol(node, caze, col, out);
-                    }
-                    out.println();
-                } catch (Throwable t) {}
+        for (PNodeInfo info :
+                archive
+                        ? api.getEngine().archiveSearchFlowNodes(criterias)
+                        : api.getEngine().storageSearchFlowNodes(criterias)) {
+            try {
+                PNode node = api.getEngine().getNodeWithoutLock(info.getId());
+                PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
+
+                boolean first = true;
+                for (String col : colNames) {
+                    if (!first) out.print(",");
+                    first = false;
+                    printCol(node, caze, col, out);
+                }
+                out.println();
+            } catch (Throwable t) {
+            }
         }
 
         return null;
@@ -103,32 +108,29 @@ public class CmdNodeQuery extends AbstractCmd {
         String hint = null;
         if (p > 0) {
             hint = col.substring(p);
-            col = col.substring(0,p-1);
+            col = col.substring(0, p - 1);
         }
         if (col.startsWith("node.")) {
             printCol(node.getParameters().get(col.substring(5)), hint, out);
-        } else
-        if (col.startsWith("case.")) {
+        } else if (col.startsWith("case.")) {
             printCol(caze.getParameters().get(col.substring(5)), hint, out);
-        } else
-        if (col.startsWith("option_")) {
+        } else if (col.startsWith("option_")) {
             printCol(caze.getOptions().get(col.substring(7)), hint, out);
-        } else
-        if (col.startsWith("node_")) {
+        } else if (col.startsWith("node_")) {
             Object val = null;
             try {
                 val = PNODE_MODEL.getAttribute(col.substring(5)).get(node);
-            } catch (Throwable t) {}
+            } catch (Throwable t) {
+            }
             printCol(val, hint, out);
-        } else
-        if (col.startsWith("case_")) {
+        } else if (col.startsWith("case_")) {
             Object val = null;
             try {
                 val = PCASE_MODEL.getAttribute(col.substring(5)).get(caze);
-            } catch (Throwable t) {}
+            } catch (Throwable t) {
+            }
             printCol(val, hint, out);
-        } else
-            printCol("",null, out);
+        } else printCol("", null, out);
     }
 
     private void printCol(Object val, String hint, PrintStream out) {
@@ -136,10 +138,8 @@ public class CmdNodeQuery extends AbstractCmd {
             return;
         }
         String str = "";
-        if (MString.isEmpty(hint))
-            str = val.toString();
-        else
-        if (hint.equals("date")) {
+        if (MString.isEmpty(hint)) str = val.toString();
+        else if (hint.equals("date")) {
             Date d = MDate.toDate(val, null);
             if (d != null) {
                 str = MDate.toIso8601(d);

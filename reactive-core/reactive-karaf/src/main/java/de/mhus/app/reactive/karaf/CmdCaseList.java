@@ -54,7 +54,7 @@ public class CmdCaseList extends AbstractCmd {
 
     @Option(name = "-c", aliases = "--count", description = "Print count only", required = false)
     private boolean count;
-    
+
     @Override
     public Object execute2() throws Exception {
 
@@ -72,7 +72,7 @@ public class CmdCaseList extends AbstractCmd {
                     PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
                     if (count) {
                         c++;
-                     } else {
+                    } else {
                         table.addRowValues(
                                 info.getId(),
                                 caze.getCustomId(),
@@ -81,7 +81,7 @@ public class CmdCaseList extends AbstractCmd {
                                 caze.getUri(),
                                 caze.getState(),
                                 caze.getClosedCode() + " " + caze.getClosedMessage());
-                     }
+                    }
                 } catch (Throwable t) {
                     table.addRowValues(
                             info.getId(),
@@ -99,10 +99,8 @@ public class CmdCaseList extends AbstractCmd {
                 System.out.println();
             }
         }
-        if (count)
-            System.out.println(c);
-        else
-            if (table.size() > 0) table.print(System.out);
+        if (count) System.out.println(c);
+        else if (table.size() > 0) table.print(System.out);
 
         return null;
     }

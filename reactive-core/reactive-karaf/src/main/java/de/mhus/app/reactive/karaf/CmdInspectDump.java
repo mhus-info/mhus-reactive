@@ -36,17 +36,11 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Service
 public class CmdInspectDump extends AbstractCmd {
 
-    @Argument(
-            index = 0,
-            name = "Pool",
-            required = false,
-            description = "Pool",
-            multiValued = false)
+    @Argument(index = 0, name = "Pool", required = false, description = "Pool", multiValued = false)
     String name;
 
     @Override
     public Object execute2() throws Exception {
-
 
         EProcess process = findProcess(name);
         ProcessTrace trace = new ProcessTrace(process);
@@ -66,7 +60,7 @@ public class CmdInspectDump extends AbstractCmd {
         if (element != null) trace.dump(System.out, pool, element);
         else if (pool != null) trace.dump(System.out, pool);
         else trace.dump(System.out);
-   
+
         return null;
     }
 
@@ -88,5 +82,4 @@ public class CmdInspectDump extends AbstractCmd {
         }
         return process;
     }
-
 }

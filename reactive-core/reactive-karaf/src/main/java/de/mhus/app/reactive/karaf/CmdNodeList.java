@@ -125,10 +125,8 @@ public class CmdNodeList extends AbstractCmd {
                 System.out.println();
             }
         }
-        if (count)
-            System.out.println(c);
-        else
-            if (table.size() > 0) table.print(System.out);
+        if (count) System.out.println(c);
+        else if (table.size() > 0) table.print(System.out);
 
         return null;
     }

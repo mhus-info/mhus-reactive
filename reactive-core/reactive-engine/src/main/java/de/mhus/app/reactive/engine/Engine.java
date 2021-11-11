@@ -334,21 +334,21 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             MUri uri = MUri.toUri(caze.getUri());
             EProcess process = getProcess(uri);
             if (process == null) {
-                log().d("Process not available",caze, uri);
+                log().d("Process not available", caze, uri);
                 return false;
             }
             EPool pool = getPool(process, uri);
             if (pool == null) {
-                log().d("Pool not available",caze, uri);
+                log().d("Pool not available", caze, uri);
                 return false;
             }
             if (pool.getCanonicalName() == null) {
-                log().d("Canonical name not found",caze, uri);
+                log().d("Canonical name not found", caze, uri);
                 return false;
             }
             return true;
         } catch (Throwable t) {
-            log().d("isProcessHealthy",caze,t);
+            log().d("isProcessHealthy", caze, t);
         }
         return false;
     }

@@ -60,7 +60,8 @@ import de.mhus.lib.vaadin.desktop.Navigable;
 @SuppressWarnings("deprecation")
 public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable {
 
-    private static CfgTimeInterval CFG_REFRESH_INTERVAL = new CfgTimeInterval(BpmSpace.class, "refreshInterval", "20s");
+    private static CfgTimeInterval CFG_REFRESH_INTERVAL =
+            new CfgTimeInterval(BpmSpace.class, "refreshInterval", "20s");
     private static Log log = Log.getLog(BpmSpace.class);
     private static final long serialVersionUID = 1L;
     private static final String I_DEFAULT = "Default";
@@ -233,7 +234,8 @@ public class BpmSpace extends VerticalLayout implements GuiLifecycle, Navigable 
         VerticalLayout menu = buildMenu();
 
         final TimerExtension timerExtension = TimerExtension.create(menu);
-        timerExtension.setIntervalInMs((int) CFG_REFRESH_INTERVAL.interval()); // polling interval in milliseconds
+        timerExtension.setIntervalInMs(
+                (int) CFG_REFRESH_INTERVAL.interval()); // polling interval in milliseconds
         timerExtension.addTimerListener(
                 e -> {
                     if (page.getComponentCount() > 0) {

@@ -34,21 +34,18 @@ import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(scope = "reactive", name = "pinspect-validate", description = "Validate deployed processes")
+@Command(
+        scope = "reactive",
+        name = "pinspect-validate",
+        description = "Validate deployed processes")
 @Service
 public class CmdInspectValidate extends AbstractCmd {
 
-    @Argument(
-            index = 0,
-            name = "Pool",
-            required = false,
-            description = "Pool",
-            multiValued = false)
+    @Argument(index = 0, name = "Pool", required = false, description = "Pool", multiValued = false)
     String name;
 
     @Override
     public Object execute2() throws Exception {
-
 
         MUri uri = MUri.toUri(name);
         EProcess process = findProcess(name);

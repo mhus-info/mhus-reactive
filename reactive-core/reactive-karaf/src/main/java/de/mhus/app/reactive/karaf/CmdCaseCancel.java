@@ -60,7 +60,8 @@ public class CmdCaseCancel extends AbstractCmd {
                 lock.closeCase(true, -1, "cancelled by cmd");
                 if (!only)
                     for (PNodeInfo info : api.getEngine().storageGetFlowNodes(caze.getId(), null)) {
-                        if (info.getState() != STATE_NODE.CLOSED && info.getState() != STATE_NODE.FAILED) {
+                        if (info.getState() != STATE_NODE.CLOSED
+                                && info.getState() != STATE_NODE.FAILED) {
                             System.out.println("Node: " + info);
                             try {
                                 PNode pNode = lock.getFlowNode(info.getId());

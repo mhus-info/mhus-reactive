@@ -117,7 +117,7 @@ public class Migrator {
         monitor.println("Version:  ", version);
 
         monitor.setSteps(0);
-        for (PCaseInfo caseInfo : getCases() ) {
+        for (PCaseInfo caseInfo : getCases()) {
             if (filter(caseInfo)) {
 
                 if (caseRules != null) {
@@ -158,8 +158,7 @@ public class Migrator {
     }
 
     private Result<PCaseInfo> getCases() throws IOException {
-        if (uuid == null)
-            return engine.storageGetCases(null);
+        if (uuid == null) return engine.storageGetCases(null);
         try {
             if (caseRules != null) {
                 final PCaseInfo entry = engine.storageGetCaseInfo(uuid);
@@ -171,9 +170,9 @@ public class Migrator {
                             list.add(entry);
                             return list.iterator();
                         }
+
                         @Override
-                        public void close() {
-                        }
+                        public void close() {}
                     };
             }
             if (nodeRules != null) {
@@ -188,9 +187,9 @@ public class Migrator {
                                 list.add(entry);
                                 return list.iterator();
                             }
+
                             @Override
-                            public void close() {
-                            }
+                            public void close() {}
                         };
                 }
                 final PCaseInfo entry = engine.storageGetCaseInfo(uuid);
@@ -203,9 +202,9 @@ public class Migrator {
                                 list.add(entry);
                                 return list.iterator();
                             }
+
                             @Override
-                            public void close() {
-                            }
+                            public void close() {}
                         };
             }
         } catch (Exception e) {
@@ -217,9 +216,9 @@ public class Migrator {
                 ArrayList<PCaseInfo> list = new ArrayList<>(0);
                 return list.iterator();
             }
+
             @Override
-            public void close() {
-            }
+            public void close() {}
         };
     }
 
@@ -257,9 +256,7 @@ public class Migrator {
                             nodeModel.getAttribute("canonicalname").set(node, rule, true);
                             break;
                         case "type":
-                            nodeModel
-                                    .getAttribute("type")
-                                    .set(node, TYPE_NODE.valueOf(rule), true);
+                            nodeModel.getAttribute("type").set(node, TYPE_NODE.valueOf(rule), true);
                             break;
                         case "actor":
                             nodeModel.getAttribute("actor").set(node, rule, true);

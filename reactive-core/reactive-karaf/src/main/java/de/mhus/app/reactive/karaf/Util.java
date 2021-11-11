@@ -94,10 +94,8 @@ public class Util {
             return "max";
         } else {
             long diff = value - System.currentTimeMillis();
-            if (diff > 0) 
-                return MPeriod.getIntervalAsString(diff);
-            else
-                return "done";
+            if (diff > 0) return MPeriod.getIntervalAsString(diff);
+            else return "done";
         }
     }
 }

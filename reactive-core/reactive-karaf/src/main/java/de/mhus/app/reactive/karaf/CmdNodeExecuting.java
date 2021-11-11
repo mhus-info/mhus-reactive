@@ -39,7 +39,11 @@ import de.mhus.osgi.api.karaf.AbstractCmd;
 @Service
 public class CmdNodeExecuting extends AbstractCmd {
 
-    @Option(name = "-u", aliases = "--upcoming", description = "Print upcoming tasks", required = false)
+    @Option(
+            name = "-u",
+            aliases = "--upcoming",
+            description = "Print upcoming tasks",
+            required = false)
     private boolean upcoming;
 
     @SuppressWarnings("deprecation")
@@ -53,7 +57,7 @@ public class CmdNodeExecuting extends AbstractCmd {
             for (UUID nodeId : api.getEngine().getExecuting()) {
                 PNode node = api.getEngine().getNodeWithoutLock(nodeId);
                 PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
-                String time = Util.toPeriod( System.currentTimeMillis() - node.getLastRunDate());
+                String time = Util.toPeriod(System.currentTimeMillis() - node.getLastRunDate());
                 table.addRowValues(
                         node.getId(),
                         caze.getName(),
@@ -65,14 +69,15 @@ public class CmdNodeExecuting extends AbstractCmd {
             }
             table.print();
         }
-        
+
         if (upcoming) {
             ConsoleTable table = new ConsoleTable(tblOpt);
-            table.setHeaderValues("Id", "Case", "Name", "State", "Type", "CaseId","Running");
-    
+            table.setHeaderValues("Id", "Case", "Name", "State", "Type", "CaseId", "Running");
+
             Engine engine = api.getEngine();
             long now = System.currentTimeMillis();
-            Result<PNodeInfo> result = engine.getStorage().getScheduledFlowNodes(STATE_NODE.RUNNING, now, true);
+            Result<PNodeInfo> result =
+                    engine.getStorage().getScheduledFlowNodes(STATE_NODE.RUNNING, now, true);
             int cnt = 0;
             for (PNodeInfo nodeInfo : result) {
                 PCase caze = engine.getCaseWithoutLock(nodeInfo.getCaseId());
@@ -83,8 +88,7 @@ public class CmdNodeExecuting extends AbstractCmd {
                 } else {
                     if (!engine.isProcessHealthy(caze)) {
                         status = "not healthy";
-                    } else
-                        cnt++;
+                    } else cnt++;
                 }
                 table.addRowValues(
                         node.getId(),
@@ -93,8 +97,7 @@ public class CmdNodeExecuting extends AbstractCmd {
                         node.getState(),
                         node.getType(),
                         node.getCaseId(),
-                        status
-                        );
+                        status);
             }
             table.print();
         }

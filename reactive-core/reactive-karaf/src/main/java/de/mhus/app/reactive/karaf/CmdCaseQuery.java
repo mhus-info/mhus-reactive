@@ -34,10 +34,7 @@ import de.mhus.lib.core.pojo.MPojo;
 import de.mhus.lib.core.pojo.PojoModel;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
-@Command(
-        scope = "reactive",
-        name = "pcase-query",
-        description = "Query cases")
+@Command(scope = "reactive", name = "pcase-query", description = "Query cases")
 @Service
 public class CmdCaseQuery extends AbstractCmd {
 
@@ -45,13 +42,14 @@ public class CmdCaseQuery extends AbstractCmd {
             index = 0,
             name = "columns",
             required = false,
-            description = "List of columns, separated by comma,\n"
-                    + " case_* - case attribute\n"
-                    + " option_* - option of the case, e.g. option_customerId\n"
-                    + " case.* - case parameter",
+            description =
+                    "List of columns, separated by comma,\n"
+                            + " case_* - case attribute\n"
+                            + " option_* - option of the case, e.g. option_customerId\n"
+                            + " case.* - case parameter",
             multiValued = false)
     String cols;
-    
+
     @Argument(
             index = 1,
             name = "search",
@@ -60,7 +58,11 @@ public class CmdCaseQuery extends AbstractCmd {
             multiValued = true)
     String[] search;
 
-    @Option(name = "-a", aliases = "--archive", description = "Use archive storage", required = false)
+    @Option(
+            name = "-a",
+            aliases = "--archive",
+            description = "Use archive storage",
+            required = false)
     private boolean archive;
 
     PojoModel PCASE_MODEL = MPojo.getAttributesModelFactory().createPojoModel(PCase.class);
@@ -70,24 +72,27 @@ public class CmdCaseQuery extends AbstractCmd {
 
         String[] colNames = cols.split(",");
         PrintStream out = System.out;
-        
+
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
 
         SearchCriterias criterias = new SearchCriterias(search);
 
-        for (PCaseInfo info : archive ? api.getEngine().archiveSearchCases(criterias) : api.getEngine().storageSearchCases(criterias)) {
-                try {
-                    PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
-                    
-                    boolean first = true;
-                    for (String col : colNames) {
-                        if (!first)
-                            out.print(",");
-                        first = false;
-                        printCol(caze, col, out);
-                    }
-                    out.println();
-                } catch (Throwable t) {}
+        for (PCaseInfo info :
+                archive
+                        ? api.getEngine().archiveSearchCases(criterias)
+                        : api.getEngine().storageSearchCases(criterias)) {
+            try {
+                PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
+
+                boolean first = true;
+                for (String col : colNames) {
+                    if (!first) out.print(",");
+                    first = false;
+                    printCol(caze, col, out);
+                }
+                out.println();
+            } catch (Throwable t) {
+            }
         }
 
         return null;
@@ -98,22 +103,20 @@ public class CmdCaseQuery extends AbstractCmd {
         String hint = null;
         if (p > 0) {
             hint = col.substring(p);
-            col = col.substring(0,p-1);
+            col = col.substring(0, p - 1);
         }
         if (col.startsWith("case.")) {
             printCol(caze.getParameters().get(col.substring(5)), hint, out);
-        } else
-        if (col.startsWith("option_")) {
+        } else if (col.startsWith("option_")) {
             printCol(caze.getOptions().get(col.substring(7)), hint, out);
-        } else
-        if (col.startsWith("case_")) {
+        } else if (col.startsWith("case_")) {
             Object val = null;
             try {
                 val = PCASE_MODEL.getAttribute(col.substring(5)).get(caze);
-            } catch (Throwable t) {}
+            } catch (Throwable t) {
+            }
             printCol(val, hint, out);
-        } else
-            printCol("",null, out);
+        } else printCol("", null, out);
     }
 
     private void printCol(Object val, String hint, PrintStream out) {
@@ -121,10 +124,8 @@ public class CmdCaseQuery extends AbstractCmd {
             return;
         }
         String str = "";
-        if (MString.isEmpty(hint))
-            str = val.toString();
-        else
-        if (hint.equals("date")) {
+        if (MString.isEmpty(hint)) str = val.toString();
+        else if (hint.equals("date")) {
             Date d = MDate.toDate(val, null);
             if (d != null) {
                 str = MDate.toIso8601(d);
