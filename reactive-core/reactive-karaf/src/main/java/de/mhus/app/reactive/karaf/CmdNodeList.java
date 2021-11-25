@@ -49,6 +49,9 @@ public class CmdNodeList extends AbstractCmd {
     @Option(name = "-c", aliases = "--count", description = "Print count only", required = false)
     private boolean count;
 
+    @Option(name = "-l", aliases = "--limit", description = "Limit", required = false)
+    private int limit = 0;
+
     @Argument(
             index = 0,
             name = "search",
@@ -83,9 +86,9 @@ public class CmdNodeList extends AbstractCmd {
             if (all
                     || (info.getState() != STATE_NODE.CLOSED
                             && info.getType() != TYPE_NODE.RUNTIME)) {
+                c++;
                 try {
                     if (count) {
-                        c++;
                     } else {
                         PNode node = api.getEngine().getNodeWithoutLock(info.getId());
                         String scheduled = "-";
@@ -118,6 +121,9 @@ public class CmdNodeList extends AbstractCmd {
                             t.getMessage(),
                             info.getUri());
                 }
+            }
+            if (!count && limit > 0 && c >= limit) {
+                break;
             }
             if (!count && !one && table.size() >= 100) {
                 table.print(System.out);

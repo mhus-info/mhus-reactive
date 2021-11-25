@@ -55,6 +55,9 @@ public class CmdCaseList extends AbstractCmd {
     @Option(name = "-c", aliases = "--count", description = "Print count only", required = false)
     private boolean count;
 
+    @Option(name = "-l", aliases = "--limit", description = "Limit", required = false)
+    private int limit = 0;
+
     @Override
     public Object execute2() throws Exception {
 
@@ -68,10 +71,10 @@ public class CmdCaseList extends AbstractCmd {
         int c = 0;
         for (PCaseInfo info : api.getEngine().storageSearchCases(criterias)) {
             if (all || info.getState() != STATE_CASE.CLOSED) {
+                c++;
                 try {
                     PCase caze = api.getEngine().getCaseWithoutLock(info.getId());
                     if (count) {
-                        c++;
                     } else {
                         table.addRowValues(
                                 info.getId(),
@@ -92,6 +95,9 @@ public class CmdCaseList extends AbstractCmd {
                             info.getState(),
                             t.getMessage());
                 }
+            }
+            if (!count && limit > 0 && c >= limit) {
+                break;
             }
             if (!count && !one && table.size() >= 100) {
                 table.print(System.out);
