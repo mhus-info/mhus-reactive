@@ -15,6 +15,7 @@
  */
 package de.mhus.app.reactive.karaf;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.apache.karaf.shell.api.action.Command;
@@ -24,11 +25,12 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 import de.mhus.app.reactive.engine.Engine;
 import de.mhus.app.reactive.model.engine.PCase;
 import de.mhus.app.reactive.model.engine.PNode;
+import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.Result;
-import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.lib.core.M;
+import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.console.ConsoleTable;
 import de.mhus.osgi.api.karaf.AbstractCmd;
 
@@ -46,18 +48,42 @@ public class CmdNodeExecuting extends AbstractCmd {
             required = false)
     private boolean upcoming;
 
+    @Option(
+            name = "-z",
+            aliases = "--zombie",
+            description = "Print zombie threads",
+            required = false)
+    private boolean zombi;
+    
+    @Option(
+            name = "-st",
+            aliases = "--stacktrace",
+            description = "Print stack traces",
+            required = false)
+    private boolean stacktraces;
+    
     @SuppressWarnings("deprecation")
     @Override
     public Object execute2() throws Exception {
 
         ReactiveAdmin api = M.l(ReactiveAdmin.class);
         if (!upcoming) {
+            // get Threads
+            HashMap<String, Thread> threadList = new HashMap<>();
+            for (Thread thread : Thread.getAllStackTraces().keySet())
+                if (thread.getName().startsWith("ReactiveExecutorThread:")) {
+                    String[] parts = thread.getName().split(" ",3);
+                    if (parts.length > 1) {
+                        threadList.put(parts[1], thread);
+                    }
+                }
             ConsoleTable table = new ConsoleTable(tblOpt);
-            table.setHeaderValues("Id", "Case", "Name", "Time", "State", "Type", "CaseId");
+            table.setHeaderValues("Id", "Case", "Name", "Time", "State", "Type", "CaseId", "Thread");
             for (UUID nodeId : api.getEngine().getExecuting()) {
                 PNode node = api.getEngine().getNodeWithoutLock(nodeId);
                 PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
                 String time = Util.toPeriod(System.currentTimeMillis() - node.getLastRunDate());
+                Thread thread = threadList.remove(node.getId().toString());
                 table.addRowValues(
                         node.getId(),
                         caze.getName(),
@@ -65,9 +91,17 @@ public class CmdNodeExecuting extends AbstractCmd {
                         time,
                         node.getState(),
                         node.getType(),
-                        node.getCaseId());
+                        node.getCaseId(),
+                        thread == null ? "" : thread.getId() + (stacktraces ? MCast.toString("", thread.getStackTrace()) : ""  ) );
             }
             table.print();
+
+            if (zombi)
+                threadList.forEach((k,v) -> {
+                    System.out.println("Zombi Thread: "+ v.getId() + " " + v.getName());
+                    if (stacktraces)
+                        System.out.println(MCast.toString("", v.getStackTrace()));
+                });
         }
 
         if (upcoming) {
