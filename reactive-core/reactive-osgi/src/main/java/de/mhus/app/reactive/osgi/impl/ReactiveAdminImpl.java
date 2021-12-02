@@ -89,6 +89,10 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private static final String SUSPENDED = "suspended";
     private static final String LAST_ENGINE_ACTIVATION_CHANGE = "lastEngineActivationChange";
 
+    public static CfgBoolean CFG_PROCESS_TASKS = new CfgBoolean(ReactiveAdmin.class, "processTasks", true);
+    public static CfgBoolean CFG_PROCESS_PREPARE = new CfgBoolean(ReactiveAdmin.class, "processPrepare", true);
+    public static CfgBoolean CFG_PROCESS_CLEANUP = new CfgBoolean(ReactiveAdmin.class, "processCleanup", true);
+    
     public static CfgLong CFG_TIME_TROTTELING =
             new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
@@ -197,7 +201,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         if (!force && lastChange == lastEngineActivationChange) return;
         lastEngineActivationChange = lastChange;
 
-        if (!engine.isReady()) {
+        if (engine == null || !engine.isReady()) {
             log().i("updateProcessActivationInformation", "Engine is not ready");
             return;
         }
@@ -536,84 +540,95 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         processTracker.open(true);
 
         stopExecutor = false;
-        executorProcess =
-                new Thread(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                log().i("Engine process executor started");
-                                while (true) {
-                                    if (stopExecutor) return;
-
-                                    updateProcessActivationInformation(false);
-
-                                    try {
-                                        if (doExecuteProcess() == 0)
-                                            Thread.sleep(CFG_TIME_TROTTELING.value());
-                                        else Thread.sleep(CFG_TIME_DELAY.value());
-                                    } catch (InterruptedException e) {
-                                        // ignore
-                                    } catch (Throwable t) {
-                                        log().e(t);
-                                        MThread.sleep(CFG_TIME_DELAY.value());
+        if (CFG_PROCESS_TASKS.value()) {
+            executorProcess =
+                    new Thread(
+                            new Runnable() {
+    
+                                @Override
+                                public void run() {
+                                    log().i("Engine process executor started");
+                                    while (true) {
+                                        if (stopExecutor) return;
+    
+                                        updateProcessActivationInformation(false);
+    
+                                        try {
+                                            if (doExecuteProcess() == 0)
+                                                Thread.sleep(CFG_TIME_TROTTELING.value());
+                                            else Thread.sleep(CFG_TIME_DELAY.value());
+                                        } catch (InterruptedException e) {
+                                            // ignore
+                                        } catch (Throwable t) {
+                                            log().e(t);
+                                            MThread.sleep(CFG_TIME_DELAY.value());
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        "reactive-engine-process");
-        executorProcess.setDaemon(true);
-        executorProcess.start();
-
-        executorPrepare =
-                new Thread(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                log().i("Engine prepare executor started");
-                                while (true) {
-                                    if (stopExecutor) return;
-                                    try {
-                                        doExecutePrepare();
-                                        Thread.sleep(CFG_TIME_PREPARE_DELAY.value());
-                                    } catch (InterruptedException e) {
-                                        // ignore
-                                    } catch (Throwable t) {
-                                        log().e(t);
-                                        MThread.sleep(CFG_TIME_DELAY.value());
+                            },
+                            "reactive-engine-process");
+            executorProcess.setDaemon(true);
+            executorProcess.start();
+        } else
+            log().i("Processing of tasks is disabled");
+        
+        if (CFG_PROCESS_PREPARE.value()) {
+            executorPrepare =
+                    new Thread(
+                            new Runnable() {
+    
+                                @Override
+                                public void run() {
+                                    log().i("Engine prepare executor started");
+                                    while (true) {
+                                        if (stopExecutor) return;
+                                        try {
+                                            doExecutePrepare();
+                                            Thread.sleep(CFG_TIME_PREPARE_DELAY.value());
+                                        } catch (InterruptedException e) {
+                                            // ignore
+                                        } catch (Throwable t) {
+                                            log().e(t);
+                                            MThread.sleep(CFG_TIME_DELAY.value());
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        "reactive-engine-prepare");
-        executorPrepare.setDaemon(true);
-        executorPrepare.start();
+                            },
+                            "reactive-engine-prepare");
+            executorPrepare.setDaemon(true);
+            executorPrepare.start();
+        } else
+            log().i("Processing of prepare is disabled");
 
-        executorCleanup =
-                new Thread(
-                        new Runnable() {
-
-                            @Override
-                            public void run() {
-                                log().i("Engine cleanup executor started");
-                                while (true) {
-                                    if (stopExecutor) return;
-                                    try {
-                                        doExecuteCleanup();
-                                        Thread.sleep(CFG_TIME_CLEANUP_DELAY.value());
-                                    } catch (InterruptedException e) {
-                                        // ignore
-                                    } catch (Throwable t) {
-                                        log().e(t);
-                                        MThread.sleep(CFG_TIME_DELAY.value());
+        
+        if (CFG_PROCESS_CLEANUP.value()) {
+            executorCleanup =
+                    new Thread(
+                            new Runnable() {
+    
+                                @Override
+                                public void run() {
+                                    log().i("Engine cleanup executor started");
+                                    while (true) {
+                                        if (stopExecutor) return;
+                                        try {
+                                            doExecuteCleanup();
+                                            Thread.sleep(CFG_TIME_CLEANUP_DELAY.value());
+                                        } catch (InterruptedException e) {
+                                            // ignore
+                                        } catch (Throwable t) {
+                                            log().e(t);
+                                            MThread.sleep(CFG_TIME_DELAY.value());
+                                        }
                                     }
                                 }
-                            }
-                        },
-                        "reactive-engine-cleanup");
-        executorCleanup.setDaemon(true);
-        executorCleanup.start();
+                            },
+                            "reactive-engine-cleanup");
+            executorCleanup.setDaemon(true);
+            executorCleanup.start();
+        } else
+            log().i("Processing of cleanup is disabled");
+
     }
 
     protected int doExecuteProcess() throws NotFoundException, IOException {
@@ -638,12 +653,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     protected void doExecutePrepare() throws NotFoundException, IOException {
         if (isExecutionSuspended()) return;
 
-        if (!engine.isReady()) {
+        Engine e = engine;
+        if (e == null || !e.isReady()) {
             log().i("doExecutePrepare", "Engine is not ready");
             return;
         }
 
-        Engine e = engine;
         // long nextPrepare = System.currentTimeMillis() + CFG_TIME_PREPARE_DELAY.value();
         Lock lock = e.acquirePrepareMaster();
         if (lock != null) {
@@ -658,12 +673,12 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     protected void doExecuteCleanup() throws NotFoundException, IOException {
         if (isExecutionSuspended()) return;
 
-        if (!engine.isReady()) {
+        Engine e = engine;
+        if (e == null || !e.isReady()) {
             log().i("doExecuteCleanup", "Engine is not ready");
             return;
         }
 
-        Engine e = engine;
         // long nextCleanup = System.currentTimeMillis() + CFG_TIME_CLEANUP_DELAY.value();
         Lock lock = e.acquireCleanupMaster();
         if (lock != null) {
