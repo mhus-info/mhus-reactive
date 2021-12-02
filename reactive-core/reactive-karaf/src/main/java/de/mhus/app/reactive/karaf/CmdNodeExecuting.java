@@ -71,7 +71,7 @@ public class CmdNodeExecuting extends AbstractCmd {
             // get Threads
             HashMap<String, Thread> threadList = new HashMap<>();
             for (Thread thread : Thread.getAllStackTraces().keySet())
-                if (thread.getName().startsWith("ReactiveExecutorThread:")) {
+                if (thread.getName().startsWith("reactive-executor:")) {
                     String[] parts = thread.getName().split(" ",3);
                     if (parts.length > 1) {
                         threadList.put(parts[1], thread);

@@ -247,7 +247,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             }
                             Thread thread = new Thread(executor);
                             executor.thread = thread;
-                            thread.setName("ReactiveExecutorThread: " + node.getId() + " " + node.getName());
+                            thread.setName("reactive-executor: " + node.getId() + " " + node.getName());
                             thread.start();
                             lock = null;
                             if (threads.size() >= maxThreads) break;
