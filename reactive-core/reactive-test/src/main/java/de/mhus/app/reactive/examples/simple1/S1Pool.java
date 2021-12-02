@@ -26,6 +26,7 @@ import de.mhus.app.reactive.model.util.EngineUtil;
 import de.mhus.app.reactive.util.bpmn2.RPool;
 import de.mhus.lib.annotations.pojo.Action;
 import de.mhus.lib.basics.consts.GenerateConst;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 
 @PoolDescription(
@@ -123,12 +124,12 @@ public class S1Pool extends RPool<S1Pool> {
 
     @Action("action")
     public MProperties doCaseAction(ProcessContext<S1Pool> context, MProperties values) {
-        return new MProperties("a", "b");
+        return IProperties.to("a", "b");
     }
 
     @Action("actions")
     public MProperties doCaseActions(MProperties values) {
-        return new MProperties("action", "Simple Action");
+        return IProperties.to("action", "Simple Action");
     }
 
     @Action("restart")
@@ -138,7 +139,7 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error", e.toString());
+            return IProperties.to("error", e.toString());
         }
         return new MProperties();
     }
@@ -149,7 +150,7 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.cancelAll(context);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error", e.toString());
+            return IProperties.to("error", e.toString());
         }
         return new MProperties();
     }
@@ -161,7 +162,7 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.start(context, _S1Start2.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error", e.toString());
+            return IProperties.to("error", e.toString());
         }
         return new MProperties();
     }
@@ -172,7 +173,7 @@ public class S1Pool extends RPool<S1Pool> {
             EngineUtil.start(context, _S1Start1.CLASS_NAME, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new MProperties("error", e.toString());
+            return IProperties.to("error", e.toString());
         }
         return new MProperties();
     }
@@ -180,6 +181,6 @@ public class S1Pool extends RPool<S1Pool> {
     @Action(value = "test", title = "Test")
     @ActionForm(S1PoolTestForm.class)
     public MProperties doTest(MProperties values) {
-        return new MProperties("action", "Simple Action", "text", values.getString("name", "?"));
+        return IProperties.to("action", "Simple Action", "text", values.getString("name", "?"));
     }
 }

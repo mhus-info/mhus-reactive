@@ -35,6 +35,7 @@ import de.mhus.app.reactive.examples.simple1.S1PoolTestForm;
 import de.mhus.app.reactive.examples.simple1.S1Process;
 import de.mhus.app.reactive.model.engine.EngineConst;
 import de.mhus.app.reactive.util.engine.MemoryStorage;
+import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.MSystem;
 import de.mhus.lib.core.console.Console;
@@ -83,7 +84,7 @@ public class S1CaseActionTest {
             System.out.println(form);
         }
         {
-            MProperties values = new MProperties("action", "test");
+            MProperties values = IProperties.to("action", "test");
             MProperties form = engine.onUserCaseAction(caseId, EngineConst.ACTION_FORM, values);
             System.out.println(form);
             assertNotNull(form);
