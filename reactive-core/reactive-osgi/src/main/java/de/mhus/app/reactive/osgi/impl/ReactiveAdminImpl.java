@@ -89,10 +89,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
     private static final String SUSPENDED = "suspended";
     private static final String LAST_ENGINE_ACTIVATION_CHANGE = "lastEngineActivationChange";
 
-    public static CfgBoolean CFG_PROCESS_TASKS = new CfgBoolean(ReactiveAdmin.class, "processTasks", true);
-    public static CfgBoolean CFG_PROCESS_PREPARE = new CfgBoolean(ReactiveAdmin.class, "processPrepare", true);
-    public static CfgBoolean CFG_PROCESS_CLEANUP = new CfgBoolean(ReactiveAdmin.class, "processCleanup", true);
-    
+    public static CfgBoolean CFG_PROCESS_TASKS =
+            new CfgBoolean(ReactiveAdmin.class, "processTasks", true);
+    public static CfgBoolean CFG_PROCESS_PREPARE =
+            new CfgBoolean(ReactiveAdmin.class, "processPrepare", true);
+    public static CfgBoolean CFG_PROCESS_CLEANUP =
+            new CfgBoolean(ReactiveAdmin.class, "processCleanup", true);
+
     public static CfgLong CFG_TIME_TROTTELING =
             new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
@@ -544,15 +547,15 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             executorProcess =
                     new Thread(
                             new Runnable() {
-    
+
                                 @Override
                                 public void run() {
                                     log().i("Engine process executor started");
                                     while (true) {
                                         if (stopExecutor) return;
-    
+
                                         updateProcessActivationInformation(false);
-    
+
                                         try {
                                             if (doExecuteProcess() == 0)
                                                 Thread.sleep(CFG_TIME_TROTTELING.value());
@@ -569,14 +572,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                             "reactive-engine-process");
             executorProcess.setDaemon(true);
             executorProcess.start();
-        } else
-            log().i("Processing of tasks is disabled");
-        
+        } else log().i("Processing of tasks is disabled");
+
         if (CFG_PROCESS_PREPARE.value()) {
             executorPrepare =
                     new Thread(
                             new Runnable() {
-    
+
                                 @Override
                                 public void run() {
                                     log().i("Engine prepare executor started");
@@ -597,15 +599,13 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                             "reactive-engine-prepare");
             executorPrepare.setDaemon(true);
             executorPrepare.start();
-        } else
-            log().i("Processing of prepare is disabled");
+        } else log().i("Processing of prepare is disabled");
 
-        
         if (CFG_PROCESS_CLEANUP.value()) {
             executorCleanup =
                     new Thread(
                             new Runnable() {
-    
+
                                 @Override
                                 public void run() {
                                     log().i("Engine cleanup executor started");
@@ -626,9 +626,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                             "reactive-engine-cleanup");
             executorCleanup.setDaemon(true);
             executorCleanup.start();
-        } else
-            log().i("Processing of cleanup is disabled");
-
+        } else log().i("Processing of cleanup is disabled");
     }
 
     protected int doExecuteProcess() throws NotFoundException, IOException {

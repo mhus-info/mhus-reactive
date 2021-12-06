@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>de.mhus.app.reactive</groupId>
 		<artifactId>reactive-tools</artifactId>
-		<version>7.8.0-SNAPSHOT</version>
+		<version>7.8.0</version>
 	</parent>
 	<packaging>maven-plugin</packaging>
 	<name>Reactive Maven Plugin</name>

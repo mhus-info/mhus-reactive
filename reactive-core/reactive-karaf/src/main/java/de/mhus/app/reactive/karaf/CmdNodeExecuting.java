@@ -54,14 +54,14 @@ public class CmdNodeExecuting extends AbstractCmd {
             description = "Print zombie threads",
             required = false)
     private boolean zombi;
-    
+
     @Option(
             name = "-st",
             aliases = "--stacktrace",
             description = "Print stack traces",
             required = false)
     private boolean stacktraces;
-    
+
     @SuppressWarnings("deprecation")
     @Override
     public Object execute2() throws Exception {
@@ -72,13 +72,14 @@ public class CmdNodeExecuting extends AbstractCmd {
             HashMap<String, Thread> threadList = new HashMap<>();
             for (Thread thread : Thread.getAllStackTraces().keySet())
                 if (thread.getName().startsWith("reactive-executor:")) {
-                    String[] parts = thread.getName().split(" ",3);
+                    String[] parts = thread.getName().split(" ", 3);
                     if (parts.length > 1) {
                         threadList.put(parts[1], thread);
                     }
                 }
             ConsoleTable table = new ConsoleTable(tblOpt);
-            table.setHeaderValues("Id", "Case", "Name", "Time", "State", "Type", "CaseId", "Thread");
+            table.setHeaderValues(
+                    "Id", "Case", "Name", "Time", "State", "Type", "CaseId", "Thread");
             for (UUID nodeId : api.getEngine().getExecuting()) {
                 PNode node = api.getEngine().getNodeWithoutLock(nodeId);
                 PCase caze = api.getEngine().getCaseWithoutLock(node.getCaseId());
@@ -92,16 +93,22 @@ public class CmdNodeExecuting extends AbstractCmd {
                         node.getState(),
                         node.getType(),
                         node.getCaseId(),
-                        thread == null ? "" : thread.getId() + (stacktraces ? MCast.toString("", thread.getStackTrace()) : ""  ) );
+                        thread == null
+                                ? ""
+                                : thread.getId()
+                                        + (stacktraces
+                                                ? MCast.toString("", thread.getStackTrace())
+                                                : ""));
             }
             table.print();
 
             if (zombi)
-                threadList.forEach((k,v) -> {
-                    System.out.println("Zombi Thread: "+ v.getId() + " " + v.getName());
-                    if (stacktraces)
-                        System.out.println(MCast.toString("", v.getStackTrace()));
-                });
+                threadList.forEach(
+                        (k, v) -> {
+                            System.out.println("Zombi Thread: " + v.getId() + " " + v.getName());
+                            if (stacktraces)
+                                System.out.println(MCast.toString("", v.getStackTrace()));
+                        });
         }
 
         if (upcoming) {
