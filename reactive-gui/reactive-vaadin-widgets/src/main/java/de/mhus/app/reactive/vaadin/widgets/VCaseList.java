@@ -52,6 +52,7 @@ public class VCaseList extends MhuTable implements Refreshable {
     protected static final Action ACTION_DETAILS = new Action("Details");
     protected static final Action ACTION_RUNTIME = new Action("Runtime");
     protected static final Action ACTION_ACTIONS = new Action("Actions");
+    protected static final Action ACTION_NODES = new Action("Nodes");
     private String sortByDefault = EngineConst.FIELD_DUEDATE;
     private boolean sortAscDefault = true;
     MhuBeanItemContainer<CaseItem> data = new MhuBeanItemContainer<CaseItem>(CaseItem.class);
@@ -178,6 +179,8 @@ public class VCaseList extends MhuTable implements Refreshable {
             activity.showCaseRuntime(caze.getId());
         } else if (action == ACTION_ACTIONS) {
             doActions(caze.getId());
+        } else if (action == ACTION_NODES) {
+            activity.showCaseNodes(caze.getId());
         }
     }
 
@@ -188,6 +191,7 @@ public class VCaseList extends MhuTable implements Refreshable {
         if (activity.isShowCaseRuntime(caze.getId())) list.add(ACTION_RUNTIME);
         if (activity.isShowCaseArchive(caze.getId()))
             if (caze.getState() == STATE_CASE.CLOSED) list.add(ACTION_ARCHIVE);
+        if (activity.isShowCaseNodes(caze.getId())) list.add(ACTION_NODES);
     }
 
     protected void doActions(UUID caseId) {

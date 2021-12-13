@@ -52,4 +52,8 @@ public interface WidgetActivityDelegate {
     boolean isShowCaseRuntime(UUID id);
 
     boolean isShowCaseArchive(UUID id);
+
+    void showCaseNodes(UUID id);
+
+    boolean isShowCaseNodes(UUID id);
 }
