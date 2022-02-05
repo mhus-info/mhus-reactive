@@ -40,6 +40,7 @@ import de.mhus.app.reactive.model.engine.PNodeInfo;
 import de.mhus.app.reactive.model.engine.Result;
 import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.engine.StorageProvider;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MActivator;
 import de.mhus.lib.core.MLog;
@@ -1458,7 +1459,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             } catch (Throwable e) {
                 hasNext = false;
                 close();
-                throw new MRuntimeException(e);
+                throw new MRuntimeException(RC.ERROR, e);
             }
         }
     }
@@ -1518,7 +1519,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             } catch (Throwable e) {
                 hasNext = false;
                 close();
-                throw new MRuntimeException(e);
+                throw new MRuntimeException(RC.ERROR, e);
             }
         }
     }

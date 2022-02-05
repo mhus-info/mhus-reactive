@@ -27,6 +27,7 @@ import de.mhus.app.reactive.model.ui.ICase;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.IEngineFactory;
 import de.mhus.app.reactive.model.util.RootActor;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.aaa.Aaa;
@@ -67,7 +68,7 @@ public class BpmCustomerNode extends ObjectListNode<ICase, ICase> {
             return engine.searchCases(
                     criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
         } catch (IOException e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 

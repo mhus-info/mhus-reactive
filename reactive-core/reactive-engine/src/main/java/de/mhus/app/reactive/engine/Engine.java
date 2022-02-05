@@ -76,6 +76,7 @@ import de.mhus.app.reactive.model.util.IndexValuesProvider;
 import de.mhus.app.reactive.model.util.LocalCaseLockProvider;
 import de.mhus.app.reactive.model.util.NoPool;
 import de.mhus.app.reactive.model.util.ValidateParametersBeforeExecute;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
 import de.mhus.lib.core.MLog;
@@ -590,7 +591,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                 }
                                 if (caze.getState() == STATE_CASE.CLOSED
                                         || caze.getState() == STATE_CASE.SUSPENDED)
-                                    throw new MException("Progress not reached before close", id);
+                                    throw new MException(RC.WARNING_TEMPORARELY, "Progress not reached before close in case {1}", id);
                                 if (MPeriod.isTimeOut(start, config.progressTimeout))
                                     throw new TimeoutRuntimeException(
                                             "Wait for progress timeout", id);
@@ -653,7 +654,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpme":
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException("misspelled node id", l);
+                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled node id", l);
                     UUID nodeId = UUID.fromString(l);
 
                     String user = uri.getUsername();
@@ -680,24 +681,24 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpmx":
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException("misspelled case id", l);
+                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
                     UUID caseId = UUID.fromString(l);
                     // check start point
                     PCaseInfo caze = getCaseInfo(caseId);
-                    if (caze == null) throw new MException("case not found", caseId);
+                    if (caze == null) throw new MException(RC.NOT_FOUND, "case {1} not found", caseId);
                     if (caze.getState() == STATE_CASE.SUSPENDED)
-                        throw new MException("case suspended", caseId);
+                        throw new MException(RC.CONFLICT, "case {1} suspended", caseId);
                     if (caze.getState() == STATE_CASE.CLOSED)
-                        throw new MException("case closed", caseId);
+                        throw new MException(RC.CONFLICT, "case {1} closed", caseId);
                     // check access
                     String user = uri.getUsername();
                     if (user != null) {
                         String pass = uri.getPassword();
                         if (!config.aaa.validatePassword(user, pass))
-                            throw new AccessDeniedException("login failed", user, uri);
+                            throw new AccessDeniedException("login for {1} failed", user, uri);
 
                         if (!hasInitiateAccess(uri, user))
-                            throw new AccessDeniedException("user is not initiator", user, uri);
+                            throw new AccessDeniedException("user {1} is not initiator", user, uri);
                     }
                     // parameters
                     if (parameters == null) {
@@ -710,7 +711,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         EngineContext context = createContext(lock);
                         EElement start = context.getEPool().getElement(uri.getFragment());
                         if (start == null)
-                            throw new MException("start point not found", uri.getFragment());
+                            throw new MException(RC.NOT_FOUND, "start point not found", uri.getFragment());
 
                         return lock.createStartPoint(context, start, uri.getQuery());
                     }
@@ -718,13 +719,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpma": // case action bpma://case-id/action?parameters
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException("misspelled case id", l);
+                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
                     UUID caseId = UUID.fromString(l);
                     return onUserCaseAction(caseId, uri.getPath(), new MProperties(uri.getQuery()));
                 }
                 // case "bpmq": // not implemented use executeQuery()
             default:
-                throw new MException("scheme unknown", uri.getScheme());
+                throw new MException(RC.ERROR, "scheme unknown", uri.getScheme());
         }
     }
 
@@ -785,9 +786,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         String fragment = uri.getFragment();
         if (fragment != null) {
             EElement point = pool.getElement(fragment);
-            if (point == null) throw new MException("start point not found", fragment, uri);
+            if (point == null) throw new MException(RC.NOT_FOUND, "start point not found", fragment, uri);
             if (!point.is(AStartPoint.class))
-                throw new MException("node is not a start point", uri);
+                throw new MException(RC.CONFLICT, "node is not a start point", uri);
             startPoints = new LinkedList<>();
             startPoints.add(point);
         } else {
@@ -818,7 +819,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             // check if exists
             try {
                 if (storage.loadCase(id) != null)
-                    throw new MException("case already exists with uuid", id);
+                    throw new MException(RC.CONFLICT, "case already exists with uuid", id);
             } catch (NotFoundException e) {
                 // everything is fine
             }
@@ -947,14 +948,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             processVersion = config.persistent.getActiveProcessVersion(processName);
         else {
             if (!config.persistent.isProcessEnabled(processName, processVersion))
-                throw new MException(
-                        "specified process version is not enabled",
+                throw new MException(RC.BUSY,
+                        "specified process {1} version {2} is not enabled",
                         processName,
                         processVersion,
                         uri);
         }
         if (MString.isEmpty(processVersion))
-            throw new MException("default process version is disabled", processName, uri);
+            throw new MException(RC.BUSY, "default process {1} version is disabled", processName, uri);
 
         EProcess process = processProvider.getProcess(processName, processVersion);
         return process;
@@ -1097,7 +1098,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     PCase caze = lock.getCase();
                     fireEvent.archiveCase(caze);
                     if (caze.getState() != STATE_CASE.CLOSED)
-                        throw new MException("case is not closed", caseId);
+                        throw new MException(RC.BUSY, "case {1} is not closed", caseId);
                     archive.saveCase(caze);
 
                     for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
@@ -1138,7 +1139,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try (CaseLock lock = getCaseLock(caseId, "suspendCase")) {
             PCase caze = lock.getCase();
             if (caze.getState() == STATE_CASE.SUSPENDED)
-                throw new MException("case already suspended", caseId);
+                throw new MException(RC.BUSY, "case {1} already suspended", caseId);
             fireEvent.suspendCase(caze);
             caze.setState(STATE_CASE.SUSPENDED);
             storage.saveCase(caze);
@@ -1165,7 +1166,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try (CaseLock lock = getCaseLock(caseId, "resumeCase")) {
             PCase caze = lock.getCase();
             if (caze.getState() != STATE_CASE.SUSPENDED)
-                throw new MException("already is not suspended", caseId);
+                throw new MException(RC.CONFLICT, "case {1} is not suspended", caseId);
             fireEvent.unsuspendCase(caze);
             caze.setState(STATE_CASE.RUNNING);
             storage.saveCase(caze);
@@ -1192,7 +1193,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try (CaseLock lock = getCaseLockByNode(nodeId, "cancelFlowNode")) {
             PNode node = lock.getFlowNode(nodeId);
             if (node.getStartState() == STATE_NODE.SUSPENDED)
-                throw new MException("node is suspended", nodeId);
+                throw new MException(RC.BUSY, "node {1} is suspended", nodeId);
             fireEvent.cancelFlowNode(node);
             node.setSuspendedState(node.getState());
             node.setState(STATE_NODE.CLOSED);
@@ -1211,7 +1212,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try (CaseLock lock = getCaseLockByNode(nodeId, "retryFlowNode")) {
             PNode node = lock.getFlowNode(nodeId);
             if (node.getStartState() == STATE_NODE.SUSPENDED)
-                throw new MException("node is suspended", nodeId);
+                throw new MException(RC.BUSY, "node {1} is suspended", nodeId);
             fireEvent.retryFlowNode(node);
             node.setSuspendedState(node.getState());
             node.setState(STATE_NODE.RUNNING);
@@ -1230,7 +1231,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     public void prepareMigrateCase(CaseLock lock) throws MException, IOException {
         PCase caze = lock.getCase();
         if (caze.getState() != STATE_CASE.SUSPENDED && caze.getState() != STATE_CASE.CLOSED)
-            throw new MException("already is not suspended", caze.getId());
+            throw new MException(RC.CONFLICT, "case {1} is not suspended", caze.getId());
 
         // load all nodes
         LinkedList<PNode> nodes = new LinkedList<>();
@@ -1259,7 +1260,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             if (caze != null) {
                 fireEvent.archiveCase(caze);
                 if (caze.getState() != STATE_CASE.CLOSED && caze.getState() != STATE_CASE.SUSPENDED)
-                    throw new MException("case is not closed or suspended", caseId);
+                    throw new MException(RC.BUSY, "case {1} is not closed or suspended", caseId);
             }
         } catch (NotFoundException e) {
             log().d(caseId, e);
@@ -1970,11 +1971,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             PNode node = lock.getFlowNode(nodeId);
             // PCase caze = lock.getCase();
             if (node.getState() != STATE_NODE.WAITING)
-                throw new MException("node is not WAITING", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not WAITING", nodeId);
             if (node.getType() != TYPE_NODE.USER)
-                throw new MException("node is not a user task", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not a user task", nodeId);
             if (node.getAssignedUser() != null)
-                throw new MException("node is already assigned", nodeId, node.getAssignedUser());
+                throw new MException(RC.BUSY, "node {1} is already assigned to {2}", nodeId, node.getAssignedUser());
             node.setAssignedUser(user);
             storage.saveFlowNode(node);
         }
@@ -1984,11 +1985,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         try (PCaseLock lock = getCaseLockByNode(nodeId, "unassignUserTask")) {
             PNode node = lock.getFlowNode(nodeId);
             if (node.getState() != STATE_NODE.WAITING)
-                throw new MException("node is not WAITING", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not WAITING", nodeId);
             if (node.getType() != TYPE_NODE.USER)
-                throw new MException("node is not a user task", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not a user task", nodeId);
             if (node.getAssignedUser() == null)
-                throw new MException("node is not assigned", nodeId);
+                throw new MException(RC.BUSY, "node {1} is not assigned", nodeId);
             node.setAssignedUser(null);
             storage.saveFlowNode(node);
         }
@@ -1999,17 +2000,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             PNode node = lock.getFlowNode(nodeId);
             PCase caze = lock.getCase();
             if (node.getState() != STATE_NODE.WAITING)
-                throw new MException("node is not WAITING", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not WAITING", nodeId);
             if (node.getType() != TYPE_NODE.USER)
-                throw new MException("node is not a user task", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not a user task", nodeId);
             if (node.getAssignedUser() == null)
-                throw new MException("node is not assigned", nodeId);
+                throw new MException(RC.BUSY, "node {1} is not assigned", nodeId);
 
             EngineContext context = createContext(lock, caze, node);
             AElement<?> aNode = context.getANode();
             if (!(aNode instanceof AUserTask<?>))
-                throw new MException(
-                        "node activity is not AUserTask",
+                throw new MException(RC.CONFLICT, 
+                        "node {1} activity is not a user task",
                         nodeId,
                         aNode.getClass().getCanonicalName());
 
@@ -2028,17 +2029,17 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             PNode node = lock.getFlowNode(nodeId);
             PCase caze = lock.getCase();
             if (node.getState() != STATE_NODE.WAITING)
-                throw new MException("node is not WAITING", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not WAITING", nodeId);
             if (node.getType() != TYPE_NODE.USER)
-                throw new MException("node is not a user task", nodeId);
+                throw new MException(RC.CONFLICT, "node {1} is not a user task", nodeId);
             if (node.getAssignedUser() == null)
-                throw new MException("node is not assigned", nodeId);
+                throw new MException(RC.BUSY, "node {1} is not assigned", nodeId);
 
             EngineContext context = createContext(lock, caze, node);
             AElement<?> aNode = context.getANode();
             if (!(aNode instanceof AUserTask<?>))
-                throw new MException(
-                        "node activity is not AUserTask",
+                throw new MException(RC.CONFLICT, 
+                        "node {1} activity is not a user task",
                         nodeId,
                         aNode.getClass().getCanonicalName());
 
@@ -2067,7 +2068,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 getCaseLock(caseId, "onUserCaseAction", "action", action, "values", values)) {
             PCase caze = lock.getCase();
             if (caze.getState() != STATE_CASE.RUNNING)
-                throw new MException("case is not RUNNING", caseId);
+                throw new MException(RC.BUSY, "case {1} is not RUNNING", caseId);
 
             EngineContext context = createContext(lock, caze, null);
             APool<?> aPool = context.getPool();
@@ -2126,7 +2127,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         } catch (MException e) {
             throw e;
         } catch (Exception e) {
-            throw new MException(nodeId, e);
+            throw new MException(RC.STATUS.ERROR, nodeId, e);
         }
     }
 
@@ -2289,9 +2290,9 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 if (span != null) span.log("setPCase " + pCase);
             } catch (Throwable t) {
             }
-            if (cazex != null) throw new MException("Case already set", caseId);
+            if (cazex != null) throw new MException(RC.CONFLICT, "Case already set", caseId);
             if (!pCase.getId().equals(caseId))
-                throw new MException("Case has wrong id", caseId, pCase.getId());
+                throw new MException(RC.CONFLICT, "Case has wrong id", caseId, pCase.getId());
             cazex = pCase;
         }
 
@@ -2764,10 +2765,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
             // some checks
             if (!start.is(AStartPoint.class))
-                throw new MException("activity is not a start point", context, start);
+                throw new MException(RC.NOT_FOUND, "activity is not a start point", context, start);
 
             if (!context.getEPool().isElementOfPool(start))
-                throw new MException("start point is not part of the pool", context, start);
+                throw new MException(RC.CONFLICT, "start point is not part of the pool", context, start);
 
             // collect information
             ActivityDescription desc = start.getActivityDescription();

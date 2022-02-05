@@ -23,6 +23,7 @@ import de.mhus.app.reactive.model.annotations.Output;
 import de.mhus.app.reactive.model.util.ActivityUtil;
 import de.mhus.app.reactive.model.util.NoCondition;
 import de.mhus.app.reactive.util.activity.RGateway;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.errors.MException;
 
 /*man bpmn
@@ -52,7 +53,7 @@ public class RInclusiveGateway<P extends RPool<?>> extends RGateway<P>
         }
         if (successful.size() == 0 && defaultOutput != null) successful.add(defaultOutput);
         if (successful.size() == 0)
-            throw new MException("condition not found", getClass().getCanonicalName());
+            throw new MException(RC.ERROR, "condition not found in {1}", getClass().getCanonicalName());
         return successful.toArray(new Output[successful.size()]);
     }
 }

@@ -26,6 +26,7 @@ import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.model.ui.IEngine;
 import de.mhus.app.reactive.model.ui.IEngineFactory;
 import de.mhus.app.reactive.model.ui.INode;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
 import de.mhus.lib.core.aaa.Aaa;
@@ -65,7 +66,7 @@ public class BpmNodeNode extends ObjectListNode<INode, INode> {
             return engine.searchNodes(
                     criterias, page, size, propertyNames == null ? null : propertyNames.split(","));
         } catch (IOException e) {
-            throw new MException(e);
+            throw new MException(RC.ERROR, e);
         }
     }
 

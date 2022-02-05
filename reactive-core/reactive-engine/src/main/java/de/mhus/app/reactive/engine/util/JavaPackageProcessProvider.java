@@ -49,6 +49,7 @@ import de.mhus.app.reactive.model.util.ActivityUtil;
 import de.mhus.app.reactive.model.util.DefaultSwimlane;
 import de.mhus.app.reactive.model.util.InactiveStartPoint;
 import de.mhus.app.reactive.model.util.NobodyActor;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MString;
 import de.mhus.lib.core.MSystem;
@@ -124,7 +125,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                         && de.mhus.app.reactive.model.activity.AProcess.class.isAssignableFrom(
                                 element)) {
                     if (processClass != null)
-                        throw new MException(
+                        throw new MException(RC.ERROR,
                                 "Multipe process definition classes found", processClass, element);
                     processClass = (Class<? extends AProcess>) element;
                 }
@@ -134,7 +135,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     try {
                         PoolContainer pool = new PoolContainer((Class<? extends APool<?>>) element);
                         if (pools.containsKey(pool.getCanonicalName()))
-                            throw new MException(
+                            throw new MException(RC.ERROR,
                                     "Multiple pools with the same name", pool.getCanonicalName());
                         pool.setProcess(this);
                         pools.put(pool.getCanonicalName(), pool);
@@ -150,7 +151,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                         ElementContainer act =
                                 new ElementContainer((Class<? extends AActivity<?>>) element);
                         if (elements.containsKey(act.getCanonicalName()))
-                            throw new MException(
+                            throw new MException(RC.ERROR,
                                     "Multiple activities with the same name",
                                     act.getCanonicalName()); // should not happen
                         elements.put(act.getCanonicalName(), act);
@@ -160,10 +161,10 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     }
                 }
             }
-            if (processClass == null) throw new MException("process definition class not found");
+            if (processClass == null) throw new MException(RC.ERROR, "process definition class not found");
             processDescription = processClass.getAnnotation(ProcessDescription.class);
             if (processDescription == null)
-                throw new MException("process definition annotation not found");
+                throw new MException(RC.ERROR, "process definition annotation not found");
             processName = processClass.getCanonicalName();
             name =
                     MString.isEmpty(processDescription.name())
@@ -245,7 +246,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     | InvocationTargetException
                     | NoSuchMethodException
                     | SecurityException e) {
-                throw new MException(getName(), e);
+                throw new MException(RC.STATUS.ERROR, getName(), e);
             }
         }
     }
@@ -263,7 +264,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
             this.pool = pool;
             poolDescription = pool.getAnnotation(PoolDescription.class);
             if (poolDescription == null)
-                throw new MException("Pool without description annotation found", pool);
+                throw new MException(RC.ERROR, "Pool without description annotation found", pool);
             name =
                     MString.isEmpty(poolDescription.name())
                             ? pool.getSimpleName()
@@ -372,7 +373,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     | InvocationTargetException
                     | NoSuchMethodException
                     | SecurityException e) {
-                throw new MException(getName(), e);
+                throw new MException(RC.STATUS.ERROR, getName(), e);
             }
         }
 
@@ -433,7 +434,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
             if (AActivity.class.isAssignableFrom(element)) {
                 actDescription = element.getAnnotation(ActivityDescription.class);
                 if (actDescription == null)
-                    throw new MException("Activity without description annotation", element);
+                    throw new MException(RC.ERROR, "Activity without description annotation", element);
             }
             name =
                     actDescription == null || MString.isEmpty(actDescription.name())
@@ -572,7 +573,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     | InvocationTargetException
                     | NoSuchMethodException
                     | SecurityException e) {
-                throw new MException(getName(), e);
+                throw new MException(RC.STATUS.ERROR, getName(), e);
             }
         }
 

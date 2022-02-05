@@ -17,6 +17,7 @@ package de.mhus.app.reactive.util.engine;
 
 import java.util.UUID;
 
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.node.INode;
 import de.mhus.lib.core.node.INodeFactory;
@@ -42,7 +43,7 @@ public class MemoryStorage extends SqlDbStorage {
         try {
             Class.forName(jdbcDriver);
         } catch (ClassNotFoundException e) {
-            throw new MException("HSQLDB driver not found", jdbcDriver);
+            throw new MException(RC.INTERNAL_ERROR, "HSQLDB driver not found", jdbcDriver);
         }
 
         INode cconfig = M.l(INodeFactory.class).create();
@@ -59,7 +60,7 @@ public class MemoryStorage extends SqlDbStorage {
         try {
             return bundle.getPool("db");
         } catch (Exception e) {
-            throw new MException("can't create pool", e);
+            throw new MException(RC.INTERNAL_ERROR, "can't create pool", e);
         }
     }
 }

@@ -64,6 +64,7 @@ import de.mhus.app.reactive.model.uimp.UiNode;
 import de.mhus.app.reactive.model.uimp.UiNodeDescription;
 import de.mhus.app.reactive.model.uimp.UiPool;
 import de.mhus.app.reactive.model.uimp.UiProcess;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MLog;
 import de.mhus.lib.core.MProperties;
@@ -624,7 +625,7 @@ public class UiEngine extends MLog implements IEngine {
     public void doArchive(UUID caseId) throws Exception {
         if (engine == null) throw new WrongStateException();
         PCaseInfo caze = engine.getCaseInfo(caseId);
-        if (caze.getState() != STATE_CASE.CLOSED) throw new MException("wrong case state", caseId);
+        if (caze.getState() != STATE_CASE.CLOSED) throw new MException(RC.BUSY, "wrong case {1} state {2}", caseId, caze.getState());
         engine.archiveCase(caseId);
     }
 

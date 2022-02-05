@@ -24,6 +24,7 @@ import java.util.UUID;
 import de.mhus.app.reactive.model.engine.PCase.STATE_CASE;
 import de.mhus.app.reactive.model.engine.PNode.STATE_NODE;
 import de.mhus.app.reactive.model.engine.PNode.TYPE_NODE;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MProperties;
@@ -409,7 +410,7 @@ public class SearchCriterias implements Externalizable, Cloneable {
         try {
             return (SearchCriterias) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw new MRuntimeException(e);
+            throw new MRuntimeException(RC.STATUS.ERROR, e);
         }
     }
 }

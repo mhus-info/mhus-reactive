@@ -39,6 +39,7 @@ import de.mhus.app.reactive.model.engine.SearchCriterias;
 import de.mhus.app.reactive.osgi.IEngineAdmin;
 import de.mhus.app.reactive.osgi.ReactiveAdmin;
 import de.mhus.app.reactive.osgi.impl.ReactiveAdminImpl;
+import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MPeriod;
@@ -104,13 +105,13 @@ public class CmdProcessEngineTool extends AbstractCmd {
         if (cmd.equals("export")) {
             File dir = new File(parameters[0]);
             if (!dir.exists() || !dir.isDirectory())
-                throw new MException("directory not found", dir);
+                throw new MException(RC.ERROR, "directory not found", dir);
             Engine engine = api.getEngine();
             ExchangeUtil.exportData(engine, dir);
         } else if (cmd.equals("import")) {
             File dir = new File(parameters[0]);
             if (!dir.exists() || !dir.isDirectory())
-                throw new MException("directory not found", dir);
+                throw new MException(RC.ERROR, "directory not found", dir);
             Engine engine = api.getEngine();
             ExchangeUtil.importData(engine, dir);
         } else if (cmd.equals("updateProcessActivationInformation")) {
