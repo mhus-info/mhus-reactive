@@ -30,6 +30,6 @@ public class S1EventMessage extends RReceiveMessageEvent<S1Pool> {
 
     @Override
     public void doExecute() throws Exception {
-        log().i(getContext().getPNode().getMessage());
+        log().i("message", getContext().getPNode().getMessage());
     }
 }

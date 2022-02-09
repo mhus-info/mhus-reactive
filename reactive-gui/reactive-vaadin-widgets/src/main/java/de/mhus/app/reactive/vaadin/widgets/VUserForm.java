@@ -124,7 +124,7 @@ public class VUserForm extends VerticalLayout implements ActionHandler {
 
             return vform;
         } catch (Throwable t) {
-            log.e(node, t);
+            log.e("create form {1} failed", node, t);
         }
         return null;
     }

@@ -59,7 +59,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 Object value = attr.get(this);
                 if (value != null) out.put(attr.getName(), value);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("export parameter {1} failed", attr, e);
             }
         }
         return out;
@@ -89,7 +89,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                     }
                 }
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("import parameter {1} failed", attr, e);
             }
         }
     }
@@ -181,7 +181,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 }
             }
         } catch (Throwable t) {
-            log().e(this, action, values, t);
+            log().e("user action {2} failed", this, action, values, t);
         }
         return null;
     }
@@ -197,7 +197,7 @@ public abstract class RPool<P extends APool<?>> extends MLog implements APool<P>
                 }
             }
         } catch (Throwable t) {
-            log().e(this, values, t);
+            log().e("user action failed", this, values, t);
         }
         return ret;
     }

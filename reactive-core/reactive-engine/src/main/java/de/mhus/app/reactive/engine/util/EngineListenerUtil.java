@@ -212,7 +212,7 @@ public class EngineListenerUtil {
                                                 .doEvent(
                                                         method.getName(), (PNode) args[1], 2, args);
                                     } catch (Throwable t) {
-                                        MLogUtil.log().e(method, args, t);
+                                        MLogUtil.log().e("do event {1} failed", method, args, t);
                                     }
                                 }
 
@@ -223,7 +223,7 @@ public class EngineListenerUtil {
                                         try {
                                             method.invoke(listener, args);
                                         } catch (Throwable t) {
-                                            MLogUtil.log().t(method, args, t);
+                                            MLogUtil.log().t("invoke listener failed", method, args, t);
                                         }
                                     }
                                 return null;

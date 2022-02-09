@@ -508,7 +508,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                             loader,
                                             process.getClass().getPackageName());
                                 } catch (Throwable t) {
-                                    log().e(reference, t);
+                                    log().e("add service {1} failed", reference, t);
                                 }
                                 return null;
                             }
@@ -526,7 +526,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                             loader,
                                             service.getClass().getPackageName());
                                 } catch (Throwable t) {
-                                    log().e(reference, t);
+                                    log().e("modify service {1} failed", reference, t);
                                 }
                             }
 
@@ -537,7 +537,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
                                     OsgiProcessLoader loader = new OsgiProcessLoader(service);
                                     removeProcess(loader.getProcessCanonicalName());
                                 } catch (Throwable t) {
-                                    log().e(reference, t);
+                                    log().e("remove service {1} failed", reference, t);
                                 }
                             }
                         });

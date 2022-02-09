@@ -45,7 +45,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
         try {
             showUserForm(id);
         } catch (Exception e) {
-            space.log().e(id, e);
+            space.log().e("show form failed",id, e);
         }
     }
 
@@ -55,7 +55,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
             List<EngineMessage[]> runtime = space.getEngine().getCaseRuntimeMessages(id.toString());
             space.showRuntime(runtime);
         } catch (Exception e) {
-            space.log().e(id, e);
+            space.log().e("show case runtime failed", id, e);
         }
     }
 
@@ -64,7 +64,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
         try {
             space.getEngine().doArchive(id);
         } catch (Exception e) {
-            space.log().e(id, e);
+            space.log().e("do case archive failed", id, e);
         }
     }
 
@@ -74,7 +74,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
             INode item = space.getEngine().getNode(id.toString());
             space.showNodeDetails(new NodeItem(space.getEngine(), item));
         } catch (Exception e) {
-            space.log().e(id, e);
+            space.log().e("show node details failed", id, e);
         }
     }
 
@@ -86,7 +86,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
 
                     @Override
                     protected void onCancel() {
-                        space.log().i(itemId, "Cancel");
+                        space.log().i("show case details failed", itemId, "Cancel");
                         space.showNodeList();
                     }
                 };
@@ -104,7 +104,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
             list.add(runtime);
             space.showRuntime(list);
         } catch (Exception e) {
-            space.log().e(id, e);
+            space.log().e("show runtime {1} failed", id, e);
         }
     }
 
@@ -129,25 +129,25 @@ public class WidgetActivity extends WidgetActivityAdapter {
 
                     @Override
                     protected void onFormCancel() {
-                        space.log().i(node, "Cancel");
+                        space.log().i("form cancel failed", node, "Cancel");
                         space.showNodeList();
                     }
 
                     @Override
                     protected void onFormSubmit(INode node, MProperties properties) {
-                        space.log().i(node, "Submit");
+                        space.log().i("Submit", node);
                         try {
                             space.getEngine().submitUserTask(node.getId().toString(), properties);
                             space.showNodeList();
                         } catch (Exception e) {
-                            space.log().e(node, e);
+                            space.log().e("submit {1} failed", node, e);
                         }
                     }
 
                     @Override
                     protected MProperties onAction(
                             INode node, String action, MProperties properties) {
-                        space.log().i(node, "Action");
+                        space.log().i("Action", node, action);
                         try {
                             MProperties res =
                                     space.getEngine()
@@ -155,7 +155,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
                                                     node.getId().toString(), action, properties);
                             return res;
                         } catch (Exception e) {
-                            space.log().e(node, action, e);
+                            space.log().e("action failed", node, action, e);
                         }
                         return null;
                     }
@@ -184,7 +184,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
                                 space.doRefresh();
                                 return true;
                             } catch (Exception e) {
-                                space.log().e(id, e);
+                                space.log().e("set due days failed", id, e);
                                 return false;
                             }
                         }
@@ -194,7 +194,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
                             space.getEngine().setDueDays(id.toString(), val);
                             space.doRefresh();
                         } catch (Exception e) {
-                            space.log().e(id, val, e);
+                            space.log().e("set due days failed", id, val, e);
                             return false;
                         }
                         return true;

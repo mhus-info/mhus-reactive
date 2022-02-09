@@ -36,7 +36,7 @@ public abstract class REvent<P extends RPool<?>> extends RAbstractEvent<P> {
                 Object value = attr.get(this);
                 if (value != null) out.put(attr.getName(), value);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("export parameter {1} failed", attr, e);
             }
         }
         return out;
@@ -50,7 +50,7 @@ public abstract class REvent<P extends RPool<?>> extends RAbstractEvent<P> {
                 Object value = parameters.get(attr.getName());
                 if (value != null) attr.set(this, value, false);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("import parameter {1} failed", attr, e);
             }
         }
     }

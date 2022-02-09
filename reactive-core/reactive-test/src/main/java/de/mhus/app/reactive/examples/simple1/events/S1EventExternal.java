@@ -27,6 +27,6 @@ public class S1EventExternal extends RExternalEvent<S1Pool> {
 
     @Override
     public void doExecute() throws Exception {
-        log().i(getContext().getPNode().getMessage());
+        log().i("external event", getContext().getPNode().getMessage());
     }
 }

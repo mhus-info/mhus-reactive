@@ -33,7 +33,7 @@ public class S1UserForm02Control extends FormControlAdapter {
                 form.getDataSource().setObject(c, DataSource.VALUE, newValue);
                 c.doUpdateValue();
             } catch (Throwable t) {
-                log().e(component, newValue, t);
+                log().e("set ctext1 failed", component, newValue, t);
             }
         } else if (component.getName().equals("ctext2")) {
             try {
@@ -41,7 +41,7 @@ public class S1UserForm02Control extends FormControlAdapter {
                 form.getDataSource().setObject(c, DataSource.VALUE, newValue);
                 c.doUpdateValue();
             } catch (Throwable t) {
-                log().e(component, newValue, t);
+                log().e("set ctext2 failed", component, newValue, t);
             }
         } else if (component.getName().equals("cgender")) {
             String v = String.valueOf(newValue);
@@ -51,7 +51,7 @@ public class S1UserForm02Control extends FormControlAdapter {
                 vMale.setVisible("MR".equals(v));
                 vFemale.setVisible("MRS".equals(v));
             } catch (Throwable t) {
-                log().e(component, newValue, t);
+                log().e("set cgender failed", component, newValue, t);
             }
         }
 

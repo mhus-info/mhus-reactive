@@ -58,7 +58,7 @@ public class CaseLockProxy extends CaseLock implements PCaseLock {
                 span.setTag("stacktrace", stacktrace);
             }
         } catch (Throwable t) {
-            log().d(caseId, t);
+            log().d("configure span failed for case {1}", caseId, t);
         }
     }
 

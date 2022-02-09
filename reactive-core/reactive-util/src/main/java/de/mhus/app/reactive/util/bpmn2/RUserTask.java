@@ -77,7 +77,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
             try {
                 out.put(name, attr.get(this));
             } catch (Throwable t) {
-                log().w(this, attr, t);
+                log().w("get node attr {1} failed", this, attr, t);
             }
         }
 
@@ -93,7 +93,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
             try {
                 out.put(name, attr.get(pool));
             } catch (Throwable t) {
-                log().w(this, attr, t);
+                log().w("get pool attr {1} failed", this, attr, t);
             }
         }
 
@@ -176,7 +176,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
                     try {
                         attr.set(this, value, false);
                     } catch (Throwable t) {
-                        log().w(this, attr, t);
+                        log().w("set {2} to node failed", this, attr, t);
                     }
                 }
             } else if (modelPool.hasAttribute(name)) {
@@ -186,7 +186,7 @@ public abstract class RUserTask<P extends RPool<?>> extends RAbstractTask<P>
                     try {
                         attr.set(pool, value, false);
                     } catch (Throwable t) {
-                        log().w(this, attr, t);
+                        log().w("set {2} to pool failed", this, attr, t);
                     }
                 }
             }

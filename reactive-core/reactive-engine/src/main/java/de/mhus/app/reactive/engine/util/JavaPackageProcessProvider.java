@@ -140,7 +140,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                         pool.setProcess(this);
                         pools.put(pool.getCanonicalName(), pool);
                     } catch (Throwable t) {
-                        log().w(element, t);
+                        log().w("loading pool {1} failed", element, t);
                         warnings.add("Pool " + element.getCanonicalName() + ": " + t.getMessage());
                     }
                 }
@@ -156,7 +156,7 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                                     act.getCanonicalName()); // should not happen
                         elements.put(act.getCanonicalName(), act);
                     } catch (Throwable t) {
-                        log().w(element, t);
+                        log().w("loading element {1} failed", element, t);
                         warnings.add("Pool " + element.getCanonicalName() + ": " + t.getMessage());
                     }
                 }

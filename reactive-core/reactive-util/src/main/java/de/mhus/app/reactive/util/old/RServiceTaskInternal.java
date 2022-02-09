@@ -39,7 +39,7 @@ public abstract class RServiceTaskInternal<P extends RPool<?>> extends RTask<P> 
                 Object value = attr.get(this);
                 if (value != null) out.put(attr.getName(), value);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("export attr {1} failed", attr, e);
             }
         }
         return out;
@@ -53,7 +53,7 @@ public abstract class RServiceTaskInternal<P extends RPool<?>> extends RTask<P> 
                 Object value = parameters.get(attr.getName());
                 if (value != null) attr.set(this, value, false);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("import attr {1} failed", attr, e);
             }
         }
     }

@@ -32,7 +32,7 @@ public abstract class RGateway<P extends RPool<?>> extends RActivity<P> implemen
                 try {
                     getContext().createActivity(act);
                 } catch (Throwable t) {
-                    log().w(act, t);
+                    log().w("create activity {1} failed in {2}", act, getContext().getPNode(), t);
                 }
             }
             getContext().getPNode().setState(STATE_NODE.CLOSED);

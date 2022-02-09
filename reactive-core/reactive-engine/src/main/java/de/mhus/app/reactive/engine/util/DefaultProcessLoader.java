@@ -100,7 +100,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
                     jar.close();
                 }
             } catch (Throwable t) {
-                log().w(url, t);
+                log().w("process loading for {1} failed", url, t);
             }
         }
 
@@ -138,7 +138,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
             try {
                 classLoaderUrls.add(dir.toURL());
             } catch (MalformedURLException e) {
-                log().w(dir, e);
+                log().w("malformed url {1}", dir, e);
             }
         } else if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
@@ -147,7 +147,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
                         try {
                             classLoaderUrls.add(file.toURL());
                         } catch (MalformedURLException e) {
-                            log().w(file, e);
+                            log().w("malformed url {1}", file, e);
                         }
                 }
             }
@@ -155,7 +155,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
             try {
                 classLoaderUrls.add(dir.toURL());
             } catch (MalformedURLException e) {
-                log().w(dir, e);
+                log().w("malformed url {1}", dir, e);
             }
         }
     }
@@ -166,7 +166,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
             try {
                 searchLoaderUrls.add(dir.toURL());
             } catch (MalformedURLException e) {
-                log().w(dir, e);
+                log().w("malformed url {1}", dir, e);
             }
         } else if (dir.isDirectory()) {
             for (File file : dir.listFiles()) {
@@ -175,7 +175,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
                         try {
                             searchLoaderUrls.add(file.toURL());
                         } catch (MalformedURLException e) {
-                            log().w(file, e);
+                            log().w("malformed url {1}", file, e);
                         }
                 }
             }
@@ -183,7 +183,7 @@ public class DefaultProcessLoader extends MLog implements ProcessLoader {
             try {
                 searchLoaderUrls.add(dir.toURL());
             } catch (MalformedURLException e) {
-                log().w(dir, e);
+                log().w("malformed url {1}", dir, e);
             }
         }
     }

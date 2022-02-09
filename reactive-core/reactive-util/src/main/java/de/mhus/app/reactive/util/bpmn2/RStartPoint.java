@@ -34,7 +34,7 @@ public class RStartPoint<P extends RPool<?>> extends RActivity<P> implements ASt
             try {
                 getContext().createActivity(output.activity());
             } catch (Throwable t) {
-                log().w(output, t);
+                log().w("activity failed", output, t);
             }
         }
         getContext().getPNode().setState(STATE_NODE.CLOSED);

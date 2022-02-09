@@ -226,7 +226,7 @@ public class XmlModel extends MLog {
                             | InvocationTargetException
                             | NoSuchMethodException
                             | SecurityException e) {
-                        log().e(clazz, e);
+                        log().e("load class {1} failed", clazz, e);
                     }
                 } else {
                     entry.doUpdate(element);

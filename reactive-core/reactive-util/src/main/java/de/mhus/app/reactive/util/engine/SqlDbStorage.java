@@ -106,7 +106,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     log().d(t);
                 }
             }
-            log().i(this, "Retry init of DB in " + CFG_INIT_RETRY_SEC.value() + " sec");
+            log().i("init failed", this, "Retry init of DB in " + CFG_INIT_RETRY_SEC.value() + " sec");
             MThread.sleep(CFG_INIT_RETRY_SEC.value() * 1000);
         }
     }
@@ -183,7 +183,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caze, t);
+                log().d("close connection failed", caze, t);
             }
         }
     }
@@ -333,7 +333,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caze, t);
+                log().d("close connection failed", caze, t);
             }
         }
     }
@@ -363,7 +363,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id, t);
+                log().d("close connection failed", id, t);
             }
         }
         if (caze == null) throw new NotFoundException("case", id);
@@ -410,7 +410,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id, t);
+                log().d("close connection failed", id, t);
             }
         }
     }
@@ -434,7 +434,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id, t);
+                log().d("close connection failed", id, t);
             }
         }
     }
@@ -529,7 +529,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(flow, t);
+                log().d("close connection failed", flow, t);
             }
         }
     }
@@ -709,7 +709,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(flow, t);
+                log().d("close connection failed", flow, t);
             }
         }
     }
@@ -733,7 +733,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     MObjectInputStream ois = new MObjectInputStream(in, act);
                     node.readExternal(ois);
                 } catch (java.io.EOFException eofe) {
-                    log().w(node, eofe); // most because of extended parameters
+                    log().w("read strem for node {1} failed", node, eofe); // most because of extended parameters
                 }
             }
             res.close();
@@ -743,7 +743,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(id, t);
+                log().d("close connection failed", id, t);
             }
         }
         if (node == null) throw new NotFoundException("node", id);
@@ -1674,7 +1674,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId, t);
+                log().d("close connection failed", caseId, t);
             }
         }
     }
@@ -1705,7 +1705,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId, t);
+                log().d("close connection failed", nodeId, t);
             }
         }
     }
@@ -1730,7 +1730,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId, t);
+                log().d("close connection failed", nodeId, t);
             }
         }
     }
@@ -1755,7 +1755,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(nodeId, t);
+                log().d("close connection failed", nodeId, t);
             }
         }
     }
@@ -1781,7 +1781,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId, t);
+                log().d("close connection failed", caseId, t);
             }
         }
     }
@@ -1806,7 +1806,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
             try {
                 if (con != null) con.close();
             } catch (Throwable t) {
-                log().d(caseId, t);
+                log().d("close connection failed", caseId, t);
             }
         }
     }

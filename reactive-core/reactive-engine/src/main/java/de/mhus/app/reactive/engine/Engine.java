@@ -175,7 +175,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     lock.saveFlowNode(null, node, null);
                 }
             } catch (Throwable t) {
-                log().e(nodeId, t);
+                log().e("scheduled node {1} failed", nodeId, t);
             }
         }
         for (PNodeInfo nodeInfo : storage.getScheduledFlowNodes(STATE_NODE.WAITING, now, false)) {
@@ -198,7 +198,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                 }
             } catch (Throwable t) {
-                log().e(nodeInfo, t);
+                log().e("waiting node {1} failed", nodeInfo, t);
             }
         }
     }
@@ -262,7 +262,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         }
                     }
                 } catch (Throwable t) {
-                    log().e(nodeInfo, t);
+                    log().e("processing node {1} failed", nodeInfo, t);
                 } finally {
                     if (lock != null) lock.close();
                 }
@@ -313,7 +313,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         }
                     }
                 } catch (Throwable t) {
-                    log().e(nodeInfo, t);
+                    log().e("processing node {1} failed", nodeInfo, t);
                 }
             }
         }
@@ -388,7 +388,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                 if (node.getState() != STATE_NODE.STOPPED) onlyStopped = false;
                             }
                         } catch (Throwable t) {
-                            log().w(nodeId, t);
+                            log().w("cleanup node {1} failed", nodeId, t);
                         }
                     }
 
@@ -398,7 +398,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         try {
                             lock.closeRuntime(rId);
                         } catch (Throwable t) {
-                            log().w(rId, t);
+                            log().w("close runtime {1} failed", rId, t);
                             fireEvent.error(rId, t);
                         }
                     }
@@ -413,12 +413,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             caze.setState(STATE_CASE.SEVERE);
                             storage.saveCase(caze);
                         } catch (MException e) {
-                            log().w(caseInfo, e);
+                            log().w("close case {1} failed", caseInfo, e);
                         }
                     }
                 }
             } catch (Throwable te) {
-                log().w(caseInfo, te);
+                log().w("cleanup for case {1} failed", caseInfo, te);
             }
         }
 
@@ -465,7 +465,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     lock.doFlowNode(node);
                 } catch (Throwable t) {
                     try {
-                        log().e(node, t);
+                        log().e("run node {1} failed", node, t);
                         fireEvent.error(node, t);
                     } catch (Throwable t2) {
                     }
@@ -475,7 +475,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     executing.remove(node.getId());
                 }
             } catch (Throwable t) {
-                log().e(node, t);
+                log().e("run failed for {1}", node, t);
             }
             finished = true;
         }
@@ -902,7 +902,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     try {
                         lock.createStartPoint(context, start, null);
                     } catch (Throwable t) {
-                        log().w(start, t);
+                        log().w("create start point {1} failed", start, t);
                         fireEvent.error(pCase, start, t);
                         isError = t;
                         ITracer.get().current().finish();
@@ -1031,7 +1031,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             if (lock != null) return lock.getFlowNode(pNode.getRuntimeId());
             return getNodeWithoutLock(pNode.getRuntimeId());
         } catch (NotFoundException | IOException e) {
-            log().w(pNode, e);
+            log().w("load runtime for node {1} failed", pNode, e);
             return null;
         }
     }
@@ -1074,7 +1074,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         }
                         storage.deleteCaseAndFlowNodes(caze.getId());
                     } catch (Throwable t) {
-                        log().e(caseId, t);
+                        log().e("archive case {1} failed", caseId, t);
                     }
                 }
             }
@@ -1106,7 +1106,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             PNode node = lock.getFlowNode(nodeId.getId());
                             archive.saveFlowNode(node);
                         } catch (NotFoundException e) {
-                            log().d(caseId, e);
+                            log().d("archive case {1} failed", caseId, e);
                         }
                     }
 
@@ -1115,14 +1115,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 }
             }
         } catch (Exception e) {
-            log().d(caseId, e);
+            log().d("archive case {1} failed", caseId, e);
         }
         for (PNodeInfo nodeId : storage.getFlowNodes(caseId, null)) {
             try {
                 PNode node = getNodeWithoutLock(nodeId.getId());
                 archive.saveFlowNode(node);
             } catch (NotFoundException e) {
-                log().d(caseId, e);
+                log().d("archive case {1} failed", caseId, e);
             }
         }
         storage.deleteCaseAndFlowNodes(caseId);
@@ -1263,7 +1263,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     throw new MException(RC.BUSY, "case {1} is not closed or suspended", caseId);
             }
         } catch (NotFoundException e) {
-            log().d(caseId, e);
+            log().d("restor case {1} failed", caseId, e);
         }
         PCase caze = archive.loadCase(caseId);
         fireEvent.restoreCase(caze);
@@ -1590,7 +1590,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             return false;
 
         } catch (Throwable t) {
-            log().e(uri, user, t);
+            log().e("check initial access to {1} for user {2} failed", uri, user, t);
             return false;
         }
     }
@@ -1632,7 +1632,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             return hasAccess;
 
         } catch (Throwable t) {
-            log().e(nodeId, user, t);
+            log().e("check execute access for node {1} of user {2} failed", nodeId, user, t);
             return false;
         }
     }
@@ -1718,16 +1718,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                             ((ValidateParametersBeforeExecute) aNode)
                                     .validateParameters(parameters);
                     } catch (ValidationException | UsageException t) {
-                        log().d(node, t);
+                        log().d("validation failed for node {1}", node, t);
                         continue;
                     } catch (Throwable t) {
-                        log().w(node, t);
+                        log().w("fire message for node {1} failed", node, t);
                         continue;
                     }
                 }
 
                 if (node.getState() == STATE_NODE.SUSPENDED) {
-                    log().w("message for suspended node will not be delivered", node, message);
+                    log().w("message for suspended node {1} will not be delivered", node, message);
                     continue;
                 } else if (isExecuting(nodeInfo.getId())) {
                     // to late ...
@@ -1774,14 +1774,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                 } catch (Throwable e) {
                     fireEvent.error(node, e);
-                    log().e(node, e);
+                    log().e("fire failed for node {1}", node, e);
                     // should not happen, it's an internal engine problem
                     try {
                         PCase caze = lock.getCase();
                         EngineContext context = createContext(lock, caze, node);
                         lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
                     } catch (Throwable e2) {
-                        log().e(nodeInfo, e2);
+                        log().e("close node {1} failed", nodeInfo, e2);
                         fireEvent.error(nodeInfo, e2);
                     }
                     continue;
@@ -1857,14 +1857,14 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         }
                     } catch (MException e) {
                         fireEvent.error(node, e);
-                        log().e(node, e);
+                        log().e("fire signal for node {1} failed", node, e);
                         // should not happen, it's an internal engine problem
                         try {
                             PCase caze = lock.getCase();
                             EngineContext context = createContext(lock, caze, node);
                             lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
                         } catch (Throwable e2) {
-                            log().e(nodeInfo, e2);
+                            log().e("close node {1} failed", nodeInfo, e2);
                             fireEvent.error(nodeInfo, e2);
                         }
                         continue;
@@ -1872,7 +1872,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 }
 
             } catch (Throwable t) {
-                log().d(nodeInfo.getId(), t);
+                log().d("fire signal for node {1} failed", nodeInfo.getId(), t);
                 // should not happen, it's an internal engine problem
                 try (PCaseLock lock = getCaseLock(nodeInfo, "fireSignal.error", "error", t)) {
                     PCase caze = lock.getCase();
@@ -1880,7 +1880,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     EngineContext context = createContext(lock, caze, node);
                     lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
                 } catch (Throwable e) {
-                    log().e(nodeInfo, e);
+                    log().e("close node {1} failed", nodeInfo, e);
                     fireEvent.error(nodeInfo, e);
                 }
             }
@@ -1946,7 +1946,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             lock.saveFlowNode(node);
 
         } catch (Throwable t) {
-            log().e(nodeInfo.getId(), t);
+            log().e("fire scheduled trigger for node {1} failed", nodeInfo.getId(), t);
             // should not happen, it's an internal engine problem
             try {
                 PNode node = lock.getFlowNode(nodeInfo.getId());
@@ -1954,7 +1954,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 EngineContext context = createContext(lock, caze, node);
                 lock.closeFlowNode(context, node, STATE_NODE.SEVERE);
             } catch (Throwable e) {
-                log().e(nodeInfo, e);
+                log().e("close node {1} failed", nodeInfo, e);
                 fireEvent.error(nodeInfo, e);
             }
         }
@@ -2265,7 +2265,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     span.setTag("stacktrace", stacktrace);
                 }
             } catch (Throwable t) {
-                log().d(caseId, t.toString());
+                log().d("configure span with case {1} failed", caseId, t.toString());
             }
         }
 
@@ -2387,7 +2387,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
 
                 } catch (Throwable t) {
-                    log().e(caze, t);
+                    log().e("close case {1} failed", caze, t);
                     fireEvent.error(caze, t);
                 }
             }
@@ -2403,7 +2403,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     try {
                         doCloseActivity(context, closeId);
                     } catch (Throwable t) {
-                        log().e(closeId, t);
+                        log().e("close activity {2} for case {1} failed", caze, closeId, t);
                     }
                 }
             }
@@ -2443,7 +2443,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             try {
                 caze = getCase();
             } catch (Throwable t) {
-                log().e(pNode.getCaseId(), t);
+                log().e("close runtime {1} failed", pNode.getCaseId(), t);
                 fireEvent.error(pNode, t);
                 return; // ignore - try next time
             }
@@ -2468,7 +2468,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 try {
                     doCloseActivity(context, closeId);
                 } catch (Throwable t) {
-                    log().e(closeId, t);
+                    log().e("close activity {2} for node {1} failed", aNode, closeId, t);
                 }
             }
 
@@ -2580,7 +2580,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 try {
                     closeFlowNode(context, pNode, STATE_NODE.FAILED);
                 } catch (Exception e) {
-                    log().e(pNode, e);
+                    log().e("node error handling for node {1} failed", pNode, e);
                     fireEvent.error(pNode, e);
                 }
                 return;
@@ -2590,7 +2590,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 try {
                     closeFlowNode(context, pNode, STATE_NODE.STOPPED);
                 } catch (Exception e) {
-                    log().e(pNode, e);
+                    log().e("close node {1} failed", pNode, e);
                     fireEvent.error(pNode, e);
                 }
                 return;
@@ -2629,7 +2629,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 try {
                     saveFlowNode(pNode);
                 } catch (NotFoundException | IOException e) {
-                    log().e(pNode, e);
+                    log().e("save node {1} failed", pNode, e);
                 }
             }
         }
@@ -2737,7 +2737,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                 }
             } catch (Throwable t) {
-                log().w(flow, t);
+                log().w("node lifecycle {1} failed", flow, t);
                 // remember
                 fireEvent.error(flow, t);
                 if (init) fireEvent.initFailed(runtime, flow);
@@ -2892,7 +2892,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 try {
                     caze = getCase();
                 } catch (Throwable t) {
-                    log().e(pNode.getCaseId(), t);
+                    log().e("get case {1} failed", pNode.getCaseId(), t);
                     fireEvent.error(pNode, t);
                     return; // ignore - try next time
                 }
@@ -2943,7 +2943,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 // do lifecycle
                 doNodeLifecycle(context, pNode);
             } catch (Throwable t) {
-                log().e(pNode, t);
+                log().e("do flow node {1} failed", pNode, t);
                 fireEvent.error(pNode, t);
             }
         }

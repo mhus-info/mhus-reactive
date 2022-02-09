@@ -142,7 +142,7 @@ public class ActivityUtil {
                 try {
                     out.put(attr.getName(), attr.get(activity));
                 } catch (Throwable t) {
-                    log.t(attr, t);
+                    log.t("put attribute {1} to activity {2} failed", attr, activity, t);
                 }
             }
         }
@@ -153,7 +153,7 @@ public class ActivityUtil {
                     try {
                         out.put(attr.getName(), attr.get(pool));
                     } catch (Throwable t) {
-                        log.t(attr, t);
+                        log.t("put attribute {1} to pool {2} failed", attr, pool, t);
                     }
             }
         }

@@ -160,7 +160,7 @@ public class UiEngine extends MLog implements IEngine {
                     }
                     cnt++;
                 } catch (Exception e) {
-                    log().d(info, e);
+                    log().d("search node failed", info, e);
                 }
                 if (out.size() >= size) break;
             }
@@ -236,7 +236,7 @@ public class UiEngine extends MLog implements IEngine {
                     }
                     cnt++;
                 } catch (Exception e) {
-                    log().d(info, e);
+                    log().d("search case failed", info, e);
                 }
                 if (out.size() >= size) break;
             }

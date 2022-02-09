@@ -63,7 +63,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
                 Object value = attr.get(this);
                 if (value != null) out.put(attr.getName(), value);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("put attribute {1} failed", attr, e);
             }
         }
         return out;
@@ -80,7 +80,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
                 Object value = parameters.get(attr.getName());
                 if (value != null) attr.set(this, value, false);
             } catch (IOException e) {
-                log().d(attr, e);
+                log().d("set attribute {1} failed", attr, e);
             }
         }
     }
@@ -91,7 +91,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
     }
 
     protected void error(Object... msg) {
-        log().e(msg);
+        log().e("report {1} error {2}", getContext().getPNode(), msg);
         try {
             getContext().getARuntime().doErrorMsg(getContext().getPNode(), msg);
         } catch (Throwable t) {
@@ -99,7 +99,7 @@ public class RActivity<P extends RPool<?>> extends MLog implements AActivity<P>,
     }
 
     protected void debug(Object... msg) {
-        log().d(msg);
+        log().d("report {1} debug {2}", getContext().getPNode(), msg);
         try {
             getContext().getARuntime().doDebugMsg(getContext().getPNode(), msg);
         } catch (Throwable t) {
