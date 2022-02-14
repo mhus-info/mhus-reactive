@@ -174,7 +174,7 @@ public class NodeItem {
     @Column(order = 25, title = "Due", editable = false, elapsed = false)
     public LocalDate getDue() {
         if (node.getDue() <= 0) return null;
-        return LocalDate.ofEpochDay(node.getDue() / MPeriod.DAY_IN_MILLISECOUNDS);
+        return LocalDate.ofEpochDay(node.getDue() / MPeriod.DAY_IN_MILLISECONDS);
     }
 
     @Column(order = 26, title = "Created", editable = false, elapsed = true)

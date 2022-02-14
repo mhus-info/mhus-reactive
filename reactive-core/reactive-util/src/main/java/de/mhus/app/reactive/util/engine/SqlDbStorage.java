@@ -1113,7 +1113,7 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                         "<=",
                         new Date(
                                 System.currentTimeMillis()
-                                        + search.due * MPeriod.DAY_IN_MILLISECOUNDS),
+                                        + search.due * MPeriod.DAY_IN_MILLISECONDS),
                         prop,
                         sql);
                 // sql.append(" OR due_ = 0) "); - not needed, 0 is lesser then timestamp

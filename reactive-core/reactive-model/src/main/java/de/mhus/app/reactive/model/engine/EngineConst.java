@@ -25,7 +25,7 @@ public class EngineConst {
     public static final String OPTION_CUSTOMER_ID = "customerId";
     public static CfgLong DEFAULT_ACTIVITY_TIMEOUT =
             new CfgLong(
-                    EEngine.class, "defaultActivityTimeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
+                    EEngine.class, "defaultActivityTimeout", MPeriod.MINUTE_IN_MILLISECONDS * 5);
     public static final int TRY_COUNT = 3;
     public static final int DEFAULT_TRY_COUNT = 1;
     public static final long END_OF_DAYS = Long.MAX_VALUE;

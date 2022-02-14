@@ -962,7 +962,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
     }
 
     private long newScheduledTime(PNode flow) {
-        return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECOUNDS;
+        return System.currentTimeMillis() + MPeriod.MINUTE_IN_MILLISECONDS;
     }
 
     public APool<?> createPoolObject(EPool pool) throws MException {

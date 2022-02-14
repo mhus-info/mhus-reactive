@@ -39,5 +39,5 @@ public class EngineConfiguration {
     public boolean executeParallel = true;
     public int maxThreads = 10;
     public long sleepBetweenProgress = 100;
-    public long progressTimeout = MPeriod.MINUTE_IN_MILLISECOUNDS * 5;
+    public long progressTimeout = MPeriod.MINUTE_IN_MILLISECONDS * 5;
 }

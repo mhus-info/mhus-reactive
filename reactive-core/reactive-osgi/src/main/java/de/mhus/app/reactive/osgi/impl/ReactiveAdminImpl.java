@@ -101,7 +101,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             new CfgLong(ReactiveAdmin.class, "timeTrotteling", 3000);
     public static CfgLong CFG_TIME_DELAY = new CfgLong(ReactiveAdmin.class, "timeDelay", 1000);
     public static CfgLong CFG_TIME_CLEANUP_DELAY =
-            new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", MPeriod.MINUTE_IN_MILLISECOUNDS);
+            new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", MPeriod.MINUTE_IN_MILLISECONDS);
     public static CfgLong CFG_TIME_PREPARE_DELAY =
             new CfgLong(ReactiveAdmin.class, "timeCleanupDelay", 10000);
 
@@ -153,7 +153,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             new CfgInt(ReactiveAdmin.class, "maxThreads", 10)
                     .updateAction(v -> instance.config.maxThreads = v);
     private static CfgLong CFG_PROGRESS_TIMEOUT =
-            new CfgLong(ReactiveAdmin.class, "progressTimeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5)
+            new CfgLong(ReactiveAdmin.class, "progressTimeout", MPeriod.MINUTE_IN_MILLISECONDS * 5)
                     .updateAction(v -> instance.config.progressTimeout = v);
     private static CfgLong CFG_SLEEP_BETWEEN_PROGRESS =
             new CfgLong(ReactiveAdmin.class, "sleepBetweenProgress", 100)

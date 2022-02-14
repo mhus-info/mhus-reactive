@@ -497,7 +497,7 @@ public class PNode implements Externalizable {
 
     public void setDueDays(int days) {
         if (days < 0) resetDue();
-        else this.due = System.currentTimeMillis() + days * MPeriod.DAY_IN_MILLISECOUNDS;
+        else this.due = System.currentTimeMillis() + days * MPeriod.DAY_IN_MILLISECONDS;
     }
 
     public void resetDue() {

@@ -116,7 +116,7 @@ public class CmdDev extends AbstractCmd {
             long now = System.currentTimeMillis();
             List<EngineCaseLock> locks = api.getEngine().getCaseLocks();
             for (EngineCaseLock lock : locks)
-                if (now - lock.getLock().getLockTime() > MPeriod.MINUTE_IN_MILLISECOUNDS * 5)
+                if (now - lock.getLock().getLockTime() > MPeriod.MINUTE_IN_MILLISECONDS * 5)
                     locksOlder5++;
 
             System.out.println(new Date());

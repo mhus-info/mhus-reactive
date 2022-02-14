@@ -29,7 +29,7 @@ public class LocalCaseLockProvider implements CaseLockProvider {
 
     private static CfgLong CFG_TIMEOUT =
             new CfgLong(
-                    LocalCaseLockProvider.class, "timeout", MPeriod.MINUTE_IN_MILLISECOUNDS * 5);
+                    LocalCaseLockProvider.class, "timeout", MPeriod.MINUTE_IN_MILLISECONDS * 5);
 
     @Override
     public boolean isCaseLocked(UUID caseId) {
