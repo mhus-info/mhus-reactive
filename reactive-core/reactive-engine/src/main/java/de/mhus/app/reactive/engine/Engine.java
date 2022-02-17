@@ -591,7 +591,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                 }
                                 if (caze.getState() == STATE_CASE.CLOSED
                                         || caze.getState() == STATE_CASE.SUSPENDED)
-                                    throw new MException(RC.WARNING_TEMPORARELY, "Progress not reached before close in case {1}", id);
+                                    throw new MException(RC.WARNING_TEMPORARILY, "Progress not reached before close in case {1}", id);
                                 if (MPeriod.isTimeOut(start, config.progressTimeout))
                                     throw new TimeoutRuntimeException(
                                             "Wait for progress timeout", id);
