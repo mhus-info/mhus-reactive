@@ -2610,6 +2610,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     if (t instanceof TaskException) {
                         if (trigger.name().equals(((TaskException) t).getTrigger()))
                             errorHandler = trigger;
+                    } else
+                    if (t instanceof IResult) {
+                        if ( String.valueOf( ((IResult)t).getReturnCode() ).equals(trigger.name()) )
+                            errorHandler = trigger;
                     }
                 }
             }
