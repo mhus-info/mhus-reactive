@@ -97,7 +97,7 @@ public abstract class XBEvent {
         if (trigger != null) {
             doc.println("Type: " + trigger.type());
             doc.println("Event: " + trigger.event());
-            doc.println("Abord: " + trigger.abord());
+            doc.println("Abord: " + trigger.abort());
         }
         doc.println("Activity: " + outgoing);
     }

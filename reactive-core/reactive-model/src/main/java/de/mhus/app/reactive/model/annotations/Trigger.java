@@ -24,7 +24,8 @@ import de.mhus.app.reactive.model.activity.AActivity;
 public @interface Trigger {
     enum TYPE {
         ERROR,
-        DEFAULT_ERROR,
+        DEFAULT_ERROR, // all errors
+        PROFESSIONAL_ERROR, // error codes < 500
         TIMER,
         MESSAGE,
         SIGNAL,
@@ -41,5 +42,7 @@ public @interface Trigger {
 
     String event() default "";
 
-    boolean abord() default true;
+    boolean abort() default true;
+
+    int error() default 0;
 }

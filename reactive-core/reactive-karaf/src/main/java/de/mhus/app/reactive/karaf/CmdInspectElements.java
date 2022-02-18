@@ -80,7 +80,7 @@ public class CmdInspectElements extends AbstractCmd {
             for (Trigger trigger : element.getTriggers()) {
                 if (trig.length() > 0) trig.append("\n");
                 trig.append(
-                        (trigger.abord() ? "" : "+")
+                        (trigger.abort() ? "" : "+")
                                 + trigger.type()
                                 + ":"
                                 + trigger.activity().getCanonicalName());

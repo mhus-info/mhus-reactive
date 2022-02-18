@@ -76,6 +76,7 @@ import de.mhus.app.reactive.model.util.IndexValuesProvider;
 import de.mhus.app.reactive.model.util.LocalCaseLockProvider;
 import de.mhus.app.reactive.model.util.NoPool;
 import de.mhus.app.reactive.model.util.ValidateParametersBeforeExecute;
+import de.mhus.lib.basics.IResult;
 import de.mhus.lib.basics.RC;
 import de.mhus.lib.core.IProperties;
 import de.mhus.lib.core.MCast;
@@ -1766,7 +1767,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                                             trigger.activity().getCanonicalName()));
                             nextNode.setMessage(parameters);
                             lock.saveFlowNode(context, nextNode, null);
-                            if (trigger.abord())
+                            if (trigger.abort())
                                 lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
                             res.close();
                             return;
@@ -1849,7 +1850,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                                                         .getCanonicalName()));
                                 nextNode.setMessage(parameters);
                                 lock.saveFlowNode(context, nextNode, null);
-                                if (trigger.abord())
+                                if (trigger.abort())
                                     lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
                                 cnt++;
                                 continue;
@@ -1934,7 +1935,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                     context.getEPool()
                                             .getElement(trigger.activity().getCanonicalName()));
                     lock.saveFlowNode(context, nextNode, null);
-                    if (trigger.abord()) lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
+                    if (trigger.abort()) lock.closeFlowNode(context, node, STATE_NODE.CLOSED);
                     return;
                 }
                 cnt++;
@@ -2598,9 +2599,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
 
             EElement eNode = context.getENode();
             Trigger defaultError = null;
+            Trigger professionalError = null;
             Trigger errorHandler = null;
             for (Trigger trigger : eNode.getTriggers()) {
-                if (trigger.type() == TYPE.DEFAULT_ERROR) defaultError = trigger;
+                if (trigger.type() == TYPE.DEFAULT_ERROR) 
+                    defaultError = trigger;
+                else if (trigger.type() == TYPE.PROFESSIONAL_ERROR)
+                    professionalError = trigger;
                 else if (trigger.type() == TYPE.ERROR) {
                     if (t instanceof TaskException) {
                         if (trigger.name().equals(((TaskException) t).getTrigger()))
@@ -2608,7 +2613,12 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                     }
                 }
             }
-            if (errorHandler == null) errorHandler = defaultError;
+            if (errorHandler == null) {
+                if (professionalError != null && t instanceof IResult && RC.isProfessionalError( ((IResult)t).getReturnCode() ))
+                    errorHandler = professionalError;
+                else
+                    errorHandler = defaultError;
+            }
             if (errorHandler != null) {
                 // create new activity
                 EElement start =

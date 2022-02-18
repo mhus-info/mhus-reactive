@@ -131,8 +131,18 @@ public class PoolValidator {
         }
         // test triggers
         boolean defaultErrorTrigger = false;
+        boolean professionalErrorTrigger = false;
         boolean timerTrigger = false;
         for (Trigger trigger : elem.getTriggers()) {
+            if (trigger.type() == TYPE.PROFESSIONAL_ERROR) {
+                if (professionalErrorTrigger)
+                    findings.add(
+                            new Finding(
+                                    LEVEL.FATAL,
+                                    name,
+                                    "task with more then one professional error trigger"));
+                else professionalErrorTrigger = true;
+            } else
             if (trigger.type() == TYPE.DEFAULT_ERROR) {
                 if (defaultErrorTrigger)
                     findings.add(
