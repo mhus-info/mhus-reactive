@@ -61,6 +61,7 @@ import de.mhus.app.reactive.util.engine.DatabaseLockProvider;
 import de.mhus.app.reactive.util.engine.MemoryStorage;
 import de.mhus.app.reactive.util.engine.SqlDbStorage;
 import de.mhus.lib.basics.RC;
+import de.mhus.lib.basics.RC.CAUSE;
 import de.mhus.lib.core.M;
 import de.mhus.lib.core.MApi;
 import de.mhus.lib.core.MApi.SCOPE;
@@ -892,7 +893,7 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         } catch (Throwable t) {
             engine = null;
             config = null;
-            throw new MRuntimeException(RC.STATUS.ERROR, t);
+            throw new MRuntimeException(CAUSE.ADAPT, RC.STATUS.ERROR, t);
         }
     }
 
