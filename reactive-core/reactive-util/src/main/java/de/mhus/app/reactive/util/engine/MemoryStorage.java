@@ -52,7 +52,7 @@ public class MemoryStorage extends SqlDbStorage {
         cdb.setString("driver", jdbcDriver);
         cdb.setString("url", jdbcUrl);
         cdb.setString("user", jdbcUser);
-        cdb.setString("pass", jdbcPass);
+        cdb.setString("password", jdbcPass);
 
         //		MActivator activator = new DefaultActivator(MemoryStorage.class.getClassLoader());
         DbPoolBundle bundle = new DbPoolBundle(cconfig, null);
