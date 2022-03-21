@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
+import de.mhus.app.reactive.engine.util.CaseLockImpl;
 import de.mhus.app.reactive.engine.util.CaseLockProxy;
 import de.mhus.app.reactive.engine.util.EngineListenerUtil;
 import de.mhus.app.reactive.model.activity.AActivity;
@@ -2237,7 +2238,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return new LinkedList<>(caseLocks.values());
     }
 
-    public class EngineCaseLock extends de.mhus.app.reactive.engine.util.CaseLock
+    public class EngineCaseLock extends CaseLockImpl
             implements PCaseLock {
 
         public Thread owner;

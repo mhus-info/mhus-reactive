@@ -35,7 +35,7 @@ import de.mhus.lib.core.concurrent.Lock;
 import de.mhus.lib.errors.MException;
 import de.mhus.lib.errors.NotFoundException;
 
-public class CaseLockProxy extends CaseLock implements PCaseLock {
+public class CaseLockProxy extends CaseLockImpl implements PCaseLock {
 
     PCaseLock instance;
     private UUID caseId;

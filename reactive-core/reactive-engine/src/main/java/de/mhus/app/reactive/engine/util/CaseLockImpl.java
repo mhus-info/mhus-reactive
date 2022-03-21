@@ -30,7 +30,7 @@ import io.opentracing.SpanContext;
 import io.opentracing.propagation.Format;
 import io.opentracing.propagation.TextMap;
 
-public class CaseLock extends MLog implements Closeable {
+public class CaseLockImpl extends MLog implements Closeable {
 
     protected Scope scope;
     private String operation;
@@ -39,7 +39,7 @@ public class CaseLock extends MLog implements Closeable {
     private boolean master;
     protected Span span;
 
-    public CaseLock(boolean master, String operation, Object... tagPairs) {
+    public CaseLockImpl(boolean master, String operation, Object... tagPairs) {
         this.operation = operation;
         this.tagPairs = tagPairs;
         this.master = master;
