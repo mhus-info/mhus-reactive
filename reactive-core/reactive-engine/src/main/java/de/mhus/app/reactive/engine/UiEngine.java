@@ -625,7 +625,8 @@ public class UiEngine extends MLog implements IEngine {
     public void doArchive(UUID caseId) throws Exception {
         if (engine == null) throw new WrongStateException();
         PCaseInfo caze = engine.getCaseInfo(caseId);
-        if (caze.getState() != STATE_CASE.CLOSED) throw new MException(RC.BUSY, "wrong case {1} state {2}", caseId, caze.getState());
+        if (caze.getState() != STATE_CASE.CLOSED)
+            throw new MException(RC.BUSY, "wrong case {1} state {2}", caseId, caze.getState());
         engine.archiveCase(caseId);
     }
 

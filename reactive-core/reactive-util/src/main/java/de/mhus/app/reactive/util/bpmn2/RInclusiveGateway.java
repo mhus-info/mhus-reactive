@@ -53,7 +53,8 @@ public class RInclusiveGateway<P extends RPool<?>> extends RGateway<P>
         }
         if (successful.size() == 0 && defaultOutput != null) successful.add(defaultOutput);
         if (successful.size() == 0)
-            throw new MException(RC.ERROR, "condition not found in {1}", getClass().getCanonicalName());
+            throw new MException(
+                    RC.ERROR, "condition not found in {1}", getClass().getCanonicalName());
         return successful.toArray(new Output[successful.size()]);
     }
 }

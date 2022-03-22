@@ -53,7 +53,8 @@ public class RExclusiveGateway<P extends RPool<?>> extends RGateway<P>
         }
         if (current == null) current = defaultOutput;
         if (current == null)
-            throw new MException(RC.ERROR, "condition not found in {1}", getClass().getCanonicalName());
+            throw new MException(
+                    RC.ERROR, "condition not found in {1}", getClass().getCanonicalName());
         return new Output[] {current};
     }
 }

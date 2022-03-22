@@ -376,7 +376,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
             info = availableProcesses.get(name);
         }
         if (info == null) throw new MException(RC.NOT_FOUND, "Process {1} not found", name);
-        if (info.deployedName == null) throw new MException(RC.BUSY, "Process {!} is not deployed", name);
+        if (info.deployedName == null)
+            throw new MException(RC.BUSY, "Process {!} is not deployed", name);
         log().i("<<< Pool", info.deployedName);
         ((JavaPackageProcessProvider) config.processProvider).removeProcess(info.deployedName);
         try {
@@ -920,7 +921,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         Collection<ServiceReference<DataSource>> refs =
                 context.getServiceReferences(
                         DataSource.class, "(osgi.jndi.service.name=" + storageDsName + ")");
-        if (refs.size() == 0) throw new MException(RC.BUSY, "datasource {1} not found", storageDsName);
+        if (refs.size() == 0)
+            throw new MException(RC.BUSY, "datasource {1} not found", storageDsName);
         storageDataSource = context.getService(refs.iterator().next());
         storageDsProvider.setDataSource(storageDataSource);
         try {
@@ -936,7 +938,8 @@ public class ReactiveAdminImpl extends MLog implements ReactiveAdmin {
         Collection<ServiceReference<DataSource>> refs =
                 context.getServiceReferences(
                         DataSource.class, "(osgi.jndi.service.name=" + archiveDsName + ")");
-        if (refs.size() == 0) throw new MException(RC.BUSY, "datasource {1} not found", archiveDsName);
+        if (refs.size() == 0)
+            throw new MException(RC.BUSY, "datasource {1} not found", archiveDsName);
         archiveDataSource = context.getService(refs.iterator().next());
         archiveDsProvider.setDataSource(archiveDataSource);
     }

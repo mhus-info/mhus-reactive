@@ -106,7 +106,10 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     log().d(t);
                 }
             }
-            log().i("init failed", this, "Retry init of DB in " + CFG_INIT_RETRY_SEC.value() + " sec");
+            log().i(
+                            "init failed",
+                            this,
+                            "Retry init of DB in " + CFG_INIT_RETRY_SEC.value() + " sec");
             MThread.sleep(CFG_INIT_RETRY_SEC.value() * 1000);
         }
     }
@@ -733,7 +736,9 @@ public class SqlDbStorage extends MLog implements StorageProvider {
                     MObjectInputStream ois = new MObjectInputStream(in, act);
                     node.readExternal(ois);
                 } catch (java.io.EOFException eofe) {
-                    log().w("read strem for node {1} failed", node, eofe); // most because of extended parameters
+                    log().w(
+                                    "read strem for node {1} failed",
+                                    node, eofe); // most because of extended parameters
                 }
             }
             res.close();

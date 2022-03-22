@@ -142,8 +142,7 @@ public class PoolValidator {
                                     name,
                                     "task with more then one professional error trigger"));
                 else professionalErrorTrigger = true;
-            } else
-            if (trigger.type() == TYPE.DEFAULT_ERROR) {
+            } else if (trigger.type() == TYPE.DEFAULT_ERROR) {
                 if (defaultErrorTrigger)
                     findings.add(
                             new Finding(

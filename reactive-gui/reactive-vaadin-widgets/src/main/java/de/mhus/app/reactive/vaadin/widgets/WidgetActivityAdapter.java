@@ -91,8 +91,7 @@ public class WidgetActivityAdapter implements WidgetActivityDelegate {
     }
 
     @Override
-    public void showCaseNodes(UUID id) {
-    }
+    public void showCaseNodes(UUID id) {}
 
     @Override
     public boolean isShowCaseNodes(UUID id) {

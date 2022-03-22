@@ -125,8 +125,11 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                         && de.mhus.app.reactive.model.activity.AProcess.class.isAssignableFrom(
                                 element)) {
                     if (processClass != null)
-                        throw new MException(RC.ERROR,
-                                "Multipe process definition classes found", processClass, element);
+                        throw new MException(
+                                RC.ERROR,
+                                "Multipe process definition classes found",
+                                processClass,
+                                element);
                     processClass = (Class<? extends AProcess>) element;
                 }
 
@@ -135,8 +138,10 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     try {
                         PoolContainer pool = new PoolContainer((Class<? extends APool<?>>) element);
                         if (pools.containsKey(pool.getCanonicalName()))
-                            throw new MException(RC.ERROR,
-                                    "Multiple pools with the same name", pool.getCanonicalName());
+                            throw new MException(
+                                    RC.ERROR,
+                                    "Multiple pools with the same name",
+                                    pool.getCanonicalName());
                         pool.setProcess(this);
                         pools.put(pool.getCanonicalName(), pool);
                     } catch (Throwable t) {
@@ -151,7 +156,8 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                         ElementContainer act =
                                 new ElementContainer((Class<? extends AActivity<?>>) element);
                         if (elements.containsKey(act.getCanonicalName()))
-                            throw new MException(RC.ERROR,
+                            throw new MException(
+                                    RC.ERROR,
                                     "Multiple activities with the same name",
                                     act.getCanonicalName()); // should not happen
                         elements.put(act.getCanonicalName(), act);
@@ -161,7 +167,8 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
                     }
                 }
             }
-            if (processClass == null) throw new MException(RC.ERROR, "process definition class not found");
+            if (processClass == null)
+                throw new MException(RC.ERROR, "process definition class not found");
             processDescription = processClass.getAnnotation(ProcessDescription.class);
             if (processDescription == null)
                 throw new MException(RC.ERROR, "process definition annotation not found");
@@ -434,7 +441,8 @@ public class JavaPackageProcessProvider extends MLog implements ProcessProvider 
             if (AActivity.class.isAssignableFrom(element)) {
                 actDescription = element.getAnnotation(ActivityDescription.class);
                 if (actDescription == null)
-                    throw new MException(RC.ERROR, "Activity without description annotation", element);
+                    throw new MException(
+                            RC.ERROR, "Activity without description annotation", element);
             }
             name =
                     actDescription == null || MString.isEmpty(actDescription.name())

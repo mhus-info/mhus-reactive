@@ -223,7 +223,8 @@ public class EngineListenerUtil {
                                         try {
                                             method.invoke(listener, args);
                                         } catch (Throwable t) {
-                                            MLogUtil.log().t("invoke listener failed", method, args, t);
+                                            MLogUtil.log()
+                                                    .t("invoke listener failed", method, args, t);
                                         }
                                     }
                                 return null;

@@ -45,7 +45,7 @@ public class WidgetActivity extends WidgetActivityAdapter {
         try {
             showUserForm(id);
         } catch (Exception e) {
-            space.log().e("show form failed",id, e);
+            space.log().e("show form failed", id, e);
         }
     }
 

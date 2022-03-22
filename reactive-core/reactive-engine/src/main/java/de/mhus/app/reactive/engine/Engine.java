@@ -593,7 +593,10 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                                 }
                                 if (caze.getState() == STATE_CASE.CLOSED
                                         || caze.getState() == STATE_CASE.SUSPENDED)
-                                    throw new MException(RC.WARNING_TEMPORARILY, "Progress not reached before close in case {1}", id);
+                                    throw new MException(
+                                            RC.WARNING_TEMPORARILY,
+                                            "Progress not reached before close in case {1}",
+                                            id);
                                 if (MPeriod.isTimeOut(start, config.progressTimeout))
                                     throw new TimeoutRuntimeException(
                                             "Wait for progress timeout", id);
@@ -656,7 +659,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpme":
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled node id", l);
+                    if (!MValidator.isUUID(l))
+                        throw new MException(RC.SYNTAX_ERROR, "misspelled node id", l);
                     UUID nodeId = UUID.fromString(l);
 
                     String user = uri.getUsername();
@@ -683,11 +687,13 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpmx":
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
+                    if (!MValidator.isUUID(l))
+                        throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
                     UUID caseId = UUID.fromString(l);
                     // check start point
                     PCaseInfo caze = getCaseInfo(caseId);
-                    if (caze == null) throw new MException(RC.NOT_FOUND, "case {1} not found", caseId);
+                    if (caze == null)
+                        throw new MException(RC.NOT_FOUND, "case {1} not found", caseId);
                     if (caze.getState() == STATE_CASE.SUSPENDED)
                         throw new MException(RC.CONFLICT, "case {1} suspended", caseId);
                     if (caze.getState() == STATE_CASE.CLOSED)
@@ -713,7 +719,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                         EngineContext context = createContext(lock);
                         EElement start = context.getEPool().getElement(uri.getFragment());
                         if (start == null)
-                            throw new MException(RC.NOT_FOUND, "start point not found", uri.getFragment());
+                            throw new MException(
+                                    RC.NOT_FOUND, "start point not found", uri.getFragment());
 
                         return lock.createStartPoint(context, start, uri.getQuery());
                     }
@@ -721,7 +728,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             case "bpma": // case action bpma://case-id/action?parameters
                 {
                     String l = uri.getLocation();
-                    if (!MValidator.isUUID(l)) throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
+                    if (!MValidator.isUUID(l))
+                        throw new MException(RC.SYNTAX_ERROR, "misspelled case id", l);
                     UUID caseId = UUID.fromString(l);
                     return onUserCaseAction(caseId, uri.getPath(), new MProperties(uri.getQuery()));
                 }
@@ -788,7 +796,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         String fragment = uri.getFragment();
         if (fragment != null) {
             EElement point = pool.getElement(fragment);
-            if (point == null) throw new MException(RC.NOT_FOUND, "start point not found", fragment, uri);
+            if (point == null)
+                throw new MException(RC.NOT_FOUND, "start point not found", fragment, uri);
             if (!point.is(AStartPoint.class))
                 throw new MException(RC.CONFLICT, "node is not a start point", uri);
             startPoints = new LinkedList<>();
@@ -950,14 +959,16 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             processVersion = config.persistent.getActiveProcessVersion(processName);
         else {
             if (!config.persistent.isProcessEnabled(processName, processVersion))
-                throw new MException(RC.BUSY,
+                throw new MException(
+                        RC.BUSY,
                         "specified process {1} version {2} is not enabled",
                         processName,
                         processVersion,
                         uri);
         }
         if (MString.isEmpty(processVersion))
-            throw new MException(RC.BUSY, "default process {1} version is disabled", processName, uri);
+            throw new MException(
+                    RC.BUSY, "default process {1} version is disabled", processName, uri);
 
         EProcess process = processProvider.getProcess(processName, processVersion);
         return process;
@@ -1977,7 +1988,11 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             if (node.getType() != TYPE_NODE.USER)
                 throw new MException(RC.CONFLICT, "node {1} is not a user task", nodeId);
             if (node.getAssignedUser() != null)
-                throw new MException(RC.BUSY, "node {1} is already assigned to {2}", nodeId, node.getAssignedUser());
+                throw new MException(
+                        RC.BUSY,
+                        "node {1} is already assigned to {2}",
+                        nodeId,
+                        node.getAssignedUser());
             node.setAssignedUser(user);
             storage.saveFlowNode(node);
         }
@@ -2011,7 +2026,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             EngineContext context = createContext(lock, caze, node);
             AElement<?> aNode = context.getANode();
             if (!(aNode instanceof AUserTask<?>))
-                throw new MException(RC.CONFLICT, 
+                throw new MException(
+                        RC.CONFLICT,
                         "node {1} activity is not a user task",
                         nodeId,
                         aNode.getClass().getCanonicalName());
@@ -2040,7 +2056,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             EngineContext context = createContext(lock, caze, node);
             AElement<?> aNode = context.getANode();
             if (!(aNode instanceof AUserTask<?>))
-                throw new MException(RC.CONFLICT, 
+                throw new MException(
+                        RC.CONFLICT,
                         "node {1} activity is not a user task",
                         nodeId,
                         aNode.getClass().getCanonicalName());
@@ -2238,8 +2255,7 @@ public class Engine extends MLog implements EEngine, InternalEngine {
         return new LinkedList<>(caseLocks.values());
     }
 
-    public class EngineCaseLock extends CaseLockImpl
-            implements PCaseLock {
+    public class EngineCaseLock extends CaseLockImpl implements PCaseLock {
 
         public Thread owner;
         private UUID caseId;
@@ -2603,26 +2619,24 @@ public class Engine extends MLog implements EEngine, InternalEngine {
             Trigger professionalError = null;
             Trigger errorHandler = null;
             for (Trigger trigger : eNode.getTriggers()) {
-                if (trigger.type() == TYPE.DEFAULT_ERROR) 
-                    defaultError = trigger;
-                else if (trigger.type() == TYPE.PROFESSIONAL_ERROR)
-                    professionalError = trigger;
+                if (trigger.type() == TYPE.DEFAULT_ERROR) defaultError = trigger;
+                else if (trigger.type() == TYPE.PROFESSIONAL_ERROR) professionalError = trigger;
                 else if (trigger.type() == TYPE.ERROR) {
                     if (t instanceof TaskException) {
                         if (trigger.name().equals(((TaskException) t).getTrigger()))
                             errorHandler = trigger;
-                    } else
-                    if (t instanceof IResult) {
-                        if ( String.valueOf( ((IResult)t).getReturnCode() ).equals(trigger.name()) )
+                    } else if (t instanceof IResult) {
+                        if (String.valueOf(((IResult) t).getReturnCode()).equals(trigger.name()))
                             errorHandler = trigger;
                     }
                 }
             }
             if (errorHandler == null) {
-                if (professionalError != null && t instanceof IResult && RC.isProfessionalError( ((IResult)t).getReturnCode() ))
+                if (professionalError != null
+                        && t instanceof IResult
+                        && RC.isProfessionalError(((IResult) t).getReturnCode()))
                     errorHandler = professionalError;
-                else
-                    errorHandler = defaultError;
+                else errorHandler = defaultError;
             }
             if (errorHandler != null) {
                 // create new activity
@@ -2783,7 +2797,8 @@ public class Engine extends MLog implements EEngine, InternalEngine {
                 throw new MException(RC.NOT_FOUND, "activity is not a start point", context, start);
 
             if (!context.getEPool().isElementOfPool(start))
-                throw new MException(RC.CONFLICT, "start point is not part of the pool", context, start);
+                throw new MException(
+                        RC.CONFLICT, "start point is not part of the pool", context, start);
 
             // collect information
             ActivityDescription desc = start.getActivityDescription();
