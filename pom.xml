@@ -35,7 +35,7 @@
 	   <!-- 
        <mhus-reactive.version>${project.version}</mhus-reactive.version>
        -->
-       <mhus-reactive.plugin>7.5.2</mhus-reactive.plugin><!-- need to define a release version -->
+       <mhus-reactive.plugin>7.9.0</mhus-reactive.plugin><!-- need to define a release version -->
     </properties>
 
     <inceptionYear>2018</inceptionYear>
