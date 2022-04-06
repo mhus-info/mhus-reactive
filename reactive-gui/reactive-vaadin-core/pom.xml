@@ -95,12 +95,12 @@
            <artifactId>vaadin-refresher</artifactId>
            <version>${mhus-ports-vaadin.version}</version>
        </dependency>
-		 -->
         <dependency>
            <groupId>de.mhus.ports</groupId>
            <artifactId>vaadin-timerextension</artifactId>
            <version>${mhus-ports-vaadin.version}</version>
        </dependency>
+		 -->
        
 	</dependencies>
 
