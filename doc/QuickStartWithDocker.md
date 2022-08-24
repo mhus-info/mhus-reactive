@@ -25,6 +25,12 @@ or
 
 docker start -ai reactive-playground
 
+Access via Browser:
+
+http://localhost:18181
+
+User: admin
+Password secret
 
 
 == Start the Process
